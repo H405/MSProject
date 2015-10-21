@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\framework\camera\Camera.h" />
+    <ClInclude Include="code\framework\camera\CameraObject.h" />
+    <ClInclude Include="code\framework\camera\CameraState.h" />
+    <ClInclude Include="code\framework\camera\CameraStateDebug.h" />
+    <ClInclude Include="code\framework\develop\Debug.h" />
+    <ClInclude Include="code\framework\develop\DebugProc.h" />
+    <ClInclude Include="code\framework\graphic\Drawer.h" />
+    <ClInclude Include="code\framework\graphic\Graphic.h" />
+    <ClInclude Include="code\framework\graphic\Material.h" />
+    <ClInclude Include="code\framework\input\Input.h" />
+    <ClInclude Include="code\framework\input\DirectInput.h" />
+    <ClInclude Include="code\framework\input\InputKeyboard.h" />
+    <ClInclude Include="code\framework\input\InputMouse.h" />
+    <ClInclude Include="code\framework\input\InputPad.h" />
+    <ClInclude Include="code\framework\light\Light.h" />
+    <ClInclude Include="code\framework\light\LightDirection.h" />
+    <ClInclude Include="code\framework\light\LightPoint.h" />
+    <ClInclude Include="code\framework\object\Object.h" />
+    <ClInclude Include="code\framework\object\ObjectMovement.h" />
+    <ClInclude Include="code\framework\polygon\Polygon2D.h" />
+    <ClInclude Include="code\framework\polygon\Polygon3D.h" />
+    <ClInclude Include="code\framework\polygon\PolygonMesh.h" />
+    <ClInclude Include="code\framework\render\DirectDevice.h" />
+    <ClInclude Include="code\framework\render\RenderMatrix.h" />
+    <ClInclude Include="code\framework\render\RenderPass.h" />
+    <ClInclude Include="code\framework\render\RenderTarget.h" />
+    <ClInclude Include="code\framework\resource\Effect.h" />
+    <ClInclude Include="code\framework\resource\ManagerEffect.h" />
+    <ClInclude Include="code\framework\resource\ManagerModel.h" />
+    <ClInclude Include="code\framework\resource\ManagerResource.h" />
+    <ClInclude Include="code\framework\resource\ManagerTexture.h" />
+    <ClInclude Include="code\framework\resource\Model.h" />
+    <ClInclude Include="code\framework\resource\ModelX.h" />
+    <ClInclude Include="code\framework\resource\Texture.h" />
+    <ClInclude Include="code\framework\scene\ManagerScene.h" />
+    <ClInclude Include="code\framework\scene\Scene.h" />
+    <ClInclude Include="code\framework\scene\SceneArgument.h" />
+    <ClInclude Include="code\framework\system\Fade.h" />
+    <ClInclude Include="code\framework\system\FrameCount.h" />
+    <ClInclude Include="code\framework\system\Manager.h" />
+    <ClInclude Include="code\framework\system\ManagerDraw.h" />
+    <ClInclude Include="code\framework\system\ManagerExector.h" />
+    <ClInclude Include="code\framework\system\ManagerUpdate.h" />
+    <ClInclude Include="code\framework\system\Window.h" />
+    <ClInclude Include="code\framework\vertex\Vertex.h" />
+    <ClInclude Include="code\framework\vertex\VertexBuffer.h" />
+    <ClInclude Include="code\graphic\drawer\Drawer2D.h" />
+    <ClInclude Include="code\graphic\drawer\Drawer3D.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerMesh.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerModel.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerScreen.h" />
+    <ClInclude Include="code\graphic\graphic\Graphic2D.h" />
+    <ClInclude Include="code\graphic\graphic\Graphic3D.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicMain.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicMesh.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicModel.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicScreen.h" />
+    <ClInclude Include="code\object\Object2D.h" />
+    <ClInclude Include="code\object\Object3D.h" />
+    <ClInclude Include="code\object\ObjectMesh.h" />
+    <ClInclude Include="code\object\ObjectModel.h" />
+    <ClInclude Include="code\object\ObjectScreen.h" />
+    <ClInclude Include="code\scene\SceneGame.h" />
+    <ClInclude Include="code\scene\SceneRanking.h" />
+    <ClInclude Include="code\scene\SceneResult.h" />
+    <ClInclude Include="code\scene\SceneSplash.h" />
+    <ClInclude Include="code\scene\SceneTitle.h" />
+    <ClInclude Include="code\system\EffectParameter.h" />
+    <ClInclude Include="code\system\Main.h" />
+    <ClInclude Include="code\system\ManagerMain.h" />
+    <ClInclude Include="code\system\ManagerSceneMain.h" />
+    <ClInclude Include="code\system\SceneArgumentMain.h" />
+    <ClInclude Include="code\system\SceneMain.h" />
+    <ClInclude Include="code\system\WindowMain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\framework\camera\Camera.cpp" />
+    <ClCompile Include="code\framework\camera\CameraObject.cpp" />
+    <ClCompile Include="code\framework\camera\CameraState.cpp" />
+    <ClCompile Include="code\framework\camera\CameraStateDebug.cpp" />
+    <ClCompile Include="code\framework\develop\Debug.cpp" />
+    <ClCompile Include="code\framework\develop\DebugProc.cpp" />
+    <ClCompile Include="code\framework\graphic\Drawer.cpp" />
+    <ClCompile Include="code\framework\graphic\Graphic.cpp" />
+    <ClCompile Include="code\framework\graphic\Material.cpp" />
+    <ClCompile Include="code\framework\input\Input.cpp" />
+    <ClCompile Include="code\framework\input\DirectInput.cpp" />
+    <ClCompile Include="code\framework\input\InputKeyboard.cpp" />
+    <ClCompile Include="code\framework\input\InputMouse.cpp" />
+    <ClCompile Include="code\framework\input\InputPad.cpp" />
+    <ClCompile Include="code\framework\light\Light.cpp" />
+    <ClCompile Include="code\framework\light\LightDirection.cpp" />
+    <ClCompile Include="code\framework\light\LightPoint.cpp" />
+    <ClCompile Include="code\framework\object\Object.cpp" />
+    <ClCompile Include="code\framework\object\ObjectMovement.cpp" />
+    <ClCompile Include="code\framework\polygon\Polygon2D.cpp" />
+    <ClCompile Include="code\framework\polygon\Polygon3D.cpp" />
+    <ClCompile Include="code\framework\polygon\PolygonMesh.cpp" />
+    <ClCompile Include="code\framework\render\DirectDevice.cpp" />
+    <ClCompile Include="code\framework\render\RenderMatrix.cpp" />
+    <ClCompile Include="code\framework\render\RenderPass.cpp" />
+    <ClCompile Include="code\framework\render\RenderTarget.cpp" />
+    <ClCompile Include="code\framework\resource\Effect.cpp" />
+    <ClCompile Include="code\framework\resource\ManagerEffect.cpp" />
+    <ClCompile Include="code\framework\resource\ManagerModel.cpp" />
+    <ClCompile Include="code\framework\resource\ManagerResource.cpp" />
+    <ClCompile Include="code\framework\resource\ManagerTexture.cpp" />
+    <ClCompile Include="code\framework\resource\Model.cpp" />
+    <ClCompile Include="code\framework\resource\ModelX.cpp" />
+    <ClCompile Include="code\framework\resource\Texture.cpp" />
+    <ClCompile Include="code\framework\scene\ManagerScene.cpp" />
+    <ClCompile Include="code\framework\scene\Scene.cpp" />
+    <ClCompile Include="code\framework\scene\SceneArgument.cpp" />
+    <ClCompile Include="code\framework\system\Fade.cpp" />
+    <ClCompile Include="code\framework\system\FrameCount.cpp" />
+    <ClCompile Include="code\framework\system\Manager.cpp" />
+    <ClCompile Include="code\framework\system\ManagerDraw.cpp" />
+    <ClCompile Include="code\framework\system\ManagerExector.cpp" />
+    <ClCompile Include="code\framework\system\ManagerUpdate.cpp" />
+    <ClCompile Include="code\framework\system\Window.cpp" />
+    <ClCompile Include="code\framework\vertex\Vertex.cpp" />
+    <ClCompile Include="code\framework\vertex\VertexBuffer.cpp" />
+    <ClCompile Include="code\graphic\drawer\Drawer2D.cpp" />
+    <ClCompile Include="code\graphic\drawer\Drawer3D.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerModel.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerScreen.cpp" />
+    <ClCompile Include="code\graphic\graphic\Graphic2D.cpp" />
+    <ClCompile Include="code\graphic\graphic\Graphic3D.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicMain.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicMesh.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicModel.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicScreen.cpp" />
+    <ClCompile Include="code\object\Object2D.cpp" />
+    <ClCompile Include="code\object\Object3D.cpp" />
+    <ClCompile Include="code\object\ObjectMesh.cpp" />
+    <ClCompile Include="code\object\ObjectModel.cpp" />
+    <ClCompile Include="code\object\ObjectScreen.cpp" />
+    <ClCompile Include="code\scene\SceneGame.cpp" />
+    <ClCompile Include="code\scene\SceneRanking.cpp" />
+    <ClCompile Include="code\scene\SceneResult.cpp" />
+    <ClCompile Include="code\scene\SceneSplash.cpp" />
+    <ClCompile Include="code\scene\SceneTitle.cpp" />
+    <ClCompile Include="code\system\EffectParameter.cpp" />
+    <ClCompile Include="code\system\Main.cpp" />
+    <ClCompile Include="code\system\ManagerMain.cpp" />
+    <ClCompile Include="code\system\ManagerSceneMain.cpp" />
+    <ClCompile Include="code\system\SceneArgumentMain.cpp" />
+    <ClCompile Include="code\system\SceneMain.cpp" />
+    <ClCompile Include="code\system\WindowMain.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4B2726EF-0828-4EAB-B277-780FF656195F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>framework</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

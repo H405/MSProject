@@ -1,0 +1,522 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\framework">
+      <UniqueIdentifier>{c3665636-7c2e-4ea2-bc32-496564cc3e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system">
+      <UniqueIdentifier>{903711a9-4ffc-4709-a97c-ef376ab1b8ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene">
+      <UniqueIdentifier>{1fd46591-cc6d-45c7-8744-87c07915ee96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object">
+      <UniqueIdentifier>{9ef53dd7-551a-4c9d-9886-c79c62fdb9f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\system">
+      <UniqueIdentifier>{8f57fdaf-79c6-4e7f-adbe-caca4c5d32df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\resource">
+      <UniqueIdentifier>{e9fa10c8-9d11-48c3-b119-f63961ee9753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\polygon">
+      <UniqueIdentifier>{c2c9bee9-efed-4377-8186-dadc6c7651c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\render">
+      <UniqueIdentifier>{3d51839b-42f4-49bd-9ea1-9329164d6c5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\object">
+      <UniqueIdentifier>{712d11ad-3c1a-467d-84b5-df997f6d016d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\input">
+      <UniqueIdentifier>{664228ba-262a-4058-a2c3-096b4aaa2556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\develop">
+      <UniqueIdentifier>{2972db61-f484-4436-ad33-420f5b5998cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\camera">
+      <UniqueIdentifier>{8f7f6bda-d4e9-45c6-8403-a50d7e597b41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\graphic">
+      <UniqueIdentifier>{deaf0f6d-82eb-4b0e-86b3-553afcf3a546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\scene">
+      <UniqueIdentifier>{77fd4ecc-2fa9-4e94-848e-63c69a1f3ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\light">
+      <UniqueIdentifier>{cbf1cdf7-891b-4de0-bf23-3102abe5c7cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\vertex">
+      <UniqueIdentifier>{d9b58cf8-b9c8-4f2c-8c4b-e1c8190e2c58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\graphic">
+      <UniqueIdentifier>{8089f6e9-2fc4-4b0a-81c9-d6fd49e2df83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\graphic\drawer">
+      <UniqueIdentifier>{4b7e3161-e18b-4933-97d5-76d5220c11ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\graphic\graphic">
+      <UniqueIdentifier>{07468ce4-d8c3-4ab6-9169-8d099a5f085d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\framework\develop\Debug.h">
+      <Filter>ソース ファイル\framework\develop</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\develop\DebugProc.h">
+      <Filter>ソース ファイル\framework\develop</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\Manager.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\Window.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\Main.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\FrameCount.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\ManagerMain.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\WindowMain.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\ManagerDraw.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\ManagerExector.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\render\RenderTarget.h">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\SceneArgumentMain.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\SceneMain.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\ManagerSceneMain.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\scene\SceneArgument.h">
+      <Filter>ソース ファイル\framework\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\scene\ManagerScene.h">
+      <Filter>ソース ファイル\framework\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\scene\Scene.h">
+      <Filter>ソース ファイル\framework\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\scene\SceneGame.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\InputMouse.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\InputPad.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\Input.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\InputKeyboard.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\DirectInput.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\Fade.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\scene\SceneResult.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\scene\SceneTitle.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\scene\SceneRanking.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\scene\SceneSplash.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\object\Object.h">
+      <Filter>ソース ファイル\framework\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\system\ManagerUpdate.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\render\RenderMatrix.h">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\light\LightDirection.h">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\light\LightPoint.h">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\light\Light.h">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\camera\CameraObject.h">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\camera\CameraState.h">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\camera\CameraStateDebug.h">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\camera\Camera.h">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\polygon\Polygon3D.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\polygon\Polygon2D.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\vertex\Vertex.h">
+      <Filter>ソース ファイル\framework\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\vertex\VertexBuffer.h">
+      <Filter>ソース ファイル\framework\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\EffectParameter.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\render\RenderPass.h">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ManagerResource.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ManagerTexture.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\Texture.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\Effect.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ManagerEffect.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\render\DirectDevice.h">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\graphic\Drawer.h">
+      <Filter>ソース ファイル\framework\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\graphic\Graphic.h">
+      <Filter>ソース ファイル\framework\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicMain.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\Object2D.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\Graphic2D.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\Drawer2D.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectScreen.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicScreen.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerScreen.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\Drawer3D.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\Graphic3D.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\Object3D.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\graphic\Material.h">
+      <Filter>ソース ファイル\framework\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\Model.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ModelX.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ManagerModel.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectModel.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicModel.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModel.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\polygon\PolygonMesh.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectMesh.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicMesh.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerMesh.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\object\ObjectMovement.h">
+      <Filter>ソース ファイル\framework\object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\framework\develop\Debug.cpp">
+      <Filter>ソース ファイル\framework\develop</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\develop\DebugProc.cpp">
+      <Filter>ソース ファイル\framework\develop</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\Manager.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\Window.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\Main.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\FrameCount.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\ManagerMain.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\WindowMain.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\ManagerDraw.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\ManagerExector.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\render\RenderTarget.cpp">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\SceneMain.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\ManagerSceneMain.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\SceneArgumentMain.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\scene\ManagerScene.cpp">
+      <Filter>ソース ファイル\framework\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\scene\Scene.cpp">
+      <Filter>ソース ファイル\framework\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\scene\SceneArgument.cpp">
+      <Filter>ソース ファイル\framework\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scene\SceneGame.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\InputMouse.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\InputPad.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\Input.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\InputKeyboard.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\DirectInput.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\Fade.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scene\SceneResult.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scene\SceneTitle.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scene\SceneRanking.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scene\SceneSplash.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\object\Object.cpp">
+      <Filter>ソース ファイル\framework\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\ManagerUpdate.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\render\RenderMatrix.cpp">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\light\LightDirection.cpp">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\light\LightPoint.cpp">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\light\Light.cpp">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\camera\CameraObject.cpp">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\camera\CameraState.cpp">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\camera\CameraStateDebug.cpp">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\camera\Camera.cpp">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\polygon\Polygon3D.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\polygon\Polygon2D.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\vertex\VertexBuffer.cpp">
+      <Filter>ソース ファイル\framework\vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\vertex\Vertex.cpp">
+      <Filter>ソース ファイル\framework\vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\EffectParameter.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\render\RenderPass.cpp">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ManagerResource.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ManagerTexture.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\Texture.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ManagerEffect.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\Effect.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\render\DirectDevice.cpp">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\graphic\Graphic.cpp">
+      <Filter>ソース ファイル\framework\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\graphic\Drawer.cpp">
+      <Filter>ソース ファイル\framework\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicMain.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\Object2D.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\Graphic2D.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\Drawer2D.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectScreen.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicScreen.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerScreen.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\Drawer3D.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\Graphic3D.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\Object3D.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\graphic\Material.cpp">
+      <Filter>ソース ファイル\framework\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\Model.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ModelX.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ManagerModel.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectModel.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicModel.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModel.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\polygon\PolygonMesh.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectMesh.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicMesh.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\object\ObjectMovement.cpp">
+      <Filter>ソース ファイル\framework\object</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
