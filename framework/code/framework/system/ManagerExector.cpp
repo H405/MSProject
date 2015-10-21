@@ -154,7 +154,7 @@ int ManagerExector< TypeItem >::Register( TypeItem* pItem, int priority )
 	int		id;		// ê›íËÇ∑ÇÈID
 	for( id = 0; id < countItem_; ++id )
 	{
-		if( !pBufferItem_[ id ].isEnable_ )
+		if( !pBufferItem_[ id ].isEnable_ && !pBufferItem_[ id ].needsUnregister_ )
 		{
 			break;
 		}

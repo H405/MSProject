@@ -88,6 +88,7 @@ technique ShadeNormal
 		SrcBlend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
 
+		// シェーダの設定
 		VertexShader = compile vs_2_0 TransformVertex();
 		PixelShader = compile ps_2_0 DrawPixel();
 	}

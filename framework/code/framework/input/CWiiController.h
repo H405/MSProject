@@ -255,6 +255,8 @@ public:
 	void rotSpeedCalibration(){rotSpeedCalibrationFlag = true;}
 	void rotReset(){rotResetFlag = true;}
 
+	bool isConnect;
+
 private:
 
 	//	バッテリーの充電量に応じてLEDを点灯させる

@@ -38,6 +38,7 @@
     <ClInclude Include="code\framework\polygon\Polygon2D.h" />
     <ClInclude Include="code\framework\polygon\Polygon3D.h" />
     <ClInclude Include="code\framework\polygon\PolygonMesh.h" />
+    <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h" />
     <ClInclude Include="code\framework\render\DirectDevice.h" />
     <ClInclude Include="code\framework\render\RenderMatrix.h" />
     <ClInclude Include="code\framework\render\RenderPass.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="code\framework\polygon\Polygon2D.cpp" />
     <ClCompile Include="code\framework\polygon\Polygon3D.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonMesh.cpp" />
+    <ClCompile Include="code\framework\polygon\PolygonMeshDomeInside.cpp" />
     <ClCompile Include="code\framework\render\DirectDevice.cpp" />
     <ClCompile Include="code\framework\render\RenderMatrix.cpp" />
     <ClCompile Include="code\framework\render\RenderPass.cpp" />

@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : Object2D.h
-// Brief  : 2Dポリゴンオブジェクトクラス
+// File   : PolygonMeshDomeInside.h
+// Brief  : 内側メッシュドームポリゴン
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_2D_H
-#define MY_OBJECT_2D_H
+#ifndef MY_POLYGON_MESH_DOME_INSIDE_H
+#define MY_POLYGON_MESH_DOME_INSIDE_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/ObjectMovement.h"
+#include "d3dx9.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,15 +29,12 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
-class EffectParameter;
-class Graphic2D;
-class Texture;
+class Vertex;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class Object2D : public ObjectMovement
+class PolygonMeshDomeInside
 {
 public:
 	//==============================================================================
@@ -45,21 +42,27 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	Object2D( void );
+	PolygonMeshDomeInside( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~Object2D( void );
+	~PolygonMeshDomeInside( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellY						: Y方向セル数
+	// Arg    : float radius						: 半径
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureY				: Y方向テクスチャ長さ
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( IDirect3DDevice9* pDevice, int countCellX, int countCellY,
+		float radius, float lengthTextureX, float lengthTextureY );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -71,61 +74,64 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellY						: Y方向セル数
+	// Arg    : float radius						: 半径
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureY				: Y方向テクスチャ長さ
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( IDirect3DDevice9* pDevice, int countCellX, int countCellY,
+		float radius, float lengthTextureX, float lengthTextureY );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : Object2D* pOut						: コピー先アドレス
+	// Arg    : PolygonMeshDomeInside* pOut			: コピー先アドレス
 	//==============================================================================
-	int Copy( Object2D* pOut ) const;
+	int Copy( PolygonMeshDomeInside* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture = nullptr );
+	void Draw( void );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( Graphic2D* pValue );
-	Graphic2D* GetGraphic( void ) const;
-	void SetColor( const D3DXCOLOR& value );
-	void SetColor( float r, float g, float b, float a );
-	void SetColor( float r, float g, float b );
-	void SetColorR( float r );
-	void SetColorG( float g );
-	void SetColorB( float b );
-	void SetColorA( float a );
-	void SetColorAlpha( float alpha );
-	void GetColor( D3DXCOLOR* pOut ) const;
-	float GetColorR( void ) const;
-	float GetColorG( void ) const;
-	float GetColorB( void ) const;
-	float GetColorA( void ) const;
+	int GetCountVertex( void ) const;
+	int GetCountIndex( void ) const;
+	void GetSizeIndex( size_t* pOut ) const;
+	int GetCountCellX( void ) const;
+	int GetCountCellY( void ) const;
+	void SetRadius( float value );
+	float GetRadius( void ) const;
+	void SetLengthTextureX( float value );
+	float GetLengthTextureX( void ) const;
+	void SetLengthTextureY( float value );
+	float GetLengthTextureY( void ) const;
 
 protected:
-	Graphic2D*	pGraphic_;		// 描画クラス
-	D3DXCOLOR	color_;			// 色
 
 private:
 	void InitializeSelf( void );
-	Object2D( const Object2D& );
-	Object2D operator=( const Object2D& );
+	PolygonMeshDomeInside( const PolygonMeshDomeInside& );
+	PolygonMeshDomeInside operator=( const PolygonMeshDomeInside& );
+
+	IDirect3DDevice9*		pDevice_;				// Direct3Dデバイス
+	IDirect3DVertexBuffer9*	pVertexBuffer_;			// 頂点バッファ
+	IDirect3DIndexBuffer9*	pIndexBuffer_;			// インデックスバッファ
+	Vertex*					pVertex_;				// 頂点情報
+	int						countVertex_;			// 頂点数
+	int						countIndex_;			// インデックス数
+	size_t					sizeIndex_;				// インデックスのサイズ
+	int						countCellX_;			// X方向セル数
+	int						countCellY_;			// Y方向セル数
+	float					radius_;				// 半径
+	float					lengthTextureX_;		// X方向テクスチャ長さ
+	float					lengthTextureY_;		// Y方向テクスチャ長さ
 };
 
-#endif	// MY_OBJECT_2D_H
+#endif	// MY_POLYGON_MESH_DOME_INSIDE_H

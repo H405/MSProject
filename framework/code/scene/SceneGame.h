@@ -108,9 +108,7 @@ private:
 	Object2D*		pObject_;
 	int				countObject_;
 	Object3D*		pObject3D_;
-	Material*		pMaterial_;
 	ObjectModel*	pObjectModel_;
-	PolygonMesh*	pMesh_;
 	ObjectMesh*		pObjectMesh_;
 };
 

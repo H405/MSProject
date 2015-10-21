@@ -58,9 +58,10 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : D3DXCOLOR* pColor					: 色
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture = nullptr );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture = nullptr );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -75,9 +76,10 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : D3DXCOLOR* pColor					: 色
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture = nullptr );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture = nullptr );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

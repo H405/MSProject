@@ -35,7 +35,6 @@
 #include "../object/Object3D.h"
 #include "../object/ObjectModel.h"
 #include "../object/ObjectMesh.h"
-#include "../framework/polygon/PolygonMesh.h"
 
 //******************************************************************************
 // ライブラリ
@@ -118,13 +117,9 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	Texture*	pTexture = pArgument->pTexture_->Get( _T( "title_logo.png" ) );;
 	pObject_ = new Object2D[ 100 ];
 	countObject_ = 0;
-	pMaterial_ = new Material();
-	pMaterial_->power_ = 5.0f;
-	pMaterial_->reflection_ = 1.0f;
-	pMaterial_->refractive_ = 0.1f;
 	pObject3D_ = new Object3D();
 	pObject3D_->Initialize( 0 );
-	pObject3D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pMaterial_, pTexture );
+	pObject3D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
 	pObject3D_->SetScale( 100.0f, 100.0f, 100.0f );
 	pObject3D_->SetPositionY( -10.0f );
 
@@ -134,43 +129,9 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pObjectModel_->Initialize( 0 );
 	pObjectModel_->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
 
-	float	pHeight[ 11 * 21 ] =
-	{
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
-	};
-	for( int counterZ = 0; counterZ < 21; ++counterZ )
-	{
-		for( int counterX = 0; counterX < 11; ++counterX )
-		{
-			pHeight[ 11 * counterZ + counterX ] = 5.0f * cosf( 0.3f * counterX ) * sinf( 0.6f * counterZ );
-		}
-	}
-	pMesh_ = new PolygonMesh();
-	pMesh_->Initialize( pArgument->pDevice_, 10, 20, 4.0f, 4.0f, 1.0f, 1.0f );
-	pMesh_->SetHeight( pHeight );
 	pObjectMesh_ = new ObjectMesh();
-	pObjectMesh_->Initialize( 0 );
-	pObjectMesh_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pMesh_, pMaterial_, pTexture );
+	pObjectMesh_->Initialize( 0, pArgument->pDevice_, 10, 20, 4.0f, 4.0f, 1.0f, 1.0f );
+	pObjectMesh_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -189,14 +150,10 @@ int SceneGame::Finalize( void )
 	// テスト終了
 	delete pObjectMesh_;
 	pObjectMesh_ = nullptr;
-	delete pMesh_;
-	pMesh_ = nullptr;
 	delete pObjectModel_;
 	pObjectModel_ = nullptr;
 	delete pObject3D_;
 	pObject3D_ = nullptr;
-	delete pMaterial_;
-	pMaterial_ = nullptr;
 	delete[] pObject_;
 	pObject_ = nullptr;
 

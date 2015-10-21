@@ -67,6 +67,7 @@ void VirtualController::update()
 {
 	//	各デバイスの更新
 	wiiController->update();
+
 	keyboard->Update();
 	mouse->Update();
 	pad->Update();

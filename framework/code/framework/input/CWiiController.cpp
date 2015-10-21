@@ -119,6 +119,8 @@ rotSpeedCalibrationCount(0),
 updateAge(0),
 updateAgePrev(0)
 {
+	isConnect = false;
+
 	for (int count = 0; count < 2; count++)
 	{
 		//	本体を生成
@@ -144,6 +146,9 @@ updateAgePrev(0)
 				{
 					MessageBox(NULL, "wiiリモコンの接続はされませんでした", "Message", MB_ICONWARNING);
 					delete buff;
+
+					//	更新関数セット
+					fpUpdate = &CWiiController::NormalUpdate;
 
 					return;
 				}
@@ -188,6 +193,8 @@ updateAgePrev(0)
 
 			//	LEDをとりあえず全部点灯させる
 			wiiRemote->SetLEDs(0x000F);
+
+			isConnect = true;
 		}
 	}
 
@@ -290,7 +297,8 @@ void CWiiController::CommonUpdate()
 
 	updateAgePrev = updateAge;
 
-
+	if(isConnect == true)
+	{
 
 	//	モーションセンサーが認識されたら有効化
 	motionConnect = wiiRemote->MotionPlusConnected();
@@ -518,6 +526,7 @@ void CWiiController::CommonUpdate()
 			joystick.y = joyStickMax;
 		if (joystick.y < -joyStickMax)
 			joystick.y = -joyStickMax;
+	}
 	}
 }
 //=============================================================================
