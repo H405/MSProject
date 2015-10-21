@@ -35,9 +35,11 @@ class Effect;
 class EffectParameter;
 class Fade;
 class Graphic;
+class CWiiController;
 class InputKeyboard;
 class InputMouse;
 class InputPad;
+class VirtualController;
 class ManagerSceneMain;
 class Model;
 class Object;
@@ -138,9 +140,11 @@ private:
 	ManagerUpdate< Object >*	pUpdate_;				// 更新管理クラス
 	RenderPass*					pRenderPass_;			// パス情報
 	DirectInput*				pDirectInput_;			// DirectInputオブジェクト
+	CWiiController*				pWiiController_;		// wiiリモコン入力クラス
 	InputKeyboard*				pKeyboard_;				// キーボード入力クラス
 	InputMouse*					pMouse_;				// マウス入力クラス
 	InputPad*					pPad_;					// ゲームパッド入力クラス
+	VirtualController*			pVirtualController_;	// 仮想コントローラ管理クラス
 	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
 	ManagerModel< Model >*		pModel_;				// モデル管理クラス
 	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス

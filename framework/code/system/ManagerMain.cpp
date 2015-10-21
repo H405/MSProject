@@ -20,9 +20,11 @@
 #include "../framework/develop/DebugProc.h"
 #include "../framework/graphic/Graphic.h"
 #include "../framework/input/DirectInput.h"
+#include "../framework/input/CWiiController.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/input/InputMouse.h"
 #include "../framework/input/InputPad.h"
+#include "../framework/input/VirtualController.h"
 #include "../framework/object/Object.h"
 #include "../framework/polygon/Polygon2D.h"
 #include "../framework/polygon/Polygon3D.h"
@@ -133,6 +135,9 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 
+	//	wiiリモコン入力クラスの生成
+	pWiiController_ = new CWiiController;
+
 	// DirectInputオブジェクトの生成
 	IDirectInput8*	pDirectInput;		// DirectInputオブジェクト
 	pDirectInput_ = new DirectInput();
@@ -185,6 +190,10 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
+
+	//	仮想コントローラ管理クラスの生成
+	pVirtualController_ = new VirtualController;
+	pVirtualController_->initialize(pWiiController_, pKeyboard_, pMouse_, pPad_);
 
 	// パスクラスの生成
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
@@ -348,9 +357,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pFade_ = pFade_;
 	pArgument_->pEffectParameter_ = pEffectParameter_;
 	pArgument_->pObjectScreen_ = pObjectScreen_;
+	pArgument_->pWiiController_ = pWiiController_;
 	pArgument_->pKeyboard_ = pKeyboard_;
 	pArgument_->pMouse_ = pMouse_;
 	pArgument_->pPad_ = pPad_;
+	pArgument_->pVirtualController_ = pVirtualController_;
 	pArgument_->pTexture_ = pTexture_;
 	pArgument_->pModel_ = pModel_;
 	pArgument_->pEffect_ = pEffect_;
@@ -362,7 +373,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_GAME, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #endif
@@ -435,6 +446,10 @@ int ManagerMain::Finalize( void )
 	delete[] pRenderPass_;
 	pRenderPass_ = nullptr;
 
+	//	仮想コントローラ管理クラスの解放
+	delete pVirtualController_;
+	pVirtualController_ = nullptr;
+
 	// ゲームパッド入力クラスの開放
 	delete pPad_;
 	pPad_ = nullptr;
@@ -450,6 +465,10 @@ int ManagerMain::Finalize( void )
 	// DirectInputオブジェクトの開放
 	delete pDirectInput_;
 	pDirectInput_ = nullptr;
+
+	//	wiiリモコン入力クラスの解放
+	delete pWiiController_;
+	pWiiController_ = nullptr;
 
 	// フェードクラスの開放
 	delete pFade_;
@@ -516,9 +535,10 @@ void ManagerMain::Update( void )
 	Assert( pScene_ != nullptr, _T( "シーン管理クラスが生成されていません。" ) );
 
 	// 入力の更新
-	pKeyboard_->Update();
-	pMouse_->Update();
-	pPad_->Update();
+	//pKeyboard_->Update();
+	//pMouse_->Update();
+	//pPad_->Update();
+	pVirtualController_->update();
 
 	// フェードの更新
 	pFade_->Update();
@@ -566,9 +586,11 @@ void ManagerMain::InitializeSelf( void )
 	pUpdate_ = nullptr;
 	pRenderPass_ = nullptr;
 	pDirectInput_ = nullptr;
+	pWiiController_ = nullptr;
 	pKeyboard_ = nullptr;
 	pMouse_ = nullptr;
 	pPad_ = nullptr;
+	pVirtualController_ = nullptr;
 	pTexture_ = nullptr;
 	pModel_ = nullptr;
 	pEffect_ = nullptr;

@@ -1,0 +1,96 @@
+﻿2015/10/21 14:13:01 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "D:\授業2016\MS\MSProject\framework\framework.vcxproj" (build ターゲット)。
+     1>InitializeBuildStatus:
+         "AlwaysCreate" が指定されたため "Debug\framework.unsuccessfulbuild" を作成しています。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Windows Kits\8.1\Include\shared" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt code\scene\SceneTitle.cpp
+         SceneTitle.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\授業2016\MS\MSProject\framework\Debug\framework.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\framework.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\授業2016\MS\MSProject\framework\Debug\framework.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\授業2016\MS\MSProject\framework\Debug\framework.lib" /MACHINE:X86 Debug\Camera.obj
+         Debug\CameraObject.obj
+         Debug\CameraState.obj
+         Debug\CameraStateDebug.obj
+         Debug\Debug.obj
+         Debug\DebugProc.obj
+         Debug\Drawer.obj
+         Debug\Graphic.obj
+         Debug\Material.obj
+         Debug\CWiiController.obj
+         Debug\Input.obj
+         Debug\DirectInput.obj
+         Debug\InputKeyboard.obj
+         Debug\InputMouse.obj
+         Debug\InputPad.obj
+         Debug\VirtualController.obj
+         Debug\wiimote.obj
+         Debug\Light.obj
+         Debug\LightDirection.obj
+         Debug\LightPoint.obj
+         Debug\Object.obj
+         Debug\ObjectMovement.obj
+         Debug\Polygon2D.obj
+         Debug\Polygon3D.obj
+         Debug\PolygonMesh.obj
+         Debug\DirectDevice.obj
+         Debug\RenderMatrix.obj
+         Debug\RenderPass.obj
+         Debug\RenderTarget.obj
+         Debug\Effect.obj
+         Debug\ManagerEffect.obj
+         Debug\ManagerModel.obj
+         Debug\ManagerResource.obj
+         Debug\ManagerTexture.obj
+         Debug\Model.obj
+         Debug\ModelX.obj
+         Debug\Texture.obj
+         Debug\ManagerScene.obj
+         Debug\Scene.obj
+         Debug\SceneArgument.obj
+         Debug\Fade.obj
+         Debug\FrameCount.obj
+         Debug\Manager.obj
+         Debug\ManagerDraw.obj
+         Debug\ManagerExector.obj
+         Debug\ManagerUpdate.obj
+         Debug\Window.obj
+         Debug\Vertex.obj
+         Debug\VertexBuffer.obj
+         Debug\Drawer2D.obj
+         Debug\Drawer3D.obj
+         Debug\DrawerMesh.obj
+         Debug\DrawerModel.obj
+         Debug\DrawerScreen.obj
+         Debug\Graphic2D.obj
+         Debug\Graphic3D.obj
+         Debug\GraphicMain.obj
+         Debug\GraphicMesh.obj
+         Debug\GraphicModel.obj
+         Debug\GraphicScreen.obj
+         Debug\Object2D.obj
+         Debug\Object3D.obj
+         Debug\ObjectMesh.obj
+         Debug\ObjectModel.obj
+         Debug\ObjectScreen.obj
+         Debug\SceneGame.obj
+         Debug\SceneRanking.obj
+         Debug\SceneResult.obj
+         Debug\SceneSplash.obj
+         Debug\SceneTitle.obj
+         Debug\EffectParameter.obj
+         Debug\Main.obj
+         Debug\ManagerMain.obj
+         Debug\ManagerSceneMain.obj
+         Debug\SceneArgumentMain.obj
+         Debug\SceneMain.obj
+         Debug\WindowMain.obj
+         framework.vcxproj -> D:\授業2016\MS\MSProject\framework\Debug\framework.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"D:\授業2016\MS\MSProject\framework\Debug\framework.exe.manifest" /manifest Debug\framework.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         ファイル "Debug\framework.unsuccessfulbuild" を削除しています。
+         "Debug\framework.lastbuildstate" のタッチ タスクを実行しています。
+     1>プロジェクト "D:\授業2016\MS\MSProject\framework\framework.vcxproj" (build ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:05.46

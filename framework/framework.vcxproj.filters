@@ -294,6 +294,21 @@
     <ClInclude Include="code\framework\object\ObjectMovement.h">
       <Filter>ソース ファイル\framework\object</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\input\CWiiController.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\wiimote.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\wiimote_common.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\wiimote_state.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\input\VirtualController.h">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -517,6 +532,15 @@
     </ClCompile>
     <ClCompile Include="code\framework\object\ObjectMovement.cpp">
       <Filter>ソース ファイル\framework\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\CWiiController.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\wiimote.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\input\VirtualController.cpp">
+      <Filter>ソース ファイル\framework\input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

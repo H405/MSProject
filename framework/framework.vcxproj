@@ -20,11 +20,16 @@
     <ClInclude Include="code\framework\graphic\Drawer.h" />
     <ClInclude Include="code\framework\graphic\Graphic.h" />
     <ClInclude Include="code\framework\graphic\Material.h" />
+    <ClInclude Include="code\framework\input\CWiiController.h" />
     <ClInclude Include="code\framework\input\Input.h" />
     <ClInclude Include="code\framework\input\DirectInput.h" />
     <ClInclude Include="code\framework\input\InputKeyboard.h" />
     <ClInclude Include="code\framework\input\InputMouse.h" />
     <ClInclude Include="code\framework\input\InputPad.h" />
+    <ClInclude Include="code\framework\input\VirtualController.h" />
+    <ClInclude Include="code\framework\input\wiimote.h" />
+    <ClInclude Include="code\framework\input\wiimote_common.h" />
+    <ClInclude Include="code\framework\input\wiimote_state.h" />
     <ClInclude Include="code\framework\light\Light.h" />
     <ClInclude Include="code\framework\light\LightDirection.h" />
     <ClInclude Include="code\framework\light\LightPoint.h" />
@@ -96,11 +101,14 @@
     <ClCompile Include="code\framework\graphic\Drawer.cpp" />
     <ClCompile Include="code\framework\graphic\Graphic.cpp" />
     <ClCompile Include="code\framework\graphic\Material.cpp" />
+    <ClCompile Include="code\framework\input\CWiiController.cpp" />
     <ClCompile Include="code\framework\input\Input.cpp" />
     <ClCompile Include="code\framework\input\DirectInput.cpp" />
     <ClCompile Include="code\framework\input\InputKeyboard.cpp" />
     <ClCompile Include="code\framework\input\InputMouse.cpp" />
     <ClCompile Include="code\framework\input\InputPad.cpp" />
+    <ClCompile Include="code\framework\input\VirtualController.cpp" />
+    <ClCompile Include="code\framework\input\wiimote.cpp" />
     <ClCompile Include="code\framework\light\Light.cpp" />
     <ClCompile Include="code\framework\light\LightDirection.cpp" />
     <ClCompile Include="code\framework\light\LightPoint.cpp" />
@@ -203,10 +211,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Windows Kits\8.1\Lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

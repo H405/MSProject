@@ -29,6 +29,15 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
+class CameraObject;
+class LightDirection;
+
+class Object2D;
+class Object3D;
+class Material;
+class ObjectModel;
+class PolygonMesh;
+class ObjectMesh;
 
 //******************************************************************************
 // クラス定義
@@ -85,6 +94,20 @@ public:
 	//==============================================================================
 	void Update( void );
 
+	//==============================================================================
+	// Brief  : 更新処理1(「Aボタンを押してね」の点滅)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void FirstUpdate( void );
+
+	//==============================================================================
+	// Brief  : 更新処理2(ゲーム開始・チュートリアル開始の選択処理)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void SecondUpdate( void );
+
 protected:
 
 private:
@@ -92,6 +115,20 @@ private:
 	SceneTitle( const SceneTitle& );
 	SceneTitle operator=( const SceneTitle& );
 
+	CameraObject*		pCamera_;				// カメラ
+	LightDirection*		pLight_;				// ライト
+
+	Object2D* titleLogo;
+	Object2D* startGame;
+	Object2D* startTutorial;
+	Object2D* pushAKey;
+
+	Object2D* chooseObject;	//	選択肢のうち、選ばれているオブジェクトのポインタ
+
+	int pushAKeyFlashingCount;	//	pushAKey点滅用
+	int pushChooseObjectFlashingCount;	//	chooseObject点滅用
+
+	void (SceneTitle::*fpUpdate)(void);
 };
 
 #endif	// MY_SCENE_TITLE_H

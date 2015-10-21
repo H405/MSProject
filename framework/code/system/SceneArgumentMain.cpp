@@ -59,6 +59,7 @@ void SceneArgumentMain::InitializeSelf( void )
 	pKeyboard_ = nullptr;
 	pMouse_ = nullptr;
 	pPad_ = nullptr;
+	pVirtualController_ = nullptr;
 	pTexture_ = nullptr;
 	pModel_ = nullptr;
 	pEffect_ = nullptr;
