@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\main">
+      <UniqueIdentifier>{0c6f6a71-afba-4bfc-8db4-aeafcb765fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\myclass">
+      <UniqueIdentifier>{ac5fe000-4fcb-424d-b688-24bb588f8f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object">
+      <UniqueIdentifier>{e42bec23-9501-41c4-99b7-d5b401315180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\manager">
+      <UniqueIdentifier>{bf4f7fcd-f000-4878-9f45-f5eb8e3fe2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\renderer">
+      <UniqueIdentifier>{646335b8-88db-41e7-bbfa-7c8b491bbff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\debug">
+      <UniqueIdentifier>{82f1ba1c-86dc-43b6-89c6-eda937a373a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\resource">
+      <UniqueIdentifier>{5b459f30-bebf-4db3-b264-b73c49de0924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\resource\texture">
+      <UniqueIdentifier>{8182bc74-aabc-4caf-9baf-894e33654297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object\2D">
+      <UniqueIdentifier>{fb40c663-8664-4242-8215-4fc9dad9f6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene">
+      <UniqueIdentifier>{98fd4d09-6ba4-4a3c-94c2-7d6846d459b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene\splash">
+      <UniqueIdentifier>{f981d068-423c-480d-887f-4943bce31f24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene\game">
+      <UniqueIdentifier>{9c901ea3-e01c-4630-85bd-8e0d500ab8d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene\title">
+      <UniqueIdentifier>{b5193038-1ff2-47d8-aa05-fe5b4a0417f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene\stageSelect">
+      <UniqueIdentifier>{e4b39512-bcb0-4846-8c5a-1579ddd32c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene\result">
+      <UniqueIdentifier>{77017ac0-3c54-4838-b39c-e6a0e70a8748}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\fade">
+      <UniqueIdentifier>{ac4ed479-3e0d-4af3-baf2-48c6b7e804e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\input">
+      <UniqueIdentifier>{4c2d8ab4-e0fd-4614-941a-651f01a71301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\movie">
+      <UniqueIdentifier>{f89d085f-e598-483c-a821-4d8622957129}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\CObj.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CRenderer.h">
+      <Filter>ソース ファイル\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CManager.h">
+      <Filter>ソース ファイル\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\main.h">
+      <Filter>ソース ファイル\main</Filter>
+    </ClInclude>
+    <ClInclude Include="source\fileReader.h">
+      <Filter>ソース ファイル\myclass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\radianTable.h">
+      <Filter>ソース ファイル\myclass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\texUV.h">
+      <Filter>ソース ファイル\myclass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\textures.h">
+      <Filter>ソース ファイル\resource\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CObj2D.h">
+      <Filter>ソース ファイル\object\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CObj2DKeyFrame.h">
+      <Filter>ソース ファイル\object\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CObj2DLoop.h">
+      <Filter>ソース ファイル\object\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="source\splash.h">
+      <Filter>ソース ファイル\scene\splash</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CDebug.h">
+      <Filter>ソース ファイル\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game.h">
+      <Filter>ソース ファイル\scene\game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\result.h">
+      <Filter>ソース ファイル\scene\result</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stageSelect.h">
+      <Filter>ソース ファイル\scene\stageSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="source\title.h">
+      <Filter>ソース ファイル\scene\title</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CSceneObject.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CSceneManager.h">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CFadeIn.h">
+      <Filter>ソース ファイル\fade</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CFadeOut.h">
+      <Filter>ソース ファイル\fade</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CInput.h">
+      <Filter>ソース ファイル\input</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CKeyboard.h">
+      <Filter>ソース ファイル\input</Filter>
+    </ClInclude>
+    <ClInclude Include="source\objects.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CScreenShot.h">
+      <Filter>ソース ファイル\main</Filter>
+    </ClInclude>
+    <ClInclude Include="source\movie.h">
+      <Filter>ソース ファイル\movie</Filter>
+    </ClInclude>
+    <ClInclude Include="source\wiiRemote\wiimote.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\wiiRemote\wiimote_common.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\wiiRemote\wiimote_state.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\wiiRemote\CWiiController.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CFireWork.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\CObj.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CRenderer.cpp">
+      <Filter>ソース ファイル\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CManager.cpp">
+      <Filter>ソース ファイル\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>ソース ファイル\main</Filter>
+    </ClCompile>
+    <ClCompile Include="source\fileReader.cpp">
+      <Filter>ソース ファイル\myclass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\radianTable.cpp">
+      <Filter>ソース ファイル\myclass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\texUV.cpp">
+      <Filter>ソース ファイル\myclass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\textures.cpp">
+      <Filter>ソース ファイル\resource\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CObj2D.cpp">
+      <Filter>ソース ファイル\object\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CObj2DKeyFrame.cpp">
+      <Filter>ソース ファイル\object\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CObj2DLoop.cpp">
+      <Filter>ソース ファイル\object\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="source\splash.cpp">
+      <Filter>ソース ファイル\scene\splash</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CDebug.cpp">
+      <Filter>ソース ファイル\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game.cpp">
+      <Filter>ソース ファイル\scene\game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\result.cpp">
+      <Filter>ソース ファイル\scene\result</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stageSelect.cpp">
+      <Filter>ソース ファイル\scene\stageSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="source\title.cpp">
+      <Filter>ソース ファイル\scene\title</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CSceneObject.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CSceneManager.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CFadeIn.cpp">
+      <Filter>ソース ファイル\fade</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CFadeOut.cpp">
+      <Filter>ソース ファイル\fade</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CInput.cpp">
+      <Filter>ソース ファイル\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CKeyboard.cpp">
+      <Filter>ソース ファイル\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CScreenShot.cpp">
+      <Filter>ソース ファイル\main</Filter>
+    </ClCompile>
+    <ClCompile Include="source\movie.cpp">
+      <Filter>ソース ファイル\movie</Filter>
+    </ClCompile>
+    <ClCompile Include="source\wiiRemote\wiimote.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="source\wiiRemote\CWiiController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CFireWork.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

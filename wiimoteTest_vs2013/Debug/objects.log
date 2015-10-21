@@ -1,0 +1,42 @@
+﻿2015/10/21 0:36:31 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "D:\授業2016\MS\MSプロジェクト\プロト\objects.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Windows Kits\8.1\Include\shared" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source\wiiRemote\CWiiController.cpp
+         CWiiController.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\授業2016\MS\MSプロジェクト\プロト\objects.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\objects.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\授業2016\MS\MSプロジェクト\プロト\objects.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\授業2016\MS\MSプロジェクト\プロト\objects.lib" /MACHINE:X86 Debug\CDebug.obj
+         Debug\CFadeIn.obj
+         Debug\CFadeOut.obj
+         Debug\CFireWork.obj
+         Debug\CInput.obj
+         Debug\CKeyboard.obj
+         Debug\CManager.obj
+         Debug\CObj.obj
+         Debug\CObj2D.obj
+         Debug\CObj2DKeyFrame.obj
+         Debug\CObj2DLoop.obj
+         Debug\CRenderer.obj
+         Debug\CScreenShot.obj
+         Debug\fileReader.obj
+         Debug\game.obj
+         Debug\main.obj
+         Debug\movie.obj
+         Debug\radianTable.obj
+         Debug\result.obj
+         Debug\CSceneManager.obj
+         Debug\CSceneObject.obj
+         Debug\splash.obj
+         Debug\stageSelect.obj
+         Debug\textures.obj
+         Debug\texUV.obj
+         Debug\title.obj
+         Debug\CWiiController.obj
+         Debug\wiimote.obj
+         objects.vcxproj -> D:\授業2016\MS\MSプロジェクト\プロト\objects.exe
+       Manifest:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\mt.exe /nologo /verbose /out:"D:\授業2016\MS\MSプロジェクト\プロト\objects.exe.manifest" /manifest Debug\objects.exe.intermediate.manifest
+     1>プロジェクト "D:\授業2016\MS\MSプロジェクト\プロト\objects.vcxproj" (Build ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:05.09
