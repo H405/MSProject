@@ -17,6 +17,7 @@
 // インクルード
 //******************************************************************************
 #include "../framework/object/ObjectMovement.h"
+#include "../framework/graphic/Material.h"
 
 //******************************************************************************
 // ライブラリ
@@ -32,7 +33,6 @@
 class Effect;
 class EffectParameter;
 class GraphicMesh;
-class Material;
 class PolygonMesh;
 class Texture;
 
@@ -60,8 +60,16 @@ public:
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellZ						: Z方向セル数
+	// Arg    : float lengthCellX					: X方向セル長さ
+	// Arg    : float lengthCellZ					: Z方向セル長さ
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureZ				: Z方向テクスチャ長さ
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellZ,
+		float lengthCellX, float lengthCellZ, float lengthTextureX, float lengthTextureZ );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -74,8 +82,16 @@ public:
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
 	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellZ						: Z方向セル数
+	// Arg    : float lengthCellX					: X方向セル長さ
+	// Arg    : float lengthCellZ					: Z方向セル長さ
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureZ				: Z方向テクスチャ長さ
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellZ,
+		float lengthCellX, float lengthCellZ, float lengthTextureX, float lengthTextureZ );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -97,11 +113,9 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : PolygonMesh* pPolygon				: メッシュポリゴン
-	// Arg    : Material* pMaterial					: マテリアル
 	// Arg    : Texture* pTexture					: テクスチャ
 	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonMesh* pPolygon, Material* pMaterial, Texture* pTexture );
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture );
 
 	//==============================================================================
 	// アクセサ
@@ -111,6 +125,8 @@ public:
 
 protected:
 	GraphicMesh*	pGraphic_;		// 描画クラス
+	PolygonMesh*	pPolygon_;		// メッシュポリゴン
+	Material		material_;		// マテリアル
 
 private:
 	void InitializeSelf( void );

@@ -145,10 +145,9 @@ void Object3D::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : Material* pMaterial					: マテリアル
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-int Object3D::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Material* pMaterial, Texture* pTexture )
+int Object3D::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture )
 {
 	// グラフィックの生成
 	int					result;				// 実行結果
@@ -163,7 +162,7 @@ int Object3D::CreateGraphic( int priority, const EffectParameter* pParameter, Ef
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pMaterial, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &material_, pTextureSet );
 	if( result != 0 )
 	{
 		return result;

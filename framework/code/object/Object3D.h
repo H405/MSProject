@@ -17,6 +17,7 @@
 // インクルード
 //******************************************************************************
 #include "../framework/object/ObjectMovement.h"
+#include "../framework/graphic/Material.h"
 
 //******************************************************************************
 // ライブラリ
@@ -32,7 +33,6 @@
 class Effect;
 class EffectParameter;
 class Graphic3D;
-class Material;
 class Texture;
 
 //******************************************************************************
@@ -96,10 +96,9 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : Material* pMaterial					: マテリアル
 	// Arg    : Texture* pTexture					: テクスチャ
 	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Material* pMaterial, Texture* pTexture );
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture );
 
 	//==============================================================================
 	// アクセサ
@@ -109,6 +108,7 @@ public:
 
 protected:
 	Graphic3D*	pGraphic_;		// 描画クラス
+	Material	material_;		// マテリアル
 
 private:
 	void InitializeSelf( void );

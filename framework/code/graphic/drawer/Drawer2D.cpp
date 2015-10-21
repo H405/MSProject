@@ -55,9 +55,10 @@ Drawer2D::~Drawer2D( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+// Arg    : D3DXCOLOR* pColor					: 色
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Drawer2D::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTexture )
+int Drawer2D::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -112,9 +113,10 @@ int Drawer2D::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+// Arg    : D3DXCOLOR* pColor					: 色
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Drawer2D::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTexture )
+int Drawer2D::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -125,7 +127,7 @@ int Drawer2D::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, 
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTexture );
+	return Initialize( pParameter, pEffect, pPolygon, pColor, pTexture );
 }
 
 //==============================================================================

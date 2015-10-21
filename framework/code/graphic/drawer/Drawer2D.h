@@ -69,9 +69,10 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+	// Arg    : D3DXCOLOR* pColor					: 色
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTexture );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -86,9 +87,10 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+	// Arg    : D3DXCOLOR* pColor					: 色
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTexture );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

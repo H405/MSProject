@@ -294,6 +294,9 @@
     <ClInclude Include="code\framework\object\ObjectMovement.h">
       <Filter>ソース ファイル\framework\object</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -517,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="code\framework\object\ObjectMovement.cpp">
       <Filter>ソース ファイル\framework\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\polygon\PolygonMeshDomeInside.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -53,9 +53,10 @@ Graphic2D::~Graphic2D( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : D3DXCOLOR* pColor					: 色
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Graphic2D::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture )
+int Graphic2D::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -72,7 +73,7 @@ int Graphic2D::Initialize( int priority, const EffectParameter* pParameter, Effe
 	{
 		return 1;
 	}
-	result = pDrawer2D->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture );
+	result = pDrawer2D->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pColor, pTexture );
 	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawer2D;
 
 	// 正常終了
@@ -107,9 +108,10 @@ int Graphic2D::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : D3DXCOLOR* pColor					: 色
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Graphic2D::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture )
+int Graphic2D::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -120,7 +122,7 @@ int Graphic2D::Reinitialize( int priority, const EffectParameter* pParameter, Ef
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pColor, pTexture );
 }
 
 //==============================================================================

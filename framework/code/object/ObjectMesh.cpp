@@ -11,6 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "ObjectMesh.h"
+#include "../framework/polygon/PolygonMesh.h"
 #include "../framework/resource/Texture.h"
 #include "../graphic/graphic/GraphicMesh.h"
 
@@ -52,12 +53,32 @@ ObjectMesh::~ObjectMesh( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : int countCellX						: X方向セル数
+// Arg    : int countCellZ						: Z方向セル数
+// Arg    : float lengthCellX					: X方向セル長さ
+// Arg    : float lengthCellZ					: Z方向セル長さ
+// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+// Arg    : float lengthTextureZ				: Z方向テクスチャ長さ
 //==============================================================================
-int ObjectMesh::Initialize( int priority )
+int ObjectMesh::Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellZ,
+	float lengthCellX, float lengthCellZ, float lengthTextureX, float lengthTextureZ )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = Object::Initialize( priority );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// メッシュポリゴンの生成
+	pPolygon_ = new PolygonMesh();
+	if( pPolygon_ == nullptr )
+	{
+		return 1;
+	}
+	result = pPolygon_->Initialize( pDevice, countCellX, countCellZ, lengthCellX, lengthCellZ, lengthTextureX, lengthTextureZ );
 	if( result != 0 )
 	{
 		return result;
@@ -74,6 +95,10 @@ int ObjectMesh::Initialize( int priority )
 //==============================================================================
 int ObjectMesh::Finalize( void )
 {
+	// メッシュポリゴンの開放
+	delete pPolygon_;
+	pPolygon_ = nullptr;
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = Object::Finalize();
@@ -93,8 +118,16 @@ int ObjectMesh::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : int countCellX						: X方向セル数
+// Arg    : int countCellZ						: Z方向セル数
+// Arg    : float lengthCellX					: X方向セル長さ
+// Arg    : float lengthCellZ					: Z方向セル長さ
+// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+// Arg    : float lengthTextureZ				: Z方向テクスチャ長さ
 //==============================================================================
-int ObjectMesh::Reinitialize( int priority )
+int ObjectMesh::Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellZ,
+	float lengthCellX, float lengthCellZ, float lengthTextureX, float lengthTextureZ )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -105,7 +138,7 @@ int ObjectMesh::Reinitialize( int priority )
 	}
 
 	// 初期化処理
-	return Initialize( priority );
+	return Initialize( priority, pDevice, countCellX, countCellZ, lengthCellX, lengthCellZ, lengthTextureX, lengthTextureZ );
 }
 
 //==============================================================================
@@ -144,11 +177,9 @@ void ObjectMesh::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : PolygonMesh* pPolygon				: メッシュポリゴン
-// Arg    : Material* pMaterial					: マテリアル
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-int ObjectMesh::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonMesh* pPolygon, Material* pMaterial, Texture* pTexture )
+int ObjectMesh::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture )
 {
 	// グラフィックの生成
 	int					result;				// 実行結果
@@ -163,7 +194,7 @@ int ObjectMesh::CreateGraphic( int priority, const EffectParameter* pParameter, 
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pPolygon, pMaterial, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pPolygon_, &material_, pTextureSet );
 	if( result != 0 )
 	{
 		return result;
@@ -205,4 +236,5 @@ GraphicMesh* ObjectMesh::GetGraphic( void ) const
 void ObjectMesh::InitializeSelf( void )
 {
 	// メンバ変数の初期化
+	pPolygon_ = nullptr;
 }
