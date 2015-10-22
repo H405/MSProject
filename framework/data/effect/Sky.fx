@@ -1,7 +1,7 @@
 //==============================================================================
 // 
-// File   ： Point.fx
-// Brief  ： ポイントスプライトエフェクト
+// File   ： Sky.fx
+// Brief  ： 空エフェクト
 // Author ： Taiga Shirakawa
 // Date   : 2015/10/21 wed : Taiga Shirakawa : create
 // 
@@ -10,8 +10,7 @@
 //******************************************************************************
 // 変数宣言
 //******************************************************************************
-float4x4	matrixView_;			// ビュー変換行列
-float4x4	matrixProjection_;		// プロジェクション変換行列
+float4x4	matrixTransform_;		// 変換行列
 texture		texture_;				// テクスチャ
 
 //******************************************************************************
@@ -20,7 +19,7 @@ texture		texture_;				// テクスチャ
 sampler samplerTexture = sampler_state
 {
 	Texture = < texture_ >;
-	MinFilter = Point;
+	MinFilter = Linear;
 	MagFilter = Linear;
 	MipFilter = None;
 	AddressU = Wrap;
@@ -34,31 +33,23 @@ sampler samplerTexture = sampler_state
 struct VertexOutput
 {
 	float4	position_		: POSITION;			// 座標
-	float	size_			: PSIZE;			// サイズ
-	float4	colorDiffuse_	: COLOR0;			// ディフューズ色
+	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
 
 //==============================================================================
 // Brief  ： 頂点変換
 // Return ： VertexOutput					： 頂点出力
-// Arg    ： float4 positionWorld			： ワールド座標
-// Arg    ： float size						： ポイントスプライトのサイズ
-// Arg    ： float4 colorDiffuse			： ディフューズ色
+// Arg    ： float4 positionLocal			： ローカル座標
+// Arg    ： float2 positionTexture			： テクスチャ座標
 //==============================================================================
-VertexOutput TransformVertex( float3 positionWorld : POSITION, float size : PSIZE, float4 colorDiffuse : COLOR0 )
+VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoord : TEXCOORD0 )
 {
 	// 頂点の変換
-	VertexOutput	output;			// 出力
-	float			lengthView;		// ビュー座標系の長さ
-	output.position_ = mul( float4( positionWorld, 1.0f ), matrixView_ );
-	lengthView = length( output.position_.xyz );
-	output.position_ = mul( output.position_, matrixProjection_ );
+	VertexOutput	output;		// 出力
+	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
 
-	// サイズの計算
-	output.size_ = 10.0f * size * (matrixProjection_._22 / matrixProjection_._11) * sqrt( 1.0f / lengthView );
-
-	// 値を格納
-	output.colorDiffuse_ = colorDiffuse;
+	// 出力値の格納
+	output.textureCoord_ = textureCoord;
 
 	// 頂点出力を返す
 	return output;
@@ -68,12 +59,11 @@ VertexOutput TransformVertex( float3 positionWorld : POSITION, float size : PSIZ
 // Brief  ： ピクセル描画
 // Return ： float4 : COLOR0				： 色
 // Arg    ： VertexOutput					： 頂点シェーダ出力
-// Arg    ： float4 colorDiffuse			： ディフューズ色
 //==============================================================================
-float4 DrawPixel( float2 textureCoord : TEXCOORD0, float4 colorDiffuse : COLOR0 ) : COLOR0
+float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
 	// ピクセル色を返す
-	return tex2D( samplerTexture, textureCoord ) * colorDiffuse;
+	return tex2D( samplerTexture, vertex.textureCoord_ );
 }
 
 //==============================================================================
@@ -84,10 +74,6 @@ technique ShadeNormal
 	// 通常変換
 	pass PassNormal
 	{
-		// レンダーステートの設定
-		PointSpriteEnable = True;
-
-		// シェーダの設定
 		VertexShader = compile vs_2_0 TransformVertex();
 		PixelShader = compile ps_2_0 DrawPixel();
 	}

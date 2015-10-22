@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneGame.h
-// Brief  : ゲームシーンクラス
+// File   : PolygonPoint.h
+// Brief  : ポイントスプライトポリゴン
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_GAME_H
-#define MY_SCENE_GAME_H
+#ifndef MY_POLYGON_POINT_H
+#define MY_POLYGON_POINT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "d3dx9.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,24 +29,12 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class LightDirection;
-
-class Object2D;
-class Object3D;
-class Material;
-class ObjectModel;
-class PolygonMesh;
-class ObjectMesh;
-class ObjectSky;
-
-class GraphicPoint;
-class PolygonPoint;
+class Vertex;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneGame : public SceneMain
+class PolygonPoint
 {
 public:
 	//==============================================================================
@@ -54,21 +42,22 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneGame( void );
+	PolygonPoint( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneGame( void );
+	~PolygonPoint( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int maximumItem						: 最大要素数
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int maximumItem, IDirect3DDevice9* pDevice );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -80,44 +69,37 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int maximumItem						: 最大要素数
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int maximumItem, IDirect3DDevice9* pDevice );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneGame* pOut						: コピー先アドレス
+	// Arg    : PolygonPoint* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneGame* pOut ) const;
+	int Copy( PolygonPoint* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void Update( void );
+	void Draw( void );
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	SceneGame( const SceneGame& );
-	SceneGame operator=( const SceneGame& );
+	PolygonPoint( const PolygonPoint& );
+	PolygonPoint operator=( const PolygonPoint& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
-
-	// テスト
-	Object2D*		pObject_;
-	int				countObject_;
-	Object3D*		pObject3D_;
-	ObjectModel*	pObjectModel_;
-	ObjectMesh*		pObjectMesh_;
-	ObjectSky*		pObjectSky_;
-
-	GraphicPoint*	pGraphicPoint_;
-	PolygonPoint*	pPolygonPoint_;
+	int						maximumItem_;		// 最大要素数
+	int						countItem_;			// 使用要素数
+	IDirect3DDevice9*		pDevice_;			// Direct3Dデバイス
+	IDirect3DVertexBuffer9*	pVertexBuffer_;		// 頂点バッファ
+	Vertex*					pVertex_;			// 頂点情報
 };
 
-#endif	// MY_SCENE_GAME_H
+#endif	// MY_POLYGON_POINT_H

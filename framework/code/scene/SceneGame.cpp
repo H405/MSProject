@@ -35,6 +35,10 @@
 #include "../object/Object3D.h"
 #include "../object/ObjectModel.h"
 #include "../object/ObjectMesh.h"
+#include "../object/ObjectSky.h"
+
+#include "../graphic/graphic/GraphicPoint.h"
+#include "../framework/polygon/PolygonPoint.h"
 
 //******************************************************************************
 // ライブラリ
@@ -120,8 +124,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pObject3D_ = new Object3D();
 	pObject3D_->Initialize( 0 );
 	pObject3D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
-	pObject3D_->SetScale( 100.0f, 100.0f, 100.0f );
-	pObject3D_->SetPositionY( -10.0f );
+	pObject3D_->SetScale( 1000.0f, 1.0f, 1000.0f );
+	pObject3D_->SetPositionY( -40.0f );
 
 	Effect*	pEffectModel = pArgument->pEffect_->Get( _T( "Model.fx" ) );
 	Model*	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
@@ -129,10 +133,23 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pObjectModel_->Initialize( 0 );
 	pObjectModel_->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
 
+	Effect*	pEffectMesh = pArgument->pEffect_->Get( _T( "Mesh.fx" ) );
 	pObjectMesh_ = new ObjectMesh();
-	pObjectMesh_->Initialize( 0, pArgument->pDevice_, 10, 20, 4.0f, 4.0f, 1.0f, 1.0f );
-	pObjectMesh_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
+	pObjectMesh_->Initialize( 0, pArgument->pDevice_, 10, 10, 100.0f, 100.0f, 1.0f, 1.0f );
+	pObjectMesh_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectMesh, pTexture );
 
+	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	pObjectSky_ = new ObjectSky();
+	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
+	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
+#if 0
+	pPolygonPoint_ = new PolygonPoint();
+	pPolygonPoint_->Initialize( 32, pArgument->pDevice_ );
+
+	Effect*	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
+	pGraphicPoint_ = new GraphicPoint();
+	pGraphicPoint_->Initialize( 0, pArgument->pEffectParameter_, pEffectPoint, pPolygonPoint_, pTexture->pTexture_ );
+#endif
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
 
@@ -148,6 +165,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 int SceneGame::Finalize( void )
 {
 	// テスト終了
+	delete pObjectSky_;
+	pObjectSky_ = nullptr;
 	delete pObjectMesh_;
 	pObjectMesh_ = nullptr;
 	delete pObjectModel_;

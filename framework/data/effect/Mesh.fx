@@ -1,9 +1,9 @@
 //==============================================================================
 // 
-// File   ： Model.fx
-// Brief  ： モデルエフェクト
+// File   ： Mesh.fx
+// Brief  ： メッシュエフェクト
 // Author ： Taiga Shirakawa
-// Date   : 2015/10/19 mon : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 // 
 //==============================================================================
 
@@ -32,8 +32,8 @@ sampler samplerTexture = sampler_state
 	MinFilter = Anisotropic;
 	MagFilter = Linear;
 	MipFilter = None;
-	AddressU = Clamp;
-	AddressV = Clamp;
+	AddressU = Wrap;
+	AddressV = Wrap;
 	MaxAnisotropy = 8;
 };
 
@@ -44,6 +44,7 @@ sampler samplerTexture = sampler_state
 struct VertexOutput
 {
 	float4	position_			: POSITION;			// 座標
+	float4	colorDiffuse_		: COLOR0;			// ディフューズ色
 	float2	textureCoord_		: TEXCOORD0;		// テクスチャ座標
 	float3	positionWorld_		: TEXCOORD1;		// ワールド座標
 	float3	vectorNormalWorld_	: TEXCOORD2;		// ワールド法線
@@ -57,7 +58,7 @@ struct VertexOutput
 // Arg    ： float2 positionTexture			： テクスチャ座標
 // Arg    ： float4 colorDiffuse			： ディフューズ色
 //==============================================================================
-VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNormalLocal : NORMAL, float2 textureCoord : TEXCOORD0 )
+VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNormalLocal : NORMAL, float2 textureCoord : TEXCOORD0, float4 colorDiffuse : COLOR0 )
 {
 	// 頂点の変換
 	VertexOutput	output;		// 出力
@@ -70,6 +71,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;
 
 	// 出力値の格納
+	output.colorDiffuse_ = colorDiffuse;
 	output.textureCoord_ = textureCoord;
 
 	// 頂点出力を返す
@@ -87,7 +89,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float	lightness = dot( vertex.vectorNormalWorld_, -vectorLight_ ) * 0.5f + 0.5f;
 
 	// ディフューズ色の計算
-	float3	diffuse = colorDiffuse_.rgb * tex2D( samplerTexture, vertex.textureCoord_ ) * lightness * colorLight_.rgb + colorAmbient_.rgb;
+	float3	diffuse = colorDiffuse_.rgb * tex2D( samplerTexture, vertex.textureCoord_ ) * lightness * colorLight_.rgb * vertex.colorDiffuse_.rgb + colorAmbient_.rgb;
 
 	// フレネル反射率を算出
 	float3	vectorVertexToEye = normalize( positionEye_ - vertex.positionWorld_.xyz );
@@ -109,12 +111,6 @@ technique ShadeNormal
 	// 通常変換
 	pass PassNormal
 	{
-		// レンダーステートの設定
-		AlphaBlendEnable = True;
-		SrcBlend = SrcAlpha;
-		DestBlend = InvSrcAlpha;
-
-		// シェーダの設定
 		VertexShader = compile vs_2_0 TransformVertex();
 		PixelShader = compile ps_2_0 DrawPixel();
 	}

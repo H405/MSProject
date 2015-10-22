@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneGame.h
-// Brief  : ゲームシーンクラス
+// File   : DrawerSky.h
+// Brief  : 空描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_GAME_H
-#define MY_SCENE_GAME_H
+#ifndef MY_DRAWER_SKY_H
+#define MY_DRAWER_SKY_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,46 +29,47 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class LightDirection;
-
-class Object2D;
-class Object3D;
-class Material;
-class ObjectModel;
-class PolygonMesh;
-class ObjectMesh;
-class ObjectSky;
-
-class GraphicPoint;
-class PolygonPoint;
+class Effect;
+class EffectParameter;
+class PolygonMeshDomeInside;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneGame : public SceneMain
+class DrawerSky : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneGame( void );
+	DrawerSky( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneGame( void );
+	~DrawerSky( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -80,44 +81,44 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneGame* pOut						: コピー先アドレス
+	// Arg    : DrawerSky* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneGame* pOut ) const;
+	int Copy( DrawerSky* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
+	void Draw( const D3DXMATRIX& matrixWorld );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTexture( void ) const;
 
 protected:
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	IDirect3DTexture9*		pTexture_;				// テクスチャ
+	PolygonMeshDomeInside*	pPolygon_;				// ポリゴン
 
 private:
 	void InitializeSelf( void );
-	SceneGame( const SceneGame& );
-	SceneGame operator=( const SceneGame& );
+	DrawerSky( const DrawerSky& );
+	DrawerSky operator=( const DrawerSky& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
-
-	// テスト
-	Object2D*		pObject_;
-	int				countObject_;
-	Object3D*		pObject3D_;
-	ObjectModel*	pObjectModel_;
-	ObjectMesh*		pObjectMesh_;
-	ObjectSky*		pObjectSky_;
-
-	GraphicPoint*	pGraphicPoint_;
-	PolygonPoint*	pPolygonPoint_;
 };
 
-#endif	// MY_SCENE_GAME_H
+#endif	// MY_DRAWER_SKY_H

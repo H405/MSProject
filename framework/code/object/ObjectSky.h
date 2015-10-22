@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneGame.h
-// Brief  : ゲームシーンクラス
+// File   : ObjectSky.h
+// Brief  : 空オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_GAME_H
-#define MY_SCENE_GAME_H
+#ifndef MY_OBJECT_SKY_H
+#define MY_OBJECT_SKY_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "../framework/object/ObjectMovement.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,24 +29,17 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class LightDirection;
-
-class Object2D;
-class Object3D;
+class Effect;
+class EffectParameter;
+class GraphicSky;
 class Material;
-class ObjectModel;
-class PolygonMesh;
-class ObjectMesh;
-class ObjectSky;
-
-class GraphicPoint;
-class PolygonPoint;
+class PolygonMeshDomeInside;
+class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneGame : public SceneMain
+class ObjectSky : public ObjectMovement
 {
 public:
 	//==============================================================================
@@ -54,21 +47,27 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneGame( void );
+	ObjectSky( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneGame( void );
+	~ObjectSky( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellY						: Z方向セル数
+	// Arg    : float radius						: 半径
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -80,16 +79,22 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellY						: Z方向セル数
+	// Arg    : float radius						: 半径
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneGame* pOut						: コピー先アドレス
+	// Arg    : ObjectSky* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneGame* pOut ) const;
+	int Copy( ObjectSky* pOut ) const;
 
 	//==============================================================================
 	// Brief  : 更新処理
@@ -98,26 +103,31 @@ public:
 	//==============================================================================
 	void Update( void );
 
+	//==============================================================================
+	// Brief  : 描画クラスの生成
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Texture* pTexture					: テクスチャ
+	//==============================================================================
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetGraphic( GraphicSky* pValue );
+	GraphicSky* GetGraphic( void ) const;
+
 protected:
 
 private:
 	void InitializeSelf( void );
-	SceneGame( const SceneGame& );
-	SceneGame operator=( const SceneGame& );
+	ObjectSky( const ObjectSky& );
+	ObjectSky operator=( const ObjectSky& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
-
-	// テスト
-	Object2D*		pObject_;
-	int				countObject_;
-	Object3D*		pObject3D_;
-	ObjectModel*	pObjectModel_;
-	ObjectMesh*		pObjectMesh_;
-	ObjectSky*		pObjectSky_;
-
-	GraphicPoint*	pGraphicPoint_;
-	PolygonPoint*	pPolygonPoint_;
+	GraphicSky*				pGraphic_;			// 描画クラス
+	PolygonMeshDomeInside*	pPolygonMesh_;		// 内部メッシュドームポリゴン
 };
 
-#endif	// MY_SCENE_GAME_H
+#endif	// MY_OBJECT_SKY_H

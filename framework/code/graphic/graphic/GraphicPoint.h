@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneGame.h
-// Brief  : ゲームシーンクラス
+// File   : GraphicPoint.h
+// Brief  : ポイントスプライト描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_GAME_H
-#define MY_SCENE_GAME_H
+#ifndef MY_GRAPHIC_POINT_H
+#define MY_GRAPHIC_POINT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,24 +29,14 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class LightDirection;
-
-class Object2D;
-class Object3D;
-class Material;
-class ObjectModel;
-class PolygonMesh;
-class ObjectMesh;
-class ObjectSky;
-
-class GraphicPoint;
+class Effect;
+class EffectParameter;
 class PolygonPoint;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneGame : public SceneMain
+class GraphicPoint : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -54,21 +44,25 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneGame( void );
+	GraphicPoint( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneGame( void );
+	~GraphicPoint( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : PolygonPoint* pPolygon				: ポイントスプライトポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonPoint* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -80,44 +74,28 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : PolygonPoint* pPolygon				: ポイントスプライトポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonPoint* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneGame* pOut						: コピー先アドレス
+	// Arg    : GraphicPoint* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneGame* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
+	int Copy( GraphicPoint* pOut ) const;
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	SceneGame( const SceneGame& );
-	SceneGame operator=( const SceneGame& );
+	GraphicPoint( const GraphicPoint& );
+	GraphicPoint operator=( const GraphicPoint& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
-
-	// テスト
-	Object2D*		pObject_;
-	int				countObject_;
-	Object3D*		pObject3D_;
-	ObjectModel*	pObjectModel_;
-	ObjectMesh*		pObjectMesh_;
-	ObjectSky*		pObjectSky_;
-
-	GraphicPoint*	pGraphicPoint_;
-	PolygonPoint*	pPolygonPoint_;
 };
 
-#endif	// MY_SCENE_GAME_H
+#endif	// MY_GRAPHIC_POINT_H
