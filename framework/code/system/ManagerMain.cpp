@@ -192,12 +192,17 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_GENERAL ].Initialize( pDevice, GraphicMain::PASS_GENERAL_TARGET_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::PASS_3D_RENDER_MAX );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_SCREEN ].Initialize( pDevice, GraphicMain::PASS_SCREEN_TARGET_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::PASS_2D_RENDER_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_SCREEN ].Initialize( pDevice, GraphicMain::PASS_SCREEN_RENDER_MAX );
 	if( result != 0 )
 	{
 		return result;
@@ -319,7 +324,9 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 
 	// 画面オブジェクトの生成
 	Effect*			pEffectScreen = nullptr;			// 画面エフェクト
-	RenderTarget*	pRenderTargetScreen = nullptr;		// 画面描画対象
+	RenderTarget*	pRenderTarget3D = nullptr;			// 3D画面描画対象
+	RenderTarget*	pRenderTarget2D = nullptr;			// 2D画面描画対象
+	RenderTarget*	pRenderTargetMask = nullptr;		// マスク描画対象
 	pObjectScreen_ = new ObjectScreen();
 	if( pObjectScreen_ == nullptr )
 	{
@@ -331,8 +338,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 	pEffectScreen = pEffect_->Get( _T( "Screen.fx" ) );
-	pRenderTargetScreen = pRenderPass_->GetRenderTarget( GraphicMain::PASS_GENERAL );
-	result = pObjectScreen_->CreateGraphic( 0, pEffectParameter_, pEffectScreen, pRenderTargetScreen->GetTexture() );
+	pRenderTarget3D = pRenderPass_[ GraphicMain::PASS_3D ].GetRenderTarget( GraphicMain::PASS_3D_RENDER_COLOR );
+	pRenderTarget2D = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_COLOR );
+	pRenderTargetMask = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_MASK );
+	result = pObjectScreen_->CreateGraphic( 0, pEffectParameter_, pEffectScreen,
+		pRenderTarget3D->GetTexture(), pRenderTarget2D->GetTexture(), pRenderTargetMask->GetTexture() );
 	if( result != 0 )
 	{
 		return result;

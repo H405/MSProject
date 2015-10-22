@@ -74,7 +74,7 @@ int Graphic2D::Initialize( int priority, const EffectParameter* pParameter, Effe
 		return 1;
 	}
 	result = pDrawer2D->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pColor, pTexture );
-	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawer2D;
+	ppDraw_[ GraphicMain::PASS_2D ] = pDrawer2D;
 
 	// ê≥èÌèIóπ
 	return 0;

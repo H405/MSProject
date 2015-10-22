@@ -115,7 +115,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 	pArgument->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, pLight_ );
-
+	
 	// ƒeƒXƒg‰Šú‰»
 	Effect*		pEffect = pArgument->pEffect_->Get( _T( "Polygon3D.fx" ) );
 	Texture*	pTexture = pArgument->pTexture_->Get( _T( "title_logo.png" ) );;
@@ -259,6 +259,7 @@ void SceneGame::Update( void )
 		pTexture = pArgument_->pTexture_->Get( _T( "title_logo.png" ) );
 		pObject_[ countObject_ ].Initialize( 0 );
 		pObject_[ countObject_ ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect, pTexture );
+		pObject_[ countObject_ ].SetColor( 0.5f, 1.0f, 0.5f, 0.8f );
 		++countObject_;
 	}
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_D ) && countObject_ > 0 )

@@ -74,7 +74,7 @@ int GraphicPoint::Initialize( int priority, const EffectParameter* pParameter, E
 		return 1;
 	}
 	result = pDrawerPoint->Initialize( pParameter, pEffectGeneral, pPolygon, pTexture );
-	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawerPoint;
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerPoint;
 
 	// ê≥èÌèIóπ
 	return 0;

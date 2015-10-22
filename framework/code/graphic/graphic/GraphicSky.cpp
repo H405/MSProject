@@ -74,7 +74,7 @@ int GraphicSky::Initialize( int priority, const EffectParameter* pParameter, Eff
 		return 1;
 	}
 	result = pDrawerSly->Initialize( pParameter, pEffectGeneral, pPolygon, pTexture );
-	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawerSly;
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerSly;
 
 	// ê≥èÌèIóπ
 	return 0;

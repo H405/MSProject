@@ -103,9 +103,10 @@ private:
 	ManagerDraw( const ManagerDraw& );
 	ManagerDraw operator=( const ManagerDraw& );
 
-	IDirect3DDevice9*	pDevice_;			// Direct3Dデバイス
-	int					countPass_;			// 描画パス数
-	RenderPass*			pRenderPass_;		// 描画パス
+	IDirect3DDevice9*	pDevice_;					// Direct3Dデバイス
+	int					maximumRenderTarget_;		// 最大レンダーターゲット数
+	int					countPass_;					// 描画パス数
+	RenderPass*			pRenderPass_;				// 描画パス
 };
 
 #endif	// MY_MANAGER_DRAW_H

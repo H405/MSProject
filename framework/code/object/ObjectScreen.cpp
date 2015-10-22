@@ -154,10 +154,13 @@ void ObjectScreen::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTextureGeneral, Texture* pTexture )
+int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture )
 {
 	// グラフィックの生成
 	int					result;				// 実行結果
@@ -172,7 +175,7 @@ int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTextureGeneral, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTexture3D, pTexture2D, pTextureMask, pTextureSet );
 	if( result != 0 )
 	{
 		return result;

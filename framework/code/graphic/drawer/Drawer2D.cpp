@@ -73,6 +73,7 @@ int Drawer2D::Initialize( const EffectParameter* pParameter, Effect* pEffect, Po
 	pEffect_ = pEffect;
 	pTexture_ = pTexture;
 	pPolygon_ = pPolygon;
+	pColor_ = pColor;
 
 	// ƒnƒ“ƒhƒ‹‚Ì“Ç‚Ýž‚Ý
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -165,6 +166,7 @@ void Drawer2D::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
 	pEffect_->SetFloat( PARAMETER_WIDTH_SCREEN_HALF, pEffectParameter_->GetWidthScreen() * 0.5f );
 	pEffect_->SetFloat( PARAMETER_HEIGHT_SCREEN_HALF, pEffectParameter_->GetHeightScreen() * 0.5f );
+	pEffect_->SetColor( PARAMETER_COLOR, *pColor_ );
 
 	// •`‰æ
 	pEffect_->Begin( 0 );
@@ -206,4 +208,5 @@ void Drawer2D::InitializeSelf( void )
 	pEffect_ = nullptr;
 	pTexture_ = nullptr;
 	pPolygon_ = nullptr;
+	pColor_ = nullptr;
 }

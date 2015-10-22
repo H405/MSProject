@@ -364,4 +364,5 @@ void Object2D::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
 	pGraphic_ = nullptr;
+	color_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 }

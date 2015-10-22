@@ -54,11 +54,13 @@ GraphicScreen::~GraphicScreen( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : const float* pProportionFade		: フェード割合
-// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
 int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTextureGeneral, IDirect3DTexture9* pTexture )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -78,7 +80,7 @@ int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, 
 	{
 		return 1;
 	}
-	result = pDrawerScreen->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureGeneral, pTexture, &colorFade_, pProportionFade );
+	result = pDrawerScreen->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture3D, pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
 	ppDraw_[ GraphicMain::PASS_SCREEN ] = pDrawerScreen;
 
 	// 正常終了
@@ -114,11 +116,13 @@ int GraphicScreen::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : const float* pProportionFade		: フェード割合
-// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
 int GraphicScreen::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTextureGeneral, IDirect3DTexture9* pTexture )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -129,7 +133,7 @@ int GraphicScreen::Reinitialize( int priority, const EffectParameter* pParameter
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pProportionFade, pTextureGeneral, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pProportionFade, pTexture3D, pTexture2D, pTextureMask, pTexture );
 }
 
 //==============================================================================

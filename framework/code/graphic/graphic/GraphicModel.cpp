@@ -73,7 +73,7 @@ int GraphicModel::Initialize( int priority, Model* pModel, const EffectParameter
 		return 1;
 	}
 	result = pDrawerModel->Initialize( pModel, pParameter, pEffectGeneral );
-	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawerModel;
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerModel;
 
 	// ê≥èÌèIóπ
 	return 0;

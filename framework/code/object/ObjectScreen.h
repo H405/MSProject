@@ -98,10 +98,13 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : Texture* pTexture					: テクスチャ
 	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTextureGeneral, Texture* pTexture = nullptr );
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture = nullptr );
 
 	//==============================================================================
 	// アクセサ

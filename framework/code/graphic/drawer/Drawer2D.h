@@ -46,6 +46,7 @@ public:
 		PARAMETER_TEXTURE,					// テクスチャ
 		PARAMETER_WIDTH_SCREEN_HALF,		// 画面幅の半分
 		PARAMETER_HEIGHT_SCREEN_HALF,		// 画面高さの半分
+		PARAMETER_COLOR,					// 色
 		PARAMETER_MAX						// 最大値
 	};
 
@@ -117,6 +118,7 @@ protected:
 	Effect*					pEffect_;				// エフェクト
 	IDirect3DTexture9*		pTexture_;				// テクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン
+	D3DXCOLOR*				pColor_;				// 色
 
 private:
 	void InitializeSelf( void );
