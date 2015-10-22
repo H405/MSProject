@@ -30,6 +30,8 @@
     <ClInclude Include="code\framework\light\LightPoint.h" />
     <ClInclude Include="code\framework\object\Object.h" />
     <ClInclude Include="code\framework\object\ObjectMovement.h" />
+    <ClInclude Include="code\framework\point\Point.h" />
+    <ClInclude Include="code\framework\point\PointState.h" />
     <ClInclude Include="code\framework\polygon\Polygon2D.h" />
     <ClInclude Include="code\framework\polygon\Polygon3D.h" />
     <ClInclude Include="code\framework\polygon\PolygonMesh.h" />
@@ -88,6 +90,7 @@
     <ClInclude Include="code\system\EffectParameter.h" />
     <ClInclude Include="code\system\Main.h" />
     <ClInclude Include="code\system\ManagerMain.h" />
+    <ClInclude Include="code\system\ManagerPoint.h" />
     <ClInclude Include="code\system\ManagerSceneMain.h" />
     <ClInclude Include="code\system\SceneArgumentMain.h" />
     <ClInclude Include="code\system\SceneMain.h" />
@@ -113,6 +116,8 @@
     <ClCompile Include="code\framework\light\LightPoint.cpp" />
     <ClCompile Include="code\framework\object\Object.cpp" />
     <ClCompile Include="code\framework\object\ObjectMovement.cpp" />
+    <ClCompile Include="code\framework\point\Point.cpp" />
+    <ClCompile Include="code\framework\point\PointState.cpp" />
     <ClCompile Include="code\framework\polygon\Polygon2D.cpp" />
     <ClCompile Include="code\framework\polygon\Polygon3D.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonMesh.cpp" />
@@ -171,6 +176,7 @@
     <ClCompile Include="code\system\EffectParameter.cpp" />
     <ClCompile Include="code\system\Main.cpp" />
     <ClCompile Include="code\system\ManagerMain.cpp" />
+    <ClCompile Include="code\system\ManagerPoint.cpp" />
     <ClCompile Include="code\system\ManagerSceneMain.cpp" />
     <ClCompile Include="code\system\SceneArgumentMain.cpp" />
     <ClCompile Include="code\system\SceneMain.cpp" />

@@ -70,6 +70,9 @@
     <Filter Include="ソース ファイル\graphic\graphic">
       <UniqueIdentifier>{07468ce4-d8c3-4ab6-9169-8d099a5f085d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\framework\point">
+      <UniqueIdentifier>{83f7d611-e08d-4a1c-9b99-ef110891a670}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -315,6 +318,15 @@
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\point\Point.h">
+      <Filter>ソース ファイル\framework\point</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\point\PointState.h">
+      <Filter>ソース ファイル\framework\point</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\ManagerPoint.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -559,6 +571,15 @@
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\point\PointState.cpp">
+      <Filter>ソース ファイル\framework\point</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\point\Point.cpp">
+      <Filter>ソース ファイル\framework\point</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\ManagerPoint.cpp">
+      <Filter>ソース ファイル\system</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

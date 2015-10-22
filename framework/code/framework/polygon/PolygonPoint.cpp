@@ -11,6 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "PolygonPoint.h"
+#include "../develop/Debug.h"
 #include "../vertex/Vertex.h"
 #include "../vertex/VertexBuffer.h"
 
@@ -178,6 +179,40 @@ void PolygonPoint::Draw( void )
 }
 
 //==============================================================================
+// Brief  : 頂点バッファの設定
+// Return : void								: なし
+// Arg    : int count							: 頂点の数
+// Arg    : void* pBuffer						: 頂点バッファ
+//==============================================================================
+void PolygonPoint::SetVertexBuffer( int count, void* pBuffer )
+{
+	// エラーチェック
+	Assert( pBuffer != nullptr, _T( "引数のアドレスが不正です。" ) );
+
+	// 個数の決定
+	countItem_ = count;
+
+	// 頂点バッファに値を設定
+	void*	pBufferAddress = nullptr;		// バッファのアドレス
+	int		sizeVertex;		// 頂点のサイズ
+	sizeVertex = pVertex_->GetSize();
+	pVertexBuffer_->Lock( 0, 0, &pBufferAddress, 0 );
+	memcpy_s( pBufferAddress, sizeVertex * count, pBuffer, sizeVertex * count );
+	pVertexBuffer_->Unlock();
+}
+
+//==============================================================================
+// Brief  : 頂点情報の取得
+// Return : Vertex*								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+Vertex* PolygonPoint::GetVertex( void ) const
+{
+	// 値の返却
+	return pVertex_;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -186,7 +221,7 @@ void PolygonPoint::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	maximumItem_ = 0;
-	countItem_ = 10;
+	countItem_ = 0;
 	pDevice_ = nullptr;
 	pVertexBuffer_ = nullptr;
 	pVertex_ = nullptr;

@@ -1,17 +1,17 @@
 //==============================================================================
 //
-// File   : PolygonPoint.h
-// Brief  : ポイントスプライトポリゴン
+// File   : ManagerPoint.h
+// Brief  : ポイントスプライトの管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/21 wed : Taiga Shirakawa : create
+// Date   : 2015/10/22 thu : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_POLYGON_POINT_H
-#define MY_POLYGON_POINT_H
+#ifndef MY_MANAGER_POINT_H
+#define MY_MANAGER_POINT_H
 
 //******************************************************************************
 // インクルード
@@ -29,35 +29,53 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Vertex;
+class Effect;
+class EffectParameter;
+class GraphicPoint;
+class Point;
+class PointState;
+class PolygonPoint;
+class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class PolygonPoint
+class ManagerPoint
 {
 public:
+	// ステート
+	enum
+	{
+		STATE_NONE = 0,		// なし
+		STATE_ADD,			// 加算
+		STATE_MULTIPLY,		// 乗算
+		STATE_MAX			// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	PolygonPoint( void );
+	ManagerPoint( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~PolygonPoint( void );
+	~ManagerPoint( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	// Arg    : int maximumItem						: 最大要素数
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int maximumItem, IDirect3DDevice9* pDevice );
+	int Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -71,48 +89,38 @@ public:
 	// Return : int									: 実行結果
 	// Arg    : int maximumItem						: 最大要素数
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int maximumItem, IDirect3DDevice9* pDevice );
+	int Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : PolygonPoint* pOut					: コピー先アドレス
+	// Arg    : ManagerPoint* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( PolygonPoint* pOut ) const;
+	int Copy( ManagerPoint* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 描画処理
+	// Brief  : 更新処理
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void Draw( void );
-
-	//==============================================================================
-	// Brief  : 頂点バッファの設定
-	// Return : void								: なし
-	// Arg    : int count							: 頂点の数
-	// Arg    : void* pBuffer						: 頂点バッファ
-	//==============================================================================
-	void SetVertexBuffer( int count, void* pBuffer );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	Vertex* GetVertex( void ) const;
+	void Update( void );
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	PolygonPoint( const PolygonPoint& );
-	PolygonPoint operator=( const PolygonPoint& );
+	ManagerPoint( const ManagerPoint& );
+	ManagerPoint operator=( const ManagerPoint& );
 
-	int						maximumItem_;		// 最大要素数
-	int						countItem_;			// 使用要素数
-	IDirect3DDevice9*		pDevice_;			// Direct3Dデバイス
-	IDirect3DVertexBuffer9*	pVertexBuffer_;		// 頂点バッファ
-	Vertex*					pVertex_;			// 頂点情報
+	PointState*		ppState_[ STATE_MAX ];		// ステートテーブル
+	int				maximumItem_;				// 最大要素数
+	Point*			pPoint_;					// ポイント情報
+	PolygonPoint*	pPolygon_;					// 頂点バッファ
+	GraphicPoint*	pGraphic_;					// 描画クラス
 };
 
-#endif	// MY_POLYGON_POINT_H
+#endif	// MY_MANAGER_POINT_H
