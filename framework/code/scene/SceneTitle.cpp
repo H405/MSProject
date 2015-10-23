@@ -96,6 +96,8 @@ void SceneTitle::InitializeSelf( void )
 	pushChooseObjectFlashingCount = -1;
 
 	chooseFlag = false;
+
+	fpUpdate = nullptr;
 }
 
 //==============================================================================
@@ -161,10 +163,11 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
 	Texture*	pTexture = nullptr;
+	Model*		pModel = nullptr;
 
 	//	プレイヤー生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
-	Model*	pModel = pArgument->pModel_->Get( _T( "head.x" ) );
+	pModel = pArgument->pModel_->Get( _T( "head.x" ) );
 
 	player = new ObjectModel;
 	player->Initialize(0);
