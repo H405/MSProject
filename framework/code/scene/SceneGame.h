@@ -111,16 +111,39 @@ private:
 
 	ManagerPoint*		pPoint_;		// ポイントスプライト管理クラス
 
-	// テスト
-	Object2D*		pObject_;
-	int				countObject_;
-	Object3D*		pObject3D_;
-	ObjectModel*	pObjectModel_;
-	ObjectMesh*		pObjectMesh_;
-	ObjectSky*		pObjectSky_;
+	ObjectSky*			pObjectSky_;	// スカイドーム
 
-	GraphicPoint*	pGraphicPoint_;
-	PolygonPoint*	pPolygonPoint_;
+	//	「スコア」文字
+	Object2D* stringScore;
+
+	//	ポーズ時用文字「再開」
+	Object2D* stringReturn;
+
+	//	ポーズ時用文字「中止」
+	Object2D* stringStop;
+
+	//	ポーズ時用文字「初めから」
+	Object2D* stringRetry;
+
+	//	１ステージクリア後文字「次のステージへ」
+	Object2D* stringNext;
+
+	//==============================================================================
+	// Brief  : 通常時用の更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void normalUpdate(void);
+
+	//==============================================================================
+	// Brief  : ポーズ時用の更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void pauseUpdate(void);
+
+	//	更新関数格納用ポインタ
+	void (SceneGame::*fpUpdate)(void);
 };
 
 #endif	// MY_SCENE_GAME_H

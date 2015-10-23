@@ -101,6 +101,10 @@ void VirtualController::update()
 	if(wiiController->getPress(WC_LEFT) || keyboard->IsPress(DIK_LEFT))
 		press[VC_LEFT] = true;
 
+	//	ポーズキー押下情報
+	if(wiiController->getPress(WC_HOME) || keyboard->IsPress(DIK_P))
+		press[VC_PAUSE] = true;
+
 
 	//	トリガー情報・リリース情報・リピート情報セット
 	for(int count = 0;count < VC_MAX;count++)

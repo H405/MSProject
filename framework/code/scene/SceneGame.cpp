@@ -15,6 +15,7 @@
 #include "../framework/develop/Debug.h"
 #include "../framework/develop/DebugProc.h"
 #include "../framework/graphic/Material.h"
+#include "../framework/input/VirtualController.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/light/LightDirection.h"
 #include "../framework/object/Object.h"
@@ -65,6 +66,26 @@ SceneGame::SceneGame( void ) : SceneMain()
 }
 
 //==============================================================================
+// Brief  : クラス内の初期化処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::InitializeSelf( void )
+{
+	// メンバ変数の初期化
+	pCamera_ = nullptr;
+	pLight_ = nullptr;
+	pObjectSky_ = nullptr;
+	stringScore = nullptr;
+	stringReturn = nullptr;
+	stringStop = nullptr;
+	stringRetry = nullptr;
+	stringNext = nullptr;
+
+	fpUpdate = nullptr;
+}
+
+//==============================================================================
 // Brief  : デストラクタ
 // Return : 									: 
 // Arg    : void								: なし
@@ -96,8 +117,17 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	result = pCamera_->Initialize( D3DX_PI / 4.0f, 1280, 720, 0.1f, 1000.0f,
-		D3DXVECTOR3( 0.0f, 20.0f, -100.0f ), D3DXVECTOR3( 0.0f, 0.0f, 10.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
+	result = pCamera_->Initialize(
+		D3DX_PI / 4.0f,
+		1280,
+		720,
+		0.1f,
+		1000.0f,
+		D3DXVECTOR3( 0.0f, 20.0f, -100.0f ),
+		D3DXVECTOR3( 0.0f, 0.0f, 10.0f ),
+		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
+		);
+
 	if( result != 0 )
 	{
 		return result;
@@ -133,40 +163,37 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 
-	// テスト初期化
-	Effect*		pEffect = pArgument->pEffect_->Get( _T( "Polygon3D.fx" ) );
-	Texture*	pTexture = pArgument->pTexture_->Get( _T( "title_logo.png" ) );;
-	pObject_ = new Object2D[ 100 ];
-	countObject_ = 0;
-	pObject3D_ = new Object3D();
-	pObject3D_->Initialize( 0 );
-	pObject3D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
-	pObject3D_->SetScale( 1000.0f, 1.0f, 1000.0f );
-	pObject3D_->SetPositionY( -40.0f );
+	//	オブジェクトの生成開始
+	Effect*		pEffect = nullptr;
+	Texture*	pTexture = nullptr;
+	Model*		pModel = nullptr;
 
-	Effect*	pEffectModel = pArgument->pEffect_->Get( _T( "Model.fx" ) );
-	Model*	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
-	pObjectModel_ = new ObjectModel();
-	pObjectModel_->Initialize( 0 );
-	pObjectModel_->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
 
-	Effect*	pEffectMesh = pArgument->pEffect_->Get( _T( "Mesh.fx" ) );
-	pObjectMesh_ = new ObjectMesh();
-	pObjectMesh_->Initialize( 0, pArgument->pDevice_, 10, 10, 100.0f, 100.0f, 1.0f, 1.0f );
-	pObjectMesh_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectMesh, pTexture );
+	//	「スコア」文字オブジェクト生成
+	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "stringScore.png" ) );
 
+	stringScore = new Object2D;
+	stringScore->Initialize(0);
+
+	stringScore->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+	stringScore->SetPosition(-400.0f, 300.0f, 0.0f);
+
+
+	//	更新関数設定
+	fpUpdate = &SceneGame::normalUpdate;
+
+	// スカイドームの生成
 	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
-#if 0
-	pPolygonPoint_ = new PolygonPoint();
-	pPolygonPoint_->Initialize( 32, pArgument->pDevice_ );
 
-	Effect*	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
-	pGraphicPoint_ = new GraphicPoint();
-	pGraphicPoint_->Initialize( 0, pArgument->pEffectParameter_, pEffectPoint, pPolygonPoint_, pTexture->pTexture_ );
-#endif
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
 
@@ -181,21 +208,17 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneGame::Finalize( void )
 {
-	// テスト終了
+	// スカイドームの開放
 	delete pObjectSky_;
 	pObjectSky_ = nullptr;
-	delete pObjectMesh_;
-	pObjectMesh_ = nullptr;
-	delete pObjectModel_;
-	pObjectModel_ = nullptr;
-	delete pObject3D_;
-	pObject3D_ = nullptr;
-	delete[] pObject_;
-	pObject_ = nullptr;
 
 	// ポイントスプライト管理クラスの開放
 	delete pPoint_;
 	pPoint_ = nullptr;
+
+	// スコアの開放
+	delete stringScore;
+	stringScore = nullptr;
 
 	// ライトの開放
 	delete pLight_;
@@ -274,51 +297,13 @@ void SceneGame::Update( void )
 	pPoint_->Update();
 
 	// テスト
-	for( int i = 0; i < 10; ++i )
-	{
-		D3DXVECTOR3	velocityPoint;
-		float		angleY = 2.0f * D3DX_PI * (static_cast< float >( rand() ) / RAND_MAX);
-		float		angleZ = 2.0f * D3DX_PI * (static_cast< float >( rand() ) / RAND_MAX);
-		velocityPoint.x = cosf( angleY ) * sinf( angleZ );
-		velocityPoint.y = cosf( angleZ );
-		velocityPoint.z = sinf( angleY ) * sinf( angleZ );
-		pPoint_->Add( 100, D3DXVECTOR3( 0.0f, 10.0f, 0.0f ), D3DXCOLOR( 1.0f, 0.2f, 0.2f, 0.9f ), 100.0f,
-			velocityPoint, D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ), 0.0f, ManagerPoint::STATE_ADD );
-	}
-
-	// テスト
 	PrintDebug( _T( "ゲームシーン\n" ) );
-	if( pArgument_->pKeyboard_->IsTrigger( DIK_A ) && countObject_ < 100 )
-	{
-		Effect*		pEffect = nullptr;
-		Texture*	pTexture = nullptr;
-		pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-		pTexture = pArgument_->pTexture_->Get( _T( "title_logo.png" ) );
-		pObject_[ countObject_ ].Initialize( 0 );
-		pObject_[ countObject_ ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect, pTexture );
-		pObject_[ countObject_ ].SetColor( 0.5f, 1.0f, 0.5f, 0.8f );
-		pObject_[ countObject_ ].SetPositionTexture( 0.25f, 0.5f );
-//		pObject_[ countObject_ ].SetScaleTexture( 2.0f, 0.5f );
-		++countObject_;
-	}
-	if( pArgument_->pKeyboard_->IsTrigger( DIK_D ) && countObject_ > 0 )
-	{
-		pObject_[ countObject_ - 1 ].Finalize();
-		--countObject_;
-	}
-	if( pArgument_->pKeyboard_->IsTrigger( DIK_C ) )
-	{
-		pCamera_->SetDebug( true );
-	}
-	pObjectModel_->AddRotationY( 0.1f );
-	if( countObject_ > 0 )
-	{
-		pObject_[ 0 ].AddPositionTexture( 0.0025f, 0.001f );
-		pObject_[ 0 ].SetPositionY( 10.0f );
-	}
+
+	//	設定された更新関数へ
+	(this->*fpUpdate)();
 
 	// シーン遷移
-	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
+	/*if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
 		SetSceneNext( ManagerSceneMain::TYPE_RESULT );
 		SetIsEnd( true );
@@ -329,18 +314,31 @@ void SceneGame::Update( void )
 		{
 			pArgument_->pFade_->FadeOut( 20 );
 		}
-	}
+	}*/
 }
-
 //==============================================================================
-// Brief  : クラス内の初期化処理
+// Brief  : 通常更新処理
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void SceneGame::InitializeSelf( void )
+void SceneGame::normalUpdate(void)
 {
-	// メンバ変数の初期化
-	pCamera_ = nullptr;
-	pLight_ = nullptr;
-	pPoint_ = nullptr;
+	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))
+	{
+		//	更新関数設定
+		fpUpdate = &SceneGame::pauseUpdate;
+	}
+}
+//==============================================================================
+// Brief  : 通常更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::pauseUpdate(void)
+{
+	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))
+	{
+		//	更新関数設定
+		fpUpdate = &SceneGame::normalUpdate;
+	}
 }

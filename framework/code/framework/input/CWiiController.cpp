@@ -570,7 +570,7 @@ void CWiiController::CommonUpdate()
 void CWiiController::NormalUpdate()
 {
 #ifdef OASOBI
-	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_HOME]) && (buttonState & BUTTON_STATE_BITS[WC_HOME]))
+	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_ONE]) && (buttonState & BUTTON_STATE_BITS[WC_ONE]))
 	{
 		//	更新関数セット
 		fpUpdate = &CWiiController::updateMode1;
