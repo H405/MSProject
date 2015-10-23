@@ -65,6 +65,10 @@ const float cuttOffHZRaw = 1.5f;
 const float rotSpeedMax = 1200.0f;
 const float rotSpeedRawMax = 1200.0f;
 
+//	スクリーンサイズをここで設定
+const float screenWidth = 1280.0f;
+const float screenHeight = 720.0f;
+
 //=============================================================================
 //	コンストラクタ
 //=============================================================================
@@ -102,6 +106,9 @@ joystickPrev(0.0f, 0.0f),
 IR(0.0f, 0.0f),
 IRPrev(0.0f, 0.0f),
 
+IRScreen(0.0f, 0.0f),
+IRScreenPrev(0.0f, 0.0f),
+
 LEDType(LED_0),
 LEDTypePrev(LED_0),
 
@@ -117,10 +124,13 @@ rotResetFlag(false),
 rotSpeedCalibrationCount(0),
 
 updateAge(0),
-updateAgePrev(0)
-{
-	isConnect = false;
+updateAgePrev(0),
 
+buttonState(0),
+buttonStatePrev(0),
+
+isConnect(false)
+{
 	for (int count = 0; count < 2; count++)
 	{
 		//	本体を生成
@@ -171,16 +181,11 @@ updateAgePrev(0)
 			connectTryCount++;
 		}
 
-		if (buff->IsBalanceBoard())
+		if (!buff->IsBalanceBoard())
 		{
-			//	一時バッファをバランスボードとして登録
-			wiiBoard = buff;
+			//	接続状態セット
+			isConnect = true;
 
-			// 使用するセンサを設定（wiiボード）
-			wiiBoard->SetReportType(wiimote::IN_BUTTONS_BALANCE_BOARD);
-		}
-		else
-		{
 			//	一時バッファを本体として登録
 			wiiRemote = buff;
 
@@ -193,8 +198,14 @@ updateAgePrev(0)
 
 			//	LEDをとりあえず全部点灯させる
 			wiiRemote->SetLEDs(0x000F);
+		}
+		else
+		{
+			//	一時バッファをバランスボードとして登録
+			wiiBoard = buff;
 
-			isConnect = true;
+			// 使用するセンサを設定（wiiボード）
+			wiiBoard->SetReportType(wiimote::IN_BUTTONS_BALANCE_BOARD);
 		}
 	}
 
@@ -211,16 +222,24 @@ updateAgePrev(0)
 //=============================================================================
 CWiiController::~CWiiController()
 {
-	//	LED消灯
-	wiiRemote->SetLEDs(0x0000);
+	if(wiiRemote != nullptr)
+	{
+		//	LED消灯
+		wiiRemote->SetLEDs(0x0000);
 
-	//	音を消す
-	wiiRemote->MuteSpeaker(false);
+		//	音を消す
+		wiiRemote->MuteSpeaker(false);
 
-	//	切断
-	wiiRemote->Disconnect();
+		//	切断
+		wiiRemote->Disconnect();
 
-	delete wiiRemote;
+		delete wiiRemote;
+	}
+
+	if(wiiBoard != nullptr)
+	{
+		delete wiiBoard;
+	}
 }
 
 //=============================================================================
@@ -277,256 +296,272 @@ void CWiiController::batteryLightingLED()
 //=============================================================================
 void CWiiController::CommonUpdate()
 {
-	//	前回の状態を保存
-	buttonStatePrev = buttonState;
-
-	accelPrev = accel;
-	accelRawPrev = accelRaw;
-
-	rotPrev = rot;
-	rotRawPrev = rotRaw;
-
-	rotSpeedPrev = rotSpeed;
-	rotSpeedRawPrev = rotSpeedRaw;
-
-	joystickPrev = joystick;
-
-	IRPrev = IR;
-
-	motionConnectPrev = motionConnect;
-
-	updateAgePrev = updateAge;
-
-	if(isConnect == true)
+	//	wiiリモコンが接続されていれば
+	if(wiiRemote != nullptr)
 	{
+		//	前回の状態を保存
+		buttonStatePrev = buttonState;
 
-	//	モーションセンサーが認識されたら有効化
-	motionConnect = wiiRemote->MotionPlusConnected();
-	if (motionConnect == true && motionConnectPrev == false)
-	{
-		wiiRemote->EnableMotionPlus();
-		rotResetFlag = true;
-	}
+		accelPrev = accel;
+		accelRawPrev = accelRaw;
 
-	//	LED点灯
-	batteryLightingLED();
+		rotPrev = rot;
+		rotRawPrev = rotRaw;
 
-	//	wiiリモコンの状態を取得...というかリセット
-	//	これやらないとステータスが更新されない
-	wiiRemote->RefreshState();
+		rotSpeedPrev = rotSpeed;
+		rotSpeedRawPrev = rotSpeedRaw;
 
-	//	ボタンの押下状態を保存
-	buttonState = wiiRemote->Button.Bits;
+		joystickPrev = joystick;
 
-	//	ヌンチャクの押下状態を保存
-	buttonState += wiiRemote->Nunchuk.C * 0x0020;
-	buttonState += wiiRemote->Nunchuk.Z * 0x0040;
+		IRPrev = IR;
+		IRScreenPrev = IRScreen;
 
-	//	リピートカウントの更新
-	for (int count = 0; count < WC_BUTTON_MAX; count++)
-	{
-		if (buttonState & BUTTON_STATE_BITS[count])
-			(repeatCount[count] < REPEAT_COUNT_MAX) ? repeatCount[count]++ : repeatCount[count] = REPEAT_COUNT_MAX;
-		else
-			repeatCount[count] = 0;
-	}
+		motionConnectPrev = motionConnect;
 
-	//	加速度を保存
-	accel = D3DXVECTOR3(wiiRemote->Acceleration.X, wiiRemote->Acceleration.Y, wiiRemote->Acceleration.Z);
-	accelRaw = D3DXVECTOR3(wiiRemote->Acceleration.RawX, wiiRemote->Acceleration.RawY, wiiRemote->Acceleration.RawZ);
-	updateAge = wiiRemote->Acceleration.Orientation.UpdateAge;
+		updateAgePrev = updateAge;
 
-	//	※モーションプラスの接続状況によって処理を変更
-	//	モーションプラス接続時の処理
-	if (motionConnect == true)
-	{
-		//	角速度を保存
-		rotSpeedRaw = D3DXVECTOR3(wiiRemote->MotionPlus.Raw.Pitch + cutOffHZ_XRaw, wiiRemote->MotionPlus.Raw.Yaw + cutOffHZ_YRaw, wiiRemote->MotionPlus.Raw.Roll + cutOffHZ_ZRaw);
-		rotSpeedRaw /= 100.0f;
-		rotSpeed = D3DXVECTOR3(wiiRemote->MotionPlus.Speed.Pitch + cutOffHZ_X, wiiRemote->MotionPlus.Speed.Yaw + cutOffHZ_Y, wiiRemote->MotionPlus.Speed.Roll + cutOffHZ_Z);
-
-		//	調整
-		adJustmentRotSpeed();
-
-		//	算出角度(Yaw Pitch Roll)
-		D3DXVECTOR3 YPR(0.0f, 0.0f, 0.0f);
-		D3DXVECTOR3 YPRRaw(0.0f, 0.0f, 0.0f);
-
-		//	オフセット値(初期値を代入しておく)
-		//	※本来はキャリブレーション（水平なとこに一定時間置いてってやつ）の値を入れること
-		//	この値はwiiリモコン赤専用の値
-		static D3DXVECTOR3 offset_YPR(168.0f, 168.0f, 66.0f);
-		static D3DXVECTOR3 offset_YPRRaw(168.0f, 168.0f, 66.0f);
-
-		//	一時変数(キャリブレーションの際に使う)
-		static D3DXVECTOR3 temp_YPR(0.0f, 0.0f, 0.0f);
-		static D3DXVECTOR3 temp_YPRRaw(0.0f, 0.0f, 0.0f);
-
-		//	キャリブレーション計算を行う
-		if (rotSpeedCalibrationFlag == true)
+		//	モーションセンサーが認識されたら有効化
+		motionConnect = wiiRemote->MotionPlusConnected();
+		if (motionConnect == true && motionConnectPrev == false)
 		{
-			temp_YPR += rotSpeed;
-			temp_YPRRaw += rotSpeedRaw;
+			wiiRemote->EnableMotionPlus();
+			rotResetFlag = true;
+		}
 
-			rotSpeedCalibrationCount++;
+		//	LED点灯
+		batteryLightingLED();
 
-			//	指定の回数サンプリングしたら
-			if (rotSpeedCalibrationCount >= rotSpeedCalibrationCountMax)
+		//	wiiリモコンの状態を取得...というかリセット
+		//	これやらないとステータスが更新されない
+		wiiRemote->RefreshState();
+
+		//	ボタンの押下状態を保存
+		buttonState = wiiRemote->Button.Bits;
+
+		//	ヌンチャクの押下状態を保存
+		buttonState += wiiRemote->Nunchuk.C * 0x0020;
+		buttonState += wiiRemote->Nunchuk.Z * 0x0040;
+
+		//	リピートカウントの更新
+		for (int count = 0; count < WC_BUTTON_MAX; count++)
+		{
+			if (buttonState & BUTTON_STATE_BITS[count])
+				(repeatCount[count] < REPEAT_COUNT_MAX) ? repeatCount[count]++ : repeatCount[count] = REPEAT_COUNT_MAX;
+			else
+				repeatCount[count] = 0;
+		}
+
+		//	加速度を保存
+		accel = D3DXVECTOR3(wiiRemote->Acceleration.X, wiiRemote->Acceleration.Y, wiiRemote->Acceleration.Z);
+		accelRaw = D3DXVECTOR3(wiiRemote->Acceleration.RawX, wiiRemote->Acceleration.RawY, wiiRemote->Acceleration.RawZ);
+		updateAge = wiiRemote->Acceleration.Orientation.UpdateAge;
+
+		//	※モーションプラスの接続状況によって処理を変更
+		//	モーションプラス接続時の処理
+		if (motionConnect == true)
+		{
+			//	角速度を保存
+			rotSpeedRaw = D3DXVECTOR3(wiiRemote->MotionPlus.Raw.Pitch + cutOffHZ_XRaw, wiiRemote->MotionPlus.Raw.Yaw + cutOffHZ_YRaw, wiiRemote->MotionPlus.Raw.Roll + cutOffHZ_ZRaw);
+			rotSpeedRaw /= 100.0f;
+			rotSpeed = D3DXVECTOR3(wiiRemote->MotionPlus.Speed.Pitch + cutOffHZ_X, wiiRemote->MotionPlus.Speed.Yaw + cutOffHZ_Y, wiiRemote->MotionPlus.Speed.Roll + cutOffHZ_Z);
+
+			//	調整
+			adJustmentRotSpeed();
+
+			//	算出角度(Yaw Pitch Roll)
+			D3DXVECTOR3 YPR(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 YPRRaw(0.0f, 0.0f, 0.0f);
+
+			//	オフセット値(初期値を代入しておく)
+			//	※本来はキャリブレーション（水平なとこに一定時間置いてってやつ）の値を入れること
+			//	この値はwiiリモコン赤専用の値
+			static D3DXVECTOR3 offset_YPR(168.0f, 168.0f, 66.0f);
+			static D3DXVECTOR3 offset_YPRRaw(168.0f, 168.0f, 66.0f);
+
+			//	一時変数(キャリブレーションの際に使う)
+			static D3DXVECTOR3 temp_YPR(0.0f, 0.0f, 0.0f);
+			static D3DXVECTOR3 temp_YPRRaw(0.0f, 0.0f, 0.0f);
+
+			//	キャリブレーション計算を行う
+			if (rotSpeedCalibrationFlag == true)
 			{
-				//	オフセット値を算出
-				offset_YPR = temp_YPR / (float)rotSpeedCalibrationCountMax;
-				offset_YPRRaw = temp_YPRRaw / (float)rotSpeedCalibrationCountMax;
+				temp_YPR += rotSpeed;
+				temp_YPRRaw += rotSpeedRaw;
 
-				//	変数初期化
-				temp_YPR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				temp_YPRRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+				rotSpeedCalibrationCount++;
 
-				rotSpeedCalibrationCount = 0;
-				rotSpeedCalibrationFlag = false;
+				//	指定の回数サンプリングしたら
+				if (rotSpeedCalibrationCount >= rotSpeedCalibrationCountMax)
+				{
+					//	オフセット値を算出
+					offset_YPR = temp_YPR / (float)rotSpeedCalibrationCountMax;
+					offset_YPRRaw = temp_YPRRaw / (float)rotSpeedCalibrationCountMax;
+
+					//	変数初期化
+					temp_YPR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+					temp_YPRRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+					rotSpeedCalibrationCount = 0;
+					rotSpeedCalibrationFlag = false;
+				}
 			}
-		}
 
-		//	角速度補正
-		rotSpeed -= temp_YPR;
-		rotSpeedRaw -= temp_YPRRaw;
+			//	角速度補正
+			rotSpeed -= temp_YPR;
+			rotSpeedRaw -= temp_YPRRaw;
 
-		//	フレームレート計測
-		static DWORD time = timeGetTime();
-		//	1フレームあたりの時間計測
-		DWORD frametime = timeGetTime() - time;
-		time = timeGetTime();
+			//	フレームレート計測
+			static DWORD time = timeGetTime();
+			//	1フレームあたりの時間計測
+			DWORD frametime = timeGetTime() - time;
+			time = timeGetTime();
 
-		//	角度を計算(単純積分)
-		//	角度 = 角速度[deg/sec] * 時間[sec]
-		/*if( rotSpeed.x > cutOffHZ_X || rotSpeed.x < -cutOffHZ_X )
-		{
-		YPR.x = rotSpeed.x * frametime / 1000.0f;
-		rot.x += YPR.x;
-		}
-		if( rotSpeed.y > cutOffHZ_Y || rotSpeed.y < -cutOffHZ_Y )
-		{
-		YPR.y = rotSpeed.y * frametime / 1000.0f;
-		rot.y += YPR.y;
-		}
-		if( rotSpeed.z > cutOffHZ_Z || rotSpeed.z < -cutOffHZ_Z )
-		{
-		YPR.z = rotSpeed.z * frametime / 1000.0f;
-		rot.z += YPR.z;
-		}*/
-
-		//	角度を計算(台形補間)
-		//	角度 = ((１つ前の角速度[deg/sec] + 今の角速度[deg/sec]) * 0.5) * 時間[sec]
-		//	たいして補間されねーじゃん・・・
-		//	cutOffHZを調整する必要あり
-		if (rotSpeed.x > cuttOffHZ || rotSpeed.x < -cuttOffHZ)
-		{
-			YPR.x = ((rotSpeed.x + rotSpeedPrev.x) * 0.5f) * (frametime / 1000.0f);
+			//	角度を計算(単純積分)
+			//	角度 = 角速度[deg/sec] * 時間[sec]
+			/*if( rotSpeed.x > cutOffHZ_X || rotSpeed.x < -cutOffHZ_X )
+			{
+			YPR.x = rotSpeed.x * frametime / 1000.0f;
 			rot.x += YPR.x;
-		}
-		if (rotSpeed.y > cuttOffHZ || rotSpeed.y < -cuttOffHZ)
-		{
-			YPR.y = ((rotSpeed.y + rotSpeedPrev.y) * 0.5f) * (frametime / 1000.0f);
+			}
+			if( rotSpeed.y > cutOffHZ_Y || rotSpeed.y < -cutOffHZ_Y )
+			{
+			YPR.y = rotSpeed.y * frametime / 1000.0f;
 			rot.y += YPR.y;
-		}
-		if (rotSpeed.z > cuttOffHZ || rotSpeed.z < -cuttOffHZ)
-		{
-			YPR.z = ((rotSpeed.z + rotSpeedPrev.z) * 0.5f) * (frametime / 1000.0f);
+			}
+			if( rotSpeed.z > cutOffHZ_Z || rotSpeed.z < -cutOffHZ_Z )
+			{
+			YPR.z = rotSpeed.z * frametime / 1000.0f;
 			rot.z += YPR.z;
-		}
+			}*/
 
-		if (rotSpeedRaw.x > cuttOffHZRaw || rotSpeedRaw.x < -cuttOffHZRaw)
+			//	角度を計算(台形補間)
+			//	角度 = ((１つ前の角速度[deg/sec] + 今の角速度[deg/sec]) * 0.5) * 時間[sec]
+			//	たいして補間されねーじゃん・・・
+			//	cutOffHZを調整する必要あり
+			if (rotSpeed.x > cuttOffHZ || rotSpeed.x < -cuttOffHZ)
+			{
+				YPR.x = ((rotSpeed.x + rotSpeedPrev.x) * 0.5f) * (frametime / 1000.0f);
+				rot.x += YPR.x;
+			}
+			if (rotSpeed.y > cuttOffHZ || rotSpeed.y < -cuttOffHZ)
+			{
+				YPR.y = ((rotSpeed.y + rotSpeedPrev.y) * 0.5f) * (frametime / 1000.0f);
+				rot.y += YPR.y;
+			}
+			if (rotSpeed.z > cuttOffHZ || rotSpeed.z < -cuttOffHZ)
+			{
+				YPR.z = ((rotSpeed.z + rotSpeedPrev.z) * 0.5f) * (frametime / 1000.0f);
+				rot.z += YPR.z;
+			}
+
+			if (rotSpeedRaw.x > cuttOffHZRaw || rotSpeedRaw.x < -cuttOffHZRaw)
+			{
+				YPRRaw.x = ((rotSpeedRaw.x + rotSpeedRawPrev.x) * 0.5f) * (frametime / 1000.0f);
+				rotRaw.x += YPRRaw.x;
+			}
+			if (rotSpeedRaw.y > cuttOffHZRaw || rotSpeedRaw.y < -cuttOffHZRaw)
+			{
+				YPRRaw.y = ((rotSpeedRaw.y + rotSpeedRawPrev.y) * 0.5f) * (frametime / 1000.0f);
+				rotRaw.y += YPRRaw.y;
+			}
+			if (rotSpeedRaw.z > cuttOffHZRaw || rotSpeedRaw.z < -cuttOffHZRaw)
+			{
+				YPRRaw.z = ((rotSpeedRaw.z + rotSpeedRawPrev.z) * 0.5f) * (frametime / 1000.0f);
+				rotRaw.z += YPRRaw.z;
+			}
+
+
+			//	姿勢をリセット
+			if (rotResetFlag == true)
+			{
+				rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+				rotRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+				rotResetFlag = false;
+			}
+
+			//	オーバーフロー対策
+			if (rot.x <= -180.0f)
+				rot.x = 180.0f;
+			if (rot.x > 180.0f)
+				rot.x = -180.0f;
+			if (rot.y <= -180.0f)
+				rot.y = 180.0f;
+			if (rot.y > 180.0f)
+				rot.y = -180.0f;
+			if (rot.z <= -180.0f)
+				rot.z = 180.0f;
+			if (rot.z > 180.0f)
+				rot.z = -180.0f;
+
+			if (rotRaw.x <= -180.0f)
+				rotRaw.x = 180.0f;
+			if (rotRaw.x > 180.0f)
+				rotRaw.x = -180.0f;
+			if (rotRaw.y <= -180.0f)
+				rotRaw.y = 180.0f;
+			if (rotRaw.y > 180.0f)
+				rotRaw.y = -180.0f;
+			if (rotRaw.z <= -180.0f)
+				rotRaw.z = 180.0f;
+			if (rotRaw.z > 180.0f)
+				rotRaw.z = -180.0f;
+		}
+		//	モーションプラス未接続時の処理
+		else
 		{
-			YPRRaw.x = ((rotSpeedRaw.x + rotSpeedRawPrev.x) * 0.5f) * (frametime / 1000.0f);
-			rotRaw.x += YPRRaw.x;
+			//	回転角を保存（本体のみ）
+			//	加速度センサーで計算しているため精度低い・・・というか間違ってるんじゃね？
+			rot = D3DXVECTOR3(wiiRemote->Acceleration.Orientation.X, wiiRemote->Acceleration.Orientation.Y, wiiRemote->Acceleration.Orientation.Z);
 		}
-		if (rotSpeedRaw.y > cuttOffHZRaw || rotSpeedRaw.y < -cuttOffHZRaw)
+
+		//	IR情報の取得
+		if (wiiRemote->IR.Dot[0].bVisible == true)
 		{
-			YPRRaw.y = ((rotSpeedRaw.y + rotSpeedRawPrev.y) * 0.5f) * (frametime / 1000.0f);
-			rotRaw.y += YPRRaw.y;
+			//	-1.0 ～ 1.0の間でとる場合
+			IR = D3DXVECTOR2((wiiRemote->IR.Dot[0].X - 0.5f) * 2.0f, (wiiRemote->IR.Dot[0].Y - 0.5f) * 2.0f);
+
+			//	0.0 ～ 1.0の間でとる場合
+			//IR = D3DXVECTOR2(wiiRemote->IR.Dot[0].X, wiiRemote->IR.Dot[0].Y);
+
+			//	スクリーン座標系計算
+			IRScreen.x = IR.x * (screenWidth * 0.5f);
+			IRScreen.y = -IR.y * (screenHeight * 0.5f);
 		}
-		if (rotSpeedRaw.z > cuttOffHZRaw || rotSpeedRaw.z < -cuttOffHZRaw)
+
+		//	ヌンチャクが接続されていたら
+		if (wiiRemote->NunchukConnected())
 		{
-			YPRRaw.z = ((rotSpeedRaw.z + rotSpeedRawPrev.z) * 0.5f) * (frametime / 1000.0f);
-			rotRaw.z += YPRRaw.z;
+			//	加速度と加速度から算出した角度を保存
+			accelN = D3DXVECTOR3(wiiRemote->Nunchuk.Acceleration.X, wiiRemote->Nunchuk.Acceleration.Y, wiiRemote->Nunchuk.Acceleration.Z);
+			rotN = D3DXVECTOR3(wiiRemote->Nunchuk.Acceleration.Orientation.X, wiiRemote->Nunchuk.Acceleration.Orientation.Y, wiiRemote->Nunchuk.Acceleration.Orientation.Z);
+
+			//	ヌンチャクのジョイスティック情報取得
+			joystick = D3DXVECTOR2(wiiRemote->Nunchuk.Joystick.X, wiiRemote->Nunchuk.Joystick.Y);
+
+			//	下限と上限の調整
+			if ((joystick.x < joyStickDeadZone) && (joystick.x > -joyStickDeadZone))
+				joystick.x = 0.0f;
+			if ((joystick.y < joyStickDeadZone) && (joystick.y > -joyStickDeadZone))
+				joystick.y = 0.0f;
+
+			if (joystick.x > joyStickMax)
+				joystick.x = joyStickMax;
+			if (joystick.x < -joyStickMax)
+				joystick.x = -joyStickMax;
+
+			if (joystick.y > joyStickMax)
+				joystick.y = joyStickMax;
+			if (joystick.y < -joyStickMax)
+				joystick.y = -joyStickMax;
 		}
-
-
-		//	姿勢をリセット
-		if (rotResetFlag == true)
-		{
-			rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			rotRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			rotResetFlag = false;
-		}
-
-		//	オーバーフロー対策
-		if (rot.x <= -180.0f)
-			rot.x = 180.0f;
-		if (rot.x > 180.0f)
-			rot.x = -180.0f;
-		if (rot.y <= -180.0f)
-			rot.y = 180.0f;
-		if (rot.y > 180.0f)
-			rot.y = -180.0f;
-		if (rot.z <= -180.0f)
-			rot.z = 180.0f;
-		if (rot.z > 180.0f)
-			rot.z = -180.0f;
-
-		if (rotRaw.x <= -180.0f)
-			rotRaw.x = 180.0f;
-		if (rotRaw.x > 180.0f)
-			rotRaw.x = -180.0f;
-		if (rotRaw.y <= -180.0f)
-			rotRaw.y = 180.0f;
-		if (rotRaw.y > 180.0f)
-			rotRaw.y = -180.0f;
-		if (rotRaw.z <= -180.0f)
-			rotRaw.z = 180.0f;
-		if (rotRaw.z > 180.0f)
-			rotRaw.z = -180.0f;
 	}
-	//	モーションプラス未接続時の処理
-	else
+
+	//	バランスwiiボード(以下、wiiボード)が接続されていれば
+	if(wiiBoard != nullptr)
 	{
-		//	回転角を保存（本体のみ）
-		//	加速度センサーで計算しているため精度低い・・・というか間違ってるんじゃね？
-		rot = D3DXVECTOR3(wiiRemote->Acceleration.Orientation.X, wiiRemote->Acceleration.Orientation.Y, wiiRemote->Acceleration.Orientation.Z);
-	}
-
-	//	IR情報の取得
-	if (wiiRemote->IR.Dot[0].bVisible == true)
-	{
-		//IR = D3DXVECTOR2((wiiRemote->IR.Dot[0].X - 0.5f) * 2.0f, (wiiRemote->IR.Dot[0].Y - 0.5f) * 2.0f);
-		IR = D3DXVECTOR2(wiiRemote->IR.Dot[0].X, wiiRemote->IR.Dot[0].Y);
-	}
-
-	//	ヌンチャクが接続されていたら
-	if (wiiRemote->NunchukConnected())
-	{
-		//	加速度と加速度から算出した角度を保存
-		accelN = D3DXVECTOR3(wiiRemote->Nunchuk.Acceleration.X, wiiRemote->Nunchuk.Acceleration.Y, wiiRemote->Nunchuk.Acceleration.Z);
-		rotN = D3DXVECTOR3(wiiRemote->Nunchuk.Acceleration.Orientation.X, wiiRemote->Nunchuk.Acceleration.Orientation.Y, wiiRemote->Nunchuk.Acceleration.Orientation.Z);
-
-		//	ヌンチャクのジョイスティック情報取得
-		joystick = D3DXVECTOR2(wiiRemote->Nunchuk.Joystick.X, wiiRemote->Nunchuk.Joystick.Y);
-
-		//	下限と上限の調整
-		if ((joystick.x < joyStickDeadZone) && (joystick.x > -joyStickDeadZone))
-			joystick.x = 0.0f;
-		if ((joystick.y < joyStickDeadZone) && (joystick.y > -joyStickDeadZone))
-			joystick.y = 0.0f;
-
-		if (joystick.x > joyStickMax)
-			joystick.x = joyStickMax;
-		if (joystick.x < -joyStickMax)
-			joystick.x = -joyStickMax;
-
-		if (joystick.y > joyStickMax)
-			joystick.y = joyStickMax;
-		if (joystick.y < -joyStickMax)
-			joystick.y = -joyStickMax;
-	}
+		//	wiiボードの状態を取得...というかリセット
+		//	これやらないとステータスが更新されない
+		wiiBoard->RefreshState();
 	}
 }
 //=============================================================================

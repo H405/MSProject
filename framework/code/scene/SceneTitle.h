@@ -94,20 +94,6 @@ public:
 	//==============================================================================
 	void Update( void );
 
-	//==============================================================================
-	// Brief  : 更新処理1(「Aボタンを押してね」の点滅)
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void FirstUpdate( void );
-
-	//==============================================================================
-	// Brief  : 更新処理2(ゲーム開始・チュートリアル開始の選択処理)
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void SecondUpdate( void );
-
 protected:
 
 private:
@@ -118,15 +104,72 @@ private:
 	CameraObject*		pCamera_;				// カメラ
 	LightDirection*		pLight_;				// ライト
 
+	//	タイトルロゴ
 	Object2D* titleLogo;
+
+	//	「演舞開始」文字
 	Object2D* startGame;
+
+	//	「練習開始」文字
 	Object2D* startTutorial;
+
+	//	「Aボタンを押してね」文字
 	Object2D* pushAKey;
 
-	Object2D* chooseObject;	//	選択肢のうち、選ばれているオブジェクトのポインタ
+	//	wiiリモコンで操作する指
+	Object2D* finger;
 
-	int pushAKeyFlashingCount;	//	pushAKey点滅用
-	int pushChooseObjectFlashingCount;	//	chooseObject点滅用
+	//	選択肢のうち、選ばれているオブジェクトのポインタ
+	Object2D* chooseObject;
+	Object2D* chooseObjectPrev;
+
+	//	プレイヤーオブジェクト
+	ObjectModel* player;
+
+	//	家オブジェクト
+	ObjectModel* house[3];
+
+	//	仮フィールド
+	ObjectMesh* field;
+
+	//	pushAKey点滅用
+	int pushAKeyFlashingCount;
+
+	//	chooseObject点滅用
+	int pushChooseObjectFlashingCount;
+
+	//	選択肢の選択方法用のフラグ
+	//	true = wiiリモコン（IR）
+	//	false = 方向キー	とする
+	bool chooseFlag;
+
+	//==============================================================================
+	// Brief  : 更新処理1(「Aボタンを押してね」の点滅)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void firstUpdate( void );
+
+	//==============================================================================
+	// Brief  : 更新処理2(ゲーム開始・チュートリアル開始の選択処理)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void secondUpdate( void );
+
+	//==============================================================================
+	// Brief  : 更新処理3(決定キー押された後の点滅処理-ゲームへ遷移)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void thirdUpdate( void );
+
+	//==============================================================================
+	// Brief  : 更新処理4(決定キー押された後の点滅処理-チュートリアルへ遷移)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void forthUpdate( void );
 
 	void (SceneTitle::*fpUpdate)(void);
 };

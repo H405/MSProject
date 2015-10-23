@@ -135,7 +135,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 
-	//	wiiリモコン入力クラスの生成
+	//	wiiリモコン入力クラスの生成（DirectInput生成前に行うこと！）
 	pWiiController_ = new CWiiController;
 
 	// DirectInputオブジェクトの生成

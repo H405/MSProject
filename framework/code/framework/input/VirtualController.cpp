@@ -66,11 +66,9 @@ bool VirtualController::initialize(CWiiController* _wiiController, InputKeyboard
 void VirtualController::update()
 {
 	//	各デバイスの更新
-	wiiController->update();
-
 	keyboard->Update();
 	mouse->Update();
-	pad->Update();
+	(wiiController->getIsConnect() == true) ? wiiController->update() : pad->Update();
 
 	//	初期化
 	for(int count = 0; count < VC_MAX; count++)
@@ -104,6 +102,7 @@ void VirtualController::update()
 		press[VC_LEFT] = true;
 
 
+	//	トリガー情報・リリース情報・リピート情報セット
 	for(int count = 0;count < VC_MAX;count++)
 	{
 		if(press[count] == true && pressOld[count] == false)

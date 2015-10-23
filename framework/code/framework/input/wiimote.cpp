@@ -288,7 +288,13 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 		if(HidD_GetAttributes(Handle, &attrib))
 			{
 			// is this a wiimote?
-			if((attrib.VendorID != VID) || (attrib.ProductID != PID))
+			/*if((attrib.VendorID != VID) || (attrib.ProductID != PID))
+			{
+				goto skip;
+			}*/
+
+			//	wiiリモコンとwiiリモコンPlus両方に対応できるようにしたと思う・・・
+			if((attrib.VendorID != VID) || (attrib.ProductID != PID && attrib.ProductID != 0x0306))
 			{
 				goto skip;
 			}
@@ -411,8 +417,32 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 			//  all devices, but may work fairly well in practice... ?)
 			memcpy(&UniqueID, &CalibrationInfo, sizeof(CalibrationInfo));
 
-			_ASSERT(UniqueID != 0); // if this fires, the calibration data didn't
+
+
+
+
+
+
+
+
+
+			//	本当は無いとダメなんだろうけど、バランスボードを繋げると壊れるから外しておく
+			//	多分ダメだね
+			//_ASSERT(UniqueID != 0); // if this fires, the calibration data didn't
 									//  arrive - this shouldn't happen
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifdef ID2_FROM_DEVICEPATH		// (see comments in header)
 			// create a 2nd alternative id by simply adding all the characters

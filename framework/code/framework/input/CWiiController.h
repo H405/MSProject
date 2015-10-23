@@ -219,18 +219,19 @@ public:
 
 	//	IRの値
 	//	取得できない場合は X:0.0f Y:0.0f が返る
-	//	元々は、0～1 の間だけど、-1 ～ 1 の間に調整して返す
+	//	元々は、0～1 の間だけど、-1 ～ 1 の間に調整して返す（うそ。cppで変更して）
 	//	調整して、取得できない場合は X:-1.0f Y:-1.0f が返る
 	//	赤外線で認識できない場所にいった場合は、最後にとれた値が返る
 	D3DXVECTOR2 getIR(){return IR;}
+	D3DXVECTOR2 getIRScreen(){return IRScreen;}
 
 	//	trueで振動　falseで振動を止める
-	void rumble(bool _flag){ wiiRemote->SetRumble(_flag); }
+	void rumble(bool _flag){ if(wiiRemote != nullptr)wiiRemote->SetRumble(_flag); }
 	//	指定した秒数(ミリ秒)振動させ続ける
-	void rumble(unsigned int _milliseconds){ wiiRemote->RumbleForAsync(_milliseconds); }
+	void rumble(unsigned int _milliseconds){ if(wiiRemote != nullptr)wiiRemote->RumbleForAsync(_milliseconds); }
 
 	//	バッテリーの残量を取得
-	int battery(){ return wiiRemote->BatteryPercent; }
+	int battery(){ return (wiiRemote != nullptr) ? wiiRemote->BatteryPercent : 0 ; }
 
 	//	音を出す
 	//	１つ目の引数に周波数、２つ目の引数に音量（0x00 ～ 0x10）を指定
@@ -250,12 +251,16 @@ public:
 	//	FREQ_2610HZ = 8,
 	//	FREQ_2470HZ = 9,
 	};*/
-	void playSound(speaker_freq _hz, BYTE _volume){ wiiRemote->PlaySquareWave(_hz, _volume); }
+	void playSound(speaker_freq _hz, BYTE _volume){ if(wiiRemote != nullptr)wiiRemote->PlaySquareWave(_hz, _volume); }
 
+	//	キャリブレーション処理を行う（外から）
 	void rotSpeedCalibration(){rotSpeedCalibrationFlag = true;}
+
+	//	回転角リセット処理を行う（外から）
 	void rotReset(){rotResetFlag = true;}
 
-	bool isConnect;
+	//	接続状態取得
+	bool getIsConnect(){return isConnect;}
 
 private:
 
@@ -334,6 +339,10 @@ private:
 	D3DXVECTOR2 IR;
 	D3DXVECTOR2 IRPrev;
 
+	//	↑のをスクリーン座標に直す
+	D3DXVECTOR2 IRScreen;
+	D3DXVECTOR2 IRScreenPrev;
+
 	//	リピートカウントの格納
 	int repeatCount[WC_ALL];
 
@@ -361,7 +370,11 @@ private:
 	unsigned int updateAge;
 	unsigned int updateAgePrev;
 
+	//	更新関数
 	void (CWiiController::*fpUpdate)(void);
+
+	//	接続状態
+	bool isConnect;
 };
 
 #endif
