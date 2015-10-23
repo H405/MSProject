@@ -213,7 +213,7 @@ int ManagerDraw< TypeItem >::Execute( void )
 			int		indexItemCurrent;		// Œ»Ý‚Ì—v‘f”Ô†
 			for( indexItemCurrent = indexTop_; indexItemCurrent >= 0; indexItemCurrent = pBufferItem_[ indexItemCurrent ].indexNext_ )
 			{
-				if( pBufferItem_[ indexItemCurrent ].needsUnregister_ || !pBufferItem_[ indexItemCurrent ].isEnable_ )
+				if( pBufferItem_[ indexItemCurrent ].needsUnregister_ || !pBufferItem_[ indexItemCurrent ].isEnable_ || !pBufferItem_[ indexItemCurrent ].pItem_->IsEnable() )
 				{
 					continue;
 				}

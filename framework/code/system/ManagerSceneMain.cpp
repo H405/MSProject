@@ -243,3 +243,11 @@ void ManagerSceneMain::InitializeSelf( void )
 	pArgument_ = nullptr;
 	pScene_ = nullptr;
 }
+
+//==============================================================================
+// Brief  : 更新フラグのゲッター
+//==============================================================================
+bool ManagerSceneMain::IsUpdate()
+{
+	return pScene_->IsUpdate();
+}

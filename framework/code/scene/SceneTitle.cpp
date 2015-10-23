@@ -60,6 +60,9 @@ static const int flashingCountMax = 40;
 static const float startXX_NormalSizeX = 400.0f;
 static const float startXX_NormalSizeY = 120.0f;
 
+//	透明値加算値
+static const float addFlashingAlpha = 0.02f;
+
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
@@ -92,8 +95,8 @@ void SceneTitle::InitializeSelf( void )
 
 	chooseObject = nullptr;
 
-	pushAKeyFlashingCount = -1;
-	pushChooseObjectFlashingCount = -1;
+	pushAKeyFlashingCount = 0;
+	pushChooseObjectFlashingCount = 0;
 
 	chooseFlag = false;
 
@@ -394,6 +397,20 @@ void SceneTitle::firstUpdate( void )
 		SetIsEnd( true );
 	}
 
+
+	//	「Aボタンを押してね」の点滅処理
+	{
+		pushAKeyFlashingCount++;
+
+		if(pushAKeyFlashingCount <= flashingCountHirf)
+			pushAKey->AddColorA(-addFlashingAlpha);
+		else if(pushAKeyFlashingCount <= flashingCountMax)
+			pushAKey->AddColorA(addFlashingAlpha);
+		else
+			pushAKeyFlashingCount = 0;
+	}
+
+
 	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )
 	{
 		//	「Aボタンを押してね」を消して、「演舞開始」と「練習開始」をそれぞれ生成
@@ -472,22 +489,6 @@ void SceneTitle::firstUpdate( void )
 		//	次の更新関数へ
 		fpUpdate = &SceneTitle::secondUpdate;
 	}
-
-	//	「Aボタンを押してね」の点滅処理
-	{
-		pushAKeyFlashingCount++;
-
-		if(pushAKeyFlashingCount == flashingCountHirf)
-		{
-			pushAKey->SetColorA(0.0f);
-		}
-		if(pushAKeyFlashingCount == flashingCountMax)
-		{
-			pushAKey->SetColorA(1.0f);
-
-			pushAKeyFlashingCount = 0;
-		}
-	}
 }
 //==============================================================================
 // Brief  : 更新処理2(ゲーム開始・チュートリアル開始の選択処理)
@@ -502,13 +503,6 @@ void SceneTitle::secondUpdate( void )
 		SetSceneNext( ManagerSceneMain::TYPE_GAME );
 		SetIsEnd( true );
 	}
-	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )
-	{
-		if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
-		{
-			pArgument_->pFade_->FadeOut( 20 );
-		}
-	}
 
 	//	１フレーム前の登録オブジェクトを保存
 	chooseObjectPrev = chooseObject;
@@ -516,18 +510,22 @@ void SceneTitle::secondUpdate( void )
 	//	決定キー押されたら
 	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )
 	{
-		//	点滅カウント初期化
-		pushAKeyFlashingCount = 0;
-
-		//	現在のオブジェクトをA1.0fで表示
-		chooseObject->SetColorA(1.0f);
-
-		//	次の更新関数へ
-		(chooseObject == startGame) ? fpUpdate = &SceneTitle::thirdUpdate : fpUpdate = &SceneTitle::forthUpdate;
-
-		if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
+		//	選択されている場合
+		if(chooseObject != nullptr)
 		{
-			pArgument_->pFade_->FadeOut( 20 );
+			//	点滅カウント初期化
+			pushAKeyFlashingCount = 0;
+
+			//	現在のオブジェクトをA1.0fで表示
+			chooseObject->SetColorA(1.0f);
+
+			//	次の更新関数へ
+			fpUpdate = &SceneTitle::fadeUpdate;
+
+			if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
+			{
+				pArgument_->pFade_->FadeOut( 20 );
+			}
 		}
 	}
 
@@ -615,9 +613,13 @@ void SceneTitle::secondUpdate( void )
 			//	選択方法がIRの場合のみ
 			if(chooseFlag == true)
 			{
-				//	登録解除
-				chooseObject = nullptr;
-				pushAKeyFlashingCount = 0;
+				if(chooseObject != nullptr)
+				{
+					//	登録解除
+					chooseObject->SetColorA(1.0f);
+					chooseObject = nullptr;
+					pushAKeyFlashingCount = 0;
+				}
 			}
 		}
 	}
@@ -631,16 +633,13 @@ void SceneTitle::secondUpdate( void )
 
 		pushAKeyFlashingCount++;
 
-		if(pushAKeyFlashingCount == flashingCountHirf)
-		{
-			chooseObject->SetColorA(0.0f);
-		}
-		if(pushAKeyFlashingCount == flashingCountMax)
-		{
-			chooseObject->SetColorA(1.0f);
-
+		if(pushAKeyFlashingCount <= flashingCountHirf)
+			chooseObject->AddColorA(-addFlashingAlpha);
+		else if(pushAKeyFlashingCount <= flashingCountMax)
+			chooseObject->AddColorA(addFlashingAlpha);
+		else
 			pushAKeyFlashingCount = 0;
-		}
+
 
 		//	１フレーム前の選択オブジェクトのサイズを変更
 		if((chooseObjectPrev != nullptr) &&
@@ -660,63 +659,20 @@ void SceneTitle::secondUpdate( void )
 	}
 }
 //==============================================================================
-// Brief  : 更新処理3(決定キー押された後の点滅処理-ゲームへ遷移)
+// Brief  : 更新処理(決定キー押された後の遷移処理)
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void SceneTitle::thirdUpdate( void )
+void SceneTitle::fadeUpdate( void )
 {
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
-		SetSceneNext( ManagerSceneMain::TYPE_GAME );
+		if(chooseObject == startGame)
+			SetSceneNext( ManagerSceneMain::TYPE_GAME );
+		else
+			SetSceneNext( ManagerSceneMain::TYPE_GAME );//ほんとはチュートリアル
+
 		SetIsEnd( true );
-	}
-
-	//	選択項目の点滅処理
-	{
-		pushAKeyFlashingCount++;
-
-		if(pushAKeyFlashingCount == flashingCountHirf)
-		{
-			chooseObject->SetColorA(0.0f);
-		}
-		if(pushAKeyFlashingCount == flashingCountMax)
-		{
-			chooseObject->SetColorA(1.0f);
-
-			pushAKeyFlashingCount = 0;
-		}
-	}
-}
-//==============================================================================
-// Brief  : 更新処理4(決定キー押された後の点滅処理-チュートリアルへ遷移)
-// Return : void								: なし
-// Arg    : void								: なし
-//==============================================================================
-void SceneTitle::forthUpdate( void )
-{
-	// シーン遷移
-	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
-	{
-		//SetSceneNext( ManagerSceneMain::TYPE_TUTORIAL );
-		SetSceneNext( ManagerSceneMain::TYPE_GAME );
-		SetIsEnd( true );
-	}
-
-	//	選択項目の点滅処理
-	{
-		pushAKeyFlashingCount++;
-
-		if(pushAKeyFlashingCount == flashingCountHirf)
-		{
-			chooseObject->SetColorA(0.0f);
-		}
-		if(pushAKeyFlashingCount == flashingCountMax)
-		{
-			chooseObject->SetColorA(1.0f);
-
-			pushAKeyFlashingCount = 0;
-		}
 	}
 }

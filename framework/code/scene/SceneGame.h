@@ -116,6 +116,9 @@ private:
 	//	「スコア」文字
 	Object2D* stringScore;
 
+	//	ポーズ時用背景
+	Object2D* pauseFrame;
+
 	//	ポーズ時用文字「再開」
 	Object2D* stringReturn;
 
@@ -127,6 +130,23 @@ private:
 
 	//	１ステージクリア後文字「次のステージへ」
 	Object2D* stringNext;
+
+
+
+	//	wiiリモコンで操作する指
+	Object2D* finger;
+
+	//	選択肢のうち、選ばれているオブジェクトのポインタ
+	Object2D* chooseObject;
+	Object2D* chooseObjectPrev;
+
+	//	chooseObject点滅用
+	int pushChooseObjectFlashingCount;
+
+	//	選択肢の選択方法用のフラグ
+	//	true = wiiリモコン（IR）
+	//	false = 方向キー	とする
+	bool chooseFlag;
 
 	//==============================================================================
 	// Brief  : 通常時用の更新処理
@@ -141,6 +161,12 @@ private:
 	// Arg    : void								: なし
 	//==============================================================================
 	void pauseUpdate(void);
+	//==============================================================================
+	// Brief  : ポーズ時用の更新処理(ポーズ中のフェード用)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void pauseFadeUpdate(void);
 
 	//	更新関数格納用ポインタ
 	void (SceneGame::*fpUpdate)(void);

@@ -342,6 +342,9 @@
     <ClInclude Include="code\system\ManagerPoint.h">
       <Filter>ソース ファイル\system</Filter>
     </ClInclude>
+    <ClInclude Include="code\system\PointStateArrange.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -603,6 +606,9 @@
       <Filter>ソース ファイル\framework\point</Filter>
     </ClCompile>
     <ClCompile Include="code\system\ManagerPoint.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\PointStateArrange.cpp">
       <Filter>ソース ファイル\system</Filter>
     </ClCompile>
   </ItemGroup>

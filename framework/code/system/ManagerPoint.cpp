@@ -112,6 +112,8 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 	}
 
 	// ステートテーブルの作成
+	//	PointStateArrangeにクラス追加したら、これのヘッダーにステート（enum）増やして
+	//	ここにテーブルを追加すること！
 	ppState_[ STATE_NONE ]		= new PointStateNone();
 	ppState_[ STATE_ADD ]		= new PointStateAdd();
 	ppState_[ STATE_MULTIPLY ]	= new PointStateMultiply();

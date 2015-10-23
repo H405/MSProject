@@ -586,7 +586,7 @@ void CWiiController::NormalUpdate()
 //=============================================================================
 void CWiiController::updateMode1()
 {
-	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_HOME]) && (buttonState & BUTTON_STATE_BITS[WC_HOME]))
+	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_ONE]) && (buttonState & BUTTON_STATE_BITS[WC_ONE]))
 	{
 		//	更新関数セット
 		fpUpdate = &CWiiController::updateMode2;
@@ -617,7 +617,7 @@ void CWiiController::updateMode2()
 
 	mode2Count++;
 
-	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_HOME]) && (buttonState & BUTTON_STATE_BITS[WC_HOME]))
+	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_ONE]) && (buttonState & BUTTON_STATE_BITS[WC_ONE]))
 	{
 		//	更新関数セット
 		fpUpdate = &CWiiController::updateMode3;
@@ -649,7 +649,7 @@ void CWiiController::updateMode3()
 
 	mode3Count++;
 
-	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_HOME]) && (buttonState & BUTTON_STATE_BITS[WC_HOME]))
+	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_ONE]) && (buttonState & BUTTON_STATE_BITS[WC_ONE]))
 	{
 		//	更新関数セット
 		fpUpdate = &CWiiController::updateMode4;
@@ -681,7 +681,7 @@ void CWiiController::updateMode4()
 
 	mode4Count++;
 
-	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_HOME]) && (buttonState & BUTTON_STATE_BITS[WC_HOME]))
+	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_ONE]) && (buttonState & BUTTON_STATE_BITS[WC_ONE]))
 	{
 		//	更新関数セット
 		fpUpdate = &CWiiController::NormalUpdate;
@@ -718,7 +718,7 @@ void CWiiController::updateMode5()
 
 	mode5Count++;
 
-	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_HOME]) && (buttonState & BUTTON_STATE_BITS[WC_HOME]))
+	if (!(buttonStatePrev & BUTTON_STATE_BITS[WC_ONE]) && (buttonState & BUTTON_STATE_BITS[WC_ONE]))
 	{
 		//	更新関数セット
 		fpUpdate = &CWiiController::NormalUpdate;

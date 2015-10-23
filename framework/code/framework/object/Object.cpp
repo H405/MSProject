@@ -208,6 +208,14 @@ void Object::SetManagerUpdate( ManagerUpdate< Object >* pValue )
 }
 
 //==============================================================================
+// Brief  : 描画クラスの有効設定
+//==============================================================================
+void Object::SetEnableGraphic(bool value)
+{
+	pGraphic_->SetIsEnable(value);
+}
+
+//==============================================================================
 // Brief  : 親オブジェクトの設定
 // Return : void								: なし
 // Arg    : Object* pValue						: 設定する値

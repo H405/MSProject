@@ -566,8 +566,11 @@ void ManagerMain::Update( void )
 		isEnd_ = true;
 	}
 
-	// オブジェクトの更新
-	pUpdate_->Execute();
+	if( pScene_->IsUpdate() )
+	{
+		// オブジェクトの更新
+		pUpdate_->Execute();
+	}
 }
 
 //==============================================================================
