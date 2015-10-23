@@ -31,6 +31,7 @@
 //******************************************************************************
 class CameraObject;
 class LightDirection;
+class ManagerPoint;
 
 class Object2D;
 class Object3D;
@@ -105,8 +106,10 @@ private:
 	SceneGame( const SceneGame& );
 	SceneGame operator=( const SceneGame& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
+	CameraObject*		pCamera_;		// カメラ
+	LightDirection*		pLight_;		// ライト
+
+	ManagerPoint*		pPoint_;		// ポイントスプライト管理クラス
 
 	// テスト
 	Object2D*		pObject_;

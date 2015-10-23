@@ -36,6 +36,7 @@ class Point;
 class PointState;
 class PolygonPoint;
 class Texture;
+class VertexBuffer;
 
 //******************************************************************************
 // クラス定義
@@ -109,18 +110,47 @@ public:
 	//==============================================================================
 	void Update( void );
 
+	//==============================================================================
+	// Brief  : ポイントの追加
+	// Return : void								: なし
+	// Arg    : int indexState						: ステート番号
+	// Arg    : const D3DXVECTOR3& position			: 座標
+	// Arg    : const D3DXCOLOR& color				: 色
+	// Arg    : float size							: 大きさ
+	//==============================================================================
+	void Add( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size );
+
+	//==============================================================================
+	// Brief  : ポイントの追加
+	// Return : void								: なし
+	// Arg    : int timeExist						: 残存時間
+	// Arg    : const D3DXVECTOR3& position			: 座標
+	// Arg    : const D3DXCOLOR& color				: 色
+	// Arg    : float size							: 大きさ
+	// Arg    : const D3DXVECTOR3& differencePosition	: 座標の変化量
+	// Arg    : const D3DXCOLOR& differenceColor	: 色の変化量
+	// Arg    : float differenceSize				: 大きさの変化量
+	// Arg    : int indexState						: ステート番号
+	//==============================================================================
+	void Add( int timeExist, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size,
+		const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize,
+		int indexState = STATE_ADD );
+
 protected:
 
 private:
-	void InitializeSelf( void );
 	ManagerPoint( const ManagerPoint& );
 	ManagerPoint operator=( const ManagerPoint& );
+
+	void InitializeSelf( void );
+	int GetIndex( void );
 
 	PointState*		ppState_[ STATE_MAX ];		// ステートテーブル
 	int				maximumItem_;				// 最大要素数
 	Point*			pPoint_;					// ポイント情報
-	PolygonPoint*	pPolygon_;					// 頂点バッファ
+	PolygonPoint*	pPolygon_;					// ポリゴン
 	GraphicPoint*	pGraphic_;					// 描画クラス
+	VertexBuffer*	pVertexBuffer_;				// 頂点バッファ
 };
 
 #endif	// MY_MANAGER_POINT_H

@@ -347,6 +347,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
+	pObjectScreen_->SetPositionY( 1.0f );
 
 	// シーン引数クラスの生成
 	pArgument_ = new SceneArgumentMain();

@@ -97,17 +97,17 @@ public:
 
 	//==============================================================================
 	// Brief  : 設定
-	// Return : int									: 実行結果
+	// Return : void								: なし
 	// Arg    : int indexState						: ステート番号
 	// Arg    : const D3DXVECTOR3& position			: 座標
 	// Arg    : const D3DXCOLOR& color				: 色
 	// Arg    : float size							: 大きさ
 	//==============================================================================
-	int Set( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size );
+	void Set( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size );
 
 	//==============================================================================
 	// Brief  : 設定
-	// Return : int									: 実行結果
+	// Return : void								: なし
 	// Arg    : int timeExist						: 残存時間
 	// Arg    : const D3DXVECTOR3& position			: 座標
 	// Arg    : const D3DXCOLOR& color				: 色
@@ -117,7 +117,8 @@ public:
 	// Arg    : float differenceSize				: 大きさの変化量
 	// Arg    : int indexState						: ステート番号
 	//==============================================================================
-	int Set( int timeExist, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size, const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize, int indexState );
+	void Set( int timeExist, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size,
+		const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize, int indexState );
 
 	//==============================================================================
 	// Brief  : ステートの切り替え

@@ -143,26 +143,30 @@ void Point::Update( void )
 
 //==============================================================================
 // Brief  : 設定
-// Return : int									: 実行結果
+// Return : void								: なし
 // Arg    : int indexState						: ステート番号
 // Arg    : const D3DXVECTOR3& position			: 座標
 // Arg    : const D3DXCOLOR& color				: 色
 // Arg    : float size							: 大きさ
 //==============================================================================
-int Point::Set( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size )
+void Point::Set( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size )
 {
 	// メンバ変数の設定
 	position_ = position;
 	size_ = size;
 	color_ = color;
 
-	// 値の返却
-	return 0;
+	// ステートの設定
+	indexStateCurrent_ = indexState;
+	time_ = 0;
+
+	// 使用フラグON
+	isEnable_ = true;
 }
 
 //==============================================================================
 // Brief  : 設定
-// Return : int									: 実行結果
+// Return : void								: なし
 // Arg    : int timeExist						: 残存時間
 // Arg    : const D3DXVECTOR3& position			: 座標
 // Arg    : const D3DXCOLOR& color				: 色
@@ -172,15 +176,24 @@ int Point::Set( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& co
 // Arg    : float differenceSize				: 大きさの変化量
 // Arg    : int indexState						: ステート番号
 //==============================================================================
-int Point::Set( int timeExist, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size, const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize, int indexState )
+void Point::Set( int timeExist, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size,
+	const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize, int indexState )
 {
 	// メンバ変数の設定
+	timeExist_ = timeExist;
 	position_ = position;
 	size_ = size;
 	color_ = color;
+	differencePosition_ = differencePosition;
+	differenceColor_ = differenceColor;
+	differenceSize_ = differenceSize;
 
-	// 値の返却
-	return 0;
+	// ステートの設定
+	indexStateCurrent_ = indexState;
+	time_ = 0;
+
+	// 使用フラグON
+	isEnable_ = true;
 }
 
 //==============================================================================
@@ -481,6 +494,28 @@ float Point::GetSize( void ) const
 {
 	// 値の設定
 	return size_;
+}
+
+//==============================================================================
+// Brief  : サイズの加算
+// Return : void								: なし
+// Arg    : float value							: 加算する値
+//==============================================================================
+void Point::AddSize( float value )
+{
+	// 値の加算
+	size_ += value;
+}
+
+//==============================================================================
+// Brief  : サイズの乗算
+// Return : void								: なし
+// Arg    : float value							: 乗算する値
+//==============================================================================
+void Point::MultiplySize( float value )
+{
+	// 値の乗算
+	size_ *= value;
 }
 
 //==============================================================================
@@ -1164,5 +1199,5 @@ void Point::InitializeSelf( void )
 	differencePosition_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
 	differenceSize_ = 0.0f;
 	differenceColor_ = D3DXCOLOR( 0.0f, 0.0f, 0.0f, 0.0f );
-	isEnable_ = true;
+	isEnable_ = false;
 }

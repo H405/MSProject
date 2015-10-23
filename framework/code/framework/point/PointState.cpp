@@ -41,6 +41,11 @@ void PointState::Update( Point* pPoint )
 //==============================================================================
 void PointStateNone::Update( Point* pPoint )
 {
+	// Á–Å
+	if( pPoint->GetTime() >= pPoint->GetTimeExist() )
+	{
+		pPoint->SetIsEnable( false );
+	}
 }
 
 //==============================================================================
@@ -50,6 +55,20 @@ void PointStateNone::Update( Point* pPoint )
 //==============================================================================
 void PointStateAdd::Update( Point* pPoint )
 {
+	// •Ï‰»—Ê‚ð‰ÁŽZ
+	D3DXVECTOR3	position;		// À•W
+	D3DXCOLOR	color;			// F
+	pPoint->GetDifferencePosition( &position );
+	pPoint->AddPosition( position );
+	pPoint->GetDifferenceColor( &color );
+	pPoint->AddColor( color );
+	pPoint->AddSize( pPoint->GetDifferenceSize() );
+
+	// Á–Å
+	if( pPoint->GetTime() >= pPoint->GetTimeExist() )
+	{
+		pPoint->SetIsEnable( false );
+	}
 }
 
 //==============================================================================
@@ -59,4 +78,18 @@ void PointStateAdd::Update( Point* pPoint )
 //==============================================================================
 void PointStateMultiply::Update( Point* pPoint )
 {
+	// •Ï‰»—Ê‚ðæŽZ
+	D3DXVECTOR3	position;		// À•W
+	D3DXCOLOR	color;			// F
+	pPoint->GetDifferencePosition( &position );
+	pPoint->MultiplyPosition( position );
+	pPoint->GetDifferenceColor( &color );
+	pPoint->MultiplyColor( color );
+	pPoint->MultiplySize( pPoint->GetDifferenceSize() );
+
+	// Á–Å
+	if( pPoint->GetTime() >= pPoint->GetTimeExist() )
+	{
+		pPoint->SetIsEnable( false );
+	}
 }

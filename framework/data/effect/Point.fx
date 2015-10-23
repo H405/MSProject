@@ -86,6 +86,11 @@ technique ShadeNormal
 	{
 		// レンダーステートの設定
 		PointSpriteEnable = True;
+		ZWriteEnable = False;
+		AlphaBlendEnable = True;
+		BlendOp = Add;
+		SrcBlend = SrcAlpha;
+		DestBlend = One;
 
 		// シェーダの設定
 		VertexShader = compile vs_2_0 TransformVertex();

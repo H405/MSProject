@@ -25,6 +25,7 @@
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
 #include "../system/EffectParameter.h"
+#include "../system/ManagerPoint.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 
@@ -115,7 +116,23 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 	pArgument->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, pLight_ );
-	
+
+	// ポイントスプライト管理クラスの生成
+	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
+	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
+	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
+	pTexturePoint = pArgument->pTexture_->Get( _T( "effect000.jpg" ) );
+	pPoint_ = new ManagerPoint();
+	if( pPoint_ == nullptr )
+	{
+		return 1;
+	}
+	result = pPoint_->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// テスト初期化
 	Effect*		pEffect = pArgument->pEffect_->Get( _T( "Polygon3D.fx" ) );
 	Texture*	pTexture = pArgument->pTexture_->Get( _T( "title_logo.png" ) );;
@@ -175,6 +192,10 @@ int SceneGame::Finalize( void )
 	pObject3D_ = nullptr;
 	delete[] pObject_;
 	pObject_ = nullptr;
+
+	// ポイントスプライト管理クラスの開放
+	delete pPoint_;
+	pPoint_ = nullptr;
 
 	// ライトの開放
 	delete pLight_;
@@ -249,6 +270,22 @@ void SceneGame::Update( void )
 	// カメラの更新
 	pCamera_->Update();
 
+	// ポイントスプライト管理クラスの更新
+	pPoint_->Update();
+
+	// テスト
+	for( int i = 0; i < 10; ++i )
+	{
+		D3DXVECTOR3	velocityPoint;
+		float		angleY = 2.0f * D3DX_PI * (static_cast< float >( rand() ) / RAND_MAX);
+		float		angleZ = 2.0f * D3DX_PI * (static_cast< float >( rand() ) / RAND_MAX);
+		velocityPoint.x = cosf( angleY ) * sinf( angleZ );
+		velocityPoint.y = cosf( angleZ );
+		velocityPoint.z = sinf( angleY ) * sinf( angleZ );
+		pPoint_->Add( 100, D3DXVECTOR3( 0.0f, 10.0f, 0.0f ), D3DXCOLOR( 1.0f, 0.2f, 0.2f, 0.9f ), 100.0f,
+			velocityPoint, D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ), 0.0f, ManagerPoint::STATE_ADD );
+	}
+
 	// テスト
 	PrintDebug( _T( "ゲームシーン\n" ) );
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_A ) && countObject_ < 100 )
@@ -298,4 +335,5 @@ void SceneGame::InitializeSelf( void )
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
 	pLight_ = nullptr;
+	pPoint_ = nullptr;
 }
