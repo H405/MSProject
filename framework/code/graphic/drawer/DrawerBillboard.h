@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneGame.h
-// Brief  : ゲームシーンクラス
+// File   : DrawerBillboard.h
+// Brief  : ビルボードポリゴン描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/23 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_GAME_H
-#define MY_SCENE_GAME_H
+#ifndef MY_DRAWER_BILLBOARD_H
+#define MY_DRAWER_BILLBOARD_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,48 +29,54 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class LightDirection;
-class ManagerPoint;
-
-class Object2D;
-class Object3D;
-class Material;
-class ObjectModel;
-class PolygonMesh;
-class ObjectMesh;
-class ObjectSky;
-class ObjectBillboard;
-
-class GraphicPoint;
-class PolygonPoint;
+class Effect;
+class EffectParameter;
+class Polygon3D;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneGame : public SceneMain
+class DrawerBillboard : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_COLOR,					// 色
+		PARAMETER_POSITION_TEXTURE,			// テクスチャ座標
+		PARAMETER_SCALE_TEXTURE,			// テクスチャ拡縮
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneGame( void );
+	DrawerBillboard( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneGame( void );
+	~DrawerBillboard( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : Polygon3D* pPolygon					: ビルボードポリゴン
+	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon3D* pPolygon,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -82,95 +88,51 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : Polygon3D* pPolygon					: ビルボードポリゴン
+	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon3D* pPolygon,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneGame* pOut						: コピー先アドレス
+	// Arg    : DrawerBillboard* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneGame* pOut ) const;
+	int Copy( DrawerBillboard* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
+	void Draw( const D3DXMATRIX& matrixWorld );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTexture( void ) const;
 
 protected:
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	IDirect3DTexture9*		pTexture_;				// テクスチャ
+	Polygon3D*				pPolygon_;				// ポリゴン
+	D3DXCOLOR*				pColor_;				// 色
+	D3DXVECTOR2*			pPositionTexture_;		// テクスチャ座標
+	D3DXVECTOR2*			pScaleTexture_;			// テクスチャ拡縮
 
 private:
 	void InitializeSelf( void );
-	SceneGame( const SceneGame& );
-	SceneGame operator=( const SceneGame& );
+	DrawerBillboard( const DrawerBillboard& );
+	DrawerBillboard operator=( const DrawerBillboard& );
 
-	CameraObject*		pCamera_;		// カメラ
-	LightDirection*		pLight_;		// ライト
-
-	ManagerPoint*		pPoint_;		// ポイントスプライト管理クラス
-
-	ObjectSky*			pObjectSky_;	// スカイドーム
-
-	//	「スコア」文字
-	Object2D* stringScore;
-
-	//	ポーズ時用背景
-	Object2D* pauseFrame;
-
-	//	ポーズ時用文字「再開」
-	Object2D* stringReturn;
-
-	//	ポーズ時用文字「中止」
-	Object2D* stringStop;
-
-	//	ポーズ時用文字「初めから」
-	Object2D* stringRetry;
-
-	//	１ステージクリア後文字「次のステージへ」
-	Object2D* stringNext;
-
-
-
-	//	wiiリモコンで操作する指
-	Object2D* finger;
-
-	//	選択肢のうち、選ばれているオブジェクトのポインタ
-	Object2D* chooseObject;
-	Object2D* chooseObjectPrev;
-
-	//	chooseObject点滅用
-	int pushChooseObjectFlashingCount;
-
-	//	選択肢の選択方法用のフラグ
-	//	true = wiiリモコン（IR）
-	//	false = 方向キー	とする
-	bool chooseFlag;
-
-	//==============================================================================
-	// Brief  : 通常時用の更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void normalUpdate(void);
-
-	//==============================================================================
-	// Brief  : ポーズ時用の更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void pauseUpdate(void);
-	//==============================================================================
-	// Brief  : ポーズ時用の更新処理(ポーズ中のフェード用)
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void pauseFadeUpdate(void);
-
-	//	更新関数格納用ポインタ
-	void (SceneGame::*fpUpdate)(void);
 };
 
-#endif	// MY_SCENE_GAME_H
+#endif	// MY_DRAWER_BILLBOARD_H

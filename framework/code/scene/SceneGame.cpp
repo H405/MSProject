@@ -38,6 +38,7 @@
 #include "../object/ObjectModel.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectSky.h"
+#include "../object/ObjectBillboard.h"
 
 #include "../graphic/graphic/GraphicPoint.h"
 #include "../framework/polygon/PolygonPoint.h"
@@ -312,7 +313,6 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 	//	更新関数設定
 	fpUpdate = &SceneGame::normalUpdate;
-
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );

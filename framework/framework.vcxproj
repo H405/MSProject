@@ -68,6 +68,7 @@
     <ClInclude Include="code\framework\vertex\VertexBuffer.h" />
     <ClInclude Include="code\graphic\drawer\Drawer2D.h" />
     <ClInclude Include="code\graphic\drawer\Drawer3D.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerBillboard.h" />
     <ClInclude Include="code\graphic\drawer\DrawerMesh.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModel.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
@@ -75,6 +76,7 @@
     <ClInclude Include="code\graphic\drawer\DrawerSky.h" />
     <ClInclude Include="code\graphic\graphic\Graphic2D.h" />
     <ClInclude Include="code\graphic\graphic\Graphic3D.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicBillboard.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMain.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMesh.h" />
     <ClInclude Include="code\graphic\graphic\GraphicModel.h" />
@@ -83,6 +85,7 @@
     <ClInclude Include="code\graphic\graphic\GraphicSky.h" />
     <ClInclude Include="code\object\Object2D.h" />
     <ClInclude Include="code\object\Object3D.h" />
+    <ClInclude Include="code\object\ObjectBillboard.h" />
     <ClInclude Include="code\object\ObjectMesh.h" />
     <ClInclude Include="code\object\ObjectModel.h" />
     <ClInclude Include="code\object\ObjectScreen.h" />
@@ -157,6 +160,7 @@
     <ClCompile Include="code\framework\vertex\VertexBuffer.cpp" />
     <ClCompile Include="code\graphic\drawer\Drawer2D.cpp" />
     <ClCompile Include="code\graphic\drawer\Drawer3D.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerBillboard.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModel.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
@@ -164,6 +168,7 @@
     <ClCompile Include="code\graphic\drawer\DrawerSky.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic2D.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic3D.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicBillboard.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMain.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMesh.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicModel.cpp" />
@@ -172,6 +177,7 @@
     <ClCompile Include="code\graphic\graphic\GraphicSky.cpp" />
     <ClCompile Include="code\object\Object2D.cpp" />
     <ClCompile Include="code\object\Object3D.cpp" />
+    <ClCompile Include="code\object\ObjectBillboard.cpp" />
     <ClCompile Include="code\object\ObjectMesh.cpp" />
     <ClCompile Include="code\object\ObjectModel.cpp" />
     <ClCompile Include="code\object\ObjectScreen.cpp" />
