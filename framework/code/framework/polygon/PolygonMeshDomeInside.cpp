@@ -98,15 +98,21 @@ int PolygonMeshDomeInside::Initialize( IDirect3DDevice9* pDevice, int countCellX
 	buffer.Initialize( countVertex_, pVertex_ );
 	for( int counterVertexY = 0; counterVertexY < countVertexY; ++counterVertexY )
 	{
+		float	proportionY;		// Y•ûŒü‚ÌŠ„‡
+		proportionY = static_cast< float >( counterVertexY ) / (countVertexY - 1);
 		for( int counterVertexX = 0; counterVertexX < countVertexX; ++counterVertexX )
 		{
 			int		indexVertex;		// ’¸“_‚Ì”Ô†
+			float	proportionX;		// X•ûŒü‚ÌŠ„‡
+			float	radiusXZ;			// XZ•½–Ê‚Ì”¼Œa
 			indexVertex = countVertexX * counterVertexY + counterVertexX;
-			buffer.SetPositionX( indexVertex, radius * cosf( 0.5f * D3DX_PI * (countVertexY - 1 - counterVertexY) / countCellY ) * cosf( 2.0f * D3DX_PI * counterVertexX / countCellX ) );
-			buffer.SetPositionY( indexVertex, radius * cosf( radius * sinf( 0.5f * D3DX_PI * (countVertexY - 1 - counterVertexY) / countCellY ) ) );
-			buffer.SetPositionZ( indexVertex, radius * cosf( radius * cosf( 0.5f * D3DX_PI * (countVertexY - 1 - counterVertexY) / countCellY ) * sinf( 2.0f * D3DX_PI * counterVertexX / countCellX ) ) );
+			proportionX = static_cast< float >( counterVertexX ) / (countVertexX - 1);
+			radiusXZ = sqrtf( radius * radius - radius * (1.0f - proportionY) * radius * (1.0f - proportionY) );
+			buffer.SetPositionX( indexVertex, radiusXZ * cosf( 2.0f * D3DX_PI * proportionX ) );
+			buffer.SetPositionY( indexVertex, radius * (1.0f - proportionY) );
+			buffer.SetPositionZ( indexVertex, radiusXZ * sinf( 2.0f * D3DX_PI * proportionX ) );
 			buffer.SetNormal( indexVertex, cosf( 2.0f * D3DX_PI * counterVertexX / countCellX ), 0.0f, -sinf( 2.0f * D3DX_PI * counterVertexX / countCellX ) );
-			buffer.SetTextureCoord0( indexVertex, lengthTextureX * counterVertexX, lengthTextureY * counterVertexY );
+			buffer.SetTextureCoord0( indexVertex, -lengthTextureX * proportionX, lengthTextureY * proportionY );
 			buffer.SetColorDiffuse( indexVertex, 1.0f, 1.0f, 1.0f, 1.0f );
 		}
 	}

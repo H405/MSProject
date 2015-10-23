@@ -76,7 +76,7 @@ int GraphicMesh::Initialize( int priority, const EffectParameter* pParameter, Ef
 		return 1;
 	}
 	result = pDrawerMesh->Initialize( pParameter, pEffectGeneral, pPolygon, pMaterial, pTexture );
-	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawerMesh;
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerMesh;
 
 	// ê≥èÌèIóπ
 	return 0;

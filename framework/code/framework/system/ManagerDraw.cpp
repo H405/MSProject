@@ -82,6 +82,11 @@ int ManagerDraw< TypeItem >::Initialize( int maximumItem, IDirect3DDevice9* pDev
 	countPass_ = countPass;
 	pRenderPass_ = pRenderPass;
 
+	// 最大レンダーターゲット数の取得
+	D3DCAPS9	capacity;		// 性能
+	pDevice->GetDeviceCaps( &capacity );
+	maximumRenderTarget_ = capacity.NumSimultaneousRTs;
+
 	// 正常終了
 	return 0;
 }
@@ -179,9 +184,9 @@ int ManagerDraw< TypeItem >::Execute( void )
 		for( int counterPass = 0; counterPass < countPass_; ++counterPass )
 		{
 			// レンダーターゲットの設定
+			int		countRenderTarget;		// レンダーターゲット数
 			if( counterPass < countPass_ - 1 )
 			{
-				int		countRenderTarget;		// レンダーターゲット数
 				countRenderTarget = pRenderPass_[ counterPass ].GetCountRenderTarget();
 				for( int counterRenderTarget = 0; counterRenderTarget < countRenderTarget; ++counterRenderTarget )
 				{
@@ -192,12 +197,17 @@ int ManagerDraw< TypeItem >::Execute( void )
 			}
 			else
 			{
+				countRenderTarget = 1;
 				pDevice_->SetRenderTarget( 0, pSurfaceRenderOrigin );
 				pDevice_->SetDepthStencilSurface( pSurfaceDepthOrigin );
 			}
+			for( int counterRenderTarget = countRenderTarget; counterRenderTarget < maximumRenderTarget_; ++counterRenderTarget )
+			{
+				pDevice_->SetRenderTarget( counterRenderTarget, nullptr );
+			}
 
 			// バッファのクリア
-			pDevice_->Clear( 0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA( 128, 128, 128, 0 ), 1.0f, 0 );
+			pDevice_->Clear( 0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA( 0, 0, 0, 0 ), 1.0f, 0 );
 
 			// オブジェクトの描画
 			int		indexItemCurrent;		// 現在の要素番号

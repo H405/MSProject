@@ -55,13 +55,16 @@ DrawerScreen::~DrawerScreen( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 // Arg    : const D3DXCOLOR* pColorFade			: フェードの色
 // Arg    : const float* pProportionFade		: フェードの割合
 //==============================================================================
 int DrawerScreen::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureGeneral, IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
+	const D3DXCOLOR* pColorFade, const float* pProportionFade )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -75,7 +78,9 @@ int DrawerScreen::Initialize( const EffectParameter* pParameter, Effect* pEffect
 	pEffectParameter_ = pParameter;
 	pEffect_ = pEffect;
 	pTexture_ = pTexture;
-	pTextureGeneral_ = pTextureGeneral;
+	pTexture3D_ = pTexture3D;
+	pTexture2D_ = pTexture2D;
+	pTextureMask_ = pTextureMask;
 	pPolygon_ = pPolygon;
 	pColorFade_ = pColorFade;
 	pProportionFade_ = pProportionFade;
@@ -119,13 +124,16 @@ int DrawerScreen::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 // Arg    : const D3DXCOLOR* pColorFade			: フェードの色
 // Arg    : const float* pProportionFade		: フェードの割合
 //==============================================================================
 int DrawerScreen::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureGeneral, IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
+	const D3DXCOLOR* pColorFade, const float* pProportionFade )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -136,7 +144,7 @@ int DrawerScreen::Reinitialize( const EffectParameter* pParameter, Effect* pEffe
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTexture, pTextureGeneral_, pColorFade, pProportionFade );
+	return Initialize( pParameter, pEffect, pPolygon, pTexture, pTexture3D_, pTexture2D, pTextureMask, pColorFade, pProportionFade );
 }
 
 //==============================================================================
@@ -174,7 +182,9 @@ void DrawerScreen::Draw( const D3DXMATRIX& matrixWorld )
 	colorFade = *pColorFade_;
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_GENERAL, pTextureGeneral_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_3D, pTexture3D_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_2D, pTexture2D_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_MASK, pTextureMask_ );
 	pEffect_->SetColor( PARAMETER_COLOR_FADE, colorFade );
 	pEffect_->SetFloat( PARAMETER_WIDTH_SCREEN_HALF, pEffectParameter_->GetWidthScreen() * 0.5f );
 	pEffect_->SetFloat( PARAMETER_HEIGHT_SCREEN_HALF, pEffectParameter_->GetHeightScreen() * 0.5f );
@@ -241,7 +251,9 @@ void DrawerScreen::InitializeSelf( void )
 	pEffectParameter_ = nullptr;
 	pEffect_ = nullptr;
 	pTexture_ = nullptr;
-	pTextureGeneral_ = nullptr;
+	pTexture3D_ = nullptr;
+	pTexture2D_ = nullptr;
+	pTextureMask_ = nullptr;
 	pPolygon_ = nullptr;
 	pColorFade_ = nullptr;
 	pProportionFade_ = nullptr;

@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : GraphicScreen.h
-// Brief  : 画面ポリゴン描画処理の管理クラス
+// File   : ObjectSky.h
+// Brief  : 空オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_GRAPHIC_SCREEN_H
-#define MY_GRAPHIC_SCREEN_H
+#ifndef MY_OBJECT_SKY_H
+#define MY_OBJECT_SKY_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicMain.h"
+#include "../framework/object/ObjectMovement.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,11 +31,15 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
+class GraphicSky;
+class Material;
+class PolygonMeshDomeInside;
+class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class GraphicScreen : public GraphicMain
+class ObjectSky : public ObjectMovement
 {
 public:
 	//==============================================================================
@@ -43,29 +47,27 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	GraphicScreen( void );
+	ObjectSky( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~GraphicScreen( void );
+	~ObjectSky( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : const float* pProportionFade		: フェード割合
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellY						: Z方向セル数
+	// Arg    : float radius						: 半径
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+	int Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -77,33 +79,55 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : const float* pProportionFade		: フェード割合
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int countCellX						: X方向セル数
+	// Arg    : int countCellY						: Z方向セル数
+	// Arg    : float radius						: 半径
+	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+	int Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : GraphicScreen* pOut						: コピー先アドレス
+	// Arg    : ObjectSky* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( GraphicScreen* pOut ) const;
+	int Copy( ObjectSky* pOut ) const;
+
+	//==============================================================================
+	// Brief  : 更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void Update( void );
+
+	//==============================================================================
+	// Brief  : 描画クラスの生成
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Texture* pTexture					: テクスチャ
+	//==============================================================================
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetGraphic( GraphicSky* pValue );
+	GraphicSky* GetGraphic( void ) const;
 
 protected:
-	IDirect3DTexture9*	pTexture_;			// テクスチャ
-	D3DXCOLOR			colorFade_;			// フェード色
 
 private:
 	void InitializeSelf( void );
-	GraphicScreen( const GraphicScreen& );
-	GraphicScreen operator=( const GraphicScreen& );
+	ObjectSky( const ObjectSky& );
+	ObjectSky operator=( const ObjectSky& );
+
+	GraphicSky*				pGraphic_;			// 描画クラス
+	PolygonMeshDomeInside*	pPolygonMesh_;		// 内部メッシュドームポリゴン
 };
 
-#endif	// MY_GRAPHIC_SCREEN_H
+#endif	// MY_OBJECT_SKY_H

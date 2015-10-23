@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : GraphicScreen.h
-// Brief  : 画面ポリゴン描画処理の管理クラス
+// File   : DrawerSky.h
+// Brief  : 空描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_GRAPHIC_SCREEN_H
-#define MY_GRAPHIC_SCREEN_H
+#ifndef MY_DRAWER_SKY_H
+#define MY_DRAWER_SKY_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicMain.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,41 +31,45 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
+class PolygonMeshDomeInside;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class GraphicScreen : public GraphicMain
+class DrawerSky : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	GraphicScreen( void );
+	DrawerSky( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~GraphicScreen( void );
+	~DrawerSky( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : const float* pProportionFade		: フェード割合
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -77,33 +81,44 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : const float* pProportionFade		: フェード割合
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : GraphicScreen* pOut						: コピー先アドレス
+	// Arg    : DrawerSky* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( GraphicScreen* pOut ) const;
+	int Copy( DrawerSky* pOut ) const;
+
+	//==============================================================================
+	// Brief  : 描画処理
+	// Return : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
+	//==============================================================================
+	void Draw( const D3DXMATRIX& matrixWorld );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTexture( void ) const;
 
 protected:
-	IDirect3DTexture9*	pTexture_;			// テクスチャ
-	D3DXCOLOR			colorFade_;			// フェード色
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	IDirect3DTexture9*		pTexture_;				// テクスチャ
+	PolygonMeshDomeInside*	pPolygon_;				// ポリゴン
 
 private:
 	void InitializeSelf( void );
-	GraphicScreen( const GraphicScreen& );
-	GraphicScreen operator=( const GraphicScreen& );
+	DrawerSky( const DrawerSky& );
+	DrawerSky operator=( const DrawerSky& );
+
 };
 
-#endif	// MY_GRAPHIC_SCREEN_H
+#endif	// MY_DRAWER_SKY_H

@@ -201,12 +201,17 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_GENERAL ].Initialize( pDevice, GraphicMain::PASS_GENERAL_TARGET_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::PASS_3D_RENDER_MAX );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_SCREEN ].Initialize( pDevice, GraphicMain::PASS_SCREEN_TARGET_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::PASS_2D_RENDER_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_SCREEN ].Initialize( pDevice, GraphicMain::PASS_SCREEN_RENDER_MAX );
 	if( result != 0 )
 	{
 		return result;
@@ -328,7 +333,9 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 
 	// 画面オブジェクトの生成
 	Effect*			pEffectScreen = nullptr;			// 画面エフェクト
-	RenderTarget*	pRenderTargetScreen = nullptr;		// 画面描画対象
+	RenderTarget*	pRenderTarget3D = nullptr;			// 3D画面描画対象
+	RenderTarget*	pRenderTarget2D = nullptr;			// 2D画面描画対象
+	RenderTarget*	pRenderTargetMask = nullptr;		// マスク描画対象
 	pObjectScreen_ = new ObjectScreen();
 	if( pObjectScreen_ == nullptr )
 	{
@@ -340,12 +347,16 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 	pEffectScreen = pEffect_->Get( _T( "Screen.fx" ) );
-	pRenderTargetScreen = pRenderPass_->GetRenderTarget( GraphicMain::PASS_GENERAL );
-	result = pObjectScreen_->CreateGraphic( 0, pEffectParameter_, pEffectScreen, pRenderTargetScreen->GetTexture() );
+	pRenderTarget3D = pRenderPass_[ GraphicMain::PASS_3D ].GetRenderTarget( GraphicMain::PASS_3D_RENDER_COLOR );
+	pRenderTarget2D = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_COLOR );
+	pRenderTargetMask = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_MASK );
+	result = pObjectScreen_->CreateGraphic( 0, pEffectParameter_, pEffectScreen,
+		pRenderTarget3D->GetTexture(), pRenderTarget2D->GetTexture(), pRenderTargetMask->GetTexture() );
 	if( result != 0 )
 	{
 		return result;
 	}
+	pObjectScreen_->SetPositionY( 1.0f );
 
 	// シーン引数クラスの生成
 	pArgument_ = new SceneArgumentMain();
@@ -533,6 +544,11 @@ void ManagerMain::Update( void )
 {
 	// エラーチェック
 	Assert( pScene_ != nullptr, _T( "シーン管理クラスが生成されていません。" ) );
+
+	// FPSの表示
+#ifdef _DEBUG
+	DebugProc::Print( _T( "FPS : %2d\n" ), fpsUpdate_ );
+#endif
 
 	// 入力の更新
 	//pKeyboard_->Update();

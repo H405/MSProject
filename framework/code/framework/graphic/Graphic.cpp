@@ -138,9 +138,6 @@ int Graphic::Copy( Graphic* pOut ) const
 //==============================================================================
 void Graphic::Draw( int index )
 {
-	// テスト
-	PrintDebug( _T( "Draw\n" ) );
-
 	// エラーチェック
 	if( ppDraw_ == nullptr )
 	{

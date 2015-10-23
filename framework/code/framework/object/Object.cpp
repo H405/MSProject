@@ -129,9 +129,6 @@ int Object::Copy( Object* pOut ) const
 //==============================================================================
 void Object::Update( void )
 {
-	// テスト
-	PrintDebug( _T( "テスト\n" ) );
-
 	// ワールドマトリクスの更新
 	if( needsUpdate_ || pParent_ != nullptr )
 	{

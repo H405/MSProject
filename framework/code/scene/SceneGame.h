@@ -31,6 +31,7 @@
 //******************************************************************************
 class CameraObject;
 class LightDirection;
+class ManagerPoint;
 
 class Object2D;
 class Object3D;
@@ -38,6 +39,10 @@ class Material;
 class ObjectModel;
 class PolygonMesh;
 class ObjectMesh;
+class ObjectSky;
+
+class GraphicPoint;
+class PolygonPoint;
 
 //******************************************************************************
 // クラス定義
@@ -101,8 +106,10 @@ private:
 	SceneGame( const SceneGame& );
 	SceneGame operator=( const SceneGame& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
+	CameraObject*		pCamera_;		// カメラ
+	LightDirection*		pLight_;		// ライト
+
+	ManagerPoint*		pPoint_;		// ポイントスプライト管理クラス
 
 	// テスト
 	Object2D*		pObject_;
@@ -110,6 +117,10 @@ private:
 	Object3D*		pObject3D_;
 	ObjectModel*	pObjectModel_;
 	ObjectMesh*		pObjectMesh_;
+	ObjectSky*		pObjectSky_;
+
+	GraphicPoint*	pGraphicPoint_;
+	PolygonPoint*	pPolygonPoint_;
 };
 
 #endif	// MY_SCENE_GAME_H

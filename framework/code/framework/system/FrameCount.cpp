@@ -329,6 +329,12 @@ void FrameCount::CountFrameDraw( FrameCount* pThis )
 		// 最終実行時間を更新
 		pThis->timeLastExecute_ = timeCurrent;
 
+		// FPSの通知
+#ifdef _DEBUG
+		pThis->pManager_->SetFpsUpdate( pThis->fpsUpdate_ );
+		pThis->pManager_->SetFpsDraw( pThis->fpsDraw_ );
+#endif
+
 		// 更新処理
 		pThis->pManager_->Update();
 
@@ -370,6 +376,12 @@ void FrameCount::CountFrameUpdate( FrameCount* pThis )
 	// フレームの処理
 	if( (timeCurrent - pThis->timeBeginGame_) >= (1000.0f / pThis->destinationFps_) * pThis->countFrameTotal_ )
 	{
+		// FPSの通知
+#ifdef _DEBUG
+		pThis->pManager_->SetFpsUpdate( pThis->fpsUpdate_ );
+		pThis->pManager_->SetFpsDraw( pThis->fpsDraw_ );
+#endif
+
 		// 更新処理
 		pThis->pManager_->Update();
 

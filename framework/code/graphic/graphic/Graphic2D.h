@@ -59,9 +59,12 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture = nullptr );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture = nullptr );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -77,9 +80,12 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture = nullptr );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture = nullptr );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

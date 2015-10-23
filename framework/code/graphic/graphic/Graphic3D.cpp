@@ -75,7 +75,7 @@ int Graphic3D::Initialize( int priority, const EffectParameter* pParameter, Effe
 		return 1;
 	}
 	result = pDrawer3D->Initialize( pParameter, pEffectGeneral, pPolygon3D_, pMaterial, pTexture );
-	ppDraw_[ GraphicMain::PASS_GENERAL ] = pDrawer3D;
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawer3D;
 
 	// ê≥èÌèIóπ
 	return 0;

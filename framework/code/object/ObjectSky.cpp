@@ -1,20 +1,20 @@
 //==============================================================================
 //
-// File   : ObjectScreen.cpp
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : ObjectSky.cpp
+// Brief  : 空オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ObjectScreen.h"
+#include "ObjectSky.h"
+#include "../framework/polygon/PolygonMeshDomeInside.h"
+#include "../framework/resource/Effect.h"
 #include "../framework/resource/Texture.h"
-#include "../framework/system/Fade.h"
-#include "../graphic/graphic/GraphicScreen.h"
-#include "../system/EffectParameter.h"
+#include "../graphic/graphic/GraphicSky.h"
 
 //******************************************************************************
 // ライブラリ
@@ -33,7 +33,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScreen::ObjectScreen( void ) : ObjectMovement()
+ObjectSky::ObjectSky( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +44,7 @@ ObjectScreen::ObjectScreen( void ) : ObjectMovement()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScreen::~ObjectScreen( void )
+ObjectSky::~ObjectSky( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,9 +54,14 @@ ObjectScreen::~ObjectScreen( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
-// Arg    : Fade* pFade							: フェード
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : int countCellX						: X方向セル数
+// Arg    : int countCellY						: Z方向セル数
+// Arg    : float radius						: 半径
+// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
 //==============================================================================
-int ObjectScreen::Initialize( int priority, Fade* pFade )
+int ObjectSky::Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -66,8 +71,13 @@ int ObjectScreen::Initialize( int priority, Fade* pFade )
 		return result;
 	}
 
-	// メンバ変数の設定
-	pFade_ = pFade;
+	// 内部メッシュドームポリゴンの生成
+	pPolygonMesh_ = new PolygonMeshDomeInside();
+	if( pPolygonMesh_ == nullptr )
+	{
+		return 1;
+	}
+	result = pPolygonMesh_->Initialize( pDevice, countCellX, countCellY, radius, lengthTextureX, lengthTextureY );
 
 	// 正常終了
 	return 0;
@@ -78,8 +88,12 @@ int ObjectScreen::Initialize( int priority, Fade* pFade )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int ObjectScreen::Finalize( void )
+int ObjectSky::Finalize( void )
 {
+	// 内部メッシュドームポリゴンの開放
+	delete pPolygonMesh_;
+	pPolygonMesh_ = nullptr;
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = Object::Finalize();
@@ -99,9 +113,14 @@ int ObjectScreen::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
-// Arg    : Fade* pFade							: フェード
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : int countCellX						: X方向セル数
+// Arg    : int countCellY						: Z方向セル数
+// Arg    : float radius						: 半径
+// Arg    : float lengthTextureX				: X方向テクスチャ長さ
+// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
 //==============================================================================
-int ObjectScreen::Reinitialize( int priority, Fade* pFade )
+int ObjectSky::Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -112,15 +131,15 @@ int ObjectScreen::Reinitialize( int priority, Fade* pFade )
 	}
 
 	// 初期化処理
-	return Initialize( priority, pFade );
+	return Initialize( priority, pDevice, countCellX, countCellY, radius, lengthTextureX, lengthTextureY );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ObjectScreen* pOut						: コピー先アドレス
+// Arg    : ObjectSky* pOut						: コピー先アドレス
 //==============================================================================
-int ObjectScreen::Copy( ObjectScreen* pOut ) const
+int ObjectSky::Copy( ObjectSky* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -139,11 +158,8 @@ int ObjectScreen::Copy( ObjectScreen* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectScreen::Update( void )
+void ObjectSky::Update( void )
 {
-	// フェードの更新
-	proportionFade_ = pFade_->GetProportion();
-
 	// 基本クラスの処理
 	ObjectMovement::Update();
 }
@@ -154,13 +170,9 @@ void ObjectScreen::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture )
+int ObjectSky::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture )
 {
 	// グラフィックの生成
 	int					result;				// 実行結果
@@ -170,24 +182,17 @@ int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter
 	{
 		pTextureSet = pTexture->pTexture_;
 	}
-	pGraphic_ = new GraphicScreen();
+	pGraphic_ = new GraphicSky();
 	if( pGraphic_ == nullptr )
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTexture3D, pTexture2D, pTextureMask, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pPolygonMesh_, pTextureSet );
 	if( result != 0 )
 	{
 		return result;
 	}
 	Object::pGraphic_ = pGraphic_;
-
-	// 拡縮の設定
-	if( pParameter != nullptr )
-	{
-		scale_.x = pParameter->GetWidthScreen();
-		scale_.y = pParameter->GetHeightScreen();
-	}
 
 	// 正常終了
 	return 0;
@@ -196,21 +201,20 @@ int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter
 //==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : GraphicScreen* pValue						: 設定する値
+// Arg    : GraphicSky* pValue					: 設定する値
 //==============================================================================
-void ObjectScreen::SetGraphic( GraphicScreen* pValue )
+void ObjectSky::SetGraphic( GraphicSky* pValue )
 {
 	// 値の設定
 	pGraphic_ = pValue;
-	Object::pGraphic_ = pValue;
 }
 
 //==============================================================================
 // Brief  : 描画クラスの取得
-// Return : GraphicScreen*							: 返却する値
+// Return : GraphicSky*							: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen* ObjectScreen::GetGraphic( void ) const
+GraphicSky* ObjectSky::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
@@ -221,10 +225,9 @@ GraphicScreen* ObjectScreen::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectScreen::InitializeSelf( void )
+void ObjectSky::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;
-	pFade_ = nullptr;
-	proportionFade_ = 0.0f;
+	pPolygonMesh_ = nullptr;
 }

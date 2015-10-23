@@ -41,23 +41,34 @@ public:
 	// パス
 	enum
 	{
-		PASS_GENERAL = 0,		// 通常描画
-		PASS_SCREEN,			// 画面描画
-		PASS_MAX				// 最大数
+		PASS_3D = 0,		// 3D描画
+		PASS_2D,			// 2D描画
+		PASS_SCREEN,		// 画面描画
+		PASS_MAX			// 最大数
 	};
 
-	// 通常描画
+	// 3D描画
 	enum
 	{
-		PASS_GENERAL_TARGET_COLOR = 0,		// 色
-		PASS_GENERAL_TARGET_MAX				// 最大値
+		PASS_3D_RENDER_COLOR = 0,			// 色
+		PASS_3D_RENDER_NORMAL_DEPTH,		// 法線・深度値
+		PASS_3D_RENDER_LUMINANCE,			// 輝度
+		PASS_3D_RENDER_MAX					// 最大値
+	};
+
+	// 2D描画
+	enum
+	{
+		PASS_2D_RENDER_COLOR = 0,			// 色
+		PASS_2D_RENDER_MASK,				// マスク
+		PASS_2D_RENDER_MAX					// 最大値
 	};
 
 	// 画面描画
 	enum
 	{
-		PASS_SCREEN_TARGET_COLOR = 0,		// 色
-		PASS_SCREEN_TARGET_MAX				// 最大値
+		PASS_SCREEN_RENDER_COLOR = 0,		// 色
+		PASS_SCREEN_RENDER_MAX				// 最大値
 	};
 
 	// ディレクショナルライト

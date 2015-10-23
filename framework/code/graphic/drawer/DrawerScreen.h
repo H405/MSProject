@@ -44,7 +44,9 @@ public:
 	{
 		PARAMETER_MATRIX_WORLD = 0,			// ワールドマトリクス
 		PARAMETER_TEXTURE,					// テクスチャ
-		PARAMETER_TEXTURE_GENERAL,			// 通常描画テクスチャ
+		PARAMETER_TEXTURE_3D,				// 3D描画テクスチャ
+		PARAMETER_TEXTURE_2D,				// 2D描画テクスチャ
+		PARAMETER_TEXTURE_MASK,				// マスクテクスチャ
 		PARAMETER_COLOR_FADE,				// フェードの色
 		PARAMETER_WIDTH_SCREEN_HALF,		// 画面幅の半分
 		PARAMETER_HEIGHT_SCREEN_HALF,		// 画面高さの半分
@@ -72,13 +74,16 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-	// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	// Arg    : const D3DXCOLOR* pColorFade			: フェードの色
 	// Arg    : const float* pProportionFade		: フェードの割合
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureGeneral, IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade );
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
+		const D3DXCOLOR* pColorFade, const float* pProportionFade );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -93,13 +98,16 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-	// Arg    : IDirect3DTexture9* pTextureGeneral	: 通常描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	// Arg    : const D3DXCOLOR* pColorFade			: フェードの色
 	// Arg    : const float* pProportionFade		: フェードの割合
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureGeneral, IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade );
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
+		const D3DXCOLOR* pColorFade, const float* pProportionFade );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -127,7 +135,9 @@ protected:
 	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
 	Effect*					pEffect_;				// エフェクト
 	IDirect3DTexture9*		pTexture_;				// テクスチャ
-	IDirect3DTexture9*		pTextureGeneral_;		// 通常描画テクスチャ
+	IDirect3DTexture9*		pTexture3D_;			// 3D描画テクスチャ
+	IDirect3DTexture9*		pTexture2D_;			// 2D描画テクスチャ
+	IDirect3DTexture9*		pTextureMask_;			// マスクテクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン
 	const D3DXCOLOR*		pColorFade_;			// フェード色
 	const float*			pProportionFade_;		// フェード割合
