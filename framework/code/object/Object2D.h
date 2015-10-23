@@ -117,10 +117,42 @@ public:
 	float GetColorG( void ) const;
 	float GetColorB( void ) const;
 	float GetColorA( void ) const;
+	void AddColor( const D3DXCOLOR& value );
+	void AddColor( float r, float g, float b, float a );
+	void AddColor( float r, float g, float b );
+	void AddColorR( float r );
+	void AddColorG( float g );
+	void AddColorB( float b );
+	void AddColorA( float a );
+	void AddColorAlpha( float alpha );
+	void SetPositionTexture( const D3DXVECTOR2& value );
+	void SetPositionTexture( float x, float y );
+	void SetPositionTextureX( float x );
+	void SetPositionTextureY( float y );
+	void GetPositionTexture( D3DXVECTOR2* pOut ) const;
+	float GetPositionTextureX( void ) const;
+	float GetPositionTextureY( void ) const;
+	void AddPositionTexture( const D3DXVECTOR2& value );
+	void AddPositionTexture( float x, float y );
+	void AddPositionTextureX( float x );
+	void AddPositionTextureY( float y );
+	void SetScaleTexture( const D3DXVECTOR2& value );
+	void SetScaleTexture( float x, float y );
+	void SetScaleTextureX( float x );
+	void SetScaleTextureY( float y );
+	void GetScaleTexture( D3DXVECTOR2* pOut ) const;
+	float GetScaleTextureX( void ) const;
+	float GetScaleTextureY( void ) const;
+	void AddScaleTexture( const D3DXVECTOR2& value );
+	void AddScaleTexture( float x, float y );
+	void AddScaleTextureX( float x );
+	void AddScaleTextureY( float y );
 
 protected:
-	Graphic2D*	pGraphic_;		// 描画クラス
-	D3DXCOLOR	color_;			// 色
+	Graphic2D*	pGraphic_;				// 描画クラス
+	D3DXCOLOR	color_;					// 色
+	D3DXVECTOR2	positionTexture_;		// テクスチャ座標
+	D3DXVECTOR2	scaleTexture_;			// テクスチャ拡縮
 
 private:
 	void InitializeSelf( void );

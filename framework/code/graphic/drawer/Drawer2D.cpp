@@ -56,9 +56,12 @@ Drawer2D::~Drawer2D( void )
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 // Arg    : D3DXCOLOR* pColor					: 色
+// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Drawer2D::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture )
+int Drawer2D::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -74,6 +77,8 @@ int Drawer2D::Initialize( const EffectParameter* pParameter, Effect* pEffect, Po
 	pTexture_ = pTexture;
 	pPolygon_ = pPolygon;
 	pColor_ = pColor;
+	pPositionTexture_ = pPositionTexture;
+	pScaleTexture_ = pScaleTexture;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -115,9 +120,12 @@ int Drawer2D::Finalize( void )
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 // Arg    : D3DXCOLOR* pColor					: 色
+// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Drawer2D::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture )
+int Drawer2D::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -128,7 +136,7 @@ int Drawer2D::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, 
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pColor, pTexture );
+	return Initialize( pParameter, pEffect, pPolygon, pColor, pPositionTexture, pScaleTexture, pTexture );
 }
 
 //==============================================================================
@@ -167,6 +175,8 @@ void Drawer2D::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetFloat( PARAMETER_WIDTH_SCREEN_HALF, pEffectParameter_->GetWidthScreen() * 0.5f );
 	pEffect_->SetFloat( PARAMETER_HEIGHT_SCREEN_HALF, pEffectParameter_->GetHeightScreen() * 0.5f );
 	pEffect_->SetColor( PARAMETER_COLOR, *pColor_ );
+	pEffect_->SetFloatArray( PARAMETER_POSITION_TEXTURE, &pPositionTexture_->x, 2 );
+	pEffect_->SetFloatArray( PARAMETER_SCALE_TEXTURE, &pScaleTexture_->x, 2 );
 
 	// 描画
 	pEffect_->Begin( 0 );
@@ -209,4 +219,6 @@ void Drawer2D::InitializeSelf( void )
 	pTexture_ = nullptr;
 	pPolygon_ = nullptr;
 	pColor_ = nullptr;
+	pPositionTexture_ = nullptr;
+	pScaleTexture_ = nullptr;
 }

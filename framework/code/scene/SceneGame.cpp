@@ -297,6 +297,8 @@ void SceneGame::Update( void )
 		pObject_[ countObject_ ].Initialize( 0 );
 		pObject_[ countObject_ ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect, pTexture );
 		pObject_[ countObject_ ].SetColor( 0.5f, 1.0f, 0.5f, 0.8f );
+		pObject_[ countObject_ ].SetPositionTexture( 0.25f, 0.5f );
+//		pObject_[ countObject_ ].SetScaleTexture( 2.0f, 0.5f );
 		++countObject_;
 	}
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_D ) && countObject_ > 0 )
@@ -309,6 +311,10 @@ void SceneGame::Update( void )
 		pCamera_->SetDebug( true );
 	}
 	pObjectModel_->AddRotationY( 0.1f );
+	if( countObject_ > 0 )
+	{
+		pObject_[ 0 ].AddPositionTexture( 0.0025f, 0.001f );
+	}
 
 	// ƒV[ƒ“‘JˆÚ
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )

@@ -171,6 +171,30 @@ bool Manager::IsEnd( void ) const
 	return isEnd_;
 }
 
+#ifdef _DEBUG
+//==============================================================================
+// Brief  : 更新FPSの設定
+// Return : void								: なし
+// Arg    : unsigned long value					: 設定する値
+//==============================================================================
+void Manager::SetFpsUpdate( unsigned long value )
+{
+	// 値の設定
+	fpsUpdate_ = static_cast< int >( value );
+}
+
+//==============================================================================
+// Brief  : 描画FPSの設定
+// Return : void								: なし
+// Arg    : unsigned long value					: 設定する値
+//==============================================================================
+void Manager::SetFpsDraw( unsigned long value )
+{
+	// 値の設定
+	fpsDraw_ = static_cast< int >( value );
+}
+#endif
+
 //==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
@@ -181,4 +205,8 @@ void Manager::InitializeSelf( void )
 	// メンバ変数の初期化
 	isEnd_ = false;
 	pWindow_ = nullptr;
+#ifdef _DEBUG
+	fpsUpdate_ = 0;
+	fpsDraw_ = 0;
+#endif
 }

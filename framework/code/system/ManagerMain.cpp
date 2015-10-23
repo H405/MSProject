@@ -526,6 +526,11 @@ void ManagerMain::Update( void )
 	// エラーチェック
 	Assert( pScene_ != nullptr, _T( "シーン管理クラスが生成されていません。" ) );
 
+	// FPSの表示
+#ifdef _DEBUG
+	DebugProc::Print( _T( "FPS : %2d\n" ), fpsUpdate_ );
+#endif
+
 	// 入力の更新
 	pKeyboard_->Update();
 	pMouse_->Update();

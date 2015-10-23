@@ -47,6 +47,8 @@ public:
 		PARAMETER_WIDTH_SCREEN_HALF,		// 画面幅の半分
 		PARAMETER_HEIGHT_SCREEN_HALF,		// 画面高さの半分
 		PARAMETER_COLOR,					// 色
+		PARAMETER_POSITION_TEXTURE,			// テクスチャ座標
+		PARAMETER_SCALE_TEXTURE,			// テクスチャ拡縮
 		PARAMETER_MAX						// 最大値
 	};
 
@@ -71,9 +73,12 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -89,9 +94,12 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, D3DXCOLOR* pColor, IDirect3DTexture9* pTexture );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -119,6 +127,8 @@ protected:
 	IDirect3DTexture9*		pTexture_;				// テクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン
 	D3DXCOLOR*				pColor_;				// 色
+	D3DXVECTOR2*			pPositionTexture_;		// テクスチャ座標
+	D3DXVECTOR2*			pScaleTexture_;			// テクスチャ拡縮
 
 private:
 	void InitializeSelf( void );
