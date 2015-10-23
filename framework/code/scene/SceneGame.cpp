@@ -38,6 +38,7 @@
 #include "../object/ObjectModel.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectSky.h"
+#include "../object/ObjectBillboard.h"
 
 #include "../graphic/graphic/GraphicPoint.h"
 #include "../framework/polygon/PolygonPoint.h"
@@ -189,10 +190,11 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	fpUpdate = &SceneGame::normalUpdate;
 
 	// スカイドームの生成
-	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	Effect*		pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	Texture*	pTextureSky = pArgument_->pTexture_->Get( _T( "title_logo.png" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
-	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
+	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTextureSky );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );

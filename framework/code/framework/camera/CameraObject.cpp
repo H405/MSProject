@@ -168,6 +168,18 @@ int CameraObject::Copy( CameraObject* pOut ) const
 //==============================================================================
 void CameraObject::Update( void )
 {
+	// デバッグモード切替
+#ifdef _DEBUG
+	if( GetKeyState( VK_F3 ) & 0x80 )
+	{
+		SetDebug( true );
+	}
+	if( GetKeyState( VK_F4 ) & 0x80 )
+	{
+		SetDebug( false );
+	}
+#endif
+
 	// ステートの実行
 	if( pState_ != nullptr )
 	{

@@ -40,6 +40,7 @@ class ObjectModel;
 class PolygonMesh;
 class ObjectMesh;
 class ObjectSky;
+class ObjectBillboard;
 
 class GraphicPoint;
 class PolygonPoint;

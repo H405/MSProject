@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneSplash.h
-// Brief  : スプラッシュシーンクラス
+// File   : GraphicBillboard.h
+// Brief  : ビルボードポリゴン描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/13 tue : Taiga Shirakawa : create
+// Date   : 2015/10/23 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_SPLASH_H
-#define MY_SCENE_SPLASH_H
+#ifndef MY_GRAPHIC_BILLBOARD_H
+#define MY_GRAPHIC_BILLBOARD_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,11 +29,13 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
+class EffectParameter;
+class Effect;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneSplash : public SceneMain
+class GraphicBillboard : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -41,21 +43,28 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneSplash( void );
+	GraphicBillboard( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneSplash( void );
+	~GraphicBillboard( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -67,30 +76,31 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : D3DXCOLOR* pColor					: 色
+	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneSplash* pOut					: コピー先アドレス
+	// Arg    : GraphicBillboard* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneSplash* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
+	int Copy( GraphicBillboard* pOut ) const;
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	SceneSplash( const SceneSplash& );
-	SceneSplash operator=( const SceneSplash& );
+	GraphicBillboard( const GraphicBillboard& );
+	GraphicBillboard operator=( const GraphicBillboard& );
+
 };
 
-#endif	// MY_SCENE_SPLASH_H
+#endif	// MY_GRAPHIC_BILLBOARD_H

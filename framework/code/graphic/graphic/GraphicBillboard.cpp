@@ -1,17 +1,17 @@
 //==============================================================================
 //
-// File   : ManagerUpdate.cpp
-// Brief  : 更新実行クラス
+// File   : GraphicBillboard.cpp
+// Brief  : ビルボードポリゴン描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/13 tue : Taiga Shirakawa : create
+// Date   : 2015/10/23 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ManagerUpdate.h"
-#include "../object/Object.h"
+#include "GraphicBillboard.h"
+#include "../drawer/DrawerBillboard.h"
 
 //******************************************************************************
 // ライブラリ
@@ -22,11 +22,6 @@
 //******************************************************************************
 
 //******************************************************************************
-// テンプレート宣言
-//******************************************************************************
-template class ManagerUpdate< class Object >;
-
-//******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
 
@@ -35,8 +30,7 @@ template class ManagerUpdate< class Object >;
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-template< class TypeItem >
-ManagerUpdate< TypeItem >::ManagerUpdate( void ) : ManagerExector()
+GraphicBillboard::GraphicBillboard( void ) : GraphicMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -47,8 +41,7 @@ ManagerUpdate< TypeItem >::ManagerUpdate( void ) : ManagerExector()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-template< class TypeItem >
-ManagerUpdate< TypeItem >::~ManagerUpdate( void )
+GraphicBillboard::~GraphicBillboard( void )
 {
 	// 終了処理
 	Finalize();
@@ -57,18 +50,34 @@ ManagerUpdate< TypeItem >::~ManagerUpdate( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : int maximumItem						: 最大要素数
+// Arg    : int priority						: 描画優先度
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : D3DXCOLOR* pColor					: 色
+// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-template< class TypeItem >
-int ManagerUpdate< TypeItem >::Initialize( int maximumItem )
+int GraphicBillboard::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = ManagerExector::Initialize( maximumItem );
+	result = GraphicMain::Initialize( priority );
 	if( result != 0 )
 	{
 		return result;
 	}
+
+	// 描画クラスの生成
+	DrawerBillboard*	pDrawerBillboard = nullptr;		// 描画クラス
+	pDrawerBillboard = new DrawerBillboard();
+	if( pDrawerBillboard == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerBillboard->Initialize( pParameter, pEffectGeneral, pPolygon3D_, pColor, pPositionTexture, pScaleTexture, pTexture );
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerBillboard;
 
 	// 正常終了
 	return 0;
@@ -79,12 +88,11 @@ int ManagerUpdate< TypeItem >::Initialize( int maximumItem )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-template< class TypeItem >
-int ManagerUpdate< TypeItem >::Finalize( void )
+int GraphicBillboard::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = ManagerExector::Finalize();
+	result = GraphicMain::Finalize();
 	if( result != 0 )
 	{
 		return result;
@@ -100,10 +108,16 @@ int ManagerUpdate< TypeItem >::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : int maximumItem						: 最大要素数
+// Arg    : int priority						: 描画優先度
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : D3DXCOLOR* pColor					: 色
+// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
+// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-template< class TypeItem >
-int ManagerUpdate< TypeItem >::Reinitialize( int maximumItem )
+int GraphicBillboard::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -114,51 +128,19 @@ int ManagerUpdate< TypeItem >::Reinitialize( int maximumItem )
 	}
 
 	// 初期化処理
-	return Initialize( maximumItem );
+	return Initialize( priority, pParameter, pEffectGeneral, pColor, pPositionTexture, pScaleTexture, pTexture );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ManagerUpdate* pOut					: コピー先アドレス
+// Arg    : GraphicBillboard* pOut				: コピー先アドレス
 //==============================================================================
-template< class TypeItem >
-int ManagerUpdate< TypeItem >::Copy( ManagerUpdate* pOut ) const
+int GraphicBillboard::Copy( GraphicBillboard* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = ManagerExector::Copy( pOut );
-	if( result != 0 )
-	{
-		return result;
-	}
-
-	// 正常終了
-	return 0;
-}
-
-//==============================================================================
-// Brief  : 実行
-// Return : int									: 実行結果
-// Arg    : void								: なし
-//==============================================================================
-template< class TypeItem >
-int ManagerUpdate< TypeItem >::Execute( void )
-{
-	// オブジェクトの更新
-	int		indexItemCurrent;		// 現在の要素番号
-	for( indexItemCurrent = indexTop_; indexItemCurrent >= 0; indexItemCurrent = pBufferItem_[ indexItemCurrent ].indexNext_ )
-	{
-		if( pBufferItem_[ indexItemCurrent ].needsUnregister_ || !pBufferItem_[ indexItemCurrent ].isEnable_ || !pBufferItem_[ indexItemCurrent ].pItem_->IsEnable() )
-		{
-			continue;
-		}
-		pBufferItem_[ indexItemCurrent ].pItem_->Update();
-	}
-
-	// 基本クラスの処理
-	int		result;		// 実行結果
-	result = ManagerExector::Execute();
+	result = GraphicMain::Copy( pOut );
 	if( result != 0 )
 	{
 		return result;
@@ -173,8 +155,7 @@ int ManagerUpdate< TypeItem >::Execute( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-template< class TypeItem >
-void ManagerUpdate< TypeItem >::InitializeSelf( void )
+void GraphicBillboard::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 }
