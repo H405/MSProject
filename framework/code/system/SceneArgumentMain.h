@@ -41,6 +41,7 @@ class VirtualController;
 class Model;
 class ObjectScreen;
 class Texture;
+class Window;
 template < class Effect > class ManagerEffect;
 template < class Model > class ManagerModel;
 template < class Texture > class ManagerTexture;
@@ -65,6 +66,7 @@ public:
 	//==============================================================================
 	~SceneArgumentMain( void );
 
+	Window*						pWindow_;				// ウィンドウ
 	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
 	Fade*						pFade_;					// フェード管理クラス
 	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ

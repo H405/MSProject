@@ -52,6 +52,7 @@ SceneArgumentMain::~SceneArgumentMain( void )
 void SceneArgumentMain::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
+	pWindow_ = nullptr;
 	pDevice_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;

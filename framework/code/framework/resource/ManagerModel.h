@@ -59,11 +59,12 @@ public:
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	// Arg    : TCHAR* pDirectory					: 基準ディレクトリ
+	// Arg    : TCHAR* pDirectoryTexture			: テクスチャ基準ディレクトリ
 	// Arg    : int maximumItem						: 最大要素数
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	// Arg    : ManagerTexture< Texture >* pTexture	: テクスチャ管理クラス
 	//==============================================================================
-	int Initialize( TCHAR* pDirectory, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture );
+	int Initialize( TCHAR* pDirectory, TCHAR* pDirectoryTexture, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -76,11 +77,12 @@ public:
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
 	// Arg    : TCHAR* pDirectory					: 基準ディレクトリ
+	// Arg    : TCHAR* pDirectoryTexture			: テクスチャ基準ディレクトリ
 	// Arg    : int maximumItem						: 最大要素数
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	// Arg    : ManagerTexture< Texture >* pTexture	: テクスチャ管理クラス
 	//==============================================================================
-	int Reinitialize( TCHAR* pDirectory, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture );
+	int Reinitialize( TCHAR* pDirectory, TCHAR* pDirectoryTexture, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -99,8 +101,9 @@ private:
 	int LoadResource( TCHAR* pPath, int index );
 	void ReleaseResource( int index );
 
-	IDirect3DDevice9*			pDevice_;		// Direct3Dデバイス
-	ManagerTexture< Texture >*	pTexture_;		// テクスチャ管理クラス
+	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
+	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
+	TCHAR*						pDirectoryTexture_;		// テクスチャ基準ディレクトリ
 };
 
 #endif	// MY_MANAGER_MODEL_H

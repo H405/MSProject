@@ -29,6 +29,14 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
+class CameraObject;
+class LightDirection;
+class LightPoint;
+class ManagerPoint;
+class Material;
+class ObjectMesh;
+class ObjectModel;
+class ObjectSky;
 
 //******************************************************************************
 // クラス定義
@@ -91,6 +99,18 @@ private:
 	void InitializeSelf( void );
 	SceneSplash( const SceneSplash& );
 	SceneSplash operator=( const SceneSplash& );
+
+	CameraObject*		pCamera_;			// カメラ
+	LightDirection*		pLight_;			// ライト
+	LightPoint*			pPointLight_;		// ポイントライト
+
+	ManagerPoint*		pPoint_;			// ポイントスプライト管理クラス
+
+	static const int	COUNT_MODEL = 10;		// モデル数
+
+	ObjectMesh*			pObjectMesh_;		// メッシュ
+	ObjectSky*			pObjectSky_;		// スカイドーム
+	ObjectModel*		pObjectModel_;		// モデル
 };
 
 #endif	// MY_SCENE_SPLASH_H

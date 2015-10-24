@@ -64,7 +64,7 @@ int LightDirection::Initialize( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3D
 	}
 
 	// メンバ変数の設定
-	vector_ = vector;
+	D3DXVec3Normalize( &vector_, &vector );
 
 	// 正常終了
 	return 0;
@@ -140,7 +140,7 @@ int LightDirection::Copy( LightDirection* pOut ) const
 void LightDirection::SetVector( const D3DXVECTOR3& value )
 {
 	// 値の設定
-	vector_ = value;
+	D3DXVec3Normalize( &vector_, &value );
 }
 
 //==============================================================================
@@ -153,9 +153,8 @@ void LightDirection::SetVector( const D3DXVECTOR3& value )
 void LightDirection::SetVector( float x, float y, float z )
 {
 	// 値の設定
-	vector_.x = x;
-	vector_.y = y;
-	vector_.z = z;
+	D3DXVECTOR3	value( x, y, z );
+	D3DXVec3Normalize( &vector_, &value );
 }
 
 //==============================================================================
