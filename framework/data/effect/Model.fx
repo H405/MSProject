@@ -183,24 +183,6 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 
 	// ピクセル色を返す
 	return float4( color, colorDiffuse.a );
-
-//	// 明度の計算
-//	float	lightness = GetLightness( vertex.vectorNormalWorld_ );//dot( vertex.vectorNormalWorld_, -vectorLight_ ) * 0.5f + 0.5f;
-//
-//	// ディフューズ色の計算
-//	float3	diffuse = colorDiffuse_.rgb * tex2D( samplerTexture, vertex.textureCoord_ ) * lightness * colorLight_.rgb + colorAmbient_.rgb;
-//
-//	// フレネル反射率を算出
-//	float3	vectorVertexToEye = normalize( positionEye_ - vertex.positionWorld_.xyz );
-//	float	fresnel = refractive_ + (1.0f - refractive_) * exp( -6.0f * max( dot( vertex.vectorNormalWorld_, vectorVertexToEye ), 0.0f ) );
-//
-//	// スペキュラ色の算出
-//	float3	vectorHalf = normalize( vectorVertexToEye - vectorLight_ );
-//	float3	specular = colorSpecular_.rgb * (pow( max( dot( vertex.vectorNormalWorld_, vectorHalf ), 0.0f ), power_ ) * reflection_ + colorAmbient_.rgb * fresnel);
-////	float3	specular = colorSpecular_.rgb * (pow( max( dot( reflect( vectorLight_, vertex.vectorNormalWorld_ ), vectorVertexToEye ), 0.0f ), power_ ) * reflection_ + colorAmbient_.rgb * fresnel);
-//
-//	// ピクセル色を返す
-//	return float4( diffuse + specular, colorDiffuse_.a );
 }
 
 //==============================================================================
