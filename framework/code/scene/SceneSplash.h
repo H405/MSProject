@@ -111,6 +111,8 @@ private:
 	ObjectMesh*			pObjectMesh_;		// メッシュ
 	ObjectSky*			pObjectSky_;		// スカイドーム
 	ObjectModel*		pObjectModel_;		// モデル
+
+	int					timerLight_;		// ライト用タイマー
 };
 
 #endif	// MY_SCENE_SPLASH_H

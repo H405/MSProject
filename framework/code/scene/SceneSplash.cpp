@@ -100,8 +100,8 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		1000.0f,
-		D3DXVECTOR3( 0.0f, 20.0f, -100.0f ),
-		D3DXVECTOR3( 0.0f, 0.0f, 10.0f ),
+		D3DXVECTOR3( 0.0f, 30.0f, -150.0f ),
+		D3DXVECTOR3( 0.0f, 0.0f, 20.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
 
@@ -117,7 +117,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	result = pLight_->Initialize( D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, 1.0f ) );
+	result = pLight_->Initialize( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, 1.0f ) );
 	if( result != 0 )
 	{
 		return result;
@@ -130,19 +130,36 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	for( int counterLight = 0; counterLight < GraphicMain::LIGHT_POINT_MAX; ++counterLight )
+
+	result = pPointLight_[ 0 ].Initialize( D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+		D3DXVECTOR3( -20.0f, 10.0f, 0.0f ),  D3DXVECTOR3( 0.0f, 0.02f, 0.001f ) );
+	if( result != 0 )
 	{
-		result = pPointLight_[ counterLight ].Initialize( D3DXCOLOR( 1.0f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 1.0f, 0.5f, 0.5f, 1.0f ),
-			D3DXVECTOR3( 10.0f, 10.0f, 0.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.02f ) );
-		if( result != 0 )
-		{
-			return result;
-		}
-		pArgument->pEffectParameter_->SetLightPoint( counterLight, &pPointLight_[ counterLight ] );
+		return result;
 	}
+	pArgument->pEffectParameter_->SetLightPoint( 0, &pPointLight_[ 0 ] );
+
+	result = pPointLight_[ 1 ].Initialize( D3DXCOLOR( 0.25f, 0.25f, 1.0f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+		D3DXVECTOR3( 20.0f, 10.0f, 0.0f ),  D3DXVECTOR3( 0.0f, 0.02f, 0.001f ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pArgument->pEffectParameter_->SetLightPoint( 1, &pPointLight_[ 1 ] );
+
+	result = pPointLight_[ 2 ].Initialize( D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+		D3DXVECTOR3( 0.0f, 10.0f, -100.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.002f ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pArgument->pEffectParameter_->SetLightPoint( 2, &pPointLight_[ 2 ] );
 
 	// ポイントライトの個数を設定
-	pArgument->pEffectParameter_->SetCountLightPoint( 1 );
+	pArgument->pEffectParameter_->SetCountLightPoint( 3 );
+
+	// 環境光の設定
+	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
 	// ポイントスプライト管理クラスの生成
 	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
@@ -173,7 +190,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	Effect*		pEffectSky = nullptr;		// エフェクト
 	Texture*	pTextureSky = nullptr;		// テクスチャ
 	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
-	pTextureSky = pArgument_->pTexture_->Get( _T( "test/sky.png" ) );
+	pTextureSky = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTextureSky );
@@ -186,6 +203,12 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectModel_ = new ObjectModel[ COUNT_MODEL ];
 	pObjectModel_[ 0 ].Initialize( 0 );
 	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 1 ].Initialize( 0 );
+	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 1 ].SetPositionX( 50.0f );
+	pObjectModel_[ 2 ].Initialize( 0 );
+	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 2 ].SetPositionX( -50.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -201,6 +224,9 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneSplash::Finalize( void )
 {
+	// ポイントライトの個数を設定
+	pArgument_->pEffectParameter_->SetCountLightPoint( 0 );
+
 	// モデルの破棄
 	delete[] pObjectModel_;
 	pObjectModel_ = nullptr;
@@ -302,6 +328,7 @@ void SceneSplash::Update( void )
 
 	// モデルの回転
 	pObjectModel_[ 0 ].AddRotationY( 0.01f );
+
 #if 0
 	// ライトの回転
 	static float	rotL = 0.0f;
@@ -316,6 +343,55 @@ void SceneSplash::Update( void )
 		rotL -= 2.0f * D3DX_PI;
 	}
 #endif
+
+	// ライトの回転角度を決定
+	float	angleLight;		// ライトの回転角度
+	angleLight = D3DX_PI * timerLight_ / 120.0f;
+	++timerLight_;
+
+	// 赤ポイントライトの移動
+	D3DXVECTOR3	positionPointR;		// ポイントライトの座標
+	pPointLight_[ 0 ].GetPosition( &positionPointR );
+	positionPointR.x = 30.0f * cosf( angleLight );
+	positionPointR.z = 30.0f * sinf( angleLight );
+	pPointLight_[ 0 ].SetPosition( positionPointR );
+
+	// 青ポイントライトの移動
+	D3DXVECTOR3	positionPointB;		// ポイントライトの座標
+	pPointLight_[ 1 ].GetPosition( &positionPointB );
+	positionPointB.x = 30.0f * cosf( angleLight + D3DX_PI );
+	positionPointB.z = 30.0f * sinf( angleLight + D3DX_PI );
+	pPointLight_[ 1 ].SetPosition( positionPointB );
+
+	// 緑ポイントライトの移動
+	D3DXVECTOR3	positionPointG;		// ポイントライトの座標
+	pPointLight_[ 2 ].GetPosition( &positionPointG );
+	if( pArgument_->pVirtualController_->IsPress( VC_LEFT ) )
+	{
+		positionPointG.x -= 1.0f;
+	}
+	else if( pArgument_->pVirtualController_->IsPress( VC_RIGHT ) )
+	{
+		positionPointG.x += 1.0f;
+	}
+	if( pArgument_->pVirtualController_->IsPress( VC_DOWN ) )
+	{
+		positionPointG.z -= 1.0f;
+	}
+	else if( pArgument_->pVirtualController_->IsPress( VC_UP ) )
+	{
+		positionPointG.z += 1.0f;
+	}
+	pPointLight_[ 2 ].SetPosition( positionPointG );
+
+	// エフェクトの発生
+	pPoint_->Add( 20, positionPointR, D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ), 50.0f,
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+	pPoint_->Add( 20, positionPointB, D3DXCOLOR( 0.25f, 0.25f, 1.0f, 1.0f ), 50.0f,
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+	pPoint_->Add( 20, positionPointG, D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), 50.0f,
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
@@ -345,4 +421,5 @@ void SceneSplash::InitializeSelf( void )
 	pPoint_ = nullptr;
 	pObjectMesh_ = nullptr;
 	pObjectSky_ = nullptr;
+	timerLight_ = 0;
 }
