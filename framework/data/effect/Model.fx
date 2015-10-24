@@ -199,7 +199,7 @@ technique ShadeNormal
 		DestBlend = InvSrcAlpha;
 
 		// シェーダの設定
-		VertexShader = compile vs_2_0 TransformVertex();
+		VertexShader = compile vs_3_0 TransformVertex();
 		PixelShader = compile ps_3_0 DrawPixel();
 	}
 }
