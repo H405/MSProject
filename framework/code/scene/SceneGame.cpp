@@ -39,6 +39,7 @@
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectSky.h"
 #include "../object/ObjectBillboard.h"
+#include "../object//ObjectScore.h"
 
 #include "../graphic/graphic/GraphicPoint.h"
 #include "../framework/polygon/PolygonPoint.h"
@@ -168,7 +169,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
 	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
 	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
-	pTexturePoint = pArgument->pTexture_->Get( _T( "effect000.jpg" ) );
+	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
 	pPoint_ = new ManagerPoint();
 	if( pPoint_ == nullptr )
 	{
@@ -187,7 +188,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 	// スカイドームの生成
 	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "sky.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.png" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
@@ -195,7 +196,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 	//	「スコア」文字オブジェクト生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "stringScore.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "game/stringScore.png" ) );
 
 	stringScore = new Object2D;
 	stringScore->Initialize(0);
@@ -206,12 +207,33 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		pEffect,
 		pTexture);
 
-	stringScore->SetPosition(-450.0f, 250.0f, 0.0f);
+	stringScore->SetScale(300.0f, 120.0f, 0.0f);
+	stringScore->SetPosition(-500.0f, 250.0f, 0.0f);
 
+
+
+	//	スコアオブジェクト生成
+	pTexture = pArgument_->pTexture_->Get( _T( "common/number.png" ) );
+
+	score = new ObjectScore;
+	score->Initialize(0, 10);
+
+	score->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+	score->SetSizeX(64.0f);
+	score->SetSizeY(64.0f);
+	score->SetPosX(-350.0f);
+	score->SetPosY(250.0f);
+
+	score->SetScoreFuture(123456789);
 
 
 	//	ポーズ時用背景オブジェクト生成
-	pTexture = pArgument_->pTexture_->Get( _T( "fade.jpg" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/fade.jpg" ) );
 
 	pauseFrame = new Object2D;
 	pauseFrame->Initialize(0);
@@ -229,7 +251,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	「再開」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "stringReturn.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringReturn.png" ) );
 
 	stringReturn = new Object2D;
 	stringReturn->Initialize(0);
@@ -247,7 +269,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	「中止」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "stringStop.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringStop.png" ) );
 
 	stringStop = new Object2D;
 	stringStop->Initialize(0);
@@ -265,7 +287,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	「初めから」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "stringRetry.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringRetry.png" ) );
 
 	stringRetry = new Object2D;
 	stringRetry->Initialize(0);
@@ -286,7 +308,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	//	指の初期化
 	if(pArgument_->pWiiController_->getIsConnect() == true)
 	{
-		pTexture = pArgument_->pTexture_->Get( _T( "finger.png" ) );
+		pTexture = pArgument_->pTexture_->Get( _T( "common/finger.png" ) );
 		finger = new Object2D;
 		finger->Initialize(0);
 
@@ -337,33 +359,31 @@ int SceneGame::Finalize( void )
 	pPoint_ = nullptr;
 
 	// ポーズ用背景の開放
-	if(pauseFrame != nullptr)
-		delete pauseFrame;
+	delete pauseFrame;
 	pauseFrame = nullptr;
 
+	//	スコアオブジェクトの解放
+	delete score;
+	score = nullptr;
+
 	// 「スコア」文字オブジェクトの開放
-	if(stringScore != nullptr)
-		delete stringScore;
+	delete stringScore;
 	stringScore = nullptr;
 
 	// 「再開」文字オブジェクトの開放
-	if(stringReturn != nullptr)
-		delete stringReturn;
+	delete stringReturn;
 	stringReturn = nullptr;
 
 	// 「中止」文字オブジェクトの開放
-	if(stringStop != nullptr)
-		delete stringStop;
+	delete stringStop;
 	stringStop = nullptr;
 
 	// 「初めから」文字オブジェクトの開放
-	if(stringRetry != nullptr)
-		delete stringRetry;
+	delete stringRetry;
 	stringRetry = nullptr;
 
 	// 指オブジェクトの開放
-	if(finger != nullptr)
-		delete finger;
+	delete finger;
 	finger = nullptr;
 
 	// ライトの開放
@@ -470,6 +490,9 @@ void SceneGame::normalUpdate(void)
 
 	// ポイントスプライト管理クラスの更新
 	pPoint_->Update();
+
+	//	スコアクラスの更新
+	score->Update();
 
 	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))
 	{

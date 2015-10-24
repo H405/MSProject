@@ -34,6 +34,7 @@ class LightDirection;
 class ManagerPoint;
 
 class Object2D;
+class ObjectScore;
 class Object3D;
 class Material;
 class ObjectModel;
@@ -116,6 +117,9 @@ private:
 
 	//	「スコア」文字
 	Object2D* stringScore;
+
+	//	スコアオブジェクト
+	ObjectScore* score;
 
 	//	ポーズ時用背景
 	Object2D* pauseFrame;

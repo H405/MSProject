@@ -204,7 +204,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	house[2]->SetPositionZ(100.0f);
 
 	//	仮のフィールド
-	pTexture = pArgument_->pTexture_->Get( _T( "titlelogo.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "title/titlelogo.png" ) );
 	field = new ObjectMesh();
 	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
 	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
@@ -214,7 +214,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	titleLogo = new Object2D;
 	titleLogo->Initialize(0);
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "titlelogo.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "title/titlelogo.png" ) );
 
 	titleLogo->CreateGraphic(
 		0,
@@ -226,7 +226,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	Aボタンを押してね
-	pTexture = pArgument_->pTexture_->Get( _T( "pressAKey.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "title/pressAKey.png" ) );
 	pushAKey = new Object2D;
 	pushAKey->Initialize(0);
 
@@ -237,6 +237,70 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		pTexture);
 
 	pushAKey->SetPosition(0.0f, -200.0f, 0.0f);
+
+
+
+	//	「演舞開始」文字オブジェクトの生成
+	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "title/startGame.png" ) );
+
+	startGame = new Object2D;
+	startGame->Initialize(0);
+
+	startGame->CreateGraphic(
+	0,
+	pArgument_->pEffectParameter_,
+	pEffect,
+	pTexture);
+
+	startGame->SetPosition(-300.0f, -100.0f, 0.0f);
+	startGame->SetScaleX(startXX_NormalSizeX);
+	startGame->SetScaleY(startXX_NormalSizeY);
+	startGame->SetEnableGraphic(false);
+
+
+	//	「練習開始」文字オブジェクトの生成
+	pTexture = pArgument_->pTexture_->Get( _T( "title/startTutorial.png" ) );
+
+	startTutorial = new Object2D;
+	startTutorial->Initialize(0);
+
+	startTutorial->CreateGraphic(
+	0,
+	pArgument_->pEffectParameter_,
+	pEffect,
+	pTexture);
+
+	startTutorial->SetPosition(300.0f, -100.0f, 0.0f);
+	startTutorial->SetScaleX(startXX_NormalSizeX);
+	startTutorial->SetScaleY(startXX_NormalSizeY);
+	startTutorial->SetEnableGraphic(false);
+
+
+
+	//	wiiリモコンが接続されていれば
+	//	指の初期化
+	if(pArgument_->pWiiController_->getIsConnect() == true)
+	{
+		pTexture = pArgument_->pTexture_->Get( _T( "common/finger.png" ) );
+		finger = new Object2D;
+		finger->Initialize(0);
+
+		finger->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+		finger->SetScale(50.0f, 50.0f, 0.1f);
+		finger->SetEnableGraphic(false);
+
+		//	IRで選択に変更
+		chooseFlag = true;
+	}
+
+
+
 
 	//	更新関数セット
 	fpUpdate = &SceneTitle::firstUpdate;
@@ -255,44 +319,34 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneTitle::Finalize( void )
 {
-	if(finger != nullptr)
-		delete finger;
+	delete finger;
 	finger = nullptr;
 
-	if(field != nullptr)
-		delete field;
+	delete field;
 	field = nullptr;
 
-	if(house[0] != nullptr)
-		delete house[0];
+	delete house[0];
 	house[0] = nullptr;
 
-	if(house[1] != nullptr)
-		delete house[1];
+	delete house[1];
 	house[1] = nullptr;
 
-	if(house[2] != nullptr)
-		delete house[2];
+	delete house[2];
 	house[2] = nullptr;
 
-	if(player != nullptr)
-		delete player;
+	delete player;
 	player = nullptr;
 
-	if(startGame != nullptr)
-		delete startGame;
+	delete startGame;
 	startGame = nullptr;
 
-	if(startTutorial != nullptr)
-		delete startTutorial;
+	delete startTutorial;
 	startTutorial = nullptr;
 
-	if(pushAKey != nullptr)
-		delete pushAKey;
+	delete pushAKey;
 	pushAKey = nullptr;
 
-	if(titleLogo != nullptr)
-		delete titleLogo;
+	delete titleLogo;
 	titleLogo = nullptr;
 
 	// ライトの開放
@@ -413,67 +467,13 @@ void SceneTitle::firstUpdate( void )
 
 	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )
 	{
-		//	「Aボタンを押してね」を消して、「演舞開始」と「練習開始」をそれぞれ生成
-		delete pushAKey;
-		pushAKey = nullptr;
+		//	「Aボタンを押してね」を消して、「演舞開始」と「練習開始」と指オブジェクトを可視化
+		pushAKey->SetEnableGraphic(false);
+		startTutorial->SetEnableGraphic(true);
+		startGame->SetEnableGraphic(true);
 
-		startGame = new Object2D;
-		startGame->Initialize(0);
-
-		startTutorial = new Object2D;
-		startTutorial->Initialize(0);
-
-		Effect*		pEffect = nullptr;
-		Texture*	pTexture = nullptr;
-		pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-		pTexture = pArgument_->pTexture_->Get( _T( "startGame.png" ) );
-
-		startGame->CreateGraphic(
-		0,
-		pArgument_->pEffectParameter_,
-		pEffect,
-		pTexture);
-
-		startGame->SetPosition(-300.0f, -100.0f, 0.0f);
-		startGame->SetScaleX(startXX_NormalSizeX);
-		startGame->SetScaleY(startXX_NormalSizeY);
-
-
-
-
-		pTexture = pArgument_->pTexture_->Get( _T( "startTutorial.png" ) );
-
-		startTutorial->CreateGraphic(
-		0,
-		pArgument_->pEffectParameter_,
-		pEffect,
-		pTexture);
-
-		startTutorial->SetPosition(300.0f, -100.0f, 0.0f);
-		startTutorial->SetScaleX(startXX_NormalSizeX);
-		startTutorial->SetScaleY(startXX_NormalSizeY);
-
-
-
-		//	wiiリモコンが接続されていれば
-		//	指の初期化
 		if(pArgument_->pWiiController_->getIsConnect() == true)
-		{
-			pTexture = pArgument_->pTexture_->Get( _T( "finger.png" ) );
-			finger = new Object2D;
-			finger->Initialize(0);
-
-			finger->CreateGraphic(
-			0,
-			pArgument_->pEffectParameter_,
-			pEffect,
-			pTexture);
-
-			finger->SetScale(50.0f, 50.0f, 0.1f);
-
-			//	IRで選択に変更
-			chooseFlag = true;
-		}
+			finger->SetEnableGraphic(true);
 
 
 		//	デフォルトの選択肢を「演舞開始」に設定

@@ -339,9 +339,6 @@
     <ClInclude Include="code\system\ManagerPoint.h">
       <Filter>ソース ファイル\system</Filter>
     </ClInclude>
-    <ClInclude Include="code\system\PointStateArrange.h">
-      <Filter>ソース ファイル\system</Filter>
-    </ClInclude>
     <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h">
       <Filter>ソース ファイル\framework\polygon</Filter>
     </ClInclude>
@@ -353,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="code\graphic\drawer\DrawerBillboard.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectScore.h">
+      <Filter>ソース ファイル\object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -617,9 +617,6 @@
     <ClCompile Include="code\system\ManagerPoint.cpp">
       <Filter>ソース ファイル\system</Filter>
     </ClCompile>
-    <ClCompile Include="code\system\PointStateArrange.cpp">
-      <Filter>ソース ファイル\system</Filter>
-    </ClCompile>
     <ClCompile Include="code\object\ObjectBillboard.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
@@ -628,6 +625,9 @@
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerBillboard.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectScore.cpp">
+      <Filter>ソース ファイル\object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
