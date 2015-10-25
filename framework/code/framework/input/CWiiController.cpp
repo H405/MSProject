@@ -9,6 +9,8 @@
 #include "CWiiController.h"
 #include <iostream>
 
+#include "../develop/DebugProc.h"
+
 //*****************************************************************************
 //	定数定義
 //*****************************************************************************
@@ -72,65 +74,11 @@ const float screenHeight = 720.0f;
 //=============================================================================
 //	コンストラクタ
 //=============================================================================
-CWiiController::CWiiController() :
-wiiRemote(nullptr),
-wiiBoard(nullptr),
-
-accel(0.0f, 0.0f, 0.0f),
-accelPrev(0.0f, 0.0f, 0.0f),
-
-accelRaw(0.0f, 0.0f, 0.0f),
-accelRawPrev(0.0f, 0.0f, 0.0f),
-
-accelN(0.0f, 0.0f, 0.0f),
-accelNPrev(0.0f, 0.0f, 0.0f),
-
-rot(0.0f, 0.0f, 0.0f),
-rotPrev(0.0f, 0.0f, 0.0f),
-
-rotN(0.0f, 0.0f, 0.0f),
-rotNPrev(0.0f, 0.0f, 0.0f),
-
-rotRaw(0.0f, 0.0f, 0.0f),
-rotRawPrev(0.0f, 0.0f, 0.0f),
-
-rotSpeed(0.0f, 0.0f, 0.0f),
-rotSpeedPrev(0.0f, 0.0f, 0.0f),
-
-rotSpeedRaw(0.0f, 0.0f, 0.0f),
-rotSpeedRawPrev(0.0f, 0.0f, 0.0f),
-
-joystick(0.0f, 0.0f),
-joystickPrev(0.0f, 0.0f),
-
-IR(0.0f, 0.0f),
-IRPrev(0.0f, 0.0f),
-
-IRScreen(0.0f, 0.0f),
-IRScreenPrev(0.0f, 0.0f),
-
-LEDType(LED_0),
-LEDTypePrev(LED_0),
-
-LEDCounter(0),
-
-motionConnect(false),
-motionConnectPrev(false),
-
-rotSpeedCalibrationFlag(false),
-
-rotResetFlag(false),
-
-rotSpeedCalibrationCount(0),
-
-updateAge(0),
-updateAgePrev(0),
-
-buttonState(0),
-buttonStatePrev(0),
-
-isConnect(false)
+CWiiController::CWiiController()
 {
+	//	変数初期化
+	initializeSelf();
+
 	for (int count = 0; count < 2; count++)
 	{
 		//	本体を生成
@@ -184,7 +132,7 @@ isConnect(false)
 		if (!buff->IsBalanceBoard())
 		{
 			//	接続状態セット
-			isConnect = true;
+			isConnectWiimote = true;
 
 			//	一時バッファを本体として登録
 			wiiRemote = buff;
@@ -201,11 +149,18 @@ isConnect(false)
 		}
 		else
 		{
+			//	接続状態セット
+			isConnectWiiboard = true;
+
 			//	一時バッファをバランスボードとして登録
 			wiiBoard = buff;
 
 			// 使用するセンサを設定（wiiボード）
-			wiiBoard->SetReportType(wiimote::IN_BUTTONS_BALANCE_BOARD);
+			wiiBoard->SetReportType(wiimote::IN_BUTTONS_BALANCE_BOARD, false);
+
+			//	初期値格納
+			wiiBoard->RefreshState();
+			calibrationWiiboard();
 		}
 	}
 
@@ -216,7 +171,182 @@ isConnect(false)
 	//	更新関数セット
 	fpUpdate = &CWiiController::NormalUpdate;
 }
+//=============================================================================
+//	変数初期化
+//=============================================================================
+void CWiiController::initializeSelfWiiRemote()
+{
+	wiiRemote = nullptr;
 
+	accel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	accelPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	accelRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	accelRawPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	accelN = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	accelNPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	rotPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	rotN = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	rotNPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	rotRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	rotRawPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	rotSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	rotSpeedPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	rotSpeedRaw = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	rotSpeedRawPrev = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	joystick = D3DXVECTOR2(0.0f, 0.0f);
+	joystickPrev = D3DXVECTOR2(0.0f, 0.0f);
+
+	IR = D3DXVECTOR2(0.0f, 0.0f);
+	IRPrev = D3DXVECTOR2(0.0f, 0.0f);
+
+	IRScreen = D3DXVECTOR2(0.0f, 0.0f);
+	IRScreenPrev = D3DXVECTOR2(0.0f, 0.0f);
+
+	LEDType = LED_0;
+	LEDTypePrev = LED_0;
+
+	LEDCounter = 0;
+
+	motionConnect = false;
+	motionConnectPrev = false;
+
+	rotSpeedCalibrationFlag = false;
+
+	rotResetFlag = false;
+
+	rotSpeedCalibrationCount = 0;
+
+	updateAge = 0;
+	updateAgePrev = 0;
+
+	buttonState = 0;
+	buttonStatePrev = 0;
+
+	isConnectWiimote = false;
+	isReConnectWiimote = false;
+}
+//=============================================================================
+//	変数初期化
+//=============================================================================
+void CWiiController::initializeSelfWiiBoard()
+{
+	wiiBoard = nullptr;
+
+	kg.BottomL = 0.0f;
+	kg.BottomR = 0.0f;
+	kg.TopL = 0.0f;
+	kg.TopR = 0.0f;
+	kg.Total = 0.0f;
+
+	kgPrev.BottomL = 0.0f;
+	kgPrev.BottomR = 0.0f;
+	kgPrev.TopL = 0.0f;
+	kgPrev.TopR = 0.0f;
+	kgPrev.Total = 0.0f;
+
+	calibKg.BottomL = 0.0f;
+	calibKg.BottomR = 0.0f;
+	calibKg.TopL = 0.0f;
+	calibKg.TopR = 0.0f;
+	calibKg.Total = 0.0f;
+
+	isConnectWiiboard = false;
+	isReConnectWiiboard = false;
+}
+//=============================================================================
+//	変数初期化
+//=============================================================================
+void CWiiController::initializeSelf()
+{
+	initializeSelfWiiRemote();
+	initializeSelfWiiBoard();
+}
+//=============================================================================
+//	再接続要求
+//=============================================================================
+void CWiiController::reConnectWiimote()
+{
+	//	一時オブジェクトを生成
+	wiimote* buff = new wiimote();
+
+	//	接続要求
+	if(buff->Connect())
+	{
+		//	wiiリモコンとして接続されれば
+		if (!buff->IsBalanceBoard())
+		{
+			//	変数初期化
+			initializeSelfWiiRemote();
+
+			//	接続状態セット
+			isConnectWiimote = true;
+
+			//	再接続要求終了
+			isReConnectWiimote = false;
+
+			//	一時バッファを本体として登録
+			wiiRemote = buff;
+
+			// 使用するセンサを設定（ボタン、加速度、IR、エクステンション（外部接続-ヌンチャクとか））
+			wiiRemote->SetReportType(wiimote::IN_BUTTONS_ACCEL_IR_EXT);
+
+			//	スピーカーを有効にする
+			wiiRemote->MuteSpeaker(false);
+			wiiRemote->EnableSpeaker(true);
+
+			//	LEDをとりあえず全部点灯させる
+			wiiRemote->SetLEDs(0x000F);
+		}
+	}
+	else
+		delete buff;
+}
+//=============================================================================
+//	再接続要求
+//=============================================================================
+void CWiiController::reConnectWiiboard()
+{
+	//	一時オブジェクトを生成
+	wiimote* buff = new wiimote();
+
+	//	接続要求
+	if(buff->Connect())
+	{
+		//	wiiボードとして接続されれば
+		if (buff->IsBalanceBoard())
+		{
+			//	変数初期化
+			initializeSelfWiiBoard();
+
+			//	接続状態セット
+			isConnectWiiboard = true;
+
+			//	再接続要求終了
+			isReConnectWiiboard = false;
+
+			//	一時バッファを本体として登録
+			wiiBoard = buff;
+
+			// 使用するセンサを設定（ボタン、加速度、IR、エクステンション（外部接続-ヌンチャクとか））
+			wiiBoard->SetReportType(wiimote::IN_BUTTONS_BALANCE_BOARD);
+
+			//	初期値格納
+			wiiBoard->RefreshState();
+			calibrationWiiboard();
+		}
+	}
+	else
+		delete buff;
+}
 //=============================================================================
 //	デストラクタ
 //=============================================================================
@@ -238,6 +368,9 @@ CWiiController::~CWiiController()
 
 	if(wiiBoard != nullptr)
 	{
+		//	切断
+		wiiBoard->Disconnect();
+
 		delete wiiBoard;
 	}
 }
@@ -299,6 +432,23 @@ void CWiiController::CommonUpdate()
 	//	wiiリモコンが接続されていれば
 	if(wiiRemote != nullptr)
 	{
+		//	wiiリモコンの接続が切れたら
+		if(wiiRemote->IsConnected() == false || isConnectWiimote == false)
+		{
+			//	接続切れ
+			isConnectWiimote = false;
+
+			//	再接続要求
+			isReConnectWiimote = true;
+
+			//	オブジェクト破棄
+			delete wiiRemote;
+			wiiRemote = nullptr;
+
+			//	関数終了
+			return;
+		}
+
 		//	前回の状態を保存
 		buttonStatePrev = buttonState;
 
@@ -559,9 +709,44 @@ void CWiiController::CommonUpdate()
 	//	バランスwiiボード(以下、wiiボード)が接続されていれば
 	if(wiiBoard != nullptr)
 	{
+		//	wiiボードの接続が切れたら
+		if(wiiBoard->IsConnected() == false || isConnectWiiboard == false)
+		{
+			//	接続切れ
+			isConnectWiiboard = false;
+
+			//	再接続要求
+			isReConnectWiiboard = true;
+
+			//	オブジェクト破棄
+			delete wiiBoard;
+			wiiBoard = nullptr;
+
+			//	関数終了
+			return;
+		}
+
+		//	前フレームの値取得
+		kgPrev = kg;
+
 		//	wiiボードの状態を取得...というかリセット
 		//	これやらないとステータスが更新されない
 		wiiBoard->RefreshState();
+
+		//	値の格納
+		kg = wiiBoard->BalanceBoard.Kg;
+
+		PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
+		PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
+		PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
+		PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
+		PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
+
+		PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
+		PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
+		PrintDebug( _T( "Kg.TopL = %f\n" ),		kg.TopL);
+		PrintDebug( _T( "Kg.TopR = %f\n" ),		kg.TopR);
+		PrintDebug( _T( "Kg.Total = %f\n" ),	kg.Total);
 	}
 }
 //=============================================================================

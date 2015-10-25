@@ -105,6 +105,9 @@ typedef enum
 	ROT_RESET_TYPE_Z_M_ONE,
 }ROT_RESET_TYPE;
 
+//	長いから省略（WiiBoardSencer）
+#define WBS wiimote_state::balance_board::sensors_f
+
 //=============================================================================
 //	クラス定義
 //=============================================================================
@@ -260,7 +263,30 @@ public:
 	void rotReset(){rotResetFlag = true;}
 
 	//	接続状態取得
-	bool getIsConnect(){return isConnect;}
+	bool getIsConnectWiimote(){return isConnectWiimote;}
+
+	//	再接続要求取得
+	bool getIsReConnectWiimote(){return isReConnectWiimote;}
+
+	//	再接続要求
+	void reConnectWiimote();
+
+	//	wiiボードのキャリブレーション
+	void calibrationWiiboard(){if(wiiBoard != nullptr){wiiBoard->CalibrateAtRest();calibKg = wiiBoard->BalanceBoard.AtRestKg;}}
+
+	//	wiiBoardが取得した重さの取得
+	WBS getKg(){return kg;}
+	WBS getKgPrev(){return kgPrev;}
+	WBS getCalibKg(){return calibKg;}
+
+	//	接続状態取得
+	bool getIsConnectWiiboard(){return isConnectWiiboard;}
+
+	//	再接続要求取得
+	bool getIsReConnectWiiboard(){return isReConnectWiiboard;}
+
+	//	再接続要求
+	void reConnectWiiboard();
 
 private:
 
@@ -374,7 +400,34 @@ private:
 	void (CWiiController::*fpUpdate)(void);
 
 	//	接続状態
-	bool isConnect;
+	bool isConnectWiimote;
+
+	//	再接続要求
+	bool isReConnectWiimote;
+
+
+
+
+
+	//	wiiボードが検出した重さ
+	//--------------------------------
+	WBS kg;
+	WBS kgPrev;
+	//--------------------------------
+
+	//	wiiボードのキャリブレーション値
+	WBS calibKg;
+
+	//	接続状態
+	bool isConnectWiiboard;
+
+	//	再接続要求
+	bool isReConnectWiiboard;
+
+	//	自分の変数初期化
+	void initializeSelf();
+	void initializeSelfWiiRemote();
+	void initializeSelfWiiBoard();
 };
 
 #endif

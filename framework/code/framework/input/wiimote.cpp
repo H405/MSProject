@@ -1629,11 +1629,14 @@ int wiimote::ParseExtension (BYTE *buff, unsigned offset)
 				Internal.BalanceBoard.AtRestKg = Internal.BalanceBoard.Kg;
 				}
 
+			//	NAGASAKI
+			//	キャリブレーション値で、現在の値を調整してるみたいだけど
+			//	今の値をそのままとりたいので、調整を無効にする
 			// remove the 'at rest' offsets
-			Internal.BalanceBoard.Kg.TopL	 -= BalanceBoard.AtRestKg.TopL;
-			Internal.BalanceBoard.Kg.TopR	 -= BalanceBoard.AtRestKg.TopR;
-			Internal.BalanceBoard.Kg.BottomL -= BalanceBoard.AtRestKg.BottomL;
-			Internal.BalanceBoard.Kg.BottomR -= BalanceBoard.AtRestKg.BottomR;
+			//Internal.BalanceBoard.Kg.TopL	 -= BalanceBoard.AtRestKg.TopL;
+			//Internal.BalanceBoard.Kg.TopR	 -= BalanceBoard.AtRestKg.TopR;
+			//Internal.BalanceBoard.Kg.BottomL -= BalanceBoard.AtRestKg.BottomL;
+			//Internal.BalanceBoard.Kg.BottomR -= BalanceBoard.AtRestKg.BottomR;
 
 			// compute the average
 			Internal.BalanceBoard.Kg.Total	  = Internal.BalanceBoard.Kg.TopL    +

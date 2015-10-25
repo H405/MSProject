@@ -119,6 +119,14 @@ private:
 	//	wiiリモコンで操作する指
 	Object2D* finger;
 
+
+	//	「wiiリモコン再接続要求」オブジェクト
+	Object2D* reConnectWiimote;
+
+	//	「wiiボード再接続要求」オブジェクト
+	Object2D* reConnectWiiboard;
+
+
 	//	選択肢のうち、選ばれているオブジェクトのポインタ
 	Object2D* chooseObject;
 	Object2D* chooseObjectPrev;
@@ -164,8 +172,30 @@ private:
 	//==============================================================================
 	void fadeUpdate( void );
 
+	//==============================================================================
+	// Brief  : 再接続要求時用の更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void reConnectWiimoteUpdate(void);
+
+	//==============================================================================
+	// Brief  : 再接続要求時用の更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void reConnectWiiboardUpdate(void);
+
+	//==============================================================================
+	// Brief  : wiiリモコンのロストチェック処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	bool wiiLostCheck(void);
+
 	//	更新関数格納用ポインタ
 	void (SceneTitle::*fpUpdate)(void);
+	void (SceneTitle::*fpUpdatePrev)(void);
 };
 
 #endif	// MY_SCENE_TITLE_H

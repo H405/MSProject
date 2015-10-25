@@ -90,6 +90,8 @@ void SceneTitle::InitializeSelf( void )
 	startTutorial = nullptr;
 	pushAKey = nullptr;
 	finger = nullptr;
+	reConnectWiimote = nullptr;
+	reConnectWiiboard = nullptr;
 
 	player = nullptr;
 
@@ -101,6 +103,7 @@ void SceneTitle::InitializeSelf( void )
 	chooseFlag = false;
 
 	fpUpdate = nullptr;
+	fpUpdatePrev = nullptr;
 }
 
 //==============================================================================
@@ -281,7 +284,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 	//	wiiリモコンが接続されていれば
 	//	指の初期化
-	if(pArgument_->pWiiController_->getIsConnect() == true)
+	if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
 	{
 		pTexture = pArgument_->pTexture_->Get( _T( "common/finger.png" ) );
 		finger = new Object2D;
@@ -298,6 +301,36 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 		//	IRで選択に変更
 		chooseFlag = true;
+
+
+
+		//	「wiiリモコン再接続要求」オブジェクト生成
+		pTexture = pArgument_->pTexture_->Get( _T( "common/reConnectWiimote.png" ) );
+		reConnectWiimote = new Object2D;
+		reConnectWiimote->Initialize(1);
+
+		reConnectWiimote->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+		reConnectWiimote->SetEnableGraphic(false);
+
+
+
+		//	「wiiボード再接続要求」オブジェクト生成
+		pTexture = pArgument_->pTexture_->Get( _T( "common/reConnectWiiboard.png" ) );
+		reConnectWiiboard = new Object2D;
+		reConnectWiiboard->Initialize(1);
+
+		reConnectWiiboard->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+		reConnectWiiboard->SetEnableGraphic(false);
 	}
 
 
@@ -349,6 +382,14 @@ int SceneTitle::Finalize( void )
 
 	delete titleLogo;
 	titleLogo = nullptr;
+
+	//	「wiiリモコン再接続要求」オブジェクト解放
+	delete reConnectWiimote;
+	reConnectWiimote = nullptr;
+
+	//	「wiiボード再接続要求」オブジェクトの解放
+	delete reConnectWiiboard;
+	reConnectWiiboard = nullptr;
 
 	// ライトの開放
 	delete pLight_;
@@ -426,14 +467,6 @@ void SceneTitle::Update( void )
 	//	カメラ更新
 	pCamera_->Update();
 
-	//	wiiリモコンが生成されていれば指の移動
-	if(finger != nullptr)
-	{
-		D3DXVECTOR2 IRBuff = pArgument_->pWiiController_->getIRScreen();
-
-		finger->SetPosition(IRBuff.x, IRBuff.y, 0.0f);
-	}
-
 	//	設定された更新クラスへ
 	(this->*fpUpdate)();
 }
@@ -445,6 +478,12 @@ void SceneTitle::Update( void )
 //==============================================================================
 void SceneTitle::firstUpdate( void )
 {
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+
+
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
@@ -473,16 +512,15 @@ void SceneTitle::firstUpdate( void )
 		startTutorial->SetEnableGraphic(true);
 		startGame->SetEnableGraphic(true);
 
-		if(pArgument_->pWiiController_->getIsConnect() == true)
+		//	wiiリモコンが登録されてる場合は登録しない
+		if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
+		{
+			chooseObject = nullptr;
 			finger->SetEnableGraphic(true);
-
+		}
 
 		//	デフォルトの選択肢を「演舞開始」に設定
 		chooseObject = startGame;
-
-		//	wiiリモコンが登録されてる場合は登録しない
-		if(pArgument_->pWiiController_->getIsConnect() == true)
-			chooseObject = nullptr;
 
 		//	点滅カウント初期化
 		pushAKeyFlashingCount = 0;
@@ -498,6 +536,10 @@ void SceneTitle::firstUpdate( void )
 //==============================================================================
 void SceneTitle::secondUpdate( void )
 {
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
@@ -507,6 +549,16 @@ void SceneTitle::secondUpdate( void )
 
 	//	１フレーム前の登録オブジェクトを保存
 	chooseObjectPrev = chooseObject;
+
+
+	//	wiiリモコンが生成されていれば指の移動
+	if(finger != nullptr)
+	{
+		D3DXVECTOR2 IRBuff = pArgument_->pWiiController_->getIRScreen();
+
+		finger->SetPosition(IRBuff.x, IRBuff.y, 0.0f);
+	}
+
 
 	//	決定キー押されたら
 	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )
@@ -666,6 +718,10 @@ void SceneTitle::secondUpdate( void )
 //==============================================================================
 void SceneTitle::fadeUpdate( void )
 {
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
@@ -676,4 +732,107 @@ void SceneTitle::fadeUpdate( void )
 
 		SetIsEnd( true );
 	}
+}
+//==============================================================================
+// Brief  : 再接続要求時用の更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneTitle::reConnectWiimoteUpdate(void)
+{
+	//	再接続要求
+	pArgument_->pWiiController_->reConnectWiimote();
+
+	//	wiiリモコンが再接続が終了したら
+	if(pArgument_->pWiiController_->getIsReConnectWiimote() == false)
+	{
+		//	更新関数設定
+		fpUpdate = fpUpdatePrev;
+		fpUpdatePrev = nullptr;
+
+		//	Objectの更新を止める
+		updateFlag = true;
+
+		//	描画やめる
+		reConnectWiimote->SetEnableGraphic(false);
+
+		//	描画再開
+		if(fpUpdate == &SceneTitle::secondUpdate)
+			finger->SetEnableGraphic(true);
+	}
+
+	//	Objectクラスの更新が止まってるから、ここで更新処理
+	reConnectWiimote->Update();
+}
+//==============================================================================
+// Brief  : 再接続要求時用の更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneTitle::reConnectWiiboardUpdate(void)
+{
+	//	再接続要求
+	pArgument_->pWiiController_->reConnectWiiboard();
+
+	//	wiiリモコンが再接続が終了したら
+	if(pArgument_->pWiiController_->getIsReConnectWiiboard() == false)
+	{
+		//	更新関数設定
+		fpUpdate = fpUpdatePrev;
+		fpUpdatePrev = nullptr;
+
+		//	Objectの更新を止める
+		updateFlag = true;
+
+		//	描画やめる
+		reConnectWiiboard->SetEnableGraphic(false);
+
+		//	描画再開
+		if(fpUpdate == &SceneTitle::secondUpdate)
+			finger->SetEnableGraphic(true);
+	}
+
+	//	Objectクラスの更新が止まってるから、ここで更新処理
+	reConnectWiiboard->Update();
+}
+//==============================================================================
+// Brief  : wiiリモコンのロストチェック処理
+// Return : bool								: true = 問題無し false = ロスト
+// Arg    : void								: なし
+//==============================================================================
+bool SceneTitle::wiiLostCheck(void)
+{
+	//	wiiリモコンが再接続要求をした場合
+	if(pArgument_->pWiiController_->getIsReConnectWiimote() == true)
+	{
+		//	更新関数設定
+		fpUpdatePrev = fpUpdate;
+		fpUpdate = &SceneTitle::reConnectWiimoteUpdate;
+
+		//	再接続要求オブジェクト可視化
+		reConnectWiimote->SetEnableGraphic(true);
+
+		//	Objectの更新を止める
+		updateFlag = false;
+
+		return false;
+	}
+
+	//	wiiボードが再接続要求をした場合
+	if(pArgument_->pWiiController_->getIsReConnectWiiboard() == true)
+	{
+		//	更新関数設定
+		fpUpdatePrev = fpUpdate;
+		fpUpdate = &SceneTitle::reConnectWiiboardUpdate;
+
+		//	再接続要求オブジェクト可視化
+		reConnectWiiboard->SetEnableGraphic(true);
+
+		//	Objectの更新を止める
+		updateFlag = false;
+
+		return false;
+	}
+
+	return true;
 }

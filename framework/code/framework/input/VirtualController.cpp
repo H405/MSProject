@@ -68,7 +68,9 @@ void VirtualController::update()
 	//	各デバイスの更新
 	keyboard->Update();
 	mouse->Update();
-	(wiiController->getIsConnect() == true) ? wiiController->update() : pad->Update();
+
+	if(wiiController->getIsConnectWiimote() == true)
+		wiiController->update();
 
 	//	初期化
 	for(int count = 0; count < VC_MAX; count++)

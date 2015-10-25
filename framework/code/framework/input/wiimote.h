@@ -454,7 +454,7 @@ volatile int	 MotionPlusDetectCount;		  // waiting for the result
 		BYTE			 ReadBuff  [REPORT_LENGTH];
 		// for polling: state is updated on a thread internally, and made only
 		//  made public via RefreshState()
-		CRITICAL_SECTION StateLock;	
+		CRITICAL_SECTION StateLock;
 		wiimote_state	 Internal;
 		state_change_flags InternalChanged;   // state changes since last RefreshState()
 		// periodic status report requests (for battery level and connection loss

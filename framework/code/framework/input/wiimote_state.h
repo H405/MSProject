@@ -323,7 +323,11 @@ struct wiimote_state
 		sensors_raw	Raw;	  // raw values (per sensor)
 		sensors_f	AtRestKg; // set by Connect() and CalibrateAtRest()
 		//  (the values below have their 'at-rest' offsets automatically removed)
+
+		//	キログラムで、四隅にかかってる体重を感知する
+		//	四隅の合計がtotalに入る
 		sensors_f	Kg;		  // kilograms  (per sensor)
+
 		sensors_f	Lb;		  // pounds	  (per sensor)
 		} BalanceBoard;
 
