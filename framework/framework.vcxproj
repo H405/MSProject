@@ -88,6 +88,7 @@
     <ClInclude Include="code\object\ObjectBillboard.h" />
     <ClInclude Include="code\object\ObjectMesh.h" />
     <ClInclude Include="code\object\ObjectModel.h" />
+    <ClInclude Include="code\object\ObjectScore.h" />
     <ClInclude Include="code\object\ObjectScreen.h" />
     <ClInclude Include="code\object\ObjectSky.h" />
     <ClInclude Include="code\scene\SceneGame.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="code\object\ObjectBillboard.cpp" />
     <ClCompile Include="code\object\ObjectMesh.cpp" />
     <ClCompile Include="code\object\ObjectModel.cpp" />
+    <ClCompile Include="code\object\ObjectScore.cpp" />
     <ClCompile Include="code\object\ObjectScreen.cpp" />
     <ClCompile Include="code\object\ObjectSky.cpp" />
     <ClCompile Include="code\scene\SceneGame.cpp" />

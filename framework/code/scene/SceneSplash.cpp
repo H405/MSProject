@@ -166,7 +166,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
 	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
 	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
-	pTexturePoint = pArgument->pTexture_->Get( _T( "effect000.jpg" ) );
+	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
 	pPoint_ = new ManagerPoint();
 	if( pPoint_ == nullptr )
 	{
