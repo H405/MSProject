@@ -62,12 +62,13 @@ ManagerModel< TypeItem >::~ManagerModel( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : TCHAR* pDirectory					: 基準ディレクトリ
+// Arg    : TCHAR* pDirectoryTexture			: テクスチャ基準ディレクトリ
 // Arg    : int maximumItem						: 最大要素数
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 // Arg    : ManagerTexture< Texture >* pTexture	: テクスチャ管理クラス
 //==============================================================================
 template< class TypeItem >
-int ManagerModel< TypeItem >::Initialize( TCHAR* pDirectory, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture )
+int ManagerModel< TypeItem >::Initialize( TCHAR* pDirectory, TCHAR* pDirectoryTexture, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -81,6 +82,15 @@ int ManagerModel< TypeItem >::Initialize( TCHAR* pDirectory, int maximumItem, ID
 	pDevice_ = pDevice;
 	pTexture_ = pTexture;
 
+	// 文字列の格納領域を確保
+	pDirectoryTexture_ = new TCHAR[ _MAX_PATH ];
+	if( pDirectoryTexture_ == nullptr )
+	{
+		return 1;
+	}
+	memset( pDirectoryTexture_, 0x00, sizeof( TCHAR ) * _MAX_PATH );
+	_tcscpy_s( pDirectoryTexture_, _MAX_PATH, pDirectoryTexture );
+
 	// 正常終了
 	return 0;
 }
@@ -93,6 +103,10 @@ int ManagerModel< TypeItem >::Initialize( TCHAR* pDirectory, int maximumItem, ID
 template< class TypeItem >
 int ManagerModel< TypeItem >::Finalize( void )
 {
+	// 格納領域の開放
+	delete[] pDirectoryTexture_;
+	pDirectoryTexture_ = nullptr;
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = ManagerResource::Finalize();
@@ -112,12 +126,13 @@ int ManagerModel< TypeItem >::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : TCHAR* pDirectory					: 基準ディレクトリ
+// Arg    : TCHAR* pDirectoryTexture			: テクスチャ基準ディレクトリ
 // Arg    : int maximumItem						: 最大要素数
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 // Arg    : ManagerTexture< Texture >* pTexture	: テクスチャ管理クラス
 //==============================================================================
 template< class TypeItem >
-int ManagerModel< TypeItem >::Reinitialize( TCHAR* pDirectory, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture )
+int ManagerModel< TypeItem >::Reinitialize( TCHAR* pDirectory, TCHAR* pDirectoryTexture, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -128,7 +143,7 @@ int ManagerModel< TypeItem >::Reinitialize( TCHAR* pDirectory, int maximumItem, 
 	}
 
 	// 初期化処理
-	return Initialize( pDirectory, maximumItem, pDevice, pTexture );
+	return Initialize( pDirectory, pDirectoryTexture, maximumItem, pDevice, pTexture );
 }
 
 //==============================================================================
@@ -162,6 +177,7 @@ void ManagerModel< TypeItem >::InitializeSelf( void )
 	// メンバ変数の初期化
 	pDevice_ = nullptr;
 	pTexture_ = nullptr;
+	pDirectoryTexture_ = nullptr;
 }
 
 //==============================================================================
@@ -204,15 +220,23 @@ int ManagerModel< TypeItem >::LoadResource( TCHAR* pPath, int index )
 	// テクスチャの設定
 	D3DXMATERIAL*	pMaterialPointer = nullptr;		// マテリアル情報の先頭アドレス
 	Texture*		pTexture = nullptr;				// テクスチャ
+	TCHAR			pNameTexture[ _MAX_PATH ];		// テクスチャファイル名
 	pMaterialPointer = static_cast< D3DXMATERIAL* >( pMaterial->GetBufferPointer() );
 	for( unsigned long counterMaterial = 0; counterMaterial < countMaterial; ++counterMaterial )
 	{
+		// テクスチャがあるか確認
 		if( pMaterialPointer[ counterMaterial ].pTextureFilename == nullptr )
 		{
 			continue;
 		}
+
+		// テクスチャ名の作成
+		_tcscpy_s( pNameTexture, _MAX_PATH, pDirectoryTexture_ );
+		_tcscat_s( pNameTexture, _MAX_PATH, pMaterialPointer[ counterMaterial ].pTextureFilename );
+
+		// テクスチャの読み込み
 		pTexture = nullptr;
-		pTexture = pTexture_->Get( pMaterialPointer[ counterMaterial ].pTextureFilename );
+		pTexture = pTexture_->Get( pNameTexture );
 		if( pTexture != nullptr )
 		{
 			pBufferItem_[ index ].pItem_->SetTexture( counterMaterial, pTexture->pTexture_ );

@@ -270,7 +270,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pModel_->Initialize( _T( "data/model/" ), 32, pDevice, pTexture_ );
+	result = pModel_->Initialize( _T( "data/model/" ), _T( "model/" ), 32, pDevice, pTexture_ );
 	if( result != 0 )
 	{
 		return result;
@@ -364,6 +364,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
+	pArgument_->pWindow_ = pWindow_;
 	pArgument_->pDevice_ = pDevice;
 	pArgument_->pFade_ = pFade_;
 	pArgument_->pEffectParameter_ = pEffectParameter_;

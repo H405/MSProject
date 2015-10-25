@@ -25,6 +25,7 @@
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
+#include "../framework/system/Window.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
 #include "../system/ManagerSceneMain.h"
@@ -137,8 +138,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	}
 	result = pCamera_->Initialize(
 		D3DX_PI / 4.0f,
-		1280,
-		720,
+		pArgument->pWindow_->GetWidth(),
+		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		1000.0f,
 		D3DXVECTOR3( 0.0f, 20.0f, -100.0f ),
