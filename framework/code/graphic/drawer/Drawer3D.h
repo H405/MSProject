@@ -43,19 +43,22 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
-		PARAMETER_MATRIX_WORLD,				// ワールドマトリクス
-		PARAMETER_VECTOR_LIGHT,				// ライトベクトル
-		PARAMETER_POSITION_EYE,				// 視点座標
-		PARAMETER_TEXTURE,					// テクスチャ
-		PARAMETER_COLOR_AMBIENT,			// アンビエント色
-		PARAMETER_COLOR_LIGHT,				// ライトの色
-		PARAMETER_COLOR_DIFFUSE,			// ディフューズ色
-		PARAMETER_COLOR_SPECULAR,			// スペキュラ色
-		PARAMETER_REFLECTION,				// 反射率
-		PARAMETER_POWER,					// 反射の強さ
-		PARAMETER_REFLACTIVE,				// 屈折率
-		PARAMETER_MAX						// 最大値
+		PARAMETER_MATRIX_TRANSFORM = 0,			// 変換行列
+		PARAMETER_MATRIX_WORLD,					// ワールドマトリクス
+		PARAMETER_POSITION_EYE,					// 視点座標
+		PARAMETER_COLOR_AMBIENT,				// 環境光色
+		PARAMETER_VECTOR_LIGHT_DIRECTION,		// ディレクショナルライトのベクトル
+		PARAMETER_COLOR_LIGHT_DIRECTION,		// ディレクショナルライトの色
+		PARAMETER_POSITION_LIGHT_POINT,			// ポイントライトの座標
+		PARAMETER_COLOR_LIGHT_POINT,			// ポイントライトの色
+		PARAMETER_ATTEMUATION_LIGHT_POINT,		// ポイントライトの減衰率
+		PARAMETER_COUNT_LIGHT_POINT,			// ポイントライトの数
+		PARAMETER_TEXTURE,						// テクスチャ
+		PARAMETER_COLOR_SPECULAR,				// スペキュラ色
+		PARAMETER_REFLECTION,					// 反射率
+		PARAMETER_POWER,						// 反射の強さ
+		PARAMETER_REFLACTIVE,					// 屈折率
+		PARAMETER_MAX							// 最大値
 	};
 
 	//==============================================================================

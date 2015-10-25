@@ -205,6 +205,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 	//	仮のフィールド
 	pTexture = pArgument_->pTexture_->Get( _T( "title/titlelogo.png" ) );
+	pEffect = pArgument_->pEffect_->Get( _T( "Mesh.fx" ) );
 	field = new ObjectMesh();
 	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
 	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
