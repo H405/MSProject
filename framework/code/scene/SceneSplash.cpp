@@ -32,6 +32,7 @@
 #include "../framework/system/Fade.h"
 #include "../framework/system/Window.h"
 #include "../graphic/graphic/GraphicMain.h"
+#include "../object/Object2D.h"
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectModel.h"
@@ -177,6 +178,16 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 
+	// 2Dオブジェクトの生成
+	Effect*		pEffect2D = nullptr;		// エフェクト
+	Texture*	pTexture2D = nullptr;		// テクスチャ
+	pEffect2D = pArgument->pEffect_->Get( _T( "Polygon2D.fx" ) );
+	pTexture2D = pArgument_->pTexture_->Get( _T( "test/title_logo.png" ) );
+	pObject2D_ = new Object2D();
+	pObject2D_->Initialize( 0 );
+	pObject2D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect2D, pTexture2D );
+	pObject2D_->SetPosition( 430.0f, 310.0f, 0.0f );
+
 	// メッシュの生成
 	Effect*		pEffectMesh = nullptr;		// エフェクト
 	Texture*	pTextureMesh = nullptr;		// メッシュ
@@ -238,6 +249,10 @@ int SceneSplash::Finalize( void )
 	// メッシュの開放
 	delete pObjectMesh_;
 	pObjectMesh_ = nullptr;
+
+	// 2Dオブジェクトの開放
+	delete pObject2D_;
+	pObject2D_ = nullptr;
 
 	// ポイントスプライト管理クラスの開放
 	delete pPoint_;
@@ -419,7 +434,9 @@ void SceneSplash::InitializeSelf( void )
 	pLight_ = nullptr;
 	pPointLight_ = nullptr;
 	pPoint_ = nullptr;
+	pObject2D_ = nullptr;
 	pObjectMesh_ = nullptr;
 	pObjectSky_ = nullptr;
+	pObjectModel_ = nullptr;
 	timerLight_ = 0;
 }

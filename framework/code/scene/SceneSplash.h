@@ -34,6 +34,7 @@ class LightDirection;
 class LightPoint;
 class ManagerPoint;
 class Material;
+class Object2D;
 class ObjectMesh;
 class ObjectModel;
 class ObjectSky;
@@ -108,6 +109,7 @@ private:
 
 	static const int	COUNT_MODEL = 10;		// モデル数
 
+	Object2D*			pObject2D_;			// 2Dオブジェクト
 	ObjectMesh*			pObjectMesh_;		// メッシュ
 	ObjectSky*			pObjectSky_;		// スカイドーム
 	ObjectModel*		pObjectModel_;		// モデル

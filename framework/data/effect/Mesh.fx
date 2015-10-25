@@ -65,7 +65,7 @@ float3 CalculateDiffuse( float3 colorLight, float3 vectorLight, float3 vectorNor
 	float	lightness = dot( vectorNormal, -vectorLight ) * 0.5f + 0.5f;
 
 	// ディフューズ色を返す
-	return colorLight * lightness + colorLight * colorAmbient_.rgb;
+	return colorLight * lightness;
 }
 
 //==============================================================================
@@ -179,7 +179,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 			+ attemuationLightPoint_[ counterLight ].z * distanceLightToVertex * distanceLightToVertex;
 
 		// ポイントライトの色を計算
-		color += (colorDiffuse.rgb * (diffusePoint + colorAmbient_) + colorSpecular_ * (specularPoint + specularAmbient ) + rimPoint) / attemuation;
+		color += (colorDiffuse.rgb * diffusePoint + colorSpecular_ * specularPoint + rimPoint) / attemuation;
 	}
 
 	// ピクセル色を返す
