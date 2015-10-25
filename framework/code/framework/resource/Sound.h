@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : DrawerModel.h
-// Brief  : モデル描画クラス
+// File   : Sound.h
+// Brief  : サウンドクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/10/25 sun : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_DRAWER_MODEL_H
-#define MY_DRAWER_MODEL_H
+#ifndef MY_SOUND_H
+#define MY_SOUND_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../../framework/graphic/drawer.h"
+#include "xaudio2.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,59 +29,35 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
-class EffectParameter;
-class Model;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class DrawerModel : public Drawer
+class Sound
 {
 public:
-	// パラメータ
-	enum
-	{
-		PARAMETER_MATRIX_TRANSFORM = 0,			// 変換行列
-		PARAMETER_MATRIX_WORLD,					// ワールドマトリクス
-		PARAMETER_POSITION_EYE,					// 視点座標
-		PARAMETER_COLOR_AMBIENT,				// 環境光色
-		PARAMETER_VECTOR_LIGHT_DIRECTION,		// ディレクショナルライトのベクトル
-		PARAMETER_COLOR_LIGHT_DIRECTION,		// ディレクショナルライトの色
-		PARAMETER_POSITION_LIGHT_POINT,			// ポイントライトの座標
-		PARAMETER_COLOR_LIGHT_POINT,			// ポイントライトの色
-		PARAMETER_ATTENUATION_LIGHT_POINT,		// ポイントライトの減衰率
-		PARAMETER_COUNT_LIGHT_POINT,			// ポイントライトの数
-		PARAMETER_TEXTURE,						// テクスチャ
-		PARAMETER_COLOR_SPECULAR,				// スペキュラ色
-		PARAMETER_REFLECTION,					// 反射率
-		PARAMETER_POWER,						// 反射の強さ
-		PARAMETER_REFLACTIVE,					// 屈折率
-		PARAMETER_MAX							// 最大値
-	};
-
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	DrawerModel( void );
+	Sound( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~DrawerModel( void );
+	~Sound( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : Model* pModel						: モデル
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : IXAudio2SourceVoice* pSourceVoice	: ソースボイス
+	// Arg    : BYTE* pData							: データ
+	// Arg    : DWORD size							: データサイズ
 	//==============================================================================
-	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect );
+	int Initialize( IXAudio2SourceVoice* pSourceVoice, BYTE* pData, DWORD size );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -93,41 +69,63 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : Model* pModel						: モデル
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : IXAudio2SourceVoice* pSourceVoice	: ソースボイス
+	// Arg    : BYTE* pData							: データ
+	// Arg    : DWORD size							: データサイズ
 	//==============================================================================
-	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect );
+	int Reinitialize( IXAudio2SourceVoice* pSourceVoice, BYTE* pData, DWORD size );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : DrawerModel* pOut					: コピー先アドレス
+	// Arg    : Sound* pOut							: コピー先アドレス
 	//==============================================================================
-	int Copy( DrawerModel* pOut ) const;
+	int Copy( Sound* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 描画処理
-	// Return : void								: なし
-	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
+	// Brief  : 再生
+	// Return : int									: 実行結果
+	// Arg    : int countLoop						: ループ回数
 	//==============================================================================
-	void Draw( const D3DXMATRIX& matrixWorld );
+	int Play( int countLoop );
+
+	//==============================================================================
+	// Brief  : 一時停止
+	// Return : int									: 実行結果
+	// Arg    : void								: なし
+	//==============================================================================
+	int Pause( void );
+
+	//==============================================================================
+	// Brief  : 一時停止解除
+	// Return : int									: 実行結果
+	// Arg    : void								: なし
+	//==============================================================================
+	int Unpause( void );
+
+	//==============================================================================
+	// Brief  : 停止
+	// Return : int									: 実行結果
+	// Arg    : void								: なし
+	//==============================================================================
+	int Stop( void );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetModel( Model* pValue );
-	Model* GetModel( void ) const;
+	void SetVolume( float value );
+	float GetVolume( void ) const;
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	Model*					pModel_;				// モデル
 
 private:
 	void InitializeSelf( void );
-	DrawerModel( const DrawerModel& );
-	DrawerModel operator=( const DrawerModel& );
+	Sound( const Sound& );
+	Sound operator=( const Sound& );
+
+	IXAudio2SourceVoice*	pSourceVoice_;		// ソースボイス
+	BYTE*					pData_;				// データ
+	DWORD					size_;				// データサイズ
 };
 
-#endif	// MY_DRAWER_MODEL_H
+#endif	// MY_SOUND_H

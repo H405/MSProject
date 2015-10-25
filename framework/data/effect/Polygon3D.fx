@@ -18,7 +18,7 @@ float3		vectorLightDirection_;				// ディレクショナルライトのベクトル
 float3		colorLightDirection_;				// ディレクショナルライトの色
 float3		positionLightPoint_[ 32 ];			// ポイントライトライトの座標
 float3		colorLightPoint_[ 32 ];				// ポイントライトライトの色
-float3		attemuationLightPoint_[ 32 ];		// ポイントライトの減衰率
+float3		attenuationLightPoint_[ 32 ];		// ポイントライトの減衰率
 int			countLightPoint_;					// ポイントライトの数
 texture		texture_;							// テクスチャ
 float3		colorSpecular_;						// スペキュラ色
@@ -174,12 +174,12 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 
 		// ポイントライトの減衰率を計算
 		float	distanceLightToVertex = distance( vertex.positionWorld_.xyz, positionLightPoint_[ counterLight ] );
-		float	attemuation = attemuationLightPoint_[ counterLight ].x
-			+ attemuationLightPoint_[ counterLight ].y * distanceLightToVertex
-			+ attemuationLightPoint_[ counterLight ].z * distanceLightToVertex * distanceLightToVertex;
+		float	attenuation = attenuationLightPoint_[ counterLight ].x
+			+ attenuationLightPoint_[ counterLight ].y * distanceLightToVertex
+			+ attenuationLightPoint_[ counterLight ].z * distanceLightToVertex * distanceLightToVertex;
 
 		// ポイントライトの色を計算
-		color += (colorDiffuse.rgb * diffusePoint + colorSpecular_ * specularPoint + rimPoint) / attemuation;
+		color += (colorDiffuse.rgb * diffusePoint + colorSpecular_ * specularPoint + rimPoint) / attenuation;
 	}
 
 	// ピクセル色を返す

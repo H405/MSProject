@@ -238,7 +238,7 @@ void DrawerMesh::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_POINT, pColorPoint, 3 * countPoint );
 
 	// ポイントライトの減衰率
-	pEffect_->SetFloatArray( PARAMETER_ATTEMUATION_LIGHT_POINT, pAttemuationPoint, 3 * countPoint );
+	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, pAttemuationPoint, 3 * countPoint );
 
 	// ポイントライトの数
 	pEffect_->SetInteger( PARAMETER_COUNT_LIGHT_POINT, countPoint );
