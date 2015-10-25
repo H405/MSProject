@@ -59,6 +59,9 @@ int Sound::Initialize( IXAudio2SourceVoice* pSourceVoice, BYTE* pData, DWORD siz
 	pSourceVoice_ = pSourceVoice;
 	pData_ = pData;
 	size_ = size;
+	audioBuffer_.pAudioData = pData;
+	audioBuffer_.AudioBytes = size;
+	audioBuffer_.Flags = XAUDIO2_END_OF_STREAM;
 
 	// 正常終了
 	return 0;
@@ -71,6 +74,21 @@ int Sound::Initialize( IXAudio2SourceVoice* pSourceVoice, BYTE* pData, DWORD siz
 //==============================================================================
 int Sound::Finalize( void )
 {
+	// ソースボイスの開放
+	if( pSourceVoice_ != nullptr )
+	{
+		// 再生の停止
+		pSourceVoice_->Stop( 0 );
+
+		// ソースボイスの開放
+		pSourceVoice_->DestroyVoice();
+		pSourceVoice_ = nullptr;
+	}
+
+	//	オーディオデータの開放
+	delete[] pData_;
+	pData_ = nullptr;
+
 	// クラス内の初期化処理
 	InitializeSelf();
 
@@ -112,46 +130,83 @@ int Sound::Copy( Sound* pOut ) const
 
 //==============================================================================
 // Brief  : 再生
-// Return : int									: 実行結果
+// Return : void								: なし
 // Arg    : int countLoop						: ループ回数
 //==============================================================================
-int Sound::Play( int countLoop )
+void Sound::Play( int countLoop )
 {
-	// 値の返却
-	return 0;
+	// ループ回数の設定
+	audioBuffer_.LoopCount = (countLoop < 0 ? XAUDIO2_LOOP_INFINITE : countLoop);
+
+	// 状態取得
+	XAUDIO2_VOICE_STATE	state;		// 状態
+	pSourceVoice_->GetState( &state );
+
+	// オーディオバッファがあるときに停止させる
+	if( state.BuffersQueued != 0 )
+	{
+		pSourceVoice_->Stop( 0 );
+		pSourceVoice_->FlushSourceBuffers();
+	}
+
+	// 再生
+	pSourceVoice_->SubmitSourceBuffer( &audioBuffer_ );
+	pSourceVoice_->Start( 0 );
 }
 
 //==============================================================================
 // Brief  : 一時停止
-// Return : int									: 実行結果
+// Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-int Sound::Pause( void )
+void Sound::Pause( void )
 {
-	// 値の返却
-	return 0;
+	// 状態取得
+	XAUDIO2_VOICE_STATE	state;		// 状態
+	pSourceVoice_->GetState( &state );
+
+	// オーディオバッファがあるときに一時停止させる
+	if( state.BuffersQueued != 0 )
+	{
+		pSourceVoice_->Stop( 0 );
+	}
 }
 
 //==============================================================================
 // Brief  : 一時停止解除
-// Return : int									: 実行結果
+// Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-int Sound::Unpause( void )
+void Sound::Unpause( void )
 {
-	// 値の返却
-	return 0;
+	// 状態取得
+	XAUDIO2_VOICE_STATE	state;		// 状態
+	pSourceVoice_->GetState( &state );
+
+	// オーディオバッファがあるときに一時停止を解除させる
+	if( state.BuffersQueued != 0 )
+	{
+		pSourceVoice_->Start( 0 );
+	}
 }
 
 //==============================================================================
 // Brief  : 停止
-// Return : int									: 実行結果
+// Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-int Sound::Stop( void )
+void Sound::Stop( void )
 {
-	// 値の返却
-	return 0;
+	// 状態取得
+	XAUDIO2_VOICE_STATE	state;		// 状態
+	pSourceVoice_->GetState( &state );
+
+	// オーディオバッファがあるときに停止させる
+	if( state.BuffersQueued != 0 )
+	{
+		pSourceVoice_->Stop( 0 );
+		pSourceVoice_->FlushSourceBuffers();
+	}
 }
 
 //==============================================================================
@@ -189,4 +244,5 @@ void Sound::InitializeSelf( void )
 	pSourceVoice_ = nullptr;
 	pData_ = nullptr;
 	size_ = 0;
+	ZeroMemory( &audioBuffer_, sizeof( XAUDIO2_BUFFER ) );
 }

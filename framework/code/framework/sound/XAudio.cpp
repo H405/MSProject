@@ -54,9 +54,6 @@ XAudio::~XAudio( void )
 //==============================================================================
 int XAudio::Initialize( HWND windowHandle )
 {
-	// COMライブラリの初期化
-	CoInitializeEx( nullptr, COINIT_MULTITHREADED );
-
 	// XAudio2オブジェクトの作成
 	HRESULT	result;		// 実行結果
 	result = XAudio2Create( &pXAudio_ );
@@ -64,9 +61,6 @@ int XAudio::Initialize( HWND windowHandle )
 	{
 		// エラーメッセージ
 		PrintMsgBox( _T( "XAudio2の初期化に失敗しました。" ) );
-
-		// COMライブラリの終了処理
-		CoUninitialize();
 
 		// 終了
 		return result;
@@ -78,9 +72,6 @@ int XAudio::Initialize( HWND windowHandle )
 	{
 		// エラーメッセージ
 		PrintMsgBox( _T( "マスターボイスの生成に失敗しました。" ) );
-
-		// COMライブラリの終了処理
-		CoUninitialize();
 
 		// 終了
 		return result;
@@ -98,8 +89,11 @@ int XAudio::Initialize( HWND windowHandle )
 int XAudio::Finalize( void )
 {
 	// マスターボイスの開放
-	pMasteringVoice_->DestroyVoice();
-	pMasteringVoice_ = nullptr;
+	if( pMasteringVoice_ != nullptr )
+	{
+		pMasteringVoice_->DestroyVoice();
+		pMasteringVoice_ = nullptr;
+	}
 
 	// XAudio2オブジェクトの開放
 	if( pXAudio_ != nullptr )
@@ -107,9 +101,6 @@ int XAudio::Finalize( void )
 		pXAudio_->Release();
 		pXAudio_ = nullptr;
 	}
-
-	// COMライブラリの終了処理
-	CoUninitialize();
 
 	// クラス内の初期化処理
 	InitializeSelf();

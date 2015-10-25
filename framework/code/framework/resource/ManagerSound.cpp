@@ -273,7 +273,7 @@ int ManagerSound< TypeItem >::LoadResource( TCHAR* pPath, int index )
 	}
 
 	// オーディオデータの読み込み
-	result = ReadChunk( handleFile, pBufferData, sizeData, positionChunk );
+	result = ReadChunk( handleFile, pBufferData, positionChunk, sizeData );
 	if( result != S_OK )
 	{
 		TCHAR	pStringError[ 512 ] = {};		// エラー文字列

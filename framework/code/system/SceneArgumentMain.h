@@ -40,10 +40,12 @@ class InputPad;
 class VirtualController;
 class Model;
 class ObjectScreen;
+class Sound;
 class Texture;
 class Window;
 template < class Effect > class ManagerEffect;
 template < class Model > class ManagerModel;
+template < class Sound > class ManagerSound;
 template < class Texture > class ManagerTexture;
 
 //******************************************************************************
@@ -79,6 +81,7 @@ public:
 	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
 	ManagerModel< Model >*		pModel_;				// モデル管理クラス
 	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス
+	ManagerSound< Sound >*		pSound_;				// サウンド管理クラス
 
 protected:
 
