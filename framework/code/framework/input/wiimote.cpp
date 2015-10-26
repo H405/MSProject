@@ -647,7 +647,7 @@ connection_lost:
 				}
 			// motion plus detection due?
 			if(!remote.IsBalanceBoard()		&&
-//			   !remote.bConnectInProgress   &&
+			   !remote.bConnectInProgress   &&
 			   !remote.bMotionPlusExtension &&
 			   (remote.Internal.ExtensionType != MOTION_PLUS) &&
 			   (remote.Internal.ExtensionType != PARTIALLY_INSERTED) &&

@@ -137,8 +137,13 @@ CWiiController::CWiiController()
 			//	一時バッファを本体として登録
 			wiiRemote = buff;
 
+#ifdef _REMOTE_MPLUS_
 			// 使用するセンサを設定（ボタン、加速度、IR、エクステンション（外部接続-ヌンチャクとか））
 			wiiRemote->SetReportType(wiimote::IN_BUTTONS_ACCEL_IR_EXT);
+#else
+			// 使用するセンサを設定（ボタン、加速度、IR）
+			wiiRemote->SetReportType(wiimote::IN_BUTTONS_ACCEL_IR);
+#endif
 
 			//	スピーカーを有効にする
 			wiiRemote->MuteSpeaker(false);
@@ -296,8 +301,13 @@ void CWiiController::reConnectWiimote()
 			//	一時バッファを本体として登録
 			wiiRemote = buff;
 
+#ifdef _REMOTE_MPLUS_
 			// 使用するセンサを設定（ボタン、加速度、IR、エクステンション（外部接続-ヌンチャクとか））
 			wiiRemote->SetReportType(wiimote::IN_BUTTONS_ACCEL_IR_EXT);
+#else
+			// 使用するセンサを設定（ボタン、加速度、IR）
+			wiiRemote->SetReportType(wiimote::IN_BUTTONS_ACCEL_IR);
+#endif
 
 			//	スピーカーを有効にする
 			wiiRemote->MuteSpeaker(false);
@@ -471,12 +481,14 @@ void CWiiController::CommonUpdate()
 		updateAgePrev = updateAge;
 
 		//	モーションセンサーが認識されたら有効化
+#ifdef _REMOTE_MPLUS_
 		motionConnect = wiiRemote->MotionPlusConnected();
 		if (motionConnect == true && motionConnectPrev == false)
 		{
 			wiiRemote->EnableMotionPlus();
 			rotResetFlag = true;
 		}
+#endif
 
 		//	LED点灯
 		batteryLightingLED();
