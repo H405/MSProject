@@ -48,10 +48,13 @@ class Polygon2D;
 class Polygon3D;
 class RenderPass;
 class SceneArgumentMain;
+class Sound;
 class Texture;
+class XAudio;
 template < class Graphic > class ManagerDraw;
 template < class Effect > class ManagerEffect;
 template < class Model > class ManagerModel;
+template < class Sound > class ManagerSound;
 template < class Texture > class ManagerTexture;
 template < class Object > class ManagerUpdate;
 
@@ -133,6 +136,7 @@ private:
 	ManagerSceneMain*			pScene_;				// シーン管理クラス
 	SceneArgumentMain*			pArgument_;				// シーン引数
 	DirectDevice*				pDevice_;				// Direct3Dデバイス
+	XAudio*						pXAudio_;				// XAudio2インターフェース
 	Fade*						pFade_;					// フェード
 	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
 	ObjectScreen*				pObjectScreen_;			// 画面オブジェクト
@@ -148,6 +152,7 @@ private:
 	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
 	ManagerModel< Model >*		pModel_;				// モデル管理クラス
 	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス
+	ManagerSound< Sound >*		pSound_;				// サウンド管理クラス
 	Polygon2D*					pPolygon2D_;			// 2Dポリゴン
 	Polygon3D*					pPolygon3D_;			// 3Dポリゴン
 };

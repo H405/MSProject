@@ -33,7 +33,9 @@
 #include "../framework/render/RenderTarget.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
+#include "../framework/resource/ManagerSound.h"
 #include "../framework/resource/ManagerTexture.h"
+#include "../framework/sound/XAudio.h"
 #include "../framework/system/Fade.h"
 #include "../framework/system/ManagerDraw.h"
 #include "../framework/system/ManagerUpdate.h"
@@ -83,6 +85,9 @@ ManagerMain::~ManagerMain( void )
 //==============================================================================
 int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 {
+	// COMライブラリの初期化
+	CoInitializeEx( NULL, COINIT_MULTITHREADED );
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = Manager::Initialize( instanceHandle, typeShow );
@@ -195,6 +200,20 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pVirtualController_ = new VirtualController;
 	pVirtualController_->initialize(pWiiController_, pKeyboard_, pMouse_, pPad_);
 
+	// XAudioインターフェースの生成
+	IXAudio2* pXAudio = nullptr;		// XAudio2インターフェース
+	pXAudio_ = new XAudio();
+	if( pXAudio_ == nullptr )
+	{
+		return 1;
+	}
+	result = pXAudio_->Initialize( windowHandle );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pXAudio = pXAudio_->GetXAudio();
+
 	// パスクラスの生成
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
@@ -283,6 +302,18 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 	result = pEffect_->Initialize( _T( "data/effect/" ), 32, pDevice );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// サウンド管理クラスの生成
+	pSound_ = new ManagerSound< Sound >();
+	if( pSound_ == nullptr )
+	{
+		return 1;
+	}
+	result = pSound_->Initialize( _T( "data/sound/" ), 32, pXAudio );
 	if( result != 0 )
 	{
 		return result;
@@ -377,6 +408,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pTexture_ = pTexture_;
 	pArgument_->pModel_ = pModel_;
 	pArgument_->pEffect_ = pEffect_;
+	pArgument_->pSound_ = pSound_;
 
 	// シーン管理クラスの生成
 	pScene_ = new ManagerSceneMain();
@@ -428,6 +460,10 @@ int ManagerMain::Finalize( void )
 	// エフェクトパラメータの開放
 	delete pEffectParameter_;
 	pEffectParameter_ = nullptr;
+
+	// サウンド管理クラスの開放
+	delete pSound_;
+	pSound_ = nullptr;
 
 	// エフェクト管理クラスの開放
 	delete pEffect_;
@@ -486,6 +522,10 @@ int ManagerMain::Finalize( void )
 	delete pFade_;
 	pFade_ = nullptr;
 
+	// XAudio2インターフェスの開放
+	delete pXAudio_;
+	pXAudio_ = nullptr;
+
 	// Direct3Dデバイスの開放
 	delete pDevice_;
 	pDevice_ = nullptr;
@@ -497,6 +537,9 @@ int ManagerMain::Finalize( void )
 	{
 		return result;
 	}
+
+	// COMライブラリの終了処理
+	CoUninitialize();
 
 	// クラス内部の初期化
 	InitializeSelf();
@@ -599,6 +642,7 @@ void ManagerMain::InitializeSelf( void )
 	pScene_ = nullptr;
 	pArgument_ = nullptr;
 	pDevice_ = nullptr;
+	pXAudio_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
 	pObjectScreen_ = nullptr;
