@@ -1,8 +1,8 @@
 //==============================================================================
 // 
-// File   ： Mesh.fx
-// Brief  ： メッシュエフェクト
-// Author ： Taiga Shirakawa
+// File   : Mesh.fx
+// Brief  : メッシュエフェクト
+// Author : Taiga Shirakawa
 // Date   : 2015/10/21 wed : Taiga Shirakawa : create
 // 
 //==============================================================================
@@ -52,62 +52,16 @@ struct VertexOutput
 	float3	vectorNormalWorld_	: TEXCOORD2;		// ワールド法線
 };
 
-//==============================================================================
-// Brief  ： ディフューズの計算
-// Return ： float3							： 色
-// Arg    ： float3 colorLight				： ライトの色
-// Arg    ： float3 vectorLight				： ライトのベクトル
-// Arg    ： float3 vectorNormal			： 法線ベクトル
-//==============================================================================
-float3 CalculateDiffuse( float3 colorLight, float3 vectorLight, float3 vectorNormal )
-{
-	// 明度の計算
-	float	lightness = dot( vectorNormal, -vectorLight ) * 0.5f + 0.5f;
-
-	// ディフューズ色を返す
-	return colorLight * lightness;
-}
+// ライト計算
+#include "CalculateLight.fx"
 
 //==============================================================================
-// Brief  ： スペキュラの計算
-// Return ： float3							： 色
-// Arg    ： float3 colorLight				： ライトの色
-// Arg    ： float3 vectorLight				： ライトのベクトル
-// Arg    ： float3 vectorNormal			： 法線ベクトル
-// Arg    ： float3 vectorVertexToEye		： 頂点から視点へのベクトル
-//==============================================================================
-float3 CalculateSpecular( float3 colorLight, float3 vectorLight, float3 vectorNormal, float3 vectorVertexToEye )
-{
-	// ハーフベクトルを求める
-	float3	vectorHalf = normalize( vectorVertexToEye - vectorLight );
-
-	// スペキュラ色を返す
-	return colorLight * pow( max( dot( vectorNormal, vectorHalf ), 0.0f ), power_ ) * reflection_;
-}
-
-//==============================================================================
-// Brief  ： リムの計算
-// Return ： float3							： 色
-// Arg    ： float3 colorLight				： ライトの色
-// Arg    ： float3 vectorLight				： ライトのベクトル
-// Arg    ： float3 vectorNormal			： 法線ベクトル
-// Arg    ： float3 vectorVertexToEye		： 頂点から視点へのベクトル
-//==============================================================================
-float3 CalculateRim( float3 colorLight, float3 vectorLight, float3 vectorNormal, float3 vectorVertexToEye )
-{
-	// リム色を返す
-	float	rim = (1.0f - max( dot( vectorNormal, vectorVertexToEye ), 0.0f )) * max( dot( vectorLight, vectorVertexToEye ), 0.0f );
-	rim = min( 5.0f * pow( rim, 5.0f ), 1.0f );
-	return colorLight * rim;
-}
-
-//==============================================================================
-// Brief  ： 頂点変換
-// Return ： VertexOutput					： 頂点出力
-// Arg    ： float4 positionLocal			： ローカル座標
-// Arg    ： float3 vectorNormalLocal		： 法線ベクトル
-// Arg    ： float2 positionTexture			： テクスチャ座標
-// Arg    ： float4 colorDiffuse			： ディフューズ色
+// Brief  : 頂点変換
+// Return : VertexOutput					: 頂点出力
+// Arg    : float4 positionLocal			: ローカル座標
+// Arg    : float3 vectorNormalLocal		: 法線ベクトル
+// Arg    : float2 positionTexture			: テクスチャ座標
+// Arg    : float4 colorDiffuse			: ディフューズ色
 //==============================================================================
 VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNormalLocal : NORMAL, float2 textureCoord : TEXCOORD0 )
 {
@@ -129,9 +83,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 }
 
 //==============================================================================
-// Brief  ： ピクセル描画
-// Return ： float4 : COLOR0				： 色
-// Arg    ： VertexOutput					： 頂点シェーダ出力
+// Brief  : ピクセル描画
+// Return : float4 : COLOR0				: 色
+// Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
@@ -149,7 +103,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float3	diffuseDirection = CalculateDiffuse( colorLightDirection_, vectorLightDirection_, vertex.vectorNormalWorld_ );
 
 	// ディレクショナルライトのスペキュラ色を計算
-	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vertex.vectorNormalWorld_, vectorVertexToEye );
+	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vertex.vectorNormalWorld_, vectorVertexToEye, reflection_, power_ );
 
 	// ディレクショナルライトのリム色を計算
 	float3	rimDirection = CalculateRim( colorLightDirection_, vectorLightDirection_, vertex.vectorNormalWorld_, vectorVertexToEye );
@@ -167,7 +121,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 		float3	diffusePoint = CalculateDiffuse( colorLightPoint_[ counterLight ], vectorLightToVertex, vertex.vectorNormalWorld_ );
 
 		// ポイントライトのスペキュラ色を計算
-		float3	specularPoint = CalculateSpecular( colorLightPoint_[ counterLight ], vectorLightToVertex, vertex.vectorNormalWorld_, vectorVertexToEye );
+		float3	specularPoint = CalculateSpecular( colorLightPoint_[ counterLight ], vectorLightToVertex, vertex.vectorNormalWorld_, vectorVertexToEye, reflection_, power_ );
 
 		// ポイントライトのリム色を計算
 		float3	rimPoint = CalculateRim( colorLightPoint_[ counterLight ], vectorLightToVertex, vertex.vectorNormalWorld_, vectorVertexToEye );
@@ -187,7 +141,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 }
 
 //==============================================================================
-// Brief  ： 通常変換
+// Brief  : 通常変換
 //==============================================================================
 technique ShadeNormal
 {
