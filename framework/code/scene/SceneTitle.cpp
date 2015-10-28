@@ -462,7 +462,7 @@ int SceneTitle::Copy( SceneTitle* pOut ) const
 void SceneTitle::Update( void )
 {
 	// テスト
-	PrintDebug( _T( "タイトル\n" ) );
+	PrintDebug( _T( "kawashima\n" ) );
 
 	//	カメラ更新
 	pCamera_->Update();
