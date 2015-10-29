@@ -838,7 +838,8 @@ void SceneGame::pauseFadeUpdate(void)
 void SceneGame::reConnectWiimoteUpdate(void)
 {
 	//	再接続要求
-	pArgument_->pWiiController_->reConnectWiimote();
+	if(pArgument_->pVirtualController_->IsTrigger(VC_DESIDE))
+		pArgument_->pWiiController_->reConnectWiimote();
 
 	//	wiiリモコンが再接続が終了したら
 	if(pArgument_->pWiiController_->getIsReConnectWiimote() == false)
@@ -871,7 +872,8 @@ void SceneGame::reConnectWiimoteUpdate(void)
 void SceneGame::reConnectWiiboardUpdate(void)
 {
 	//	再接続要求
-	pArgument_->pWiiController_->reConnectWiiboard();
+	if(pArgument_->pVirtualController_->IsTrigger(VC_DESIDE))
+		pArgument_->pWiiController_->reConnectWiiboard();
 
 	//	wiiリモコンが再接続が終了したら
 	if(pArgument_->pWiiController_->getIsReConnectWiiboard() == false)
