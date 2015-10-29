@@ -53,6 +53,7 @@
     <ClInclude Include="code\framework\resource\ManagerSound.h" />
     <ClInclude Include="code\framework\resource\ManagerTexture.h" />
     <ClInclude Include="code\framework\resource\Model.h" />
+    <ClInclude Include="code\framework\resource\ModelConvert.h" />
     <ClInclude Include="code\framework\resource\ModelX.h" />
     <ClInclude Include="code\framework\resource\Sound.h" />
     <ClInclude Include="code\framework\resource\Texture.h" />
@@ -61,6 +62,7 @@
     <ClInclude Include="code\framework\scene\SceneArgument.h" />
     <ClInclude Include="code\framework\sound\XAudio.h" />
     <ClInclude Include="code\framework\system\Fade.h" />
+    <ClInclude Include="code\framework\system\File.h" />
     <ClInclude Include="code\framework\system\FrameCount.h" />
     <ClInclude Include="code\framework\system\Manager.h" />
     <ClInclude Include="code\framework\system\ManagerDraw.h" />
@@ -149,6 +151,7 @@
     <ClCompile Include="code\framework\resource\ManagerSound.cpp" />
     <ClCompile Include="code\framework\resource\ManagerTexture.cpp" />
     <ClCompile Include="code\framework\resource\Model.cpp" />
+    <ClCompile Include="code\framework\resource\ModelConvert.cpp" />
     <ClCompile Include="code\framework\resource\ModelX.cpp" />
     <ClCompile Include="code\framework\resource\Sound.cpp" />
     <ClCompile Include="code\framework\resource\Texture.cpp" />
@@ -157,6 +160,7 @@
     <ClCompile Include="code\framework\scene\SceneArgument.cpp" />
     <ClCompile Include="code\framework\sound\XAudio.cpp" />
     <ClCompile Include="code\framework\system\Fade.cpp" />
+    <ClCompile Include="code\framework\system\File.cpp" />
     <ClCompile Include="code\framework\system\FrameCount.cpp" />
     <ClCompile Include="code\framework\system\Manager.cpp" />
     <ClCompile Include="code\framework\system\ManagerDraw.cpp" />

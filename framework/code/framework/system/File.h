@@ -1,23 +1,23 @@
 //==============================================================================
 //
-// File   : ManagerModel.h
-// Brief  : モデル管理クラス
+// File   : File.h
+// Brief  : ファイル読み込みクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/10/29 thu : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_MANAGER_MODEL_H
-#define MY_MANAGER_MODEL_H
+#ifndef MY_FILE_H
+#define MY_FILE_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "d3dx9.h"
-#include "ManagerResource.h"
+#include <stdio.h>
+#include <tchar.h>
 
 //******************************************************************************
 // ライブラリ
@@ -30,15 +30,11 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Model;
-class Texture;
-template < class Texture > class ManagerTexture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-template< class TypeItem >
-class ManagerModel : public ManagerResource< TypeItem >
+class File
 {
 public:
 	//==============================================================================
@@ -46,25 +42,21 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ManagerModel( void );
+	File( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ManagerModel( void );
+	~File( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : TCHAR* pDirectory					: 基準ディレクトリ
-	// Arg    : TCHAR* pDirectoryTexture			: テクスチャ基準ディレクトリ
-	// Arg    : int maximumItem						: 最大要素数
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : ManagerTexture< Texture >* pTexture	: テクスチャ管理クラス
+	// Arg    : const TCHAR* pNameFile				: ファイル名
 	//==============================================================================
-	int Initialize( TCHAR* pDirectory, TCHAR* pDirectoryTexture, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture );
+	int Initialize( const TCHAR* pNameFile );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -76,36 +68,70 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : TCHAR* pDirectory					: 基準ディレクトリ
-	// Arg    : TCHAR* pDirectoryTexture			: テクスチャ基準ディレクトリ
-	// Arg    : int maximumItem						: 最大要素数
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : ManagerTexture< Texture >* pTexture	: テクスチャ管理クラス
+	// Arg    : const TCHAR* pNameFile				: ファイル名
 	//==============================================================================
-	int Reinitialize( TCHAR* pDirectory, TCHAR* pDirectoryTexture, int maximumItem, IDirect3DDevice9* pDevice, ManagerTexture< Texture >* pTexture );
+	int Reinitialize( const TCHAR* pNameFile );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ManagerModel* pOut					: コピー先アドレス
+	// Arg    : File* pOut							: コピー先アドレス
 	//==============================================================================
-	int Copy( ManagerModel* pOut ) const;
+	int Copy( File* pOut ) const;
+
+	//==============================================================================
+	// Brief  : 種類の判定
+	// Return : bool								: 種類かどうか
+	// Arg    : const TCHAR* pType					: ファイルの種類
+	//==============================================================================
+	bool IsType( const TCHAR* pType );
+
+	//==============================================================================
+	// Brief  : 読み込み
+	// Return : void								: なし
+	// Arg    : Type* pOut							: 値の格納先アドレス
+	// Arg    : int count							: 読み込み要素数
+	//==============================================================================
+	template< typename Type >
+	void Read( Type* pOut, int count = 1 );
+
+	//==============================================================================
+	// Brief  : カーソルの加算
+	// Return : void								: なし
+	// Arg    : unsigned long value					: 加算値
+	//==============================================================================
+	void AddCursor( unsigned long value );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetCursor( unsigned long value );
+	unsigned long GetCursor( void ) const;
+	void GetType( TCHAR* pOut, int lengthOut ) const;
+	unsigned long GetSize( void ) const;
+	unsigned long GetVersion( void ) const;
+	unsigned long GetForm( void ) const;
+	unsigned short GetCode( void ) const;
+	unsigned short GetCompress( void ) const;
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	ManagerModel( const ManagerModel& );
-	ManagerModel operator=( const ManagerModel& );
+	File( const File& );
+	File operator=( const File& );
 
-	int LoadResource( TCHAR* pPath, int index );
-	void ReleaseResource( int index );
-	int LoadModelX( TCHAR* pPath, int index );
-	int LoadModelConvert( TCHAR* pPath, int index );
+	static const int	COUNT_SIZE_TYPE = 4;		// 種類の文字数
 
-	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
-	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
-	TCHAR*						pDirectoryTexture_;		// テクスチャ基準ディレクトリ
+	FILE*			pFile_;								// ファイル
+	char*			pBuffer_;							// データバッファ
+	unsigned long	cursor_;							// カーソル
+	TCHAR			pType_[ COUNT_SIZE_TYPE + 1 ];		// 種類
+	unsigned long	size_;								// ファイルサイズ
+	unsigned long	version_;							// バージョン
+	unsigned long	form_;								// 保存形式
+	unsigned short	code_;								// 暗号化形式
+	unsigned short	compress_;							// 圧縮形式
 };
 
-#endif	// MY_MANAGER_MODEL_H
+#endif	// MY_FILE_H

@@ -366,6 +366,12 @@
     <ClInclude Include="code\framework\resource\Sound.h">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\system\File.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ModelConvert.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -648,6 +654,12 @@
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClCompile>
     <ClCompile Include="code\framework\resource\ManagerSound.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\File.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ModelConvert.cpp">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClCompile>
   </ItemGroup>
