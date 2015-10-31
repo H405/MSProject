@@ -63,6 +63,7 @@ void SceneArgumentMain::InitializeSelf( void )
 	pVirtualController_ = nullptr;
 	pTexture_ = nullptr;
 	pModel_ = nullptr;
+	pMotion_ = nullptr;
 	pEffect_ = nullptr;
 	pSound_ = nullptr;
 }

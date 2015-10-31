@@ -372,6 +372,12 @@
     <ClInclude Include="code\framework\resource\ModelConvert.h">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\resource\Motion.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ManagerMotion.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -660,6 +666,12 @@
       <Filter>ソース ファイル\framework\system</Filter>
     </ClCompile>
     <ClCompile Include="code\framework\resource\ModelConvert.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\Motion.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ManagerMotion.cpp">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClCompile>
   </ItemGroup>

@@ -33,6 +33,7 @@
 #include "../framework/render/RenderTarget.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
+#include "../framework/resource/ManagerMotion.h"
 #include "../framework/resource/ManagerSound.h"
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/sound/XAudio.h"
@@ -295,6 +296,19 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 
+	// モーション管理クラスの生成
+	pMotion_ = new ManagerMotion< Motion >();
+	if( pMotion_ == nullptr )
+	{
+		return 1;
+	}
+	result = pMotion_->Initialize( _T( "data/Motion/" ), 32 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pMotion_->Get( _T( "test.motion" ) );
+
 	// エフェクト管理クラスの生成
 	pEffect_ = new ManagerEffect< Effect >();
 	if( pEffect_ == nullptr )
@@ -407,6 +421,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pVirtualController_ = pVirtualController_;
 	pArgument_->pTexture_ = pTexture_;
 	pArgument_->pModel_ = pModel_;
+	pArgument_->pMotion_ = pMotion_;
 	pArgument_->pEffect_ = pEffect_;
 	pArgument_->pSound_ = pSound_;
 
@@ -468,6 +483,10 @@ int ManagerMain::Finalize( void )
 	// エフェクト管理クラスの開放
 	delete pEffect_;
 	pEffect_ = nullptr;
+
+	// モーション管理クラスの開放
+	delete pMotion_;
+	pMotion_ = nullptr;
 
 	// モデル管理クラスの開放
 	delete pModel_;
@@ -657,6 +676,7 @@ void ManagerMain::InitializeSelf( void )
 	pVirtualController_ = nullptr;
 	pTexture_ = nullptr;
 	pModel_ = nullptr;
+	pMotion_ = nullptr;
 	pEffect_ = nullptr;
 	pPolygon2D_ = nullptr;
 	pPolygon3D_ = nullptr;
