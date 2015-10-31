@@ -251,6 +251,10 @@ void Model::SetTexture( int index, IDirect3DTexture9* pValue )
 IDirect3DTexture9* Model::GetTexture( int index ) const
 {
 	// ’l‚Ì•Ô‹p
+	if( static_cast< unsigned int >( index ) >= countTexture_ )
+	{
+		return nullptr;
+	}
 	return ppTexture_[ index ];
 }
 

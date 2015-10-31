@@ -115,6 +115,10 @@ int File::Initialize( const TCHAR* pNameFile )
 //==============================================================================
 int File::Finalize( void )
 {
+	// バッファの開放
+	delete[] pBuffer_;
+	pBuffer_ = nullptr;
+
 	// ファイルを閉じる
 	if( pFile_ != nullptr )
 	{

@@ -99,11 +99,11 @@ public:
 	void SetCountMaterial( unsigned int value );
 	unsigned int GetCountMaterial( void ) const;
 	void SetMaterial( int index, const Material& value );
-	void GetMaterial( int index, Material* pOut ) const;
+	virtual void GetMaterial( int index, Material* pOut ) const;
 	void SetCountTexture( unsigned int value );
 	unsigned int GetCountTexture( void ) const;
 	void SetTexture( int index, IDirect3DTexture9* pValue );
-	IDirect3DTexture9* GetTexture( int index ) const;
+	virtual IDirect3DTexture9* GetTexture( int index ) const;
 
 protected:
 	IDirect3DDevice9*	pDevice_;			// Direct3Dデバイス

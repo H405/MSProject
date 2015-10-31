@@ -11,6 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "ModelConvert.h"
+#include "../graphic/Material.h"
 #include "../vertex/Vertex.h"
 
 //******************************************************************************
@@ -56,15 +57,18 @@ ModelConvert::~ModelConvert( void )
 // Arg    : unsigned int countTexture			: テクスチャ数
 // Arg    : unsigned long countMesh				: メッシュ数
 // Arg    : unsigned long countBone				: ボーン数
-// Arg    : const void** ppVertexBuffer			: メッシュの頂点情報
+// Arg    : void* pVertexBuffer					: メッシュの頂点情報
 // Arg    : const int* pCountVertex				: メッシュの頂点数
+// Arg    : Material* pMaterial					: メッシュのマテリアル情報
 // Arg    : const int* pIndexMaterial			: メッシュのマテリアル番号
+// Arg    : IDirect3DTexture9** ppTexture		: メッシュのテクスチャ情報
 // Arg    : const int* pIndexTexture			: メッシュのテクスチャ番号
 // Arg    : const D3DXMATRIX* pMatrixBone		: ボーンの初期姿勢行列
 //==============================================================================
 int ModelConvert::Initialize( IDirect3DDevice9* pDevice, unsigned int elementVertex,
 	unsigned int countMaterial, unsigned int countTexture, unsigned long countMesh, unsigned long countBone,
-	const void** ppVertexBuffer, const int* pCountVertex, const int* pIndexMaterial, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone )
+	void** ppVertexBuffer, const int* pCountVertex, Material* pMaterial, const int* pIndexMaterial,
+	IDirect3DTexture9** ppTexture, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -77,21 +81,45 @@ int ModelConvert::Initialize( IDirect3DDevice9* pDevice, unsigned int elementVer
 	// メンバ変数の設定
 	countMesh_ = countMesh;
 	countBone_ = countBone;
+
+	pCountPolygon_ = new unsigned long[ countMesh ];
+	if( pCountPolygon_ == nullptr )
+	{
+		return 1;
+	}
+	for( unsigned int counterItem = 0; counterItem < countMesh; ++counterItem )
+	{
+		pCountPolygon_[ counterItem ] = pCountVertex[ counterItem ] / 3;
+	}
+
 	ppVertexBuffer_ = new IDirect3DVertexBuffer9*[ countMesh ];
 	for( unsigned int counterItem = 0; counterItem < countMesh; ++counterItem )
 	{
 		ppVertexBuffer_[ counterItem ] = nullptr;
 	}
-	pIndexMaterial_ = new int[ countMaterial ];
+
 	for( unsigned int counterItem = 0; counterItem < countMaterial; ++counterItem )
+	{
+		pMaterial_[ counterItem ] = pMaterial[ counterItem ];
+	}
+
+	pIndexMaterial_ = new int[ countMesh ];
+	for( unsigned int counterItem = 0; counterItem < countMesh; ++counterItem )
 	{
 		pIndexMaterial_[ counterItem ] = pIndexMaterial[ counterItem ];
 	}
-	pIndexTexture_ = new int[ countTexture ];
+
 	for( unsigned int counterItem = 0; counterItem < countTexture; ++counterItem )
+	{
+		ppTexture_[ counterItem ] = ppTexture[ counterItem ];
+	}
+
+	pIndexTexture_ = new int[ countMesh ];
+	for( unsigned int counterItem = 0; counterItem < countMesh; ++counterItem )
 	{
 		pIndexTexture_[ counterItem ] = pIndexTexture[ counterItem ];
 	}
+
 	pMatrixBone_ = new D3DXMATRIX[ countBone ];
 	for( unsigned int counterItem = 0; counterItem < countBone; ++counterItem )
 	{
@@ -140,6 +168,10 @@ int ModelConvert::Finalize( void )
 	delete[] ppVertexBuffer_;
 	ppVertexBuffer_ = nullptr;
 
+	// ポリゴン数格納領域の開放
+	delete[] pCountPolygon_;
+	pCountPolygon_ = nullptr;
+
 	// 格納領域の開放
 	delete[] pIndexMaterial_;
 	pIndexMaterial_ = nullptr;
@@ -174,15 +206,18 @@ int ModelConvert::Finalize( void )
 // Arg    : unsigned int countTexture			: テクスチャ数
 // Arg    : unsigned long countMesh				: メッシュ数
 // Arg    : unsigned long countBone				: ボーン数
-// Arg    : const void** ppVertexBuffer			: メッシュの頂点情報
+// Arg    : void* pVertexBuffer					: メッシュの頂点情報
 // Arg    : const int* pCountVertex				: メッシュの頂点数
+// Arg    : Material* pMaterial					: メッシュのマテリアル情報
 // Arg    : const int* pIndexMaterial			: メッシュのマテリアル番号
+// Arg    : IDirect3DTexture9** ppTexture		: メッシュのテクスチャ情報
 // Arg    : const int* pIndexTexture			: メッシュのテクスチャ番号
 // Arg    : const D3DXMATRIX* pMatrixBone		: ボーンの初期姿勢行列
 //==============================================================================
 int ModelConvert::Reinitialize( IDirect3DDevice9* pDevice, unsigned int elementVertex,
 	unsigned int countMaterial, unsigned int countTexture, unsigned long countMesh, unsigned long countBone,
-	const void** ppVertexBuffer, const int* pCountVertex, const int* pIndexMaterial, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone )
+	void** ppVertexBuffer, const int* pCountVertex, Material* pMaterial, const int* pIndexMaterial,
+	IDirect3DTexture9** ppTexture, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -193,7 +228,8 @@ int ModelConvert::Reinitialize( IDirect3DDevice9* pDevice, unsigned int elementV
 	}
 
 	// 初期化処理
-	return Initialize( pDevice, elementVertex, countMaterial, countTexture, countMesh, countBone, ppVertexBuffer, pCountVertex, pIndexMaterial, pIndexTexture, pMatrixBone );
+	return Initialize( pDevice, elementVertex, countMaterial, countTexture, countMesh, countBone, ppVertexBuffer, pCountVertex,
+		pMaterial, pIndexMaterial, ppTexture, pIndexTexture, pMatrixBone );
 }
 
 //==============================================================================
@@ -213,6 +249,46 @@ int ModelConvert::Copy( ModelConvert* pOut ) const
 
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 描画処理
+// Return : void								: なし
+// Arg    : int indexMaterial					: 描画マテリアル番号
+//==============================================================================
+void ModelConvert::Draw( int indexMaterial )
+{
+	// 描画
+	pDevice_->SetVertexDeclaration( pVertex_->GetDeclaration() );
+	pDevice_->SetStreamSource( 0, ppVertexBuffer_[ indexMaterial ], 0, pVertex_->GetSize() );
+	pDevice_->DrawPrimitive( D3DPT_TRIANGLELIST, 0, pCountPolygon_[ indexMaterial ] );
+}
+
+//==============================================================================
+// Brief  : マテリアルの取得
+// Return : void								: なし
+// Arg    : int index							: 設定する番号
+// Arg    : Material* pOut						: 値の格納アドレス
+//==============================================================================
+void ModelConvert::GetMaterial( int index, Material* pOut ) const
+{
+	// 値の返却
+	*pOut = pMaterial_[ pIndexMaterial_[ index ] ];
+}
+
+//==============================================================================
+// Brief  : テクスチャの取得
+// Return : IDirect3DTexture9*					: 返却する値
+// Arg    : int index							: 設定する番号
+//==============================================================================
+IDirect3DTexture9* ModelConvert::GetTexture( int index ) const
+{
+	// 値の返却
+	if( static_cast< unsigned int >( index ) >= countTexture_ )
+	{
+		return nullptr;
+	}
+	return ppTexture_[ pIndexTexture_[ index ] ];
 }
 
 //==============================================================================
@@ -341,6 +417,7 @@ void ModelConvert::InitializeSelf( void )
 	// メンバ変数の初期化
 	countMesh_ = 0;
 	countBone_ = 0;
+	pCountPolygon_ = nullptr;
 	ppVertexBuffer_ = nullptr;
 	pIndexMaterial_ = nullptr;
 	pIndexTexture_ = nullptr;

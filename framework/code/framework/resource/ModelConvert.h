@@ -60,15 +60,18 @@ public:
 	// Arg    : unsigned int countTexture			: テクスチャ数
 	// Arg    : unsigned long countMesh				: メッシュ数
 	// Arg    : unsigned long countBone				: ボーン数
-	// Arg    : const void** ppVertexBuffer			: メッシュの頂点情報
+	// Arg    : void* pVertexBuffer					: メッシュの頂点情報
 	// Arg    : const int* pCountVertex				: メッシュの頂点数
+	// Arg    : Material* pMaterial					: メッシュのマテリアル情報
 	// Arg    : const int* pIndexMaterial			: メッシュのマテリアル番号
+	// Arg    : IDirect3DTexture9** ppTexture		: メッシュのテクスチャ情報
 	// Arg    : const int* pIndexTexture			: メッシュのテクスチャ番号
 	// Arg    : const D3DXMATRIX* pMatrixBone		: ボーンの初期姿勢行列
 	//==============================================================================
 	int Initialize( IDirect3DDevice9* pDevice, unsigned int elementVertex,
 		unsigned int countMaterial, unsigned int countTexture, unsigned long countMesh, unsigned long countBone,
-		const void** ppVertexBuffer, const int* pCountVertex, const int* pIndexMaterial, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone );
+		void** ppVertexBuffer, const int* pCountVertex, Material* pMaterial, const int* pIndexMaterial,
+		IDirect3DTexture9** ppTexture, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -86,15 +89,18 @@ public:
 	// Arg    : unsigned int countTexture			: テクスチャ数
 	// Arg    : unsigned long countMesh				: メッシュ数
 	// Arg    : unsigned long countBone				: ボーン数
-	// Arg    : const void** ppVertexBuffer			: メッシュの頂点情報
+	// Arg    : void* pVertexBuffer					: メッシュの頂点情報
 	// Arg    : const int* pCountVertex				: メッシュの頂点数
+	// Arg    : Material* pMaterial					: メッシュのマテリアル情報
 	// Arg    : const int* pIndexMaterial			: メッシュのマテリアル番号
+	// Arg    : IDirect3DTexture9** ppTexture		: メッシュのテクスチャ情報
 	// Arg    : const int* pIndexTexture			: メッシュのテクスチャ番号
 	// Arg    : const D3DXMATRIX* pMatrixBone		: ボーンの初期姿勢行列
 	//==============================================================================
 	int Reinitialize( IDirect3DDevice9* pDevice, unsigned int elementVertex,
 		unsigned int countMaterial, unsigned int countTexture, unsigned long countMesh, unsigned long countBone,
-		const void** ppVertexBuffer, const int* pCountVertex, const int* pIndexMaterial, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone );
+		void** ppVertexBuffer, const int* pCountVertex, Material* pMaterial, const int* pIndexMaterial,
+		IDirect3DTexture9** ppTexture, const int* pIndexTexture, const D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -104,8 +110,17 @@ public:
 	int Copy( ModelConvert* pOut ) const;
 
 	//==============================================================================
+	// Brief  : 描画処理
+	// Return : void								: なし
+	// Arg    : int indexMaterial					: 描画マテリアル番号
+	//==============================================================================
+	void Draw( int indexMaterial );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	void GetMaterial( int index, Material* pOut ) const;
+	IDirect3DTexture9* GetTexture( int index ) const;
 	void SetCountMesh( unsigned long value );
 	unsigned long GetCountMesh( void ) const;
 	void SetCountBone( unsigned long value );
@@ -126,6 +141,7 @@ private:
 
 	unsigned long				countMesh_;				// メッシュ数
 	unsigned long				countBone_;				// ボーン数
+	unsigned long*				pCountPolygon_;			// ポリゴン数
 	IDirect3DVertexBuffer9**	ppVertexBuffer_;		// 頂点バッファ
 	int*						pIndexMaterial_;		// メッシュのマテリアル番号
 	int*						pIndexTexture_;			// メッシュのテクスチャ番号
