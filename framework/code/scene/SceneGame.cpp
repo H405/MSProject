@@ -28,6 +28,7 @@
 #include "../framework/system/Window.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
+#include "../system/ManagerFireworks.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 
@@ -52,6 +53,7 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
+#define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
 
 //******************************************************************************
 // 静的変数
@@ -76,6 +78,8 @@ SceneGame::SceneGame( void ) : SceneMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
+
+	buffFlag = false;
 }
 
 //==============================================================================
@@ -96,8 +100,14 @@ void SceneGame::InitializeSelf( void )
 	stringRetry = nullptr;
 	stringNext = nullptr;
 
-	fpUpdate = nullptr;
+	testArm = nullptr;
+	testObj[0] = nullptr;
+	testObj[1] = nullptr;
+	testObj[2] = nullptr;
+	testObj[3] = nullptr;
+	managerFireworks = nullptr;
 
+	fpUpdate = nullptr;
 	finger = nullptr;
 	reConnectWiimote = nullptr;
 	reConnectWiiboard = nullptr;
@@ -144,8 +154,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		1000.0f,
-		D3DXVECTOR3( 0.0f, 20.0f, -100.0f ),
-		D3DXVECTOR3( 0.0f, 0.0f, 10.0f ),
+		D3DXVECTOR3( 0.0f, 22.0f, -10.0f ),
+		D3DXVECTOR3( 0.0f, 24.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
 
@@ -168,26 +178,34 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	}
 	pArgument->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, pLight_ );
 
-	// ポイントスプライト管理クラスの生成
-	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
-	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
-	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
-	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
-	pPoint_ = new ManagerPoint();
-	if( pPoint_ == nullptr )
-	{
-		return 1;
-	}
-	result = pPoint_->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
-	if( result != 0 )
-	{
-		return result;
-	}
 
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
+
+
+
+	//	ポイントスプライト管理オブジェクト生成
+	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
+	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
+	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
+	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
+	managerPoint = new ManagerPoint();
+	if( managerPoint == nullptr )
+	{
+		return 1;
+	}
+	result = managerPoint->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	//	花火管理オブジェクト生成
+	managerFireworks = new ManagerFireworks;
+	managerFireworks->Initialize(managerPoint);
+
 
 	// スカイドームの生成
 	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
@@ -195,6 +213,54 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
+
+
+
+	//	仮のフィールド
+	pTexture = pArgument_->pTexture_->Get( _T( "title/titlelogo.png" ) );
+	pEffect = pArgument_->pEffect_->Get( _T( "Mesh.fx" ) );
+	field = new ObjectMesh();
+	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
+	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
+
+
+
+	//	テスト用の腕オブジェクト
+	pEffect = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pModel = pArgument_->pModel_->Get( _T( "arm_r.x" ) );
+	testArm = new ObjectModel();
+	testArm->Initialize(0);
+	testArm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+
+	testArm->SetPositionY(20.0f);
+
+
+	pEffect = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pModel = pArgument_->pModel_->Get( _T( "kuma.x" ) );
+	testObj[0] = new ObjectModel();
+	testObj[0]->Initialize(0);
+	testObj[0]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	testObj[0]->SetEnableGraphic(false);
+
+	testObj[1] = new ObjectModel();
+	testObj[1]->Initialize(0);
+	testObj[1]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+
+	testObj[2] = new ObjectModel();
+	testObj[2]->Initialize(0);
+	testObj[2]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+
+	testObj[3] = new ObjectModel();
+	testObj[3]->Initialize(0);
+	testObj[3]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+
+
+	testObj[1]->SetPositionX(-50.0f);
+	testObj[2]->SetPositionX(50.0f);
+
+	testObj[1]->SetPositionZ(200.0f);
+	testObj[2]->SetPositionZ(200.0f);
+	testObj[3]->SetPositionZ(200.0f);
 
 
 	//	「スコア」文字オブジェクト生成
@@ -210,8 +276,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		pEffect,
 		pTexture);
 
-	stringScore->SetScale(300.0f, 120.0f, 0.0f);
-	stringScore->SetPosition(-500.0f, 250.0f, 0.0f);
+	stringScore->SetScale(150.0f, 80.0f, 0.0f);
+	stringScore->SetPosition(-550.0f, 300.0f, 0.0f);
 
 
 
@@ -227,10 +293,10 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		pEffect,
 		pTexture);
 
-	score->SetSizeX(64.0f);
-	score->SetSizeY(64.0f);
-	score->SetPosX(-350.0f);
-	score->SetPosY(250.0f);
+	score->SetSizeX(32.0f);
+	score->SetSizeY(32.0f);
+	score->SetPosX(-470.0f);
+	score->SetPosY(300.0f);
 
 	score->SetScoreFuture(123456789);
 
@@ -386,9 +452,26 @@ int SceneGame::Finalize( void )
 	delete pObjectSky_;
 	pObjectSky_ = nullptr;
 
+	delete testObj[0];
+	delete testObj[1];
+	delete testObj[2];
+	delete testObj[3];
+
+	// 仮フィールドの開放
+	delete field;
+	field = nullptr;
+
+	//	テストオブジェクトの解放
+	delete testArm;
+	testArm = nullptr;
+
+	//	花火管理クラスの解放
+	delete managerFireworks;
+	managerFireworks = nullptr;
+
 	// ポイントスプライト管理クラスの開放
-	delete pPoint_;
-	pPoint_ = nullptr;
+	delete managerPoint;
+	managerPoint = nullptr;
 
 	// ポーズ用背景の開放
 	delete pauseFrame;
@@ -504,20 +587,6 @@ void SceneGame::Update( void )
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
-
-	// シーン遷移
-	/*if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
-	{
-		SetSceneNext( ManagerSceneMain::TYPE_RESULT );
-		SetIsEnd( true );
-	}
-	if( pArgument_->pKeyboard_->IsTrigger( DIK_RETURN ) )
-	{
-		if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
-		{
-			pArgument_->pFade_->FadeOut( 20 );
-		}
-	}*/
 }
 //==============================================================================
 // Brief  : 通常更新処理
@@ -532,11 +601,73 @@ void SceneGame::normalUpdate(void)
 	if(wiiLostCheck() == false)
 		return;
 
+	//	花火管理クラスの更新
+	managerFireworks->Update();
+
 	// ポイントスプライト管理クラスの更新
-	pPoint_->Update();
+	managerPoint->Update();
 
 	//	スコアクラスの更新
 	score->Update();
+
+
+
+	//	テスト用ここから
+	//---------------------------------------------------------------------------------------------------------
+	if(pArgument_->pWiiController_->getTrigger(WC_A) == true)
+	{
+		managerFireworks->Add(
+			managerPoint,
+			D3DXVECTOR3(0.0f, 0.0f, 200.0f),
+			D3DXVECTOR3(0.1f, 0.1f, 0.0f),
+			DEG_TO_RAD(5.0f),
+			DEG_TO_RAD(1.0f)
+			);
+	}
+	if(pArgument_->pWiiController_->getTrigger(WC_B) == true)
+	{
+		managerFireworks->Burn();
+	}
+
+	testObj[1]->AddRotationX(0.1f);
+	testObj[2]->AddRotationY(0.1f);
+	testObj[3]->AddRotationZ(0.1f);
+
+	if(pArgument_->pVirtualController_->IsPress(VC_UP) && pArgument_->pKeyboard_->IsPress(DIK_Z))
+	{
+		testArm->AddPositionZ(1.0f);
+	}
+	if(pArgument_->pVirtualController_->IsPress(VC_DOWN) && pArgument_->pKeyboard_->IsPress(DIK_Z))
+	{
+		testArm->AddPositionZ(-1.0f);
+	}
+
+	if(pArgument_->pVirtualController_->IsPress(VC_UP) && pArgument_->pKeyboard_->IsPress(DIK_Y))
+	{
+		testArm->AddPositionY(1.0f);
+	}
+	if(pArgument_->pVirtualController_->IsPress(VC_DOWN) && pArgument_->pKeyboard_->IsPress(DIK_Y))
+	{
+		testArm->AddPositionY(-1.0f);
+	}
+
+	if(pArgument_->pVirtualController_->IsPress(VC_UP) && pArgument_->pKeyboard_->IsPress(DIK_X))
+	{
+		testArm->AddPositionX(1.0f);
+	}
+	if(pArgument_->pVirtualController_->IsPress(VC_DOWN) && pArgument_->pKeyboard_->IsPress(DIK_X))
+	{
+		testArm->AddPositionX(-1.0f);
+	}
+
+	if(pArgument_->pWiiController_->getPress(WC_A) && pArgument_->pWiiController_->getPress(WC_B))
+		pArgument_->pWiiController_->rotReset();
+
+	D3DXVECTOR3 buffRot = pArgument_->pWiiController_->getRot();
+	testArm->SetRotation(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
+
+	//---------------------------------------------------------------------------------------------------------
+	//	テスト用ここまで
 
 	//	ポーズキーが押されたら
 	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))

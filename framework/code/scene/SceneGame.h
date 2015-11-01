@@ -32,7 +32,7 @@
 class CameraObject;
 class LightDirection;
 class ManagerPoint;
-
+class ManagerFireworks;
 class Object2D;
 class ObjectScore;
 class Object3D;
@@ -111,8 +111,6 @@ private:
 	CameraObject*		pCamera_;		// カメラ
 	LightDirection*		pLight_;		// ライト
 
-	ManagerPoint*		pPoint_;		// ポイントスプライト管理クラス
-
 	ObjectSky*			pObjectSky_;	// スカイドーム
 
 	//	「スコア」文字
@@ -142,14 +140,25 @@ private:
 	//	「wiiボード再接続要求」オブジェクト
 	Object2D* reConnectWiiboard;
 
-
-
 	//	wiiリモコンで操作する指
 	Object2D* finger;
 
 	//	選択肢のうち、選ばれているオブジェクトのポインタ
 	Object2D* chooseObject;
 	Object2D* chooseObjectPrev;
+
+	//	テスト用
+	ObjectModel* testArm;
+	ObjectModel* testObj[4];
+
+	//	仮フィールド
+	ObjectMesh* field;
+
+	// ポイントスプライト管理クラス
+	ManagerPoint* managerPoint;
+
+	//	花火管理クラス
+	ManagerFireworks* managerFireworks;
 
 	//	chooseObject点滅用
 	int pushChooseObjectFlashingCount;
@@ -203,6 +212,8 @@ private:
 
 	//	更新関数格納用ポインタ
 	void (SceneGame::*fpUpdate)(void);
+
+	bool buffFlag;
 };
 
 #endif	// MY_SCENE_GAME_H
