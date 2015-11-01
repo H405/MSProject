@@ -42,25 +42,27 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,				// ワールドマトリクス
-		PARAMETER_SIZE_SCREEN,					// 画面サイズ
+		PARAMETER_MATRIX_WORLD = 0,					// ワールド変換行列
+		PARAMETER_SIZE_SCREEN,						// 画面サイズ
 
-		PARAMETER_TEXTURE_DIFFUSE,				// ディフューズテクスチャ
-		PARAMETER_TEXTURE_SPECULAR,				// スペキュラテクスチャ
-		PARAMETER_TEXTURE_NORMAL,				// 法線テクスチャ
-		PARAMETER_TEXTURE_DEPTH,				// 深度テクスチャ
+		PARAMETER_TEXTURE_DIFFUSE,					// ディフューズテクスチャ
+		PARAMETER_TEXTURE_SPECULAR,					// スペキュラテクスチャ
+		PARAMETER_TEXTURE_NORMAL,					// 法線テクスチャ
+		PARAMETER_TEXTURE_DEPTH,					// 深度テクスチャ
 
-		PARAMETER_POSITION_EYE,					// 視点座標
-		PARAMETER_CLIP_CAMERA,					// カメラのクリップ値
-		PARAMETER_COLOR_AMBIENT,				// 環境光色
-		PARAMETER_VECTOR_LIGHT_DIRECTION,		// ディレクショナルライトのベクトル
-		PARAMETER_COLOR_LIGHT_DIRECTION,		// ディレクショナルライトの色
-		PARAMETER_POSITION_LIGHT_POINT,			// ポイントライトの座標
-		PARAMETER_COLOR_LIGHT_POINT,			// ポイントライトの色
-		PARAMETER_ATTENUATION_LIGHT_POINT,		// ポイントライトの減衰率
-		PARAMETER_COUNT_LIGHT_POINT,			// ポイントライトの数
+		PARAMETER_MATRIX_PROJECTION_INVERSE,		// プロジェクション変換逆行列
+		PARAMETER_MATRIX_VIEW_INVERSE,				// ビュー変換逆行列
+		PARAMETER_POSITION_EYE,						// 視点座標
+		PARAMETER_CLIP_CAMERA,						// カメラのクリップ値
+		PARAMETER_COLOR_AMBIENT,					// 環境光色
+		PARAMETER_VECTOR_LIGHT_DIRECTION,			// ディレクショナルライトのベクトル
+		PARAMETER_COLOR_LIGHT_DIRECTION,			// ディレクショナルライトの色
+		PARAMETER_POSITION_LIGHT_POINT,				// ポイントライトの座標
+		PARAMETER_COLOR_LIGHT_POINT,				// ポイントライトの色
+		PARAMETER_ATTENUATION_LIGHT_POINT,			// ポイントライトの減衰率
+		PARAMETER_COUNT_LIGHT_POINT,				// ポイントライトの数
 
-		PARAMETER_MAX							// 最大値
+		PARAMETER_MAX								// 最大値
 	};
 
 	//==============================================================================

@@ -186,16 +186,34 @@ void DrawerLightEffect::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetTexture( PARAMETER_TEXTURE_NORMAL, pTextureNormal_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
 
-	// 視点座標
-	const Camera*	pCamera = nullptr;		// カメラ
-	D3DXVECTOR3		positionEye;			// 視点座標
-	float			pClipCamera[ 2 ];		// カメラのクリップ値
+	// プロジェクション変換逆行列
+	const Camera*	pCamera = nullptr;				// カメラ
+	RenderMatrix*	pRenderMatrix = nullptr;		// 描画変換行列
+	D3DXMATRIX		matrixProjectionInverse;		// プロジェクション変換逆行列
 	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pRenderMatrix = pCamera->GetRenderMatrix();
+	pRenderMatrix->GetMatrixProjection( &matrixProjectionInverse );
+	D3DXMatrixInverse( &matrixProjectionInverse, nullptr, &matrixProjectionInverse );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_PROJECTION_INVERSE, matrixProjectionInverse );
+
+	// ビュー変換逆行列
+	D3DXMATRIX	matrixViewInverse;		// ビュー変換逆行列
+	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pRenderMatrix = pCamera->GetRenderMatrix();
+	pRenderMatrix->GetMatrixView( &matrixViewInverse );
+	D3DXMatrixInverse( &matrixViewInverse, nullptr, &matrixViewInverse );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_VIEW_INVERSE, matrixViewInverse );
+
+	// 視点座標
+	D3DXVECTOR3	positionEye;		// 視点座標
+	pCamera->GetPositionCamera( &positionEye );
+	pEffect_->SetFloatArray( PARAMETER_POSITION_EYE, &positionEye.x, 3 );
+
+	// カメラのクリップ値
+	float	pClipCamera[ 2 ];		// カメラのクリップ値
 	pClipCamera[ 0 ] = pCamera->GetClipNear();
 	pClipCamera[ 1 ] = pCamera->GetClipFar();
-	pCamera->GetPositionCamera( &positionEye );
 	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
-	pEffect_->SetFloatArray( PARAMETER_POSITION_EYE, &positionEye.x, 3 );
 
 	// 環境光色
 	D3DXCOLOR	colorAmbient;		// 環境光色

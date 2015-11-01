@@ -159,23 +159,27 @@ void DrawerModel::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 変換行列
 	D3DXMATRIX		matrixTransform;				// 変換行列
-	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション行列
+	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
+	D3DXMATRIX		matrixWorldView;				// ワールドビュー変換行列
+	D3DXMATRIX		matrixView;						// ビュー変換行列
 	const Camera*	pCamera = nullptr;				// カメラ
 	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
 	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
 	pRenderMatrix = pCamera->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
+	pRenderMatrix->GetMatrixView( &matrixView );
 	D3DXMatrixMultiply( &matrixTransform, &matrixWorld, &matrixViewProjection );
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
-
-	// ワールドマトリクス
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
 
-	// 視点座標
-	D3DXVECTOR3	positionEye;		// 視点座標
-	pCamera->GetPositionCamera( &positionEye );
-	pEffect_->SetFloatArray( PARAMETER_POSITION_EYE, &positionEye.x, 3 );
-
+	// カメラのクリップ値
+	float	pClipCamera[ 2 ];		// カメラのクリップ値
+	pClipCamera[ 0 ] = pCamera->GetClipNear();
+	pClipCamera[ 1 ] = pCamera->GetClipFar();
+	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
+#if 0
 	// 環境光色
 	D3DXCOLOR	colorAmbient;		// 環境光色
 	pEffectParameter_->GetColorAmbient( &colorAmbient );
@@ -236,7 +240,7 @@ void DrawerModel::Draw( const D3DXMATRIX& matrixWorld )
 
 	// ポイントライトの数
 	pEffect_->SetInteger( PARAMETER_COUNT_LIGHT_POINT, countPoint );
-
+#endif
 	// 描画
 	unsigned int		countMaterial;			// マテリアル数
 	IDirect3DTexture9*	pTexture = nullptr;		// テクスチャ

@@ -1,7 +1,7 @@
 //==============================================================================
 //
 // File   : RenderPassParameter.cpp
-// Brief  : 描画対象パラメータ
+// Brief  : 描画パスパラメータ
 // Author : Taiga Shirakawa
 // Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //

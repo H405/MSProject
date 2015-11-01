@@ -36,6 +36,15 @@ struct VertexOutput
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
 
+// ピクセルシェーダ出力
+struct PixelOutput
+{
+	float4	diffuse_				: COLOR0;			// ディフューズ色
+	float4	specular_				: COLOR1;			// スペキュラ色
+	float4	normal_					: COLOR2;			// 法線
+	float4	depth_					: COLOR3;			// 深度
+};
+
 //==============================================================================
 // Brief  ： 頂点変換
 // Return ： VertexOutput					： 頂点出力
@@ -56,14 +65,23 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 }
 
 //==============================================================================
-// Brief  ： ピクセル描画
-// Return ： float4 : COLOR0				： 色
-// Arg    ： VertexOutput					： 頂点シェーダ出力
+// Brief  : ピクセル描画
+// Return : PixelOutput						: ピクセルシェーダ出力
+// Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
-float4 DrawPixel( VertexOutput vertex ) : COLOR0
+PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// ピクセル色を返す
-	return tex2D( samplerTexture, vertex.textureCoord_ );
+	PixelOutput	output;		// ピクセルシェーダ出力
+
+	// 値の設定
+	output.diffuse_ = tex2D( samplerTexture, vertex.textureCoord_ );
+	output.specular_ = 1.0f;
+	output.normal_ = 0.5f;
+	output.depth_ = 1.0f;
+
+	// 頂点シェーダ出力を返す
+	return output;
 }
 
 //==============================================================================
