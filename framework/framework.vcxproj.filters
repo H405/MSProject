@@ -246,15 +246,6 @@
     <ClInclude Include="code\graphic\drawer\Drawer2D.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
-    <ClInclude Include="code\object\ObjectScreen.h">
-      <Filter>ソース ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="code\graphic\graphic\GraphicScreen.h">
-      <Filter>ソース ファイル\graphic\graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="code\graphic\drawer\DrawerScreen.h">
-      <Filter>ソース ファイル\graphic\drawer</Filter>
-    </ClInclude>
     <ClInclude Include="code\graphic\drawer\Drawer3D.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
@@ -377,6 +368,18 @@
     </ClInclude>
     <ClInclude Include="code\framework\resource\ManagerMotion.h">
       <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectPostEffect.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicPostEffect.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerPostEffect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\render\RenderPassParameter.h">
+      <Filter>ソース ファイル\framework\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -548,15 +551,6 @@
     <ClCompile Include="code\graphic\drawer\Drawer2D.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
-    <ClCompile Include="code\object\ObjectScreen.cpp">
-      <Filter>ソース ファイル\object</Filter>
-    </ClCompile>
-    <ClCompile Include="code\graphic\graphic\GraphicScreen.cpp">
-      <Filter>ソース ファイル\graphic\graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="code\graphic\drawer\DrawerScreen.cpp">
-      <Filter>ソース ファイル\graphic\drawer</Filter>
-    </ClCompile>
     <ClCompile Include="code\graphic\drawer\Drawer3D.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
@@ -673,6 +667,18 @@
     </ClCompile>
     <ClCompile Include="code\framework\resource\ManagerMotion.cpp">
       <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectPostEffect.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicPostEffect.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerPostEffect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\render\RenderPassParameter.cpp">
+      <Filter>ソース ファイル\framework\render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -46,6 +46,7 @@
     <ClInclude Include="code\framework\render\RenderMatrix.h" />
     <ClInclude Include="code\framework\render\RenderPass.h" />
     <ClInclude Include="code\framework\render\RenderTarget.h" />
+    <ClInclude Include="code\framework\render\RenderPassParameter.h" />
     <ClInclude Include="code\framework\resource\Effect.h" />
     <ClInclude Include="code\framework\resource\ManagerEffect.h" />
     <ClInclude Include="code\framework\resource\ManagerModel.h" />
@@ -79,7 +80,7 @@
     <ClInclude Include="code\graphic\drawer\DrawerMesh.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModel.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
-    <ClInclude Include="code\graphic\drawer\DrawerScreen.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerPostEffect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSky.h" />
     <ClInclude Include="code\graphic\graphic\Graphic2D.h" />
     <ClInclude Include="code\graphic\graphic\Graphic3D.h" />
@@ -88,7 +89,7 @@
     <ClInclude Include="code\graphic\graphic\GraphicMesh.h" />
     <ClInclude Include="code\graphic\graphic\GraphicModel.h" />
     <ClInclude Include="code\graphic\graphic\GraphicPoint.h" />
-    <ClInclude Include="code\graphic\graphic\GraphicScreen.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicPostEffect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicSky.h" />
     <ClInclude Include="code\object\Object2D.h" />
     <ClInclude Include="code\object\Object3D.h" />
@@ -96,7 +97,7 @@
     <ClInclude Include="code\object\ObjectMesh.h" />
     <ClInclude Include="code\object\ObjectModel.h" />
     <ClInclude Include="code\object\ObjectScore.h" />
-    <ClInclude Include="code\object\ObjectScreen.h" />
+    <ClInclude Include="code\object\ObjectPostEffect.h" />
     <ClInclude Include="code\object\ObjectSky.h" />
     <ClInclude Include="code\scene\SceneGame.h" />
     <ClInclude Include="code\scene\SceneRanking.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="code\framework\render\RenderMatrix.cpp" />
     <ClCompile Include="code\framework\render\RenderPass.cpp" />
     <ClCompile Include="code\framework\render\RenderTarget.cpp" />
+    <ClCompile Include="code\framework\render\RenderPassParameter.cpp" />
     <ClCompile Include="code\framework\resource\Effect.cpp" />
     <ClCompile Include="code\framework\resource\ManagerEffect.cpp" />
     <ClCompile Include="code\framework\resource\ManagerModel.cpp" />
@@ -179,7 +181,7 @@
     <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModel.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
-    <ClCompile Include="code\graphic\drawer\DrawerScreen.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerPostEffect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSky.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic2D.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic3D.cpp" />
@@ -188,7 +190,7 @@
     <ClCompile Include="code\graphic\graphic\GraphicMesh.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicModel.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicPoint.cpp" />
-    <ClCompile Include="code\graphic\graphic\GraphicScreen.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicPostEffect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicSky.cpp" />
     <ClCompile Include="code\object\Object2D.cpp" />
     <ClCompile Include="code\object\Object3D.cpp" />
@@ -196,7 +198,7 @@
     <ClCompile Include="code\object\ObjectMesh.cpp" />
     <ClCompile Include="code\object\ObjectModel.cpp" />
     <ClCompile Include="code\object\ObjectScore.cpp" />
-    <ClCompile Include="code\object\ObjectScreen.cpp" />
+    <ClCompile Include="code\object\ObjectPostEffect.cpp" />
     <ClCompile Include="code\object\ObjectSky.cpp" />
     <ClCompile Include="code\scene\SceneGame.cpp" />
     <ClCompile Include="code\scene\SceneRanking.cpp" />

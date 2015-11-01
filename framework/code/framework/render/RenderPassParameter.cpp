@@ -1,16 +1,16 @@
 //==============================================================================
 //
-// File   : SceneArgumentMain.cpp
-// Brief  : シーンの共通引数
+// File   : RenderPassParameter.cpp
+// Brief  : 描画対象パラメータ
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "SceneArgumentMain.h"
+#include "RenderPassParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,7 +29,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-SceneArgumentMain::SceneArgumentMain( void ) : SceneArgument()
+RenderPassParameter::RenderPassParameter( void )
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -40,8 +40,10 @@ SceneArgumentMain::SceneArgumentMain( void ) : SceneArgument()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-SceneArgumentMain::~SceneArgumentMain( void )
+RenderPassParameter::~RenderPassParameter( void )
 {
+	// クラス内の初期化処理
+	InitializeSelf();
 }
 
 //==============================================================================
@@ -49,21 +51,17 @@ SceneArgumentMain::~SceneArgumentMain( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void SceneArgumentMain::InitializeSelf( void )
+void RenderPassParameter::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	pWindow_ = nullptr;
-	pDevice_ = nullptr;
-	pFade_ = nullptr;
-	pEffectParameter_ = nullptr;
-	pObjectPostEffect_ = nullptr;
-	pKeyboard_ = nullptr;
-	pMouse_ = nullptr;
-	pPad_ = nullptr;
-	pVirtualController_ = nullptr;
-	pTexture_ = nullptr;
-	pModel_ = nullptr;
-	pMotion_ = nullptr;
-	pEffect_ = nullptr;
-	pSound_ = nullptr;
+	width_ = -1;
+	height_ = -1;
+	for( int counterRenderRarget = 0; counterRenderRarget < MAXIMUM_RENDER_TARGET; ++counterRenderRarget )
+	{
+		pFormat_[ counterRenderRarget ] = D3DFMT_A8R8G8B8;
+	}
+	flagClear_ = (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER);
+	clearTarget_ = D3DCOLOR_RGBA( 0, 0, 0, 0 );
+	clearZBuffer_ = 1.0f;
+	clearStencil_ = 0;
 }

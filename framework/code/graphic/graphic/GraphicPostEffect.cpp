@@ -1,6 +1,6 @@
 //==============================================================================
 //
-// File   : GraphicScreen.cpp
+// File   : GraphicPostEffect.cpp
 // Brief  : 画面ポリゴン描画処理の管理クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/10/17 sat : Taiga Shirakawa : create
@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicScreen.h"
-#include "../drawer/DrawerScreen.h"
+#include "GraphicPostEffect.h"
+#include "../drawer/DrawerPostEffect.h"
 
 //******************************************************************************
 // ライブラリ
@@ -30,7 +30,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen::GraphicScreen( void ) : GraphicMain()
+GraphicPostEffect::GraphicPostEffect( void ) : GraphicMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -41,7 +41,7 @@ GraphicScreen::GraphicScreen( void ) : GraphicMain()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen::~GraphicScreen( void )
+GraphicPostEffect::~GraphicPostEffect( void )
 {
 	// 終了処理
 	Finalize();
@@ -59,7 +59,7 @@ GraphicScreen::~GraphicScreen( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
+int GraphicPostEffect::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
 	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
@@ -74,14 +74,14 @@ int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, 
 	pTexture_ = pTexture;
 
 	// 描画クラスの生成
-	DrawerScreen*	pDrawerScreen = nullptr;		// 描画クラス
-	pDrawerScreen = new DrawerScreen();
-	if( pDrawerScreen == nullptr )
+	DrawerPostEffect*	pDrawerPostEffect = nullptr;		// 描画クラス
+	pDrawerPostEffect = new DrawerPostEffect();
+	if( pDrawerPostEffect == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerScreen->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture3D, pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
-	ppDraw_[ GraphicMain::PASS_SCREEN ] = pDrawerScreen;
+	result = pDrawerPostEffect->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture3D, pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
+	ppDraw_[ GraphicMain::PASS_SCREEN ] = pDrawerPostEffect;
 
 	// 正常終了
 	return 0;
@@ -92,7 +92,7 @@ int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, 
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicScreen::Finalize( void )
+int GraphicPostEffect::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -121,7 +121,7 @@ int GraphicScreen::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int GraphicScreen::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
+int GraphicPostEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
 	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
@@ -139,9 +139,9 @@ int GraphicScreen::Reinitialize( int priority, const EffectParameter* pParameter
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicScreen* pOut						: コピー先アドレス
+// Arg    : GraphicPostEffect* pOut				: コピー先アドレス
 //==============================================================================
-int GraphicScreen::Copy( GraphicScreen* pOut ) const
+int GraphicPostEffect::Copy( GraphicPostEffect* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -160,7 +160,7 @@ int GraphicScreen::Copy( GraphicScreen* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicScreen::InitializeSelf( void )
+void GraphicPostEffect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pTexture_ = nullptr;

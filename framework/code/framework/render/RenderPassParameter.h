@@ -1,23 +1,22 @@
 //==============================================================================
 //
-// File   : SceneArgumentMain.h
-// Brief  : シーンの共通引数
+// File   : RenderPassParameter.h
+// Brief  : 描画対象パラメータ
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_ARGUMENT_MAIN_H
-#define MY_SCENE_ARGUMENT_MAIN_H
+#ifndef MY_RENDER_PASS_PARAMETER_H
+#define MY_RENDER_PASS_PARAMETER_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
 #include "d3dx9.h"
-#include "../framework/scene/SceneArgument.h"
 
 //******************************************************************************
 // ライブラリ
@@ -30,30 +29,11 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
-class EffectParameter;
-class Fade;
-class CWiiController;
-class InputKeyboard;
-class InputMouse;
-class InputPad;
-class VirtualController;
-class Model;
-class Motion;
-class ObjectPostEffect;
-class Sound;
-class Texture;
-class Window;
-template < class Effect > class ManagerEffect;
-template < class Model > class ManagerModel;
-template < class Motion > class ManagerMotion;
-template < class Sound > class ManagerSound;
-template < class Texture > class ManagerTexture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneArgumentMain : public SceneArgument
+class RenderPassParameter
 {
 public:
 	//==============================================================================
@@ -61,36 +41,31 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneArgumentMain( void );
+	RenderPassParameter( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneArgumentMain( void );
+	~RenderPassParameter( void );
 
-	Window*						pWindow_;				// ウィンドウ
-	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
-	Fade*						pFade_;					// フェード管理クラス
-	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
-	ObjectPostEffect*			pObjectPostEffect_;		// 画面オブジェクト
-	CWiiController*				pWiiController_;		// wiiリモコン入力クラス
-	InputKeyboard*				pKeyboard_;				// キーボード入力クラス
-	InputMouse*					pMouse_;				// マウス入力クラス
-	InputPad*					pPad_;					// ゲームパッド入力クラス
-	VirtualController*			pVirtualController_;	// 仮想コントローラ管理クラス
-	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
-	ManagerModel< Model >*		pModel_;				// モデル管理クラス
-	ManagerMotion< Motion >*	pMotion_;				// モーション管理クラス
-	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス
-	ManagerSound< Sound >*		pSound_;				// サウンド管理クラス
+	static const int	MAXIMUM_RENDER_TARGET = 16;		// 最大レンダーターゲット数
+
+	int			width_;									// 幅
+	int			height_;								// 高さ
+	D3DFORMAT	pFormat_[ MAXIMUM_RENDER_TARGET ];		// レンダーターゲットの形式
+	DWORD		flagClear_;								// クリアフラグ
+	D3DCOLOR	clearTarget_;							// レンダーターゲットのクリア値
+	float		clearZBuffer_;							// Zバッファのクリア値
+	DWORD		clearStencil_;							// ステンシルバッファのクリア値
 
 protected:
 
 private:
 	void InitializeSelf( void );
-
+	RenderPassParameter( const RenderPassParameter& );
+	RenderPassParameter operator=( const RenderPassParameter& );
 };
 
-#endif	// MY_SCENE_ARGUMENT_MAIN_H
+#endif	// MY_RENDER_PASS_PARAMETER_H

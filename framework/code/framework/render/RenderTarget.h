@@ -54,8 +54,11 @@ public:
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int width							: 幅
+	// Arg    : int height							: 高さ
+	// Arg    : D3DFORMAT format					: テクスチャフォーマット
 	//==============================================================================
-	int Initialize( IDirect3DDevice9* pDevice );
+	int Initialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -68,8 +71,11 @@ public:
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : int width							: 幅
+	// Arg    : int height							: 高さ
+	// Arg    : D3DFORMAT format					: テクスチャフォーマット
 	//==============================================================================
-	int Reinitialize( IDirect3DDevice9* pDevice );
+	int Reinitialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -88,12 +94,9 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DDevice9* GetDevice( void ) const;
 	IDirect3DTexture9* GetTexture( void ) const;
-	void SetSurfaceTexture( IDirect3DSurface9* pValue );
 	IDirect3DSurface9* GetSurfaceTexture( void ) const;
-	void SetSurfaceDepth( IDirect3DSurface9* pValue );
-	IDirect3DSurface9* GetSurfaceDepth( void ) const;
 	void SetIsEnable( bool value );
 	bool GetIsEnable( void ) const;
 	bool IsEnable( void ) const;
@@ -108,7 +111,6 @@ private:
 	IDirect3DDevice9*	pDevice_;				// Direct3Dデバイス
 	IDirect3DTexture9*	pTexture_;				// テクスチャ
 	IDirect3DSurface9*	pSurfaceTexture_;		// テクスチャサーフェイス
-	IDirect3DSurface9*	pSurfaceDepth_;			// 深度バッファ
 	bool				isEnable_;				// 有効フラグ
 };
 

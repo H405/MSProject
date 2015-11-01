@@ -1,6 +1,6 @@
 //==============================================================================
 //
-// File   : ObjectScreen.h
+// File   : ObjectPostEffect.h
 // Brief  : 画面ポリゴンオブジェクトクラス
 // Author : Taiga Shirakawa
 // Date   : 2015/10/17 sat : Taiga Shirakawa : create
@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SCREEN_H
-#define MY_OBJECT_SCREEN_H
+#ifndef MY_OBJECT_POST_EFFECT_H
+#define MY_OBJECT_POST_EFFECT_H
 
 //******************************************************************************
 // インクルード
@@ -32,13 +32,13 @@
 class Effect;
 class EffectParameter;
 class Fade;
-class GraphicScreen;
+class GraphicPostEffect;
 class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectScreen : public ObjectMovement
+class ObjectPostEffect : public ObjectMovement
 {
 public:
 	//==============================================================================
@@ -46,14 +46,14 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectScreen( void );
+	ObjectPostEffect( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectScreen( void );
+	~ObjectPostEffect( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
@@ -81,9 +81,9 @@ public:
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectScreen* pOut						: コピー先アドレス
+	// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectScreen* pOut ) const;
+	int Copy( ObjectPostEffect* pOut ) const;
 
 	//==============================================================================
 	// Brief  : 更新処理
@@ -109,19 +109,19 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicScreen* pValue );
-	GraphicScreen* GetGraphic( void ) const;
+	void SetGraphic( GraphicPostEffect* pValue );
+	GraphicPostEffect* GetGraphic( void ) const;
 
 protected:
-	GraphicScreen*	pGraphic_;		// 描画クラス
+	GraphicPostEffect*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	ObjectScreen( const ObjectScreen& );
-	ObjectScreen operator=( const ObjectScreen& );
+	ObjectPostEffect( const ObjectPostEffect& );
+	ObjectPostEffect operator=( const ObjectPostEffect& );
 
 	Fade*	pFade_;					// フェード
 	float	proportionFade_;		// フェード割合
 };
 
-#endif	// MY_OBJECT_SCREEN_H
+#endif	// MY_OBJECT_POST_EFFECT_H

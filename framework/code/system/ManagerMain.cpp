@@ -30,6 +30,7 @@
 #include "../framework/polygon/Polygon3D.h"
 #include "../framework/render/DirectDevice.h"
 #include "../framework/render/RenderPass.h"
+#include "../framework/render/RenderPassParameter.h"
 #include "../framework/render/RenderTarget.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
@@ -41,7 +42,7 @@
 #include "../framework/system/ManagerDraw.h"
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
-#include "../object/ObjectScreen.h"
+#include "../object/ObjectPostEffect.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -381,27 +382,27 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	RenderTarget*	pRenderTarget3D = nullptr;			// 3D画面描画対象
 	RenderTarget*	pRenderTarget2D = nullptr;			// 2D画面描画対象
 	RenderTarget*	pRenderTargetMask = nullptr;		// マスク描画対象
-	pObjectScreen_ = new ObjectScreen();
-	if( pObjectScreen_ == nullptr )
+	pObjectPostEffect_ = new ObjectPostEffect();
+	if( pObjectPostEffect_ == nullptr )
 	{
 		return 1;
 	}
-	result = pObjectScreen_->Initialize( 0, pFade_ );
+	result = pObjectPostEffect_->Initialize( 0, pFade_ );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pEffectScreen = pEffect_->Get( _T( "Screen.fx" ) );
+	pEffectScreen = pEffect_->Get( _T( "PostEffect.fx" ) );
 	pRenderTarget3D = pRenderPass_[ GraphicMain::PASS_3D ].GetRenderTarget( GraphicMain::PASS_3D_RENDER_COLOR );
 	pRenderTarget2D = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_COLOR );
 	pRenderTargetMask = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_MASK );
-	result = pObjectScreen_->CreateGraphic( 0, pEffectParameter_, pEffectScreen,
+	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectScreen,
 		pRenderTarget3D->GetTexture(), pRenderTarget2D->GetTexture(), pRenderTargetMask->GetTexture() );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pObjectScreen_->SetPositionY( 1.0f );
+	pObjectPostEffect_->SetPositionY( 1.0f );
 
 	// シーン引数クラスの生成
 	pArgument_ = new SceneArgumentMain();
@@ -413,7 +414,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pDevice_ = pDevice;
 	pArgument_->pFade_ = pFade_;
 	pArgument_->pEffectParameter_ = pEffectParameter_;
-	pArgument_->pObjectScreen_ = pObjectScreen_;
+	pArgument_->pObjectPostEffect_ = pObjectPostEffect_;
 	pArgument_->pWiiController_ = pWiiController_;
 	pArgument_->pKeyboard_ = pKeyboard_;
 	pArgument_->pMouse_ = pMouse_;
@@ -461,8 +462,8 @@ int ManagerMain::Finalize( void )
 	pArgument_ = nullptr;
 
 	// 画面オブジェクトの開放
-	delete pObjectScreen_;
-	pObjectScreen_ = nullptr;
+	delete pObjectPostEffect_;
+	pObjectPostEffect_ = nullptr;
 
 	// 3Dポリゴンの開放
 	delete pPolygon3D_;
@@ -664,7 +665,7 @@ void ManagerMain::InitializeSelf( void )
 	pXAudio_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
-	pObjectScreen_ = nullptr;
+	pObjectPostEffect_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;
 	pRenderPass_ = nullptr;

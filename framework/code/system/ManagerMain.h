@@ -44,7 +44,7 @@ class ManagerSceneMain;
 class Model;
 class Motion;
 class Object;
-class ObjectScreen;
+class ObjectPostEffect;
 class Polygon2D;
 class Polygon3D;
 class RenderPass;
@@ -141,7 +141,7 @@ private:
 	XAudio*						pXAudio_;				// XAudio2インターフェース
 	Fade*						pFade_;					// フェード
 	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
-	ObjectScreen*				pObjectScreen_;			// 画面オブジェクト
+	ObjectPostEffect*			pObjectPostEffect_;		// 画面オブジェクト
 	ManagerDraw< Graphic >*		pDraw_;					// 描画管理クラス
 	ManagerUpdate< Object >*	pUpdate_;				// 更新管理クラス
 	RenderPass*					pRenderPass_;			// パス情報

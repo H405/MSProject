@@ -1,6 +1,6 @@
 //==============================================================================
 //
-// File   : ObjectScreen.cpp
+// File   : ObjectPostEffect.cpp
 // Brief  : 画面ポリゴンオブジェクトクラス
 // Author : Taiga Shirakawa
 // Date   : 2015/10/17 sat : Taiga Shirakawa : create
@@ -10,10 +10,10 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ObjectScreen.h"
+#include "ObjectPostEffect.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
-#include "../graphic/graphic/GraphicScreen.h"
+#include "../graphic/graphic/GraphicPostEffect.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -33,7 +33,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScreen::ObjectScreen( void ) : ObjectMovement()
+ObjectPostEffect::ObjectPostEffect( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +44,7 @@ ObjectScreen::ObjectScreen( void ) : ObjectMovement()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScreen::~ObjectScreen( void )
+ObjectPostEffect::~ObjectPostEffect( void )
 {
 	// 終了処理
 	Finalize();
@@ -56,7 +56,7 @@ ObjectScreen::~ObjectScreen( void )
 // Arg    : int priority						: 更新優先度
 // Arg    : Fade* pFade							: フェード
 //==============================================================================
-int ObjectScreen::Initialize( int priority, Fade* pFade )
+int ObjectPostEffect::Initialize( int priority, Fade* pFade )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -78,7 +78,7 @@ int ObjectScreen::Initialize( int priority, Fade* pFade )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int ObjectScreen::Finalize( void )
+int ObjectPostEffect::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -101,7 +101,7 @@ int ObjectScreen::Finalize( void )
 // Arg    : int priority						: 更新優先度
 // Arg    : Fade* pFade							: フェード
 //==============================================================================
-int ObjectScreen::Reinitialize( int priority, Fade* pFade )
+int ObjectPostEffect::Reinitialize( int priority, Fade* pFade )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -118,9 +118,9 @@ int ObjectScreen::Reinitialize( int priority, Fade* pFade )
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ObjectScreen* pOut						: コピー先アドレス
+// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
 //==============================================================================
-int ObjectScreen::Copy( ObjectScreen* pOut ) const
+int ObjectPostEffect::Copy( ObjectPostEffect* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -139,7 +139,7 @@ int ObjectScreen::Copy( ObjectScreen* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectScreen::Update( void )
+void ObjectPostEffect::Update( void )
 {
 	// フェードの更新
 	proportionFade_ = pFade_->GetProportion();
@@ -159,7 +159,7 @@ void ObjectScreen::Update( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+int ObjectPostEffect::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
 	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture )
 {
 	// グラフィックの生成
@@ -170,7 +170,7 @@ int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter
 	{
 		pTextureSet = pTexture->pTexture_;
 	}
-	pGraphic_ = new GraphicScreen();
+	pGraphic_ = new GraphicPostEffect();
 	if( pGraphic_ == nullptr )
 	{
 		return 1;
@@ -196,9 +196,9 @@ int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter
 //==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : GraphicScreen* pValue						: 設定する値
+// Arg    : GraphicPostEffect* pValue			: 設定する値
 //==============================================================================
-void ObjectScreen::SetGraphic( GraphicScreen* pValue )
+void ObjectPostEffect::SetGraphic( GraphicPostEffect* pValue )
 {
 	// 値の設定
 	pGraphic_ = pValue;
@@ -207,10 +207,10 @@ void ObjectScreen::SetGraphic( GraphicScreen* pValue )
 
 //==============================================================================
 // Brief  : 描画クラスの取得
-// Return : GraphicScreen*							: 返却する値
+// Return : GraphicPostEffect*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen* ObjectScreen::GetGraphic( void ) const
+GraphicPostEffect* ObjectPostEffect::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
@@ -221,7 +221,7 @@ GraphicScreen* ObjectScreen::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectScreen::InitializeSelf( void )
+void ObjectPostEffect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;
