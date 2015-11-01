@@ -40,7 +40,6 @@ class InputPad;
 class VirtualController;
 class Model;
 class Motion;
-class ObjectPostEffect;
 class Sound;
 class Texture;
 class Window;
@@ -74,7 +73,6 @@ public:
 	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
 	Fade*						pFade_;					// フェード管理クラス
 	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
-	ObjectPostEffect*			pObjectPostEffect_;		// 画面オブジェクト
 	CWiiController*				pWiiController_;		// wiiリモコン入力クラス
 	InputKeyboard*				pKeyboard_;				// キーボード入力クラス
 	InputMouse*					pMouse_;				// マウス入力クラス

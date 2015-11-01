@@ -31,7 +31,6 @@
 #include "../framework/render/DirectDevice.h"
 #include "../framework/render/RenderPass.h"
 #include "../framework/render/RenderPassParameter.h"
-#include "../framework/render/RenderTarget.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
 #include "../framework/resource/ManagerMotion.h"
@@ -42,6 +41,7 @@
 #include "../framework/system/ManagerDraw.h"
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
+#include "../object/ObjectLightEffect.h"
 #include "../object/ObjectPostEffect.h"
 #include "../system/EffectParameter.h"
 
@@ -222,17 +222,22 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::PASS_3D_RENDER_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MAX );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::PASS_2D_RENDER_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_LIGHT_EFFECT_MAX );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_SCREEN ].Initialize( pDevice, GraphicMain::PASS_SCREEN_RENDER_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::RENDER_PASS_2D_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_POST_EFFECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_POST_EFFECT_MAX );
 	if( result != 0 )
 	{
 		return result;
@@ -377,11 +382,32 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	GraphicMain::SetPolygon3D( pPolygon3D_ );
 
-	// 画面オブジェクトの生成
-	Effect*			pEffectScreen = nullptr;			// 画面エフェクト
-	RenderTarget*	pRenderTarget3D = nullptr;			// 3D画面描画対象
-	RenderTarget*	pRenderTarget2D = nullptr;			// 2D画面描画対象
-	RenderTarget*	pRenderTargetMask = nullptr;		// マスク描画対象
+	// ライティングオブジェクトの生成
+	Effect*	pEffectLightEffect = nullptr;		// ライティングエフェクト
+	pObjectLightEffect_ = new ObjectLightEffect();
+	if( pObjectLightEffect_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectLightEffect_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectLightEffect = pEffect_->Get( _T( "LightEffect.fx" ) );
+	result = pObjectLightEffect_->CreateGraphic( 0, pEffectParameter_, pEffectLightEffect,
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE ),
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_SPECULAR ),
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_NORMAL ),
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectLightEffect_->SetPositionY( 1.0f );
+
+	// ポストエフェクトオブジェクトの生成
+	Effect*	pEffectPostEffect = nullptr;		// ポストエフェクト
 	pObjectPostEffect_ = new ObjectPostEffect();
 	if( pObjectPostEffect_ == nullptr )
 	{
@@ -392,12 +418,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pEffectScreen = pEffect_->Get( _T( "PostEffect.fx" ) );
-	pRenderTarget3D = pRenderPass_[ GraphicMain::PASS_3D ].GetRenderTarget( GraphicMain::PASS_3D_RENDER_COLOR );
-	pRenderTarget2D = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_COLOR );
-	pRenderTargetMask = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_MASK );
-	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectScreen,
-		pRenderTarget3D->GetTexture(), pRenderTarget2D->GetTexture(), pRenderTargetMask->GetTexture() );
+	pEffectPostEffect = pEffect_->Get( _T( "PostEffect.fx" ) );
+	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectPostEffect,
+		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_MASK ) );
 	if( result != 0 )
 	{
 		return result;
@@ -414,7 +439,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pDevice_ = pDevice;
 	pArgument_->pFade_ = pFade_;
 	pArgument_->pEffectParameter_ = pEffectParameter_;
-	pArgument_->pObjectPostEffect_ = pObjectPostEffect_;
 	pArgument_->pWiiController_ = pWiiController_;
 	pArgument_->pKeyboard_ = pKeyboard_;
 	pArgument_->pMouse_ = pMouse_;
@@ -461,9 +485,13 @@ int ManagerMain::Finalize( void )
 	delete pArgument_;
 	pArgument_ = nullptr;
 
-	// 画面オブジェクトの開放
+	// ポストエフェクトオブジェクトの開放
 	delete pObjectPostEffect_;
 	pObjectPostEffect_ = nullptr;
+
+	// ライティングオブジェクトの開放
+	delete pObjectLightEffect_;
+	pObjectLightEffect_ = nullptr;
 
 	// 3Dポリゴンの開放
 	delete pPolygon3D_;
@@ -665,6 +693,7 @@ void ManagerMain::InitializeSelf( void )
 	pXAudio_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
+	pObjectLightEffect_ = nullptr;
 	pObjectPostEffect_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;

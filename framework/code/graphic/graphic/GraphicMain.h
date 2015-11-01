@@ -41,34 +41,43 @@ public:
 	// パス
 	enum
 	{
-		PASS_3D = 0,		// 3D描画
-		PASS_2D,			// 2D描画
-		PASS_SCREEN,		// 画面描画
-		PASS_MAX			// 最大数
+		PASS_3D = 0,			// 3D描画
+		PASS_LIGHT_EFFECT,		// ライティング
+		PASS_2D,				// 2D描画
+		PASS_POST_EFFECT,		// ポストエフェクト
+		PASS_MAX				// 最大数
 	};
 
 	// 3D描画
 	enum
 	{
-		PASS_3D_RENDER_COLOR = 0,			// 色
-		PASS_3D_RENDER_NORMAL_DEPTH,		// 法線・深度値
-		PASS_3D_RENDER_LUMINANCE,			// 輝度
-		PASS_3D_RENDER_MAX					// 最大値
+		RENDER_PASS_3D_DIFFUSE = 0,				// ディフューズ色
+		RENDER_PASS_3D_SPECULAR,				// スペキュラ色
+		RENDER_PASS_3D_NORMAL,					// 法線
+		RENDER_PASS_3D_DEPTH,					// 深度
+		RENDER_PASS_3D_MAX						// 最大値
+	};
+
+	// ライティング
+	enum
+	{
+		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,		// 色
+		RENDER_PASS_LIGHT_EFFECT_MAX			// 最大値
 	};
 
 	// 2D描画
 	enum
 	{
-		PASS_2D_RENDER_COLOR = 0,			// 色
-		PASS_2D_RENDER_MASK,				// マスク
-		PASS_2D_RENDER_MAX					// 最大値
+		RENDER_PASS_2D_COLOR = 0,				// 色
+		RENDER_PASS_2D_MASK,					// マスク
+		RENDER_PASS_2D_MAX						// 最大値
 	};
 
 	// 画面描画
 	enum
 	{
-		PASS_SCREEN_RENDER_COLOR = 0,		// 色
-		PASS_SCREEN_RENDER_MAX				// 最大値
+		RENDER_PASS_POST_EFFECT_COLOR = 0,		// 色
+		RENDER_PASS_POST_EFFECT_MAX				// 最大値
 	};
 
 	// ディレクショナルライト

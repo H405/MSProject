@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectPostEffect.h
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : GraphicLightEffect.h
+// Brief  : ライト描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_POST_EFFECT_H
-#define MY_OBJECT_POST_EFFECT_H
+#ifndef MY_GRAPHIC_LIGHT_EFFECT_H
+#define MY_GRAPHIC_LIGHT_EFFECT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/Object.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,14 +31,11 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class Fade;
-class GraphicPostEffect;
-class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectPostEffect : public Object
+class GraphicLightEffect : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -46,22 +43,28 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectPostEffect( void );
+	GraphicLightEffect( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectPostEffect( void );
+	~GraphicLightEffect( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	//==============================================================================
-	int Initialize( int priority, Fade* pFade );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -73,55 +76,31 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, Fade* pFade );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
+	// Arg    : GraphicLightEffect* pOut			: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectPostEffect* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture = nullptr );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	void SetGraphic( GraphicPostEffect* pValue );
-	GraphicPostEffect* GetGraphic( void ) const;
+	int Copy( GraphicLightEffect* pOut ) const;
 
 protected:
-	GraphicPostEffect*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	ObjectPostEffect( const ObjectPostEffect& );
-	ObjectPostEffect operator=( const ObjectPostEffect& );
+	GraphicLightEffect( const GraphicLightEffect& );
+	GraphicLightEffect operator=( const GraphicLightEffect& );
 
-	Fade*	pFade_;					// フェード
-	float	proportionFade_;		// フェード割合
 };
 
-#endif	// MY_OBJECT_POST_EFFECT_H
+#endif	// MY_GRAPHIC_LIGHT_EFFECT_H

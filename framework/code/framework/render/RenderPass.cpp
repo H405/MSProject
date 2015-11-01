@@ -13,6 +13,7 @@
 #include "RenderPass.h"
 #include "RenderPassParameter.h"
 #include "RenderTarget.h"
+#include "../develop/Debug.h"
 
 //******************************************************************************
 // ライブラリ
@@ -213,14 +214,18 @@ int RenderPass::GetCountRenderTarget( void ) const
 }
 
 //==============================================================================
-// Brief  : レンダーターゲットの取得
-// Return : RenderTarget*						: 取得する値
-// Arg    : int index							: 設定する番号
+// Brief  : テクスチャの取得
+// Return : IDirect3DTexture9*					: 返却する値
+// Arg    : int index							: レンダーターゲットの番号
 //==============================================================================
-RenderTarget* RenderPass::GetRenderTarget( int index ) const
+IDirect3DTexture9* RenderPass::GetTexture( int index ) const
 {
+	// エラーチェック
+	Assert( index >= 0 && index < countRenderTarget_, _T( "レンダーターゲットの番号が不正です。" ) );
+	Assert( ppRenderTarget_[ index ] != nullptr, _T( "レンダーターゲットの番号が不正です。" ) );
+
 	// 値の返却
-	return ppRenderTarget_[ index ];
+	return ppRenderTarget_[ index ]->GetTexture();
 }
 
 //==============================================================================

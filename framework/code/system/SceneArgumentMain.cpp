@@ -56,7 +56,6 @@ void SceneArgumentMain::InitializeSelf( void )
 	pDevice_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
-	pObjectPostEffect_ = nullptr;
 	pKeyboard_ = nullptr;
 	pMouse_ = nullptr;
 	pPad_ = nullptr;

@@ -91,11 +91,12 @@ public:
 	//==============================================================================
 	void Set();
 
+	IDirect3DTexture9* GetTexture( int index ) const;
+
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	int GetCountRenderTarget( void ) const;
-	RenderTarget* GetRenderTarget( int index ) const;
 	IDirect3DSurface9* GetSurfaceDepth( void ) const;
 	unsigned int GetWidth( void ) const;
 	unsigned int GetHeight( void ) const;

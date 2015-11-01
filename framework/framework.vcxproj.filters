@@ -381,6 +381,15 @@
     <ClInclude Include="code\framework\render\RenderPassParameter.h">
       <Filter>ソース ファイル\framework\render</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectLightEffect.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicLightEffect.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -679,6 +688,15 @@
     </ClCompile>
     <ClCompile Include="code\framework\render\RenderPassParameter.cpp">
       <Filter>ソース ファイル\framework\render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectLightEffect.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicLightEffect.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

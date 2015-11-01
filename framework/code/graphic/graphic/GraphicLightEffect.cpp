@@ -1,17 +1,17 @@
 //==============================================================================
 //
-// File   : GraphicPostEffect.cpp
-// Brief  : 画面ポリゴン描画処理の管理クラス
+// File   : GraphicLightEffect.cpp
+// Brief  : ライト描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicPostEffect.h"
-#include "../drawer/DrawerPostEffect.h"
+#include "GraphicLightEffect.h"
+#include "../drawer/DrawerLightEffect.h"
 
 //******************************************************************************
 // ライブラリ
@@ -30,7 +30,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicPostEffect::GraphicPostEffect( void ) : GraphicMain()
+GraphicLightEffect::GraphicLightEffect( void ) : GraphicMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -41,7 +41,7 @@ GraphicPostEffect::GraphicPostEffect( void ) : GraphicMain()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicPostEffect::~GraphicPostEffect( void )
+GraphicLightEffect::~GraphicLightEffect( void )
 {
 	// 終了処理
 	Finalize();
@@ -53,14 +53,13 @@ GraphicPostEffect::~GraphicPostEffect( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : const float* pProportionFade		: フェード割合
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 //==============================================================================
-int GraphicPostEffect::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
+int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -70,18 +69,15 @@ int GraphicPostEffect::Initialize( int priority, const EffectParameter* pParamet
 		return result;
 	}
 
-	// メンバ変数の設定
-	pTexture_ = pTexture;
-
 	// 描画クラスの生成
-	DrawerPostEffect*	pDrawerPostEffect = nullptr;		// 描画クラス
-	pDrawerPostEffect = new DrawerPostEffect();
-	if( pDrawerPostEffect == nullptr )
+	DrawerLightEffect*	pDrawerLightEffect = nullptr;		// 描画クラス
+	pDrawerLightEffect = new DrawerLightEffect();
+	if( pDrawerLightEffect == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerPostEffect->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture3D, pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
-	ppDraw_[ GraphicMain::PASS_POST_EFFECT ] = pDrawerPostEffect;
+	result = pDrawerLightEffect->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
+	ppDraw_[ GraphicMain::PASS_LIGHT_EFFECT ] = pDrawerLightEffect;
 
 	// 正常終了
 	return 0;
@@ -92,7 +88,7 @@ int GraphicPostEffect::Initialize( int priority, const EffectParameter* pParamet
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicPostEffect::Finalize( void )
+int GraphicLightEffect::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -115,14 +111,13 @@ int GraphicPostEffect::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : const float* pProportionFade		: フェード割合
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 //==============================================================================
-int GraphicPostEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
+int GraphicLightEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -133,15 +128,15 @@ int GraphicPostEffect::Reinitialize( int priority, const EffectParameter* pParam
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pProportionFade, pTexture3D, pTexture2D, pTextureMask, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicPostEffect* pOut				: コピー先アドレス
+// Arg    : GraphicLightEffect* pOut			: コピー先アドレス
 //==============================================================================
-int GraphicPostEffect::Copy( GraphicPostEffect* pOut ) const
+int GraphicLightEffect::Copy( GraphicLightEffect* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -160,9 +155,7 @@ int GraphicPostEffect::Copy( GraphicPostEffect* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicPostEffect::InitializeSelf( void )
+void GraphicLightEffect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	pTexture_ = nullptr;
-	colorFade_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 }
