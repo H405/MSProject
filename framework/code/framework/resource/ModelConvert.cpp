@@ -292,17 +292,6 @@ IDirect3DTexture9* ModelConvert::GetTexture( int index ) const
 }
 
 //==============================================================================
-// Brief  : メッシュ数の設定
-// Return : void								: なし
-// Arg    : unsigned long value					: 設定する値
-//==============================================================================
-void ModelConvert::SetCountMesh( unsigned long value )
-{
-	// 値の設定
-	countMesh_ = value;
-}
-
-//==============================================================================
 // Brief  : メッシュ数の取得
 // Return : unsigned long						: 返却する値
 // Arg    : void								: なし
@@ -311,17 +300,6 @@ unsigned long ModelConvert::GetCountMesh( void ) const
 {
 	// 値の返却
 	return countMesh_;
-}
-
-//==============================================================================
-// Brief  : ボーン数の設定
-// Return : void								: なし
-// Arg    : unsigned long value					: 設定する値
-//==============================================================================
-void ModelConvert::SetCountBone( unsigned long value )
-{
-	// 値の設定
-	countBone_ = value;
 }
 
 //==============================================================================

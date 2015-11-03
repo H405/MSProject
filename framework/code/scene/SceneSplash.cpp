@@ -27,6 +27,7 @@
 #include "../framework/resource/Effect.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
+#include "../framework/resource/ManagerMotion.h"
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
@@ -36,6 +37,7 @@
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectModel.h"
+#include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectSky.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
@@ -233,6 +235,17 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectBoard_->SetScale( pObjectBoard_->GetScaleX() * 0.1f, pObjectBoard_->GetScaleY() * 0.1f, 1.0f );
 	pObjectBoard_->SetPosition( -50.0f, 90.0f, 0.0f );
 
+	// スキンメッシュの生成
+	Effect*	pEffectSkinMesh = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;		// モデル
+	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
+	pObjectSkinMesh_ = new ObjectSkinMesh();
+	pObjectSkinMesh_->Initialize( 0, 1 );
+	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
+	pObjectSkinMesh_->SetPositionX( -100.0f );
+
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
 
@@ -249,6 +262,10 @@ int SceneSplash::Finalize( void )
 {
 	// ポイントライトの個数を設定
 	pArgument_->pEffectParameter_->SetCountLightPoint( 0 );
+
+	// スキンメッシュの開放
+	delete pObjectSkinMesh_;
+	pObjectSkinMesh_ = nullptr;
 
 	// ビルボードの開放
 	delete pObjectBoard_;
@@ -454,5 +471,7 @@ void SceneSplash::InitializeSelf( void )
 	pObjectMesh_ = nullptr;
 	pObjectSky_ = nullptr;
 	pObjectModel_ = nullptr;
+	pObjectBoard_ = nullptr;
+	pObjectSkinMesh_ = nullptr;
 	timerLight_ = 0;
 }

@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneSplash.h
-// Brief  : スプラッシュシーンクラス
+// File   : GraphicSkinMesh.h
+// Brief  : スキンメッシュ描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/13 tue : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_SPLASH_H
-#define MY_SCENE_SPLASH_H
+#ifndef MY_GRAPHIC_SKIN_MESH_H
+#define MY_GRAPHIC_SKIN_MESH_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,22 +29,14 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class LightDirection;
-class LightPoint;
-class ManagerPoint;
-class Material;
-class Object2D;
-class ObjectBillboard;
-class ObjectMesh;
-class ObjectModel;
-class ObjectSkinMesh;
-class ObjectSky;
+class Effect;
+class EffectParameter;
+class Model;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneSplash : public SceneMain
+class GraphicSkinMesh : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -52,21 +44,28 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneSplash( void );
+	GraphicSkinMesh( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneSplash( void );
+	~GraphicSkinMesh( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Model* pModel						: モデル
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -78,47 +77,38 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Model* pModel						: モデル
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneSplash* pOut					: コピー先アドレス
+	// Arg    : GraphicSkinMesh* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneSplash* pOut ) const;
+	int Copy( GraphicSkinMesh* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// アクセサ
 	//==============================================================================
-	void Update( void );
+	void SetGraphic( GraphicSkinMesh* pValue );
+	GraphicSkinMesh* GetGraphic( void ) const;
 
 protected:
+	GraphicSkinMesh*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	SceneSplash( const SceneSplash& );
-	SceneSplash operator=( const SceneSplash& );
+	GraphicSkinMesh( const GraphicSkinMesh& );
+	GraphicSkinMesh operator=( const GraphicSkinMesh& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
-	LightPoint*			pPointLight_;			// ポイントライト
-
-	ManagerPoint*		pPoint_;				// ポイントスプライト管理クラス
-
-	static const int	COUNT_MODEL = 10;		// モデル数
-
-	Object2D*			pObject2D_;				// 2Dオブジェクト
-	ObjectMesh*			pObjectMesh_;			// メッシュ
-	ObjectSky*			pObjectSky_;			// スカイドーム
-	ObjectModel*		pObjectModel_;			// モデル
-	ObjectBillboard*	pObjectBoard_;			// ビルボード
-	ObjectSkinMesh*		pObjectSkinMesh_;		// スキンメッシュ
-
-	int					timerLight_;			// ライト用タイマー
 };
 
-#endif	// MY_SCENE_SPLASH_H
+#endif	// MY_GRAPHIC_SKIN_MESH_H

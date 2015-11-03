@@ -1,16 +1,16 @@
 //==============================================================================
 //
-// File   : DrawerModel.cpp
-// Brief  : モデル描画クラス
+// File   : DrawerSkinMesh.cpp
+// Brief  : スキンメッシュ描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "DrawerModel.h"
+#include "DrawerSkinMesh.h"
 #include "../graphic/GraphicMain.h"
 #include "../../framework/camera/Camera.h"
 #include "../../framework/graphic/Material.h"
@@ -36,7 +36,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerModel::DrawerModel( void ) : Drawer()
+DrawerSkinMesh::DrawerSkinMesh( void ) : Drawer()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -47,7 +47,7 @@ DrawerModel::DrawerModel( void ) : Drawer()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerModel::~DrawerModel( void )
+DrawerSkinMesh::~DrawerSkinMesh( void )
 {
 	// 終了処理
 	Finalize();
@@ -56,11 +56,14 @@ DrawerModel::~DrawerModel( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : Model* pModel						: モデル
+// Arg    : int countBone						: ボーン数
+// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int DrawerModel::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerSkinMesh::Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -74,6 +77,9 @@ int DrawerModel::Initialize( Model* pModel, const EffectParameter* pParameter, E
 	pEffectParameter_ = pParameter;
 	pEffect_ = pEffect;
 	pModel_ = pModel;
+	countBone_ = countBone;
+	pMatrixBone_ = pMatrixBone;
+	pIndexFrame_ = pIndexFrame;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -91,7 +97,7 @@ int DrawerModel::Initialize( Model* pModel, const EffectParameter* pParameter, E
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int DrawerModel::Finalize( void )
+int DrawerSkinMesh::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -111,11 +117,14 @@ int DrawerModel::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : Model* pModel						: モデル
+// Arg    : int countBone						: ボーン数
+// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int DrawerModel::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerSkinMesh::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -126,15 +135,15 @@ int DrawerModel::Reinitialize( Model* pModel, const EffectParameter* pParameter,
 	}
 
 	// 初期化処理
-	return Initialize( pModel, pParameter, pEffect );
+	return Initialize( pParameter, pEffect, pModel, countBone, pMatrixBone, pIndexFrame );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : DrawerModel* pOut					: コピー先アドレス
+// Arg    : DrawerSkinMesh* pOut				: コピー先アドレス
 //==============================================================================
-int DrawerModel::Copy( DrawerModel* pOut ) const
+int DrawerSkinMesh::Copy( DrawerSkinMesh* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -153,7 +162,7 @@ int DrawerModel::Copy( DrawerModel* pOut ) const
 // Return : void								: なし
 // Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 //==============================================================================
-void DrawerModel::Draw( const D3DXMATRIX& matrixWorld )
+void DrawerSkinMesh::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 変換行列
 	D3DXMATRIX		matrixTransform;				// 変換行列
@@ -216,7 +225,7 @@ void DrawerModel::Draw( const D3DXMATRIX& matrixWorld )
 // Return : void								: なし
 // Arg    : Model* pValue						: 設定する値
 //==============================================================================
-void DrawerModel::SetModel( Model* pValue )
+void DrawerSkinMesh::SetModel( Model* pValue )
 {
 	// 値の設定
 	pModel_ = pValue;
@@ -227,7 +236,7 @@ void DrawerModel::SetModel( Model* pValue )
 // Return : Model*								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-Model* DrawerModel::GetModel( void ) const
+Model* DrawerSkinMesh::GetModel( void ) const
 {
 	// 値の返却
 	return pModel_;
@@ -238,10 +247,13 @@ Model* DrawerModel::GetModel( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void DrawerModel::InitializeSelf( void )
+void DrawerSkinMesh::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pEffectParameter_ = nullptr;
 	pEffect_ = nullptr;
 	pModel_ = nullptr;
+	countBone_ = 0;
+	pMatrixBone_ = nullptr;
+	pIndexFrame_ = nullptr;
 }

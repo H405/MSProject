@@ -632,6 +632,7 @@ int ManagerModel< TypeItem >::LoadModelConvert( TCHAR* pPath, int index )
 		material.diffuse_.a = transparent;
 		material.specular_.a = transparent;
 		pMaterial[ counterMesh ] = material;
+		pIndexMaterial[ counterMesh ] = counterMesh;
 	}
 
 	// ƒ{[ƒ“î•ñ‚Ìæ“¾

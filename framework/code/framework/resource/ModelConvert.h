@@ -121,9 +121,7 @@ public:
 	//==============================================================================
 	void GetMaterial( int index, Material* pOut ) const;
 	IDirect3DTexture9* GetTexture( int index ) const;
-	void SetCountMesh( unsigned long value );
 	unsigned long GetCountMesh( void ) const;
-	void SetCountBone( unsigned long value );
 	unsigned long GetCountBone( void ) const;
 	void SetIndexMaterial( int index, const int& value );
 	void GetIndexMaterial( int index, int* pOut ) const;
