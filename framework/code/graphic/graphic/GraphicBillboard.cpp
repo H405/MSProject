@@ -76,8 +76,8 @@ int GraphicBillboard::Initialize( int priority, const EffectParameter* pParamete
 	{
 		return 1;
 	}
-	result = pDrawerBillboard->Initialize( pParameter, pEffectGeneral, pPolygon3D_, pColor, pPositionTexture, pScaleTexture, pTexture );
-	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerBillboard;
+	result = pDrawerBillboard->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pColor, pPositionTexture, pScaleTexture, pTexture );
+	ppDraw_[ GraphicMain::PASS_3D_NOT_LIGHT ] = pDrawerBillboard;
 
 	// ê≥èÌèIóπ
 	return 0;

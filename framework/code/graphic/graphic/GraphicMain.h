@@ -42,6 +42,7 @@ public:
 	enum
 	{
 		PASS_3D = 0,			// 3D描画
+		PASS_3D_NOT_LIGHT,		// ライティングなし3D描画
 		PASS_LIGHT_EFFECT,		// ライティング
 		PASS_2D,				// 2D描画
 		PASS_POST_EFFECT,		// ポストエフェクト
@@ -56,6 +57,15 @@ public:
 		RENDER_PASS_3D_NORMAL,					// 法線
 		RENDER_PASS_3D_DEPTH,					// 深度
 		RENDER_PASS_3D_MAX						// 最大値
+	};
+
+	// ライティングなし3D描画
+	enum
+	{
+		RENDER_PASS_3D_NOT_LIGHT_COLOR = 0,		// 色
+		RENDER_PASS_3D_NOT_LIGHT_MASK,			// マスク
+		RENDER_PASS_3D_NOT_LIGHT_ADD,			// 加算合成
+		RENDER_PASS_3D_NOT_LIGHT_MAX			// 最大値
 	};
 
 	// ライティング

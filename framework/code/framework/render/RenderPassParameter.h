@@ -52,13 +52,14 @@ public:
 
 	static const int	MAXIMUM_RENDER_TARGET = 16;		// 最大レンダーターゲット数
 
-	int			width_;									// 幅
-	int			height_;								// 高さ
-	D3DFORMAT	pFormat_[ MAXIMUM_RENDER_TARGET ];		// レンダーターゲットの形式
-	DWORD		flagClear_;								// クリアフラグ
-	D3DCOLOR	clearTarget_;							// レンダーターゲットのクリア値
-	float		clearZBuffer_;							// Zバッファのクリア値
-	DWORD		clearStencil_;							// ステンシルバッファのクリア値
+	int					width_;									// 幅
+	int					height_;								// 高さ
+	D3DFORMAT			pFormat_[ MAXIMUM_RENDER_TARGET ];		// レンダーターゲットの形式
+	DWORD				flagClear_;								// クリアフラグ
+	D3DCOLOR			clearTarget_;							// レンダーターゲットのクリア値
+	float				clearZBuffer_;							// Zバッファのクリア値
+	DWORD				clearStencil_;							// ステンシルバッファのクリア値
+	IDirect3DSurface9*	pSurfaceDepth_;							// 深度バッファ
 
 protected:
 

@@ -101,21 +101,29 @@ int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, co
 		clearTarget_ = pParameter->clearTarget_;
 		clearZBuffer_ = pParameter->clearZBuffer_;
 		clearStencil_ = pParameter->clearStencil_;
+		pSurfaceDepth_ = pParameter->pSurfaceDepth_;
 	}
 
 	// 深度バッファの生成
-	IDirect3DSurface9*	pSurface = nullptr;		// サーフェイス
-	D3DSURFACE_DESC		descSurfaceTexture;		// サーフェイス情報
-	unsigned int		widthTexture;			// サーフェイスの幅
-	unsigned int		heightTexture;			// サーフェイスの高さ
-	ppRenderTarget_[ 0 ]->GetTexture()->GetSurfaceLevel( 0, &pSurface );
-	pSurface->GetDesc( &descSurfaceTexture );
-	widthTexture = descSurfaceTexture.Width;
-	heightTexture = descSurfaceTexture.Height;
-	result = pDevice_->CreateDepthStencilSurface( widthTexture, heightTexture, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, FALSE, &pSurfaceDepth_, nullptr );
-	if( result != 0 )
+	if( pParameter == nullptr || pParameter->pSurfaceDepth_ == nullptr )
 	{
-		return 0;
+		IDirect3DSurface9*	pSurface = nullptr;		// サーフェイス
+		D3DSURFACE_DESC		descSurfaceTexture;		// サーフェイス情報
+		unsigned int		widthTexture;			// サーフェイスの幅
+		unsigned int		heightTexture;			// サーフェイスの高さ
+		ppRenderTarget_[ 0 ]->GetTexture()->GetSurfaceLevel( 0, &pSurface );
+		pSurface->GetDesc( &descSurfaceTexture );
+		widthTexture = descSurfaceTexture.Width;
+		heightTexture = descSurfaceTexture.Height;
+		result = pDevice_->CreateDepthStencilSurface( widthTexture, heightTexture, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, FALSE, &pSurfaceDepth_, nullptr );
+		if( result != 0 )
+		{
+			return result;
+		}
+	}
+	else
+	{
+		needsReleaseDepth_ = false;
 	}
 
 	// 正常終了
@@ -130,11 +138,11 @@ int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, co
 int RenderPass::Finalize( void )
 {
 	// 深度バッファの開放
-	if( pSurfaceDepth_ != nullptr )
+	if( needsReleaseDepth_ && pSurfaceDepth_ != nullptr )
 	{
 		pSurfaceDepth_->Release();
-		pSurfaceDepth_ = nullptr;
 	}
+	pSurfaceDepth_ = nullptr;
 
 	// レンダーターゲットの開放
 	if( ppRenderTarget_ != nullptr )
@@ -367,4 +375,5 @@ void RenderPass::InitializeSelf( void )
 	clearTarget_ = D3DCOLOR_RGBA( 0, 0, 0, 0 );
 	clearZBuffer_ = 1.0f;
 	clearStencil_ = 0;
+	needsReleaseDepth_ = true;
 }

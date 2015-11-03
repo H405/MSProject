@@ -126,6 +126,7 @@ private:
 	D3DCOLOR			clearTarget_;			// レンダーターゲットのクリア値
 	float				clearZBuffer_;			// Zバッファのクリア値
 	DWORD				clearStencil_;			// ステンシルバッファのクリア値
+	bool				needsReleaseDepth_;		// 深度バッファを開放する必要があるか
 };
 
 #endif	// MY_RENDER_PASS_H

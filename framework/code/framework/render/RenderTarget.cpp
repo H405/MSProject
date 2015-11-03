@@ -60,7 +60,7 @@ int RenderTarget::Initialize( IDirect3DDevice9* pDevice, int width, int height, 
 	pDevice_ = pDevice;
 
 	// テクスチャサーフェイスの生成
-	int			result;		// 実行結果
+	int		result;		// 実行結果
 	result = D3DXCreateTexture( pDevice_, width, height, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &pTexture_ );
 	if( result != 0 )
 	{

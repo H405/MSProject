@@ -35,6 +35,7 @@ class LightPoint;
 class ManagerPoint;
 class Material;
 class Object2D;
+class ObjectBillboard;
 class ObjectMesh;
 class ObjectModel;
 class ObjectSky;
@@ -113,6 +114,7 @@ private:
 	ObjectMesh*			pObjectMesh_;		// メッシュ
 	ObjectSky*			pObjectSky_;		// スカイドーム
 	ObjectModel*		pObjectModel_;		// モデル
+	ObjectBillboard*	pObjectBoard_;		// ビルボード
 
 	int					timerLight_;		// ライト用タイマー
 };

@@ -166,16 +166,18 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 //==============================================================================
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
-	// 情報を取得
+	// テクスチャから情報を取得
 	float4	dataDiffuse = tex2D( samplerTextureDiffuse , vertex.textureCoord_ );
 	float4	dataSpecular = tex2D( samplerTextureSpecular , vertex.textureCoord_ );
 	float4	dataNormal = tex2D( samplerTextureNormal , vertex.textureCoord_ );
 	float	dataDepth = tex2D( samplerTextureDepth , vertex.textureCoord_ ).r;
 
+	// 情報の設定
 	float3	colorDiffuse = dataDiffuse.rgb;
 	float3	colorSpecular = dataSpecular.rgb;
-	float3	vectorNormal = normalize( dataNormal.xyz * 2.0f - 1.0f );
+	float3	vectorNormal = dataNormal.xyz * 2.0f - 1.0f;
 	float	depth = dataDepth * clipCamera_.y;
+	float	power = dataSpecular.a * 64.0f;
 
 	// ワールド座標を求める
 	float2	positionTexture = vertex.textureCoord_ * 2.0f - 1.0f;
@@ -194,7 +196,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float3	diffuseDirection = CalculateDiffuse( colorLightDirection_, vectorLightDirection_, vectorNormal );
 
 	// ディレクショナルライトのスペキュラ色を計算
-	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye, dataDiffuse.a, dataSpecular.a * 64.0f );
+	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye, dataDiffuse.a, power );
 
 	// ディレクショナルライトのリム色を計算
 	float3	rimDirection = CalculateRim( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye );
@@ -218,7 +220,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 		float3	diffusePoint = CalculateDiffuse( colorLightPoint_[ counterLight ], vectorLightToVertex, vectorNormal );
 
 		// ポイントライトのスペキュラ色を計算
-		float3	specularPoint = CalculateSpecular( colorLightPoint_[ counterLight ], vectorLightToVertex, vectorNormal, vectorVertexToEye, dataDiffuse.a, dataSpecular.a * 64.0f );
+		float3	specularPoint = CalculateSpecular( colorLightPoint_[ counterLight ], vectorLightToVertex, vectorNormal, vectorVertexToEye, dataDiffuse.a, power );
 
 		// ポイントライトのリム色を計算
 		float3	rimPoint = CalculateRim( colorLightPoint_[ counterLight ], vectorLightToVertex, vectorNormal, vectorVertexToEye );

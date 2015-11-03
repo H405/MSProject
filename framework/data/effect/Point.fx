@@ -1,8 +1,8 @@
 //==============================================================================
 // 
-// File   ： Point.fx
-// Brief  ： ポイントスプライトエフェクト
-// Author ： Taiga Shirakawa
+// File   : Point.fx
+// Brief  : ポイントスプライトエフェクト
+// Author : Taiga Shirakawa
 // Date   : 2015/10/21 wed : Taiga Shirakawa : create
 // 
 //==============================================================================
@@ -33,19 +33,27 @@ sampler samplerTexture = sampler_state
 // 頂点シェーダ出力
 struct VertexOutput
 {
-	float4	position_		: POSITION;			// 座標
-	float	size_			: PSIZE;			// サイズ
-	float4	colorDiffuse_	: COLOR0;			// ディフューズ色
+	float4	position_	: POSITION;		// 座標
+	float	size_		: PSIZE;		// サイズ
+	float4	color_		: COLOR0;		// 色
+};
+
+// ピクセルシェーダ出力
+struct PixelOutput
+{
+	float4	color_		: COLOR0;		// 色
+	float4	mask_		: COLOR1;		// マスク
+	float4	add_		: COLOR2;		// 加算合成
 };
 
 //==============================================================================
-// Brief  ： 頂点変換
-// Return ： VertexOutput					： 頂点出力
-// Arg    ： float4 positionWorld			： ワールド座標
-// Arg    ： float size						： ポイントスプライトのサイズ
-// Arg    ： float4 colorDiffuse			： ディフューズ色
+// Brief  : 頂点変換
+// Return : VertexOutput					: 頂点出力
+// Arg    : float4 positionWorld			: ワールド座標
+// Arg    : float size						: ポイントスプライトのサイズ
+// Arg    : float4 color					: 色
 //==============================================================================
-VertexOutput TransformVertex( float3 positionWorld : POSITION, float size : PSIZE, float4 colorDiffuse : COLOR0 )
+VertexOutput TransformVertex( float3 positionWorld : POSITION, float size : PSIZE, float4 color : COLOR0 )
 {
 	// 頂点の変換
 	VertexOutput	output;			// 出力
@@ -58,26 +66,32 @@ VertexOutput TransformVertex( float3 positionWorld : POSITION, float size : PSIZ
 	output.size_ = 10.0f * size * (matrixProjection_._22 / matrixProjection_._11) * sqrt( 1.0f / lengthView );
 
 	// 値を格納
-	output.colorDiffuse_ = colorDiffuse;
+	output.color_ = color;
 
 	// 頂点出力を返す
 	return output;
 }
 
 //==============================================================================
-// Brief  ： ピクセル描画
-// Return ： float4 : COLOR0				： 色
-// Arg    ： VertexOutput					： 頂点シェーダ出力
-// Arg    ： float4 colorDiffuse			： ディフューズ色
+// Brief  : ピクセル描画
+// Return : PixelOutput						: ピクセルシェーダ出力
+// Arg    : float2 textureCoord				: テクスチャ座標
+// Arg    : float4 color					: 色
 //==============================================================================
-float4 DrawPixel( float2 textureCoord : TEXCOORD0, float4 colorDiffuse : COLOR0 ) : COLOR0
+PixelOutput DrawPixel( float2 textureCoord : TEXCOORD0, float4 color : COLOR0 )
 {
-	// ピクセル色を返す
-	return tex2D( samplerTexture, textureCoord ) * colorDiffuse;
+	// 値の設定
+	PixelOutput	output;		// ピクセルシェーダ出力
+	output.color_ = 0.0f;
+	output.mask_ = 0.0f;
+	output.add_ = tex2D( samplerTexture, textureCoord ) * color;
+
+	// ピクセルシェーダ出力を返す
+	return output;
 }
 
 //==============================================================================
-// Brief  ： 通常変換
+// Brief  : 通常変換
 //==============================================================================
 technique ShadeNormal
 {

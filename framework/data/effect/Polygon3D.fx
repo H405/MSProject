@@ -89,16 +89,14 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 //==============================================================================
 PixelOutput DrawPixel( VertexOutput vertex )
 {
-	// ピクセル色を返す
-	PixelOutput	output;		// ピクセルシェーダ出力
-
 	// 値の設定
+	PixelOutput	output;		// ピクセルシェーダ出力
 	output.diffuse_ = float4( tex2D( samplerTexture, vertex.textureCoord_ ).rgb, reflection_ );
 	output.specular_ = float4( colorSpecular_, power_ * 0.015625f );
 	output.normal_ = float4( (vertex.vectorNormalWorld_ * 0.5f + 0.5f), refractive_ );
 	output.depth_ = float4( vertex.depth_, 1.0f, 1.0f, 1.0f );
 
-	// 頂点シェーダ出力を返す
+	// ピクセルシェーダ出力を返す
 	return output;
 }
 

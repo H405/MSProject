@@ -217,15 +217,22 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pXAudio = pXAudio_->GetXAudio();
 
 	// パスクラスの生成
-	RenderPassParameter	parameterPass3D;		// 3D描画パスのパラメータ
+	RenderPassParameter	parameterPass3D;			// 3D描画パスのパラメータ
+	RenderPassParameter	parameterPassNotLight;		// ライティングなし3D描画パスのパラメータ
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
 	{
 		return 1;
 	}
-	parameterPass3D.clearTarget_ = D3DXCOLOR( 0.0f, 0.0f, 0.0f, 0.0f );
 	parameterPass3D.pFormat_[ GraphicMain::RENDER_PASS_3D_DEPTH ] = D3DFMT_R32F;
 	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MAX, &parameterPass3D );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassNotLight.flagClear_ = D3DCLEAR_TARGET;
+	parameterPassNotLight.pSurfaceDepth_ = pRenderPass_[ GraphicMain::PASS_3D ].GetSurfaceDepth();
+	result = pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_NOT_LIGHT_MAX, &parameterPassNotLight );
 	if( result != 0 )
 	{
 		return result;

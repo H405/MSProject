@@ -67,14 +67,14 @@ int GraphicSky::Initialize( int priority, const EffectParameter* pParameter, Eff
 	}
 
 	// 描画クラスの生成
-	DrawerSky*	pDrawerSly = nullptr;		// 描画クラス
-	pDrawerSly = new DrawerSky();
-	if( pDrawerSly == nullptr )
+	DrawerSky*	pDrawerSky = nullptr;		// 描画クラス
+	pDrawerSky = new DrawerSky();
+	if( pDrawerSky == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerSly->Initialize( pParameter, pEffectGeneral, pPolygon, pTexture );
-	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerSly;
+	result = pDrawerSky->Initialize( pParameter, pEffectGeneral, pPolygon, pTexture );
+	ppDraw_[ GraphicMain::PASS_3D_NOT_LIGHT ] = pDrawerSky;
 
 	// 正常終了
 	return 0;

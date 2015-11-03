@@ -64,4 +64,5 @@ void RenderPassParameter::InitializeSelf( void )
 	clearTarget_ = D3DCOLOR_RGBA( 0, 0, 0, 0 );
 	clearZBuffer_ = 1.0f;
 	clearStencil_ = 0;
+	pSurfaceDepth_ = nullptr;
 }

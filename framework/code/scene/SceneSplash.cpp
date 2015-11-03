@@ -222,6 +222,15 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
 	pObjectModel_[ 2 ].SetPositionY( 20.0f );
 
+	// ビルボードの生成
+	Effect*		pEffectBillboard = nullptr;			// エフェクト
+	Texture*	pTextureBillboard = nullptr;		// テクスチャ
+	pEffectBillboard = pArgument->pEffect_->Get( _T( "Billboard.fx" ) );
+	pTextureBillboard = pArgument_->pTexture_->Get( _T( "common/finger.png" ) );
+	pObjectBoard_ = new ObjectBillboard();
+	pObjectBoard_->Initialize( 0 );
+	pObjectBoard_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectBillboard, pTextureBillboard );
+
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
 
@@ -239,7 +248,11 @@ int SceneSplash::Finalize( void )
 	// ポイントライトの個数を設定
 	pArgument_->pEffectParameter_->SetCountLightPoint( 0 );
 
-	// モデルの破棄
+	// ビルボードの開放
+	delete pObjectBoard_;
+	pObjectBoard_ = nullptr;
+
+	// モデルの開放
 	delete[] pObjectModel_;
 	pObjectModel_ = nullptr;
 
@@ -344,7 +357,7 @@ void SceneSplash::Update( void )
 
 	// モデルの回転
 	pObjectModel_[ 0 ].AddRotationY( 0.01f );
-
+	pObjectBoard_->AddRotationZ( 0.1f );
 #if 0
 	// ライトの回転
 	static float	rotL = 0.0f;
