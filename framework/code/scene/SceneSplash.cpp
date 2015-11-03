@@ -101,7 +101,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		1000.0f,
-		D3DXVECTOR3( 0.0f, 30.0f, -150.0f ),
+		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ),
 		D3DXVECTOR3( 0.0f, 0.0f, 20.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
@@ -220,6 +220,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectModel_[ 2 ].Initialize( 0 );
 	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
+	pObjectModel_[ 2 ].SetPositionY( 20.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );

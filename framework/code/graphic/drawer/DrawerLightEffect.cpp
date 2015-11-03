@@ -280,6 +280,33 @@ void DrawerLightEffect::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->Begin( 0 );
 	pPolygon_->Draw();
 	pEffect_->End();
+
+	// ƒeƒXƒg
+	D3DXVECTOR4	posWOrg( 0.5f, 0.0f, 0.5f, 1.0f );
+	D3DXVECTOR4	posV;
+	D3DXVECTOR4	posP;
+	D3DXMATRIX	mtxV;
+	D3DXMATRIX	mtxP;
+	D3DXMATRIX	mtxVI;
+	D3DXMATRIX	mtxPI;
+	float		depth;
+	float		clipF = 1000.0f;
+	pRenderMatrix->GetMatrixView( &mtxV );
+	pRenderMatrix->GetMatrixProjection( &mtxP );
+	D3DXMatrixInverse( &mtxVI, nullptr, &mtxV );
+	D3DXMatrixInverse( &mtxPI, nullptr, &mtxP );
+
+	D3DXVec4Transform( &posV, &posWOrg, &mtxV );
+	depth = posV.z / clipF;
+	D3DXVec4Transform( &posP, &posV, &mtxP );
+	posP /= posP.w;
+
+	D3DXVECTOR4	posP2;
+	D3DXVECTOR3	posV2;
+	D3DXVECTOR4	posW2;
+	D3DXVec4Transform( &posP2, &D3DXVECTOR4( posP.x, posP.y, 1.0f, 1.0f ), &mtxPI );
+	posV2 = D3DXVECTOR3( posP2.x, posP2.y, 1.0f ) * depth * clipF;
+	D3DXVec4Transform( &posW2, &D3DXVECTOR4( posV2.x, posV2.y, posV2.z, 1.0f ), &mtxVI );
 }
 
 //==============================================================================

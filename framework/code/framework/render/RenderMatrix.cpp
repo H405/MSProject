@@ -137,7 +137,7 @@ void RenderMatrix::SetMatrixProjection( const D3DXMATRIX& value )
 	matrixProjection_ = value;
 
 	// ŒvŽZŒ‹‰Ê‚ð•Û‘¶
-	matrixViewProjection_ = matrixView_ * matrixProjection_;
+	D3DXMatrixMultiply( &matrixViewProjection_, &matrixView_, &matrixProjection_ );
 }
 
 //==============================================================================

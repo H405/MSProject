@@ -175,12 +175,13 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float3	colorDiffuse = dataDiffuse.rgb;
 	float3	colorSpecular = dataSpecular.rgb;
 	float3	vectorNormal = normalize( dataNormal.xyz * 2.0f - 1.0f );
+	float	depth = dataDepth * clipCamera_.y;
 
 	// ワールド座標を求める
-	float2	positionProjection = vertex.textureCoord_ * float2( 2.0f, 2.0f ) - float2( 1.0f, 1.0f );
-	float3	a = mul( float4( positionProjection, 0.0f, 1.0f ), matrixProjectionInverse_ ).xyz;
-	float3	positionView = dataDepth * clipCamera_.y * float3( a.xy / a.z, 1.0f );
-	float3	positionWorld = mul( float4( positionView, 1.0f ), matrixViewInverse_ ).xyz;
+	float2	positionTexture = vertex.textureCoord_ * 2.0f - 1.0f;
+	float3	positionProjection = mul( float4( positionTexture.x, -positionTexture.y, 1.0f, 1.0f ), matrixProjectionInverse_ ).xyz;
+	float3	positionView = float3( positionProjection.xy, 1.0f ) * depth;
+	float3	positionWorld = mul( float4( positionView, 1.0f ), matrixViewInverse_ );
 
 	// 視線ベクトルを求める
 	float3	vectorVertexToEye = normalize( positionEye_ - positionWorld );
@@ -204,6 +205,12 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	// ポイントライトの色を計算
 	for( int counterLight = 0; counterLight < countLightPoint_; ++counterLight )
 	{
+		// ポイントライトの減衰率を計算
+		float	distanceLightToVertex = distance( positionWorld, positionLightPoint_[ counterLight ] );
+		float	attenuation = attenuationLightPoint_[ counterLight ].x
+			+ attenuationLightPoint_[ counterLight ].y * distanceLightToVertex
+			+ attenuationLightPoint_[ counterLight ].z * distanceLightToVertex * distanceLightToVertex;
+
 		// ライトから頂点へのベクトルを求める
 		float3	vectorLightToVertex = normalize( positionWorld - positionLightPoint_[ counterLight ] );
 
@@ -215,12 +222,6 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 
 		// ポイントライトのリム色を計算
 		float3	rimPoint = CalculateRim( colorLightPoint_[ counterLight ], vectorLightToVertex, vectorNormal, vectorVertexToEye );
-
-		// ポイントライトの減衰率を計算
-		float	distanceLightToVertex = distance( positionWorld, positionLightPoint_[ counterLight ] );
-		float	attenuation = attenuationLightPoint_[ counterLight ].x
-			+ attenuationLightPoint_[ counterLight ].y * distanceLightToVertex
-			+ attenuationLightPoint_[ counterLight ].z * distanceLightToVertex * distanceLightToVertex;
 
 		// ポイントライトの色を計算
 		color += (colorDiffuse * diffusePoint + colorSpecular * specularPoint + rimPoint) / attenuation;
