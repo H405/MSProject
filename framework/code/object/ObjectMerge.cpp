@@ -1,19 +1,18 @@
 //==============================================================================
 //
-// File   : Object3D.cpp
-// Brief  : 3Dポリゴンオブジェクトクラス
+// File   : ObjectMerge.cpp
+// Brief  : 総合3D描画オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "Object3D.h"
-#include "../framework/polygon/Polygon3D.h"
-#include "../framework/resource/Texture.h"
-#include "../graphic/graphic/Graphic3D.h"
+#include "ObjectMerge.h"
+#include "../graphic/graphic/GraphicMerge.h"
+#include "../system/EffectParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -32,7 +31,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Object3D::Object3D( void ) : ObjectMovement()
+ObjectMerge::ObjectMerge( void ) : Object()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -43,7 +42,7 @@ Object3D::Object3D( void ) : ObjectMovement()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Object3D::~Object3D( void )
+ObjectMerge::~ObjectMerge( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,7 +53,7 @@ Object3D::~Object3D( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
 //==============================================================================
-int Object3D::Initialize( int priority )
+int ObjectMerge::Initialize( int priority )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -73,7 +72,7 @@ int Object3D::Initialize( int priority )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int Object3D::Finalize( void )
+int ObjectMerge::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -95,7 +94,7 @@ int Object3D::Finalize( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
 //==============================================================================
-int Object3D::Reinitialize( int priority )
+int ObjectMerge::Reinitialize( int priority )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -112,9 +111,9 @@ int Object3D::Reinitialize( int priority )
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : Object3D* pOut						: コピー先アドレス
+// Arg    : ObjectMerge* pOut					: コピー先アドレス
 //==============================================================================
-int Object3D::Copy( Object3D* pOut ) const
+int ObjectMerge::Copy( ObjectMerge* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -133,10 +132,10 @@ int Object3D::Copy( Object3D* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Object3D::Update( void )
+void ObjectMerge::Update( void )
 {
 	// 基本クラスの処理
-	ObjectMovement::Update();
+	Object::Update();
 }
 
 //==============================================================================
@@ -145,24 +144,22 @@ void Object3D::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : Texture* pTexture					: テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLight	: ライトありテクスチャ
+// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
+// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
+// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 //==============================================================================
-int Object3D::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture )
+int ObjectMerge::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd )
 {
 	// グラフィックの生成
-	int					result;				// 実行結果
-	IDirect3DTexture9*	pTextureSet;		// 設定するテクスチャ
-	pTextureSet = nullptr;
-	if( pTexture != nullptr )
-	{
-		pTextureSet = pTexture->pTexture_;
-	}
-	pGraphic_ = new Graphic3D();
+	int		result;				// 実行結果
+	pGraphic_ = new GraphicMerge();
 	if( pGraphic_ == nullptr )
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &material_, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd );
 	if( result != 0 )
 	{
 		return result;
@@ -170,22 +167,22 @@ int Object3D::CreateGraphic( int priority, const EffectParameter* pParameter, Ef
 	Object::pGraphic_ = pGraphic_;
 
 	// 拡縮の設定
-	if( pTexture != nullptr )
+	if( pParameter != nullptr )
 	{
-		scale_.x = static_cast< float >( pTexture->width_ );
-		scale_.y = static_cast< float >( pTexture->height_ );
+		scale_.x = pParameter->GetWidthScreen();
+		scale_.y = pParameter->GetHeightScreen();
 	}
 
-	// 正常終了
+	// 値の返却
 	return 0;
 }
 
 //==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : Graphic3D* pValue						: 設定する値
+// Arg    : GraphicMerge* pValue			: 設定する値
 //==============================================================================
-void Object3D::SetGraphic( Graphic3D* pValue )
+void ObjectMerge::SetGraphic( GraphicMerge* pValue )
 {
 	// 値の設定
 	pGraphic_ = pValue;
@@ -194,10 +191,10 @@ void Object3D::SetGraphic( Graphic3D* pValue )
 
 //==============================================================================
 // Brief  : 描画クラスの取得
-// Return : Graphic3D*							: 返却する値
+// Return : GraphicMerge*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-Graphic3D* Object3D::GetGraphic( void ) const
+GraphicMerge* ObjectMerge::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
@@ -208,7 +205,7 @@ Graphic3D* Object3D::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Object3D::InitializeSelf( void )
+void ObjectMerge::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;

@@ -390,6 +390,15 @@
     <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectMerge.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicMerge.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerMerge.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -696,6 +705,15 @@
       <Filter>ソース ファイル\graphic\graphic</Filter>
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectMerge.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicMerge.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerMerge.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
   </ItemGroup>

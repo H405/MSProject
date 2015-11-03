@@ -209,4 +209,5 @@ GraphicLightEffect* ObjectLightEffect::GetGraphic( void ) const
 void ObjectLightEffect::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
+	pGraphic_ = nullptr;
 }

@@ -1,8 +1,8 @@
 //==============================================================================
 // 
-// File   ： LightEffect.fx
-// Brief  ： ライトエフェクト
-// Author ： Taiga Shirakawa
+// File   : LightEffect.fx
+// Brief  : ライトエフェクト
+// Author : Taiga Shirakawa
 // Date   : 2015/11/01 sun : Taiga Shirakawa : create
 // 
 //==============================================================================
@@ -80,7 +80,6 @@ sampler samplerTextureDepth = sampler_state
 struct VertexOutput
 {
 	float4	position_		: POSITION;			// 座標
-	float4	diffuse_		: COLOR0;			// ディフューズ色
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
 
@@ -136,13 +135,12 @@ float3 CalculateRim( float3 colorLight, float3 vectorLight, float3 vectorNormal,
 }
 
 //==============================================================================
-// Brief  ： 頂点変換
-// Return ： VertexOutput					： 頂点出力
-// Arg    ： float4 positionLocal			： ローカル座標
-// Arg    ： float3 vectorNormal			： 法線ベクトル
-// Arg    ： float2 positionTexture			： テクスチャ座標
+// Brief  : 頂点変換
+// Return : VertexOutput					: 頂点出力
+// Arg    : float4 positionLocal			: ローカル座標
+// Arg    : float2 positionTexture			: テクスチャ座標
 //==============================================================================
-VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoord : TEXCOORD0, float4 diffuse : COLOR0 )
+VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoord : TEXCOORD0 )
 {
 	// 頂点の変換
 	VertexOutput	output;		// 出力
@@ -153,16 +151,15 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 
 	// 値を格納
 	output.textureCoord_ = textureCoord;
-	output.diffuse_ = diffuse;
 
 	// 頂点出力を返す
 	return output;
 }
 
 //==============================================================================
-// Brief  ： ピクセル描画
-// Return ： float4 : COLOR0				： 色
-// Arg    ： VertexOutput					： 頂点シェーダ出力
+// Brief  : ピクセル描画
+// Return : float4 : COLOR0					: 色
+// Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
@@ -234,7 +231,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 }
 
 //==============================================================================
-// Brief  ： 通常変換
+// Brief  : 通常変換
 //==============================================================================
 technique ShadeNormal
 {

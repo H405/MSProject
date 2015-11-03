@@ -42,6 +42,7 @@
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/ObjectLightEffect.h"
+#include "../object/ObjectMerge.h"
 #include "../object/ObjectPostEffect.h"
 #include "../system/EffectParameter.h"
 
@@ -242,6 +243,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
+	result = pRenderPass_[ GraphicMain::PASS_3D_MERGE ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MERGE_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
 	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::RENDER_PASS_2D_MAX );
 	if( result != 0 )
 	{
@@ -416,6 +422,30 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	pObjectLightEffect_->SetPositionY( 1.0f );
 
+	// 総合3D描画オブジェクトの生成
+	Effect*	pEffectMerge = nullptr;		// ライティングエフェクト
+	pObjectMerge_ = new ObjectMerge();
+	if( pObjectMerge_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectMerge_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectMerge = pEffect_->Get( _T( "Merge.fx" ) );
+	result = pObjectMerge_->CreateGraphic( 0, pEffectParameter_, pEffectMerge,
+		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_MASK ),
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_ADD ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectMerge_->SetPositionY( 1.0f );
+
 	// ポストエフェクトオブジェクトの生成
 	Effect*	pEffectPostEffect = nullptr;		// ポストエフェクト
 	pObjectPostEffect_ = new ObjectPostEffect();
@@ -430,7 +460,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	pEffectPostEffect = pEffect_->Get( _T( "PostEffect.fx" ) );
 	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectPostEffect,
-		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_3D_MERGE ].GetTexture( GraphicMain::RENDER_PASS_3D_MERGE_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_MASK ) );
 	if( result != 0 )
@@ -498,6 +528,10 @@ int ManagerMain::Finalize( void )
 	// ポストエフェクトオブジェクトの開放
 	delete pObjectPostEffect_;
 	pObjectPostEffect_ = nullptr;
+
+	// 総合3D描画オブジェクトの開放
+	delete pObjectMerge_;
+	pObjectMerge_ = nullptr;
 
 	// ライティングオブジェクトの開放
 	delete pObjectLightEffect_;
@@ -704,6 +738,7 @@ void ManagerMain::InitializeSelf( void )
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
 	pObjectLightEffect_ = nullptr;
+	pObjectMerge_ = nullptr;
 	pObjectPostEffect_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;

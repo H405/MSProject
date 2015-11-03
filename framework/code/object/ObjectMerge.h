@@ -1,71 +1,42 @@
 //==============================================================================
 //
-// File   : ManagerMain.h
-// Brief  : メインプログラム管理クラス
+// File   : ObjectMerge.h
+// Brief  : 総合3D描画オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/09 fri : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_MANAGER_MAIN_H
-#define MY_MANAGER_MAIN_H
+#ifndef MY_OBJECT_MERGE_H
+#define MY_OBJECT_MERGE_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/system/Manager.h"
+#include "../framework/object/object.h"
 
 //******************************************************************************
 // ライブラリ
 //******************************************************************************
 
 //******************************************************************************
-// マクロ定義
+// マクロ
 //******************************************************************************
 
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class DirectDevice;
-class DirectInput;
 class Effect;
 class EffectParameter;
-class Fade;
-class Graphic;
-class CWiiController;
-class InputKeyboard;
-class InputMouse;
-class InputPad;
-class VirtualController;
-class ManagerSceneMain;
-class Model;
-class Motion;
-class Object;
-class ObjectLightEffect;
-class ObjectPostEffect;
-class ObjectMerge;
-class Polygon2D;
-class Polygon3D;
-class RenderPass;
-class SceneArgumentMain;
-class Sound;
-class Texture;
-class XAudio;
-template < class Graphic > class ManagerDraw;
-template < class Effect > class ManagerEffect;
-template < class Model > class ManagerModel;
-template < class Motion > class ManagerMotion;
-template < class Sound > class ManagerSound;
-template < class Texture > class ManagerTexture;
-template < class Object > class ManagerUpdate;
+class GraphicMerge;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ManagerMain : public Manager
+class ObjectMerge : public Object
 {
 public:
 	//==============================================================================
@@ -73,22 +44,21 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ManagerMain( void );
+	ObjectMerge( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ManagerMain( void );
+	~ObjectMerge( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : HINSTANCE instanceHandle			: インスタンスハンドル
-	// Arg    : int typeShow						: 表示の種類
+	// Arg    : int priority						: 更新優先度
 	//==============================================================================
-	int Initialize( HINSTANCE instanceHandle, int typeShow );
+	int Initialize( int priority );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -100,17 +70,16 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : HINSTANCE instanceHandle			: インスタンスハンドル
-	// Arg    : int typeShow						: 表示の種類
+	// Arg    : int priority						: 更新優先度
 	//==============================================================================
-	int Reinitialize( HINSTANCE instanceHandle, int typeShow );
+	int Reinitialize( int priority );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ManagerMain* pOut					: コピー先アドレス
+	// Arg    : ObjectMerge* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( ManagerMain* pOut ) const;
+	int Copy( ObjectMerge* pOut ) const;
 
 	//==============================================================================
 	// Brief  : 更新処理
@@ -120,48 +89,33 @@ public:
 	void Update( void );
 
 	//==============================================================================
-	// Brief  : 描画処理
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Brief  : 描画クラスの生成
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTextureLight	: ライトありテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 	//==============================================================================
-	void Draw( void );
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	void SetGraphic( GraphicMerge* pValue );
+	GraphicMerge* GetGraphic( void ) const;
 
 protected:
+	GraphicMerge*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	ManagerMain( const ManagerMain& );
-	ManagerMain operator=( const ManagerMain& );
+	ObjectMerge( const ObjectMerge& );
+	ObjectMerge operator=( const ObjectMerge& );
 
-	ManagerSceneMain*			pScene_;					// シーン管理クラス
-	SceneArgumentMain*			pArgument_;					// シーン引数
-	DirectDevice*				pDevice_;					// Direct3Dデバイス
-	XAudio*						pXAudio_;					// XAudio2インターフェース
-	Fade*						pFade_;						// フェード
-	EffectParameter*			pEffectParameter_;			// エフェクトパラメータ
-	ObjectLightEffect*			pObjectLightEffect_;		// ライティングオブジェクト
-	ObjectMerge*				pObjectMerge_;				// 総合3D描画オブジェクト
-	ObjectPostEffect*			pObjectPostEffect_;			// ポストエフェクトオブジェクト
-	ManagerDraw< Graphic >*		pDraw_;						// 描画管理クラス
-	ManagerUpdate< Object >*	pUpdate_;					// 更新管理クラス
-	RenderPass*					pRenderPass_;				// パス情報
-	DirectInput*				pDirectInput_;				// DirectInputオブジェクト
-	CWiiController*				pWiiController_;			// wiiリモコン入力クラス
-	InputKeyboard*				pKeyboard_;					// キーボード入力クラス
-	InputMouse*					pMouse_;					// マウス入力クラス
-	InputPad*					pPad_;						// ゲームパッド入力クラス
-	VirtualController*			pVirtualController_;		// 仮想コントローラ管理クラス
-	ManagerTexture< Texture >*	pTexture_;					// テクスチャ管理クラス
-	ManagerModel< Model >*		pModel_;					// モデル管理クラス
-	ManagerMotion< Motion >*		pMotion_;				// モーション管理クラス
-	ManagerEffect< Effect >*	pEffect_;					// エフェクト管理クラス
-	ManagerSound< Sound >*		pSound_;					// サウンド管理クラス
-	Polygon2D*					pPolygon2D_;				// 2Dポリゴン
-	Polygon3D*					pPolygon3D_;				// 3Dポリゴン
 };
 
-#endif	// MY_MANAGER_MAIN_H
+#endif	// MY_OBJECT_MERGE_H

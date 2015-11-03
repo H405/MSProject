@@ -78,6 +78,7 @@
     <ClInclude Include="code\graphic\drawer\Drawer3D.h" />
     <ClInclude Include="code\graphic\drawer\DrawerBillboard.h" />
     <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerMerge.h" />
     <ClInclude Include="code\graphic\drawer\DrawerMesh.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModel.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
@@ -88,6 +89,7 @@
     <ClInclude Include="code\graphic\graphic\GraphicBillboard.h" />
     <ClInclude Include="code\graphic\graphic\GraphicLightEffect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMain.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicMerge.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMesh.h" />
     <ClInclude Include="code\graphic\graphic\GraphicModel.h" />
     <ClInclude Include="code\graphic\graphic\GraphicPoint.h" />
@@ -97,6 +99,7 @@
     <ClInclude Include="code\object\Object3D.h" />
     <ClInclude Include="code\object\ObjectBillboard.h" />
     <ClInclude Include="code\object\ObjectLightEffect.h" />
+    <ClInclude Include="code\object\ObjectMerge.h" />
     <ClInclude Include="code\object\ObjectMesh.h" />
     <ClInclude Include="code\object\ObjectModel.h" />
     <ClInclude Include="code\object\ObjectScore.h" />
@@ -182,6 +185,7 @@
     <ClCompile Include="code\graphic\drawer\Drawer3D.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerBillboard.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerMerge.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModel.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
@@ -192,6 +196,7 @@
     <ClCompile Include="code\graphic\graphic\GraphicBillboard.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicLightEffect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMain.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicMerge.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMesh.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicModel.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicPoint.cpp" />
@@ -201,6 +206,7 @@
     <ClCompile Include="code\object\Object3D.cpp" />
     <ClCompile Include="code\object\ObjectBillboard.cpp" />
     <ClCompile Include="code\object\ObjectLightEffect.cpp" />
+    <ClCompile Include="code\object\ObjectMerge.cpp" />
     <ClCompile Include="code\object\ObjectMesh.cpp" />
     <ClCompile Include="code\object\ObjectModel.cpp" />
     <ClCompile Include="code\object\ObjectScore.cpp" />

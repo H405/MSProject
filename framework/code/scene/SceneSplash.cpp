@@ -230,6 +230,8 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectBoard_ = new ObjectBillboard();
 	pObjectBoard_->Initialize( 0 );
 	pObjectBoard_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectBillboard, pTextureBillboard );
+	pObjectBoard_->SetScale( pObjectBoard_->GetScaleX() * 0.1f, pObjectBoard_->GetScaleY() * 0.1f, 1.0f );
+	pObjectBoard_->SetPosition( -50.0f, 90.0f, 0.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
