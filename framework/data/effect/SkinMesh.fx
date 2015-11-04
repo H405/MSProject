@@ -45,6 +45,8 @@ struct VertexOutput
 	float2	textureCoord_		: TEXCOORD0;		// テクスチャ座標
 	float3	vectorNormalWorld_	: TEXCOORD1;		// 変換後法線
 	float	depth_				: TEXCOORD2;		// 深度
+
+	float4	weight_				: TEXCOORD3;
 };
 
 // ピクセルシェーダ出力
@@ -76,6 +78,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 weight : B
 //	output.position_ = mul( float4( positionLocal, 1.0f ), matrixBone );
 //	output.position_ = mul( output.position_, matrixTransform_ );
 	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
+	output.weight_ = float4( weight, 1.0f );
 
 	// 法線の変換
 	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;
@@ -103,6 +106,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	output.specular_ = float4( colorSpecular_, power_ * 0.015625f );
 	output.normal_ = float4( (vertex.vectorNormalWorld_ * 0.5f + 0.5f), refractive_ );
 	output.depth_ = float4( vertex.depth_, 1.0f, 1.0f, 1.0f );
+	output.diffuse_ = float4( vertex.weight_.xyz, 1.0f );
 
 	// ピクセルシェーダ出力を返す
 	return output;

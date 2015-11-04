@@ -17,6 +17,7 @@
 #include "WindowMain.h"
 #include "../framework/camera/CameraStateDebug.h"
 #include "../framework/develop/Debug.h"
+#include "../framework/develop/DebugMeasure.h"
 #include "../framework/develop/DebugProc.h"
 #include "../framework/graphic/Graphic.h"
 #include "../framework/input/DirectInput.h"
@@ -112,6 +113,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 	windowHandle = pWindow_->GetWindowHandle();
+
+#ifdef _DEBUG
+	// デバッグ用計測クラスの初期化
+	ManagerDebugMeasure::Initialize();
+#endif
 
 	// Direct3Dデバイスの生成
 	IDirect3DDevice9*	pDevice = nullptr;			// Direct3Dデバイス
@@ -497,7 +503,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_GAME, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #endif
@@ -622,6 +628,11 @@ int ManagerMain::Finalize( void )
 	delete pDevice_;
 	pDevice_ = nullptr;
 
+#ifdef _DEBUG
+	// デバッグ用計測クラスの終了
+	ManagerDebugMeasure::Finalize();
+#endif
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = Manager::Finalize();
@@ -696,7 +707,10 @@ void ManagerMain::Update( void )
 	pFade_->Update();
 
 	// シーンの更新
-	pScene_->Update();
+	{
+		MeasureTime( _T( "シーンの更新" ) );
+		pScene_->Update();
+	}
 	if( pScene_->IsEnd() )
 	{
 		isEnd_ = true;
@@ -707,6 +721,11 @@ void ManagerMain::Update( void )
 		// オブジェクトの更新
 		pUpdate_->Execute();
 	}
+
+#ifdef _DEBUG
+	// デバッグ用計測クラスの更新
+	ManagerDebugMeasure::Update();
+#endif
 }
 
 //==============================================================================
@@ -720,7 +739,10 @@ void ManagerMain::Draw( void )
 	Assert( pDraw_ != nullptr, _T( "メンバ変数が不正です。" ) );
 
 	// 描画処理
-	pDraw_->Execute();
+	{
+		MeasureTime( _T( "描画" ) );
+		pDraw_->Execute();
+	}
 }
 
 //==============================================================================

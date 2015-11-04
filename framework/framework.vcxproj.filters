@@ -435,6 +435,9 @@
     <ClInclude Include="code\system\ManagerFireworks.h">
       <Filter>ソース ファイル\system</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\develop\DebugMeasure.h">
+      <Filter>ソース ファイル\framework\develop</Filter>
+    </ClInclude>
     <ClInclude Include="code\object\ObjectModelMaterial.h">
       <Filter>ソース ファイル\object</Filter>
     </ClInclude>
@@ -787,6 +790,9 @@
     </ClCompile>
     <ClCompile Include="code\system\ManagerFireworks.cpp">
       <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\develop\DebugMeasure.cpp">
+      <Filter>ソース ファイル\framework\develop</Filter>
     </ClCompile>
     <ClCompile Include="code\object\ObjectModelMaterial.cpp">
       <Filter>ソース ファイル\object</Filter>
