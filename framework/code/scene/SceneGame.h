@@ -33,6 +33,7 @@ class CameraObject;
 class LightDirection;
 class ManagerPoint;
 class ManagerFireworks;
+class ManagerTarget;
 class Object2D;
 class ObjectScore;
 class Object3D;
@@ -160,6 +161,9 @@ private:
 	//	花火管理クラス
 	ManagerFireworks* managerFireworks;
 
+	//	ターゲット管理クラス
+	ManagerTarget* managerTarget;
+
 	//	chooseObject点滅用
 	int pushChooseObjectFlashingCount;
 
@@ -209,6 +213,13 @@ private:
 	// Arg    : void								: なし
 	//==============================================================================
 	bool wiiLostCheck(void);
+
+	//==============================================================================
+	// Brief  : 花火とターゲットの当たり判定処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void collision_fireworks_target();
 
 	//	更新関数格納用ポインタ
 	void (SceneGame::*fpUpdate)(void);

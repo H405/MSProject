@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : ManagerFireworks.h
-// Brief  : 花火管理オブジェクトクラス
+// File   : ManagerTarget.h
+// Brief  : ターゲット管理オブジェクトクラス
 // Author : Kotaro Nagasaki
 // Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
 //
@@ -10,14 +10,14 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_MANAGER_FIREWORKS_H
-#define MY_MANAGER_FIREWORKS_H
+#ifndef MY_MANAGER_TARGET_H
+#define MY_MANAGER_TARGET_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
 #include "../framework/object/ObjectMovement.h"
-#include "../framework/fireworks/Fireworks.h"
+#include "../framework/target/Target.h"
 
 //******************************************************************************
 // ライブラリ
@@ -26,25 +26,26 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define FIREWORKS_MAX (16)
+#define TARGET_MAX (16)
 
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Fireworks;
-class ManagerPoint;
-class FireworksState;
+class Target;
+class Effect;
+class EffectParameter;
+class Texture;
+
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ManagerFireworks
+class ManagerTarget
 {
 public:
 	enum
 	{
 		STATE_NORMAL = 0,
-		STATE_SLOW,
 		STATE_MAX
 	}STATE;
 
@@ -53,20 +54,31 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ManagerFireworks( void );
+	ManagerTarget( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ManagerFireworks( void );
+	~ManagerTarget( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize(ManagerPoint* _managerPoint);
+	int Initialize(
+		IDirect3DDevice9* pDevice,
+		const EffectParameter* pParameter,
+		Effect* pEffectGeneral,
+		Texture* pTextureCross,
+		Texture* pTextureArrow,
+		Texture* pTextureCircle
+	);
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -83,22 +95,11 @@ public:
 	void Update( void );
 
 	//==============================================================================
-	// Brief  : 花火発射処理
+	// Brief  : ターゲット発射処理
 	// Return : void								: なし
-	// Arg    : int indexState						: ステート番号
-	// Arg   : ManagerPoint*						: ポイントスプライト生成用マネージャ
-	// Arg   : D3DXVECTOR3							: 発生位置
-	// Arg   : D3DXVECTOR3							: 速度
-	// Arg   : float								: 更新ごとの回転量
-	// Arg   : float								: ↑に加算する回転量（大きすぎると変になるから注意）
+	// Arg2   : D3DXVECTOR3							: 発生位置
 	//==============================================================================
-	void Add(
-		int _indexState,
-		ManagerPoint* _managerPoint,
-		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _speed,
-		float _rot,
-		float _rotSpeed);
+	void Add(D3DXVECTOR3 _pos);
 
 	//==============================================================================
 	// Brief  : インデックス取得処理
@@ -108,45 +109,19 @@ public:
 	int GetIndex();
 
 	//==============================================================================
-	// Brief  : 花火の爆発処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Burn();
-
-	//==============================================================================
-	// Brief  : 花火を打ち上げた順番通りに格納する
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void sort();
-
-	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	Fireworks* getFireworks(int _index){return &fireworks[_index];}
-	int getBurnIndex(){return burnIndex;}
+	Target* getTarget(int _index){return &target[_index];}
 
 protected:
 
-	//	花火の配列
-	Fireworks* fireworks;
+	//	ターゲットの配列
+	Target* target;
 
-	//	爆発させる花火
-	int burnIndex;
-
-	// ステートテーブル
-	FireworksState* ppState_[ STATE_MAX ];
-
-	//	花火ポインタ格納用リスト
-	Fireworks** fireworksList;
 private:
-
-	ManagerPoint* managerPoint;
-
 	void InitializeSelf( void );
-	ManagerFireworks( const ManagerFireworks& );
-	ManagerFireworks operator=( const ManagerFireworks& );
+	ManagerTarget( const ManagerTarget& );
+	ManagerTarget operator=( const ManagerTarget& );
 };
 
-#endif	// MY_MANAGER_FIREWORKS_H
+#endif	// MY_MANAGER_TARGET_H

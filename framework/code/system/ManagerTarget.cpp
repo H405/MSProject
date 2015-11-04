@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : Fireworks.cpp
-// Brief  : 花火オブジェクトクラス
+// File   : ManagerTarget.cpp
+// Brief  : ターゲット管理オブジェクトクラス
 // Author : Kotaro Nagasaki
 // Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
 //
@@ -10,10 +10,10 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "Fireworks.h"
-#include "FireworksState.h"
-#include "../../system/ManagerPoint.h"
-#include "../../system/ManagerFireworks.h"
+#include "ManagerTarget.h"
+#include "../framework/develop/Debug.h"
+#include "../framework/resource/ManagerEffect.h"
+#include "../framework/resource/ManagerTexture.h"
 
 //******************************************************************************
 // ライブラリ
@@ -27,15 +27,12 @@
 // 静的メンバ変数
 //******************************************************************************
 
-//	ステートテーブル
-FireworksState** Fireworks::ppState_ = nullptr;
-
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Fireworks::Fireworks( void )
+ManagerTarget::ManagerTarget( void )
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -45,61 +42,51 @@ Fireworks::Fireworks( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fireworks::InitializeSelf( void )
+void ManagerTarget::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	param.managerPoint = nullptr;
-	param.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	param.rot = 0.0f;
-	param.rotSpeed = 0.0f;
-	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	param.enable = false;
-	param.deleteCount = 0;
-	indexState = 0;
+	target = nullptr;
 }
 //==============================================================================
 // Brief  : デストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Fireworks::~Fireworks( void )
+ManagerTarget::~ManagerTarget( void )
 {
 	// 終了処理
 	Finalize();
 }
-//==============================================================================
-// Brief  : ステートの設定
-// Return : void								: なし
-// Arg    : FireworksState** ppState				: ステートテーブル
-//==============================================================================
-void Fireworks::SetState( FireworksState** ppState )
-{
-	// ステートテーブルの設定
-	ppState_ = ppState;
-}
+
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Fireworks::Set(
-	int _indexState,
-	ManagerPoint* _managerPoint,
-	D3DXVECTOR3 _pos,
-	D3DXVECTOR3 _speed,
-	float _rot,
-	float _rotSpeed )
+int ManagerTarget::Initialize(
+	IDirect3DDevice9* pDevice,
+	const EffectParameter* pParameter,
+	Effect* pEffectGeneral,
+	Texture* pTextureCross,
+	Texture* pTextureArrow,
+	Texture* pTextureCircle
+	)
 {
-	//	変数の保存と初期化
-	param.managerPoint = _managerPoint;
-	param.pos = _pos;
-	param.speed = _speed;
-	param.rot = _rot;
-	param.rotSpeed = _rotSpeed;
-
-	param.enable = true;
-	param.deleteCount = 0;
-
-	indexState = _indexState;
+	//	ターゲットを指定個数分用意
+	target = new Target[TARGET_MAX];
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		target[count].Initialize(
+			pDevice,
+			pParameter,
+			pEffectGeneral,
+			pTextureCross,
+			pTextureArrow,
+			pTextureCircle);
+	}
 
 	// 正常終了
 	return 0;
@@ -110,8 +97,10 @@ int Fireworks::Set(
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int Fireworks::Finalize( void )
+int ManagerTarget::Finalize( void )
 {
+	delete[] target;
+
 	// クラス内の初期化処理
 	InitializeSelf();
 
@@ -123,17 +112,52 @@ int Fireworks::Finalize( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fireworks::Update( void )
+void ManagerTarget::Update( void )
 {
-	//	ステート毎の更新処理へ
-	ppState_[indexState]->Update(this);
+	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
+	{
+		// 使用されていないとき次へ
+		if( !target[ counterPoint ].IsEnable() )
+		{
+			continue;
+		}
+
+		target[counterPoint].Update();
+	}
 }
 //==============================================================================
-// Brief  : 花火の爆発処理
+// Brief  : ターゲット発射処理
 // Return : void								: なし
+// Arg2   : D3DXVECTOR3							: 発生位置
+//==============================================================================
+void ManagerTarget::Add(D3DXVECTOR3 _pos)
+{
+	int index = GetIndex();
+	if(index < 0)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return;
+	}
+
+	//	ターゲットのセット
+	target[index].Set(_pos);
+}
+//==============================================================================
+// Brief  : インデックス取得処理
+// Return : int									: 使用可能なオブジェクトの番号（全部使用中の場合は負の値が返る）
 // Arg    : void								: なし
 //==============================================================================
-void Fireworks::burn()
+int ManagerTarget::GetIndex()
 {
-	Finalize();
+	// 空き番号を探す
+	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
+	{
+		if( !target[ counterPoint ].IsEnable() )
+		{
+			return counterPoint;
+		}
+	}
+
+	// 空いていなかった
+	return -1;
 }

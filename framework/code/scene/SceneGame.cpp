@@ -29,6 +29,7 @@
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
+#include "../system/ManagerTarget.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 
@@ -54,6 +55,7 @@
 // マクロ定義
 //******************************************************************************
 #define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
+#define RANDAM(value) (float)((rand() % value) - (rand() % value))
 
 //******************************************************************************
 // 静的変数
@@ -106,6 +108,7 @@ void SceneGame::InitializeSelf( void )
 	testObj[2] = nullptr;
 	testObj[3] = nullptr;
 	managerFireworks = nullptr;
+	managerTarget = nullptr;
 
 	fpUpdate = nullptr;
 	finger = nullptr;
@@ -186,6 +189,24 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 
+	// スカイドームの生成
+	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.jpg" ) );
+	pObjectSky_ = new ObjectSky();
+	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
+	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
+
+
+
+	//	仮のフィールド
+	pTexture = pArgument_->pTexture_->Get( _T( "common/field.jpg" ) );
+	pEffect = pArgument_->pEffect_->Get( _T( "Mesh.fx" ) );
+	field = new ObjectMesh();
+	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
+	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
+
+
+
 	//	ポイントスプライト管理オブジェクト生成
 	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
 	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
@@ -207,21 +228,20 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	managerFireworks->Initialize(managerPoint);
 
 
-	// スカイドームの生成
-	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.png" ) );
-	pObjectSky_ = new ObjectSky();
-	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
-	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
-
-
-
-	//	仮のフィールド
-	pTexture = pArgument_->pTexture_->Get( _T( "title/titlelogo.png" ) );
-	pEffect = pArgument_->pEffect_->Get( _T( "Mesh.fx" ) );
-	field = new ObjectMesh();
-	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
-	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
+	//	ターゲット管理オブジェクト生成
+	Effect*		pEffectTarget = pArgument->pEffect_->Get( _T( "Billboard.fx" ) );
+	Texture*	pTextureCross = pArgument->pTexture_->Get( _T( "game/targetCross.png" ) );
+	Texture*	pTextureArrow = pArgument->pTexture_->Get( _T( "game/targetArrow.png" ) );
+	Texture*	pTextureCircle = pArgument->pTexture_->Get( _T( "game/targetCircle.png" ) );
+	managerTarget = new ManagerTarget;
+	managerTarget->Initialize(
+		pArgument->pDevice_,
+		pArgument->pEffectParameter_,
+		pEffectTarget,
+		pTextureCross,
+		pTextureArrow,
+		pTextureCircle
+		);
 
 
 
@@ -465,6 +485,10 @@ int SceneGame::Finalize( void )
 	delete testArm;
 	testArm = nullptr;
 
+	//	ターゲット管理クラスの解放
+	delete managerTarget;
+	managerTarget = nullptr;
+
 	//	花火管理クラスの解放
 	delete managerFireworks;
 	managerFireworks = nullptr;
@@ -604,6 +628,9 @@ void SceneGame::normalUpdate(void)
 	//	花火管理クラスの更新
 	managerFireworks->Update();
 
+	//	ターゲット管理クラスの更新
+	managerTarget->Update();
+
 	// ポイントスプライト管理クラスの更新
 	managerPoint->Update();
 
@@ -614,19 +641,26 @@ void SceneGame::normalUpdate(void)
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
-	if(pArgument_->pWiiController_->getTrigger(WC_A) == true)
+	if(pArgument_->pWiiController_->getTrigger(WC_B) == true)
 	{
 		managerFireworks->Add(
+			ManagerFireworks::STATE_NORMAL,
 			managerPoint,
 			D3DXVECTOR3(0.0f, 0.0f, 200.0f),
 			D3DXVECTOR3(0.1f, 0.1f, 0.0f),
 			DEG_TO_RAD(5.0f),
 			DEG_TO_RAD(1.0f)
 			);
+
+		managerTarget->Add(
+			D3DXVECTOR3(RANDAM(200), (float)(rand() % 50) + 100.0f, 200.0f)
+			);
 	}
-	if(pArgument_->pWiiController_->getTrigger(WC_B) == true)
+
+	if(pArgument_->pWiiController_->getTrigger(WC_A) == true)
 	{
-		managerFireworks->Burn();
+		//	ターゲットと花火の当たり判定
+		collision_fireworks_target();
 	}
 
 	testObj[1]->AddRotationX(0.1f);
@@ -1067,4 +1101,17 @@ bool SceneGame::wiiLostCheck(void)
 	}
 
 	return true;
+}
+//==============================================================================
+// Brief  : 花火とターゲットの当たり判定処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::collision_fireworks_target()
+{
+	Fireworks* buffF;
+	Target* buffT;
+
+	//	爆発処理
+	managerFireworks->Burn();
 }
