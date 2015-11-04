@@ -39,6 +39,7 @@ class ObjectScore;
 class Object3D;
 class Material;
 class ObjectModel;
+class ObjectModelMaterial;
 class PolygonMesh;
 class ObjectMesh;
 class ObjectSky;
@@ -149,8 +150,8 @@ private:
 	Object2D* chooseObjectPrev;
 
 	//	テスト用
-	ObjectModel* testArm;
-	ObjectModel* testObj[4];
+	ObjectModelMaterial* testArm;
+	ObjectModelMaterial* testObj[4];
 
 	//	仮フィールド
 	ObjectMesh* field;

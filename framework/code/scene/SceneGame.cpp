@@ -39,6 +39,7 @@
 #include "../object/Object2D.h"
 #include "../object/Object3D.h"
 #include "../object/ObjectModel.h"
+#include "../object/ObjectModelMaterial.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectSky.h"
 #include "../object/ObjectBillboard.h"
@@ -217,7 +218,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	result = managerPoint->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 1000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		return result;
@@ -246,34 +247,33 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	テスト用の腕オブジェクト
-	pEffect = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
 	pModel = pArgument_->pModel_->Get( _T( "arm_r.x" ) );
-	testArm = new ObjectModel();
+	testArm = new ObjectModelMaterial();
 	testArm->Initialize(0);
 	testArm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 
 	testArm->SetPositionY(20.0f);
 
 
-	pEffect = pArgument->pEffect_->Get( _T( "Model.fx" ) );
-	pModel = pArgument_->pModel_->Get( _T( "kuma.x" ) );
-	testObj[0] = new ObjectModel();
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pModel = pArgument_->pModel_->Get( _T( "torii_005.x" ) );
+	testObj[0] = new ObjectModelMaterial();
 	testObj[0]->Initialize(0);
 	testObj[0]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 	testObj[0]->SetEnableGraphic(false);
 
-	testObj[1] = new ObjectModel();
+	testObj[1] = new ObjectModelMaterial();
 	testObj[1]->Initialize(0);
 	testObj[1]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 
-	testObj[2] = new ObjectModel();
+	testObj[2] = new ObjectModelMaterial();
 	testObj[2]->Initialize(0);
 	testObj[2]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 
-	testObj[3] = new ObjectModel();
+	testObj[3] = new ObjectModelMaterial();
 	testObj[3]->Initialize(0);
 	testObj[3]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
-
 
 	testObj[1]->SetPositionX(-50.0f);
 	testObj[2]->SetPositionX(50.0f);
@@ -663,9 +663,9 @@ void SceneGame::normalUpdate(void)
 		collision_fireworks_target();
 	}
 
-	testObj[1]->AddRotationX(0.1f);
-	testObj[2]->AddRotationY(0.1f);
-	testObj[3]->AddRotationZ(0.1f);
+	//testObj[1]->AddRotationX(0.1f);
+	//testObj[2]->AddRotationY(0.1f);
+	//testObj[3]->AddRotationZ(0.1f);
 
 	if(pArgument_->pVirtualController_->IsPress(VC_UP) && pArgument_->pKeyboard_->IsPress(DIK_Z))
 	{

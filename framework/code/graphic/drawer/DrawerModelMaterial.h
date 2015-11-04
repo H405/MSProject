@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ManagerFireworks.h
-// Brief  : 花火管理オブジェクトクラス
-// Author : Kotaro Nagasaki
-// Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
+// File   : DrawerModelMaterial.h
+// Brief  : モデル描画クラス
+// Author : Taiga Shirakawa
+// Date   : 2015/10/18 sun : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_MANAGER_FIREWORKS_H
-#define MY_MANAGER_FIREWORKS_H
+#ifndef MY_DRAWER_MODEL_H
+#define MY_DRAWER_MODEL_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "fireworks/Fireworks.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -25,47 +25,57 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define FIREWORKS_MAX (160)
 
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Fireworks;
-class ManagerPoint;
-class FireworksState;
+class Effect;
+class EffectParameter;
+class Model;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ManagerFireworks
+class DrawerModelMaterial : public Drawer
 {
 public:
+	// パラメータ
 	enum
 	{
-		STATE_NORMAL = 0,
-		STATE_SLOW,
-		STATE_MAX
-	}STATE;
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_MATRIX_WORLD,				// ワールド変換行列
+		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
+		PARAMETER_CLIP_CAMERA,				// カメラのクリップ値
+		PARAMETER_MATERIAL_COLOR,					// マテリアルカラー
+		PARAMETER_COLOR_SPECULAR,			// スペキュラ色
+		PARAMETER_REFLECTION,				// 反射率
+		PARAMETER_POWER,					// 反射の強さ
+		PARAMETER_REFLACTIVE,				// 屈折率
+		PARAMETER_MAX						// 最大値
+	};
 
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ManagerFireworks( void );
+	DrawerModelMaterial( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ManagerFireworks( void );
+	~DrawerModelMaterial( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
 	//==============================================================================
-	int Initialize(ManagerPoint* _managerPoint);
+	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -75,77 +85,43 @@ public:
 	int Finalize( void );
 
 	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Brief  : 再初期化処理
+	// Return : int									: 実行結果
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
 	//==============================================================================
-	void Update( void );
+	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect );
 
 	//==============================================================================
-	// Brief  : 花火発射処理
-	// Return : void								: なし
-	// Arg    : int indexState						: ステート番号
-	// Arg   : ManagerPoint*						: ポイントスプライト生成用マネージャ
-	// Arg   : D3DXVECTOR3							: 発生位置
-	// Arg   : D3DXVECTOR3							: 速度
-	// Arg   : float								: 更新ごとの回転量
-	// Arg   : float								: ↑に加算する回転量（大きすぎると変になるから注意）
+	// Brief  : クラスのコピー
+	// Return : int									: 実行結果
+	// Arg    : DrawerModelMaterial* pOut					: コピー先アドレス
 	//==============================================================================
-	void Add(
-		int _indexState,
-		ManagerPoint* _managerPoint,
-		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _speed,
-		float _rot,
-		float _rotSpeed);
+	int Copy( DrawerModelMaterial* pOut ) const;
 
 	//==============================================================================
-	// Brief  : インデックス取得処理
-	// Return : int									: 使用可能なオブジェクトの番号（全部使用中の場合は負の値が返る）
-	// Arg    : void								: なし
-	//==============================================================================
-	int GetIndex();
-
-	//==============================================================================
-	// Brief  : 花火の爆発処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Burn();
-
-	//==============================================================================
-	// Brief  : 花火を打ち上げた順番通りに格納する
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void sort();
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	Fireworks* getFireworks(int _index){return &fireworks[_index];}
-	int getBurnIndex(){return burnIndex;}
+	void SetModel( Model* pValue );
+	Model* GetModel( void ) const;
 
 protected:
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	Model*					pModel_;				// モデル
 
-	//	花火の配列
-	Fireworks* fireworks;
-
-	//	爆発させる花火
-	int burnIndex;
-
-	// ステートテーブル
-	FireworksState* ppState_[ STATE_MAX ];
-
-	//	花火ポインタ格納用リスト
-	Fireworks** fireworksList;
 private:
-
-	ManagerPoint* managerPoint;
-
 	void InitializeSelf( void );
-	ManagerFireworks( const ManagerFireworks& );
-	ManagerFireworks operator=( const ManagerFireworks& );
+	DrawerModelMaterial( const DrawerModelMaterial& );
+	DrawerModelMaterial operator=( const DrawerModelMaterial& );
 };
 
-#endif	// MY_MANAGER_FIREWORKS_H
+#endif	// MY_DRAWER_MODEL_H

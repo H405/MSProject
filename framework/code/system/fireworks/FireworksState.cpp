@@ -84,7 +84,7 @@ void FireworksStateNormal::Update( Fireworks* _fireworks )
 	_fireworks->getManagerPoint()->Add(
 		effectExistTime,
 		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
-		D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ),
+		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),

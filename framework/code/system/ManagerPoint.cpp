@@ -21,6 +21,8 @@
 #include "../framework/vertex/Vertex.h"
 #include "../framework/vertex/VertexBuffer.h"
 
+#include "../framework/develop/DebugProc.h"
+
 //******************************************************************************
 // ライブラリ
 //******************************************************************************
@@ -204,6 +206,7 @@ void ManagerPoint::Update( void )
 	// 頂点バッファの作成
 	int		countPoint;		// ポイントの数
 	countPoint = 0;
+
 	for( int counterPoint = 0; counterPoint < maximumItem_; ++counterPoint )
 	{
 		// 使用されていないとき次へ

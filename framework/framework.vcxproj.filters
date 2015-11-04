@@ -435,6 +435,15 @@
     <ClInclude Include="code\system\ManagerFireworks.h">
       <Filter>ソース ファイル\system</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectModelMaterial.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicModelMaterial.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelMaterial.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -778,6 +787,15 @@
     </ClCompile>
     <ClCompile Include="code\system\ManagerFireworks.cpp">
       <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectModelMaterial.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicModelMaterial.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelMaterial.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

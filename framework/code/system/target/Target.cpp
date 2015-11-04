@@ -154,9 +154,9 @@ int Target::Set(D3DXVECTOR3 _pos)
 	targetCross->SetColorAlpha(0.0f);
 
 	//	回転量初期化
-	//targetCircle->SetRotation(0.0f, 0.0f, 0.0f);
-	//targetArrow->SetRotation(0.0f, 0.0f, 0.0f);
-	//targetCross->SetRotation(0.0f, 0.0f, 0.0f);
+	targetCircle->SetRotation(0.0f, 0.0f, 0.0f);
+	targetArrow->SetRotation(0.0f, 0.0f, 0.0f);
+	targetCross->SetRotation(0.0f, 0.0f, 0.0f);
 
 	//	スケール変更
 	targetCross->SetScale(targetSize, targetSize, targetSize);
@@ -237,7 +237,7 @@ void Target::updateAppearCross( void )
 //==============================================================================
 void Target::updateAppearArrow( void )
 {
-	//targetArrow->AddRotationY(D3DX_PI / (float)APPEAR_COUNT_ARROW);
+	targetArrow->AddRotationZ(D3DX_PI / (float)APPEAR_COUNT_ARROW);
 
 	//	だんだんと出現
 	if(counter < APPEAR_COUNT_ARROW / 2)
@@ -263,7 +263,7 @@ void Target::updateAppearArrow( void )
 //==============================================================================
 void Target::updateAppearCircle( void )
 {
-	//targetCircle->AddRotationY(D3DX_PI / (float)APPEAR_COUNT_CIRCLE);
+	//targetCircle->AddRotationZ(D3DX_PI / (float)APPEAR_COUNT_CIRCLE);
 
 	if(counter < APPEAR_COUNT_CIRCLE / 2)
 	{
