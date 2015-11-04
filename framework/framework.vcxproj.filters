@@ -76,6 +76,12 @@
     <Filter Include="ソース ファイル\framework\sound">
       <UniqueIdentifier>{b99a1f9b-773b-4c97-a145-8f1f6008b2ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\framework\fireworks">
+      <UniqueIdentifier>{593e3025-ee44-46e6-bf21-1247496ffdbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\target">
+      <UniqueIdentifier>{bec3158b-cc76-490c-918c-055e0249a770}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -366,6 +372,24 @@
     <ClInclude Include="code\framework\resource\Sound.h">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectFire.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\ManagerFireworks.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\fireworks\Fireworks.h">
+      <Filter>ソース ファイル\framework\fireworks</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\target\Target.h">
+      <Filter>ソース ファイル\framework\target</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\ManagerTarget.h">
+      <Filter>ソース ファイル\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\fireworks\FireworksState.h">
+      <Filter>ソース ファイル\framework\fireworks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -649,6 +673,24 @@
     </ClCompile>
     <ClCompile Include="code\framework\resource\ManagerSound.cpp">
       <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectFire.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\ManagerFireworks.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\fireworks\Fireworks.cpp">
+      <Filter>ソース ファイル\framework\fireworks</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\target\Target.cpp">
+      <Filter>ソース ファイル\framework\target</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\ManagerTarget.cpp">
+      <Filter>ソース ファイル\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\fireworks\FireworksState.cpp">
+      <Filter>ソース ファイル\framework\fireworks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
