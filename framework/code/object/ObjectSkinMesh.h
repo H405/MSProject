@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : Target.h
-// Brief  : ターゲットオブジェクトクラス
-// Author : Kotaro Nagasaki
-// Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
+// File   : ObjectSkinMesh.h
+// Brief  : スキンメッシュオブジェクトクラス
+// Author : Taiga Shirakawa
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_TARGET_H
-#define MY_TARGET_H
+#ifndef MY_OBJECT_SKIN_MESH_H
+#define MY_OBJECT_SKIN_MESH_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../object/ObjectMovement.h"
+#include "../framework/object/ObjectMovement.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,15 +29,16 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class ObjectBillboard;
 class Effect;
 class EffectParameter;
-class Texture;
+class GraphicSkinMesh;
+class Model;
+class Motion;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class Target
+class ObjectSkinMesh : public ObjectMovement
 {
 public:
 	//==============================================================================
@@ -45,36 +46,22 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	Target( void );
+	ObjectSkinMesh( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~Target( void );
+	~ObjectSkinMesh( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : int priority						: 更新優先度
+	// Arg    : int countMotion						: モーション数
 	//==============================================================================
-	int Initialize(
-	IDirect3DDevice9* pDevice,
-	const EffectParameter* pParameter,
-	Effect* pEffectGeneral,
-	Texture* pTextureCross,
-	Texture* pTextureArrow,
-	Texture* pTextureCircle);
-
-	//==============================================================================
-	// Brief  : 初期化処理
-	// Return : int									: 実行結果
-	//==============================================================================
-	int Set(D3DXVECTOR3 _pos);
+	int Initialize( int priority, int countMotion );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -84,6 +71,21 @@ public:
 	int Finalize( void );
 
 	//==============================================================================
+	// Brief  : 再初期化処理
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 更新優先度
+	// Arg    : int countMotion						: モーション数
+	//==============================================================================
+	int Reinitialize( int priority, int countMotion );
+
+	//==============================================================================
+	// Brief  : クラスのコピー
+	// Return : int									: 実行結果
+	// Arg    : ObjectSkinMesh* pOut				: コピー先アドレス
+	//==============================================================================
+	int Copy( ObjectSkinMesh* pOut ) const;
+
+	//==============================================================================
 	// Brief  : 更新処理
 	// Return : void								: なし
 	// Arg    : void								: なし
@@ -91,68 +93,61 @@ public:
 	void Update( void );
 
 	//==============================================================================
-	// Brief  : cross出現時の更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Brief  : 描画クラスの生成
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 描画優先度
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	//==============================================================================
-	void updateAppearCross( void );
+	int CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral );
 
 	//==============================================================================
-	// Brief  : Arrow出現時の更新処理
+	// Brief  : 次のモーションを設定
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : int indexMotion						: 次のモーション番号
+	// Arg    : int timeBeginBlend					: ブレンド開始時間
+	// Arg    : int timeBlend						: ブレンド時間
 	//==============================================================================
-	void updateAppearArrow( void );
+	void SetNextMotion( int indexMotion, int timeBeginBlend, int timeBlend );
 
 	//==============================================================================
-	// Brief  : Circle出現時の更新処理
-	// Return : void								: なし
+	// Brief  : ブレンド中か判定
+	// Return : bool								: ブレンド中かどうか
 	// Arg    : void								: なし
 	//==============================================================================
-	void updateAppearCircle( void );
-
-	//==============================================================================
-	// Brief  : 消滅時の更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void updateDisAppear( void );
-
-	//==============================================================================
-	// Brief  : ターゲットの消滅処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Dissappear();
+	bool IsBlending( void );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	D3DXVECTOR3 getPosition(){return pos;}
-	bool IsEnable(){return enable;}
+	void SetGraphic( GraphicSkinMesh* pValue );
+	GraphicSkinMesh* GetGraphic( void ) const;
+	void SetTableMotion( int index, Motion* pValue );
+	Motion* GetTableMotion( int index ) const;
+	void SetMatrixBoneCurrent( int index, const D3DXMATRIX& value );
+	void GetMatrixBoneCurrent( int index, D3DXMATRIX* pOut ) const;
+	int GetIndexMotionCurrent( void ) const;
+	int GetIndexMotionNext( void ) const;
+	int GetIndexFrame( void ) const;
 
 protected:
-
-	ObjectBillboard* targetCross;
-	ObjectBillboard* targetArrow;
-	ObjectBillboard* targetCircle;
-
-	//	位置情報
-	D3DXVECTOR3 pos;
-
-	//	使用可能フラグ
-	bool enable;
-
-	//	カウンタ
-	int counter;
+	GraphicSkinMesh*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	Target( const Target& );
-	Target operator=( const Target& );
+	ObjectSkinMesh( const ObjectSkinMesh& );
+	ObjectSkinMesh operator=( const ObjectSkinMesh& );
 
-	//	更新関数格納用ポインタ
-	void (Target::*fpUpdate)(void);
+	Model*		pModel_;					// モデル
+	Motion**	ppTableMotion_;				// モーションテーブル
+	D3DXMATRIX*	pMatrixBoneCurrent_;		// 現在のボーン変換行列
+	int			countMotion_;				// モーション数
+	int			indexMotionCurrent_;		// 現在のモーション番号
+	int			indexMotionNext_;			// 次のモーション番号
+	int			indexFrame_;				// フレーム番号
+	int			indexFrameBeginBlend_;		// ブレンド開始フレーム番号
+	int			countFrameBlend_;			// ブレンドするフレーム数
 };
 
-#endif	// MY_TARGET_H
+#endif	// MY_OBJECT_SKIN_MESH_H

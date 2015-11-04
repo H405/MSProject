@@ -28,6 +28,7 @@
 //******************************************************************************
 template class ManagerResource< class Effect >;
 template class ManagerResource< class Model >;
+template class ManagerResource< class Motion >;
 template class ManagerResource< class Sound >;
 template class ManagerResource< class Texture >;
 

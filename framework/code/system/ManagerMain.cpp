@@ -30,9 +30,10 @@
 #include "../framework/polygon/Polygon3D.h"
 #include "../framework/render/DirectDevice.h"
 #include "../framework/render/RenderPass.h"
-#include "../framework/render/RenderTarget.h"
+#include "../framework/render/RenderPassParameter.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
+#include "../framework/resource/ManagerMotion.h"
 #include "../framework/resource/ManagerSound.h"
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/sound/XAudio.h"
@@ -40,7 +41,9 @@
 #include "../framework/system/ManagerDraw.h"
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
-#include "../object/ObjectScreen.h"
+#include "../object/ObjectLightEffect.h"
+#include "../object/ObjectMerge.h"
+#include "../object/ObjectPostEffect.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -215,22 +218,42 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pXAudio = pXAudio_->GetXAudio();
 
 	// パスクラスの生成
+	RenderPassParameter	parameterPass3D;			// 3D描画パスのパラメータ
+	RenderPassParameter	parameterPassNotLight;		// ライティングなし3D描画パスのパラメータ
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
 	{
 		return 1;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::PASS_3D_RENDER_MAX );
+	parameterPass3D.pFormat_[ GraphicMain::RENDER_PASS_3D_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MAX, &parameterPass3D );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::PASS_2D_RENDER_MAX );
+	parameterPassNotLight.flagClear_ = D3DCLEAR_TARGET;
+	parameterPassNotLight.pSurfaceDepth_ = pRenderPass_[ GraphicMain::PASS_3D ].GetSurfaceDepth();
+	result = pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_NOT_LIGHT_MAX, &parameterPassNotLight );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_SCREEN ].Initialize( pDevice, GraphicMain::PASS_SCREEN_RENDER_MAX );
+	result = pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_LIGHT_EFFECT_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_3D_MERGE ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MERGE_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_2D ].Initialize( pDevice, GraphicMain::RENDER_PASS_2D_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_POST_EFFECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_POST_EFFECT_MAX );
 	if( result != 0 )
 	{
 		return result;
@@ -294,6 +317,19 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
+
+	// モーション管理クラスの生成
+	pMotion_ = new ManagerMotion< Motion >();
+	if( pMotion_ == nullptr )
+	{
+		return 1;
+	}
+	result = pMotion_->Initialize( _T( "data/Motion/" ), 32 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pMotion_->Get( _T( "test.motion" ) );
 
 	// エフェクト管理クラスの生成
 	pEffect_ = new ManagerEffect< Effect >();
@@ -362,32 +398,76 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	GraphicMain::SetPolygon3D( pPolygon3D_ );
 
-	// 画面オブジェクトの生成
-	Effect*			pEffectScreen = nullptr;			// 画面エフェクト
-	RenderTarget*	pRenderTarget3D = nullptr;			// 3D画面描画対象
-	RenderTarget*	pRenderTarget2D = nullptr;			// 2D画面描画対象
-	RenderTarget*	pRenderTargetMask = nullptr;		// マスク描画対象
-	pObjectScreen_ = new ObjectScreen();
-	if( pObjectScreen_ == nullptr )
+	// ライティングオブジェクトの生成
+	Effect*	pEffectLightEffect = nullptr;		// ライティングエフェクト
+	pObjectLightEffect_ = new ObjectLightEffect();
+	if( pObjectLightEffect_ == nullptr )
 	{
 		return 1;
 	}
-	result = pObjectScreen_->Initialize( 0, pFade_ );
+	result = pObjectLightEffect_->Initialize( 0 );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pEffectScreen = pEffect_->Get( _T( "Screen.fx" ) );
-	pRenderTarget3D = pRenderPass_[ GraphicMain::PASS_3D ].GetRenderTarget( GraphicMain::PASS_3D_RENDER_COLOR );
-	pRenderTarget2D = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_COLOR );
-	pRenderTargetMask = pRenderPass_[ GraphicMain::PASS_2D ].GetRenderTarget( GraphicMain::PASS_2D_RENDER_MASK );
-	result = pObjectScreen_->CreateGraphic( 0, pEffectParameter_, pEffectScreen,
-		pRenderTarget3D->GetTexture(), pRenderTarget2D->GetTexture(), pRenderTargetMask->GetTexture() );
+	pEffectLightEffect = pEffect_->Get( _T( "LightEffect.fx" ) );
+	result = pObjectLightEffect_->CreateGraphic( 0, pEffectParameter_, pEffectLightEffect,
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE ),
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_SPECULAR ),
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_NORMAL ),
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pObjectScreen_->SetPositionY( 1.0f );
+	pObjectLightEffect_->SetPositionY( 1.0f );
+
+	// 総合3D描画オブジェクトの生成
+	Effect*	pEffectMerge = nullptr;		// ライティングエフェクト
+	pObjectMerge_ = new ObjectMerge();
+	if( pObjectMerge_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectMerge_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectMerge = pEffect_->Get( _T( "Merge.fx" ) );
+	result = pObjectMerge_->CreateGraphic( 0, pEffectParameter_, pEffectMerge,
+		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_MASK ),
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_ADD ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectMerge_->SetPositionY( 1.0f );
+
+	// ポストエフェクトオブジェクトの生成
+	Effect*	pEffectPostEffect = nullptr;		// ポストエフェクト
+	pObjectPostEffect_ = new ObjectPostEffect();
+	if( pObjectPostEffect_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectPostEffect_->Initialize( 0, pFade_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectPostEffect = pEffect_->Get( _T( "PostEffect.fx" ) );
+	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectPostEffect,
+		pRenderPass_[ GraphicMain::PASS_3D_MERGE ].GetTexture( GraphicMain::RENDER_PASS_3D_MERGE_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_MASK ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectPostEffect_->SetPositionY( 1.0f );
 
 	// シーン引数クラスの生成
 	pArgument_ = new SceneArgumentMain();
@@ -399,7 +479,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pDevice_ = pDevice;
 	pArgument_->pFade_ = pFade_;
 	pArgument_->pEffectParameter_ = pEffectParameter_;
-	pArgument_->pObjectScreen_ = pObjectScreen_;
 	pArgument_->pWiiController_ = pWiiController_;
 	pArgument_->pKeyboard_ = pKeyboard_;
 	pArgument_->pMouse_ = pMouse_;
@@ -407,6 +486,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pVirtualController_ = pVirtualController_;
 	pArgument_->pTexture_ = pTexture_;
 	pArgument_->pModel_ = pModel_;
+	pArgument_->pMotion_ = pMotion_;
 	pArgument_->pEffect_ = pEffect_;
 	pArgument_->pSound_ = pSound_;
 
@@ -445,9 +525,17 @@ int ManagerMain::Finalize( void )
 	delete pArgument_;
 	pArgument_ = nullptr;
 
-	// 画面オブジェクトの開放
-	delete pObjectScreen_;
-	pObjectScreen_ = nullptr;
+	// ポストエフェクトオブジェクトの開放
+	delete pObjectPostEffect_;
+	pObjectPostEffect_ = nullptr;
+
+	// 総合3D描画オブジェクトの開放
+	delete pObjectMerge_;
+	pObjectMerge_ = nullptr;
+
+	// ライティングオブジェクトの開放
+	delete pObjectLightEffect_;
+	pObjectLightEffect_ = nullptr;
 
 	// 3Dポリゴンの開放
 	delete pPolygon3D_;
@@ -468,6 +556,10 @@ int ManagerMain::Finalize( void )
 	// エフェクト管理クラスの開放
 	delete pEffect_;
 	pEffect_ = nullptr;
+
+	// モーション管理クラスの開放
+	delete pMotion_;
+	pMotion_ = nullptr;
 
 	// モデル管理クラスの開放
 	delete pModel_;
@@ -645,7 +737,9 @@ void ManagerMain::InitializeSelf( void )
 	pXAudio_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
-	pObjectScreen_ = nullptr;
+	pObjectLightEffect_ = nullptr;
+	pObjectMerge_ = nullptr;
+	pObjectPostEffect_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;
 	pRenderPass_ = nullptr;
@@ -657,6 +751,7 @@ void ManagerMain::InitializeSelf( void )
 	pVirtualController_ = nullptr;
 	pTexture_ = nullptr;
 	pModel_ = nullptr;
+	pMotion_ = nullptr;
 	pEffect_ = nullptr;
 	pPolygon2D_ = nullptr;
 	pPolygon3D_ = nullptr;

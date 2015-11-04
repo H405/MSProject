@@ -251,7 +251,34 @@ void Model::SetTexture( int index, IDirect3DTexture9* pValue )
 IDirect3DTexture9* Model::GetTexture( int index ) const
 {
 	// 値の返却
+	if( static_cast< unsigned int >( index ) >= countTexture_ )
+	{
+		return nullptr;
+	}
 	return ppTexture_[ index ];
+}
+
+//==============================================================================
+// Brief  : ボーン数の取得
+// Return : unsigned long						: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+unsigned long Model::GetCountBone( void ) const
+{
+	// 値の返却
+	return 0;
+}
+
+//==============================================================================
+// Brief  : ボーンの初期姿勢行列の取得
+// Return : void								: なし
+// Arg    : int index							: 設定する番号
+// Arg    : D3DXMATRIX* pOut					: 値の格納アドレス
+//==============================================================================
+void Model::GetMatrixBone( int index, D3DXMATRIX* pOut ) const
+{
+	// 値の返却
+	D3DXMatrixIdentity( pOut );
 }
 
 //==============================================================================

@@ -170,14 +170,11 @@ int ObjectBillboard::CreateGraphic( int priority, const EffectParameter* pParame
 	}
 	Object::pGraphic_ = pGraphic_;
 
-	// ‰ñ“]‚Ìİ’è
-	rotation_.x = 1.5f * D3DX_PI;
-
 	// Šgk‚Ìİ’è
 	if( pTexture != nullptr )
 	{
 		scale_.x = static_cast< float >( pTexture->width_ );
-		scale_.z = static_cast< float >( pTexture->height_ );
+		scale_.y = static_cast< float >( pTexture->height_ );
 	}
 
 	// ³íI—¹

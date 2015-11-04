@@ -12,7 +12,7 @@
 //******************************************************************************
 #include "ManagerFireworks.h"
 #include "../framework/develop/Debug.h"
-#include "../framework/fireworks/FireworksState.h"
+#include "fireworks/FireworksState.h"
 
 //******************************************************************************
 // ƒ‰ƒCƒuƒ‰ƒŠ

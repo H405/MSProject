@@ -35,8 +35,10 @@ class LightPoint;
 class ManagerPoint;
 class Material;
 class Object2D;
+class ObjectBillboard;
 class ObjectMesh;
 class ObjectModel;
+class ObjectSkinMesh;
 class ObjectSky;
 
 //******************************************************************************
@@ -101,20 +103,22 @@ private:
 	SceneSplash( const SceneSplash& );
 	SceneSplash operator=( const SceneSplash& );
 
-	CameraObject*		pCamera_;			// カメラ
-	LightDirection*		pLight_;			// ライト
-	LightPoint*			pPointLight_;		// ポイントライト
+	CameraObject*		pCamera_;				// カメラ
+	LightDirection*		pLight_;				// ライト
+	LightPoint*			pPointLight_;			// ポイントライト
 
-	ManagerPoint*		pPoint_;			// ポイントスプライト管理クラス
+	ManagerPoint*		pPoint_;				// ポイントスプライト管理クラス
 
 	static const int	COUNT_MODEL = 10;		// モデル数
 
-	Object2D*			pObject2D_;			// 2Dオブジェクト
-	ObjectMesh*			pObjectMesh_;		// メッシュ
-	ObjectSky*			pObjectSky_;		// スカイドーム
-	ObjectModel*		pObjectModel_;		// モデル
+	Object2D*			pObject2D_;				// 2Dオブジェクト
+	ObjectMesh*			pObjectMesh_;			// メッシュ
+	ObjectSky*			pObjectSky_;			// スカイドーム
+	ObjectModel*		pObjectModel_;			// モデル
+	ObjectBillboard*	pObjectBoard_;			// ビルボード
+	ObjectSkinMesh*		pObjectSkinMesh_;		// スキンメッシュ
 
-	int					timerLight_;		// ライト用タイマー
+	int					timerLight_;			// ライト用タイマー
 };
 
 #endif	// MY_SCENE_SPLASH_H

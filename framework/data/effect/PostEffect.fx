@@ -1,8 +1,8 @@
 //==============================================================================
 // 
-// File   ： Polygon2D.fx
-// Brief  ： 2Dポリゴンエフェクト
-// Author ： Taiga Shirakawa
+// File   : PostEffect.fx
+// Brief  : ポストエフェクト
+// Author : Taiga Shirakawa
 // Date   : 2015/10/17 sat : Taiga Shirakawa : create
 // 
 //==============================================================================
@@ -75,11 +75,11 @@ struct VertexOutput
 };
 
 //==============================================================================
-// Brief  ： 頂点変換
-// Return ： VertexOutput					： 頂点出力
-// Arg    ： float4 positionLocal			： ローカル座標
-// Arg    ： float3 vectorNormal			： 法線ベクトル
-// Arg    ： float2 positionTexture			： テクスチャ座標
+// Brief  : 頂点変換
+// Return : VertexOutput					: 頂点出力
+// Arg    : float4 positionLocal			: ローカル座標
+// Arg    : float3 vectorNormal				: 法線ベクトル
+// Arg    : float2 positionTexture			: テクスチャ座標
 //==============================================================================
 VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoord : TEXCOORD0, float4 diffuse : COLOR0 )
 {
@@ -100,9 +100,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 }
 
 //==============================================================================
-// Brief  ： ピクセル描画
-// Return ： float4 : COLOR0				： 色
-// Arg    ： VertexOutput					： 頂点シェーダ出力
+// Brief  : ピクセル描画
+// Return : float4 : COLOR0					: 色
+// Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
@@ -114,7 +114,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 }
 
 //==============================================================================
-// Brief  ： 通常変換
+// Brief  : 通常変換
 //==============================================================================
 technique ShadeNormal
 {

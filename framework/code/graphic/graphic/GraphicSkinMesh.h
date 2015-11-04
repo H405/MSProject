@@ -1,17 +1,17 @@
 //==============================================================================
 //
-// File   : GraphicScreen.h
-// Brief  : 画面ポリゴン描画処理の管理クラス
+// File   : GraphicSkinMesh.h
+// Brief  : スキンメッシュ描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_GRAPHIC_SCREEN_H
-#define MY_GRAPHIC_SCREEN_H
+#ifndef MY_GRAPHIC_SKIN_MESH_H
+#define MY_GRAPHIC_SKIN_MESH_H
 
 //******************************************************************************
 // インクルード
@@ -31,11 +31,12 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
+class Model;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class GraphicScreen : public GraphicMain
+class GraphicSkinMesh : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -43,14 +44,14 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	GraphicScreen( void );
+	GraphicSkinMesh( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~GraphicScreen( void );
+	~GraphicSkinMesh( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
@@ -58,14 +59,13 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : const float* pProportionFade		: フェード割合
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : Model* pModel						: モデル
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -80,30 +80,35 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : const float* pProportionFade		: フェード割合
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : Model* pModel						: モデル
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : GraphicScreen* pOut						: コピー先アドレス
+	// Arg    : GraphicSkinMesh* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( GraphicScreen* pOut ) const;
+	int Copy( GraphicSkinMesh* pOut ) const;
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetGraphic( GraphicSkinMesh* pValue );
+	GraphicSkinMesh* GetGraphic( void ) const;
 
 protected:
-	IDirect3DTexture9*	pTexture_;			// テクスチャ
-	D3DXCOLOR			colorFade_;			// フェード色
+	GraphicSkinMesh*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	GraphicScreen( const GraphicScreen& );
-	GraphicScreen operator=( const GraphicScreen& );
+	GraphicSkinMesh( const GraphicSkinMesh& );
+	GraphicSkinMesh operator=( const GraphicSkinMesh& );
+
 };
 
-#endif	// MY_GRAPHIC_SCREEN_H
+#endif	// MY_GRAPHIC_SKIN_MESH_H

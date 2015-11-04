@@ -76,11 +76,14 @@
     <Filter Include="ソース ファイル\framework\sound">
       <UniqueIdentifier>{b99a1f9b-773b-4c97-a145-8f1f6008b2ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\framework\fireworks">
-      <UniqueIdentifier>{593e3025-ee44-46e6-bf21-1247496ffdbc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\framework\target">
       <UniqueIdentifier>{bec3158b-cc76-490c-918c-055e0249a770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\fireworks">
+      <UniqueIdentifier>{43f16352-7869-4b2b-aaaf-7f32889a4123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\target">
+      <UniqueIdentifier>{4f1d4a8b-9026-4765-843b-85c1b7d55488}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -252,15 +255,6 @@
     <ClInclude Include="code\graphic\drawer\Drawer2D.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
-    <ClInclude Include="code\object\ObjectScreen.h">
-      <Filter>ソース ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="code\graphic\graphic\GraphicScreen.h">
-      <Filter>ソース ファイル\graphic\graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="code\graphic\drawer\DrawerScreen.h">
-      <Filter>ソース ファイル\graphic\drawer</Filter>
-    </ClInclude>
     <ClInclude Include="code\graphic\drawer\Drawer3D.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
@@ -372,23 +366,74 @@
     <ClInclude Include="code\framework\resource\Sound.h">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClInclude>
-    <ClInclude Include="code\object\ObjectFire.h">
+    <ClInclude Include="code\framework\system\File.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ModelConvert.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\Motion.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\resource\ManagerMotion.h">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectPostEffect.h">
       <Filter>ソース ファイル\object</Filter>
     </ClInclude>
-    <ClInclude Include="code\system\ManagerFireworks.h">
-      <Filter>ソース ファイル\system</Filter>
+    <ClInclude Include="code\graphic\graphic\GraphicPostEffect.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
     </ClInclude>
-    <ClInclude Include="code\framework\fireworks\Fireworks.h">
-      <Filter>ソース ファイル\framework\fireworks</Filter>
+    <ClInclude Include="code\graphic\drawer\DrawerPostEffect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
-    <ClInclude Include="code\framework\target\Target.h">
-      <Filter>ソース ファイル\framework\target</Filter>
+    <ClInclude Include="code\framework\render\RenderPassParameter.h">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectLightEffect.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicLightEffect.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectMerge.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicMerge.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerMerge.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectSkinMesh.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicSkinMesh.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMesh.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\fireworks\Fireworks.h">
+      <Filter>ソース ファイル\system\fireworks</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\fireworks\FireworksState.h">
+      <Filter>ソース ファイル\system\fireworks</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\target\Target.h">
+      <Filter>ソース ファイル\system\target</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectFire.h">
+      <Filter>ソース ファイル\object</Filter>
     </ClInclude>
     <ClInclude Include="code\system\ManagerTarget.h">
       <Filter>ソース ファイル\system</Filter>
     </ClInclude>
-    <ClInclude Include="code\framework\fireworks\FireworksState.h">
-      <Filter>ソース ファイル\framework\fireworks</Filter>
+    <ClInclude Include="code\system\ManagerFireworks.h">
+      <Filter>ソース ファイル\system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -560,15 +605,6 @@
     <ClCompile Include="code\graphic\drawer\Drawer2D.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
-    <ClCompile Include="code\object\ObjectScreen.cpp">
-      <Filter>ソース ファイル\object</Filter>
-    </ClCompile>
-    <ClCompile Include="code\graphic\graphic\GraphicScreen.cpp">
-      <Filter>ソース ファイル\graphic\graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="code\graphic\drawer\DrawerScreen.cpp">
-      <Filter>ソース ファイル\graphic\drawer</Filter>
-    </ClCompile>
     <ClCompile Include="code\graphic\drawer\Drawer3D.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
@@ -674,23 +710,74 @@
     <ClCompile Include="code\framework\resource\ManagerSound.cpp">
       <Filter>ソース ファイル\framework\resource</Filter>
     </ClCompile>
-    <ClCompile Include="code\object\ObjectFire.cpp">
+    <ClCompile Include="code\framework\system\File.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ModelConvert.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\Motion.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\resource\ManagerMotion.cpp">
+      <Filter>ソース ファイル\framework\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectPostEffect.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
-    <ClCompile Include="code\system\ManagerFireworks.cpp">
-      <Filter>ソース ファイル\system</Filter>
+    <ClCompile Include="code\graphic\graphic\GraphicPostEffect.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
     </ClCompile>
-    <ClCompile Include="code\framework\fireworks\Fireworks.cpp">
-      <Filter>ソース ファイル\framework\fireworks</Filter>
+    <ClCompile Include="code\graphic\drawer\DrawerPostEffect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
-    <ClCompile Include="code\framework\target\Target.cpp">
-      <Filter>ソース ファイル\framework\target</Filter>
+    <ClCompile Include="code\framework\render\RenderPassParameter.cpp">
+      <Filter>ソース ファイル\framework\render</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectLightEffect.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicLightEffect.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectMerge.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicMerge.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerMerge.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectSkinMesh.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicSkinMesh.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMesh.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\fireworks\Fireworks.cpp">
+      <Filter>ソース ファイル\system\fireworks</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\fireworks\FireworksState.cpp">
+      <Filter>ソース ファイル\system\fireworks</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\target\Target.cpp">
+      <Filter>ソース ファイル\system\target</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectFire.cpp">
+      <Filter>ソース ファイル\object</Filter>
     </ClCompile>
     <ClCompile Include="code\system\ManagerTarget.cpp">
       <Filter>ソース ファイル\system</Filter>
     </ClCompile>
-    <ClCompile Include="code\framework\fireworks\FireworksState.cpp">
-      <Filter>ソース ファイル\framework\fireworks</Filter>
+    <ClCompile Include="code\system\ManagerFireworks.cpp">
+      <Filter>ソース ファイル\system</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

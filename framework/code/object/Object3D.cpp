@@ -211,4 +211,5 @@ Graphic3D* Object3D::GetGraphic( void ) const
 void Object3D::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
+	pGraphic_ = nullptr;
 }

@@ -100,6 +100,8 @@ private:
 
 	int LoadResource( TCHAR* pPath, int index );
 	void ReleaseResource( int index );
+	int LoadModelX( TCHAR* pPath, int index );
+	int LoadModelConvert( TCHAR* pPath, int index );
 
 	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
 	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス

@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : Fireworks.h
-// Brief  : 花火オブジェクトクラス
-// Author : Kotaro Nagasaki
-// Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
+// File   : ObjectPostEffect.h
+// Brief  : 画面ポリゴンオブジェクトクラス
+// Author : Taiga Shirakawa
+// Date   : 2015/10/17 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_FIREWORKS_H
-#define MY_FIREWORKS_H
+#ifndef MY_OBJECT_POST_EFFECT_H
+#define MY_OBJECT_POST_EFFECT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../object/ObjectMovement.h"
+#include "../framework/object/Object.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,70 +29,39 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class ManagerPoint;
-class FireworksState;
-
-//******************************************************************************
-// 構造体定義
-//******************************************************************************
-typedef struct
-{
-	//	位置情報
-	D3DXVECTOR3 pos;
-
-	//	移動の回転方向
-	float rot;
-
-	//	Z軸の回転速度（１アップデートでどのくらい回転するか）
-	float rotSpeed;
-
-	//	移動速度
-	D3DXVECTOR3 speed;
-
-	//	ポイントスプライトクラス管理オブジェクト
-	ManagerPoint* managerPoint;
-
-	//	使用可能フラグ
-	bool enable;
-
-	//	自然消滅までのカウンタ
-	int deleteCount;
-
-}FIREWORKS_PARAM;
+class Effect;
+class EffectParameter;
+class Fade;
+class GraphicPostEffect;
+class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class Fireworks
+class ObjectPostEffect : public Object
 {
-friend class FireworksState;
-
 public:
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	Fireworks( void );
+	ObjectPostEffect( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~Fireworks( void );
+	~ObjectPostEffect( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
+	// Arg    : int priority						: 更新優先度
+	// Arg    : Fade* pFade							: フェード
 	//==============================================================================
-	int Set(
-		int _indexState,
-		ManagerPoint* _managerPoint,
-		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _speed,
-		float _rot,
-		float _rotSpeed);
+	int Initialize( int priority, Fade* pFade );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -102,6 +71,21 @@ public:
 	int Finalize( void );
 
 	//==============================================================================
+	// Brief  : 再初期化処理
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 更新優先度
+	// Arg    : Fade* pFade							: フェード
+	//==============================================================================
+	int Reinitialize( int priority, Fade* pFade );
+
+	//==============================================================================
+	// Brief  : クラスのコピー
+	// Return : int									: 実行結果
+	// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
+	//==============================================================================
+	int Copy( ObjectPostEffect* pOut ) const;
+
+	//==============================================================================
 	// Brief  : 更新処理
 	// Return : void								: なし
 	// Arg    : void								: なし
@@ -109,58 +93,35 @@ public:
 	void Update( void );
 
 	//==============================================================================
-	// Brief  : 花火の爆発処理
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Brief  : 描画クラスの生成
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
+	// Arg    : Texture* pTexture					: テクスチャ
 	//==============================================================================
-	void burn();
-
-	//==============================================================================
-	// Brief  : ステートの設定
-	// Return : void								: なし
-	// Arg    : FireworksState** ppState				: ステートテーブル
-	//==============================================================================
-	static void SetState( FireworksState** ppState );
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture = nullptr );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	D3DXVECTOR3 getSpeed(){return param.speed;}
-
-	D3DXVECTOR3 getPosition(){return param.pos;}
-	void addPosition(float _x, float _y, float _z){param.pos.x += _x;param.pos.y += _y;param.pos.z += _z;}
-	void addPositionX(float _x){param.pos.x += _x;}
-	void addPositionY(float _y){param.pos.y += _y;}
-	void addPositionZ(float _z){param.pos.z += _z;}
-
-	float getRotation(){return param.rot;}
-	void addRotationSpeed(float _value){param.rot += _value;}
-
-	float getRotationSpeed(){return param.rotSpeed;}
-
-	bool IsEnable(){return param.enable;}
-	void setEnable(bool _flag){param.enable = _flag;}
-
-	ManagerPoint* getManagerPoint(){return param.managerPoint;};
-
-	int getDeleteCount(){return param.deleteCount;}
-	void deleteCountPP(){param.deleteCount++;}
-
-	FIREWORKS_PARAM* getParam(){return &param;}
+	void SetGraphic( GraphicPostEffect* pValue );
+	GraphicPostEffect* GetGraphic( void ) const;
 
 protected:
-
-	// ステート
-	static FireworksState**	ppState_;
-	int indexState;
-
-	//	花火用パラメータ
-	FIREWORKS_PARAM param;
+	GraphicPostEffect*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	Fireworks( const Fireworks& );
-	Fireworks operator=( const Fireworks& );
+	ObjectPostEffect( const ObjectPostEffect& );
+	ObjectPostEffect operator=( const ObjectPostEffect& );
+
+	Fade*	pFade_;					// フェード
+	float	proportionFade_;		// フェード割合
 };
 
-#endif	// MY_FIREWORKS_H
+#endif	// MY_OBJECT_POST_EFFECT_H

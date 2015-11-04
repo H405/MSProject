@@ -236,5 +236,6 @@ GraphicMesh* ObjectMesh::GetGraphic( void ) const
 void ObjectMesh::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
+	pGraphic_ = nullptr;
 	pPolygon_ = nullptr;
 }

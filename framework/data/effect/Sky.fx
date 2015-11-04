@@ -1,8 +1,8 @@
 //==============================================================================
 // 
-// File   ： Sky.fx
-// Brief  ： 空エフェクト
-// Author ： Taiga Shirakawa
+// File   : Sky.fx
+// Brief  : 空エフェクト
+// Author : Taiga Shirakawa
 // Date   : 2015/10/21 wed : Taiga Shirakawa : create
 // 
 //==============================================================================
@@ -36,11 +36,19 @@ struct VertexOutput
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
 
+// ピクセルシェーダ出力
+struct PixelOutput
+{
+	float4	color_			: COLOR0;			// 色
+	float4	mask_			: COLOR1;			// マスク
+	float4	add_			: COLOR2;			// 加算合成
+};
+
 //==============================================================================
-// Brief  ： 頂点変換
-// Return ： VertexOutput					： 頂点出力
-// Arg    ： float4 positionLocal			： ローカル座標
-// Arg    ： float2 positionTexture			： テクスチャ座標
+// Brief  : 頂点変換
+// Return : VertexOutput					: 頂点出力
+// Arg    : float4 positionLocal			: ローカル座標
+// Arg    : float2 positionTexture			: テクスチャ座標
 //==============================================================================
 VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoord : TEXCOORD0 )
 {
@@ -56,18 +64,24 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 }
 
 //==============================================================================
-// Brief  ： ピクセル描画
-// Return ： float4 : COLOR0				： 色
-// Arg    ： VertexOutput					： 頂点シェーダ出力
+// Brief  : ピクセル描画
+// Return : PixelOutput						: ピクセルシェーダ出力
+// Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
-float4 DrawPixel( VertexOutput vertex ) : COLOR0
+PixelOutput DrawPixel( VertexOutput vertex )
 {
-	// ピクセル色を返す
-	return tex2D( samplerTexture, vertex.textureCoord_ );
+	// 値の設定
+	PixelOutput	output;		// ピクセルシェーダ出力
+	output.color_ = tex2D( samplerTexture, vertex.textureCoord_ );
+	output.mask_ = 1.0f;
+	output.add_ = 0.0f;
+
+	// ピクセルシェーダ出力を返す
+	return output;
 }
 
 //==============================================================================
-// Brief  ： 通常変換
+// Brief  : 通常変換
 //==============================================================================
 technique ShadeNormal
 {

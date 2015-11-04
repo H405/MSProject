@@ -1,6 +1,6 @@
 //==============================================================================
 //
-// File   : DrawerScreen.cpp
+// File   : DrawerPostEffect.cpp
 // Brief  : 画面ポリゴン描画クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/10/17 sat : Taiga Shirakawa : create
@@ -10,7 +10,7 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "DrawerScreen.h"
+#include "DrawerPostEffect.h"
 #include "../../framework/resource/Effect.h"
 #include "../../framework/polygon/Polygon2D.h"
 #include "../../system/EffectParameter.h"
@@ -32,7 +32,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerScreen::DrawerScreen( void ) : Drawer()
+DrawerPostEffect::DrawerPostEffect( void ) : Drawer()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -43,7 +43,7 @@ DrawerScreen::DrawerScreen( void ) : Drawer()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerScreen::~DrawerScreen( void )
+DrawerPostEffect::~DrawerPostEffect( void )
 {
 	// 終了処理
 	Finalize();
@@ -62,7 +62,7 @@ DrawerScreen::~DrawerScreen( void )
 // Arg    : const D3DXCOLOR* pColorFade			: フェードの色
 // Arg    : const float* pProportionFade		: フェードの割合
 //==============================================================================
-int DrawerScreen::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
 	const D3DXCOLOR* pColorFade, const float* pProportionFade )
 {
@@ -101,7 +101,7 @@ int DrawerScreen::Initialize( const EffectParameter* pParameter, Effect* pEffect
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int DrawerScreen::Finalize( void )
+int DrawerPostEffect::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -131,7 +131,7 @@ int DrawerScreen::Finalize( void )
 // Arg    : const D3DXCOLOR* pColorFade			: フェードの色
 // Arg    : const float* pProportionFade		: フェードの割合
 //==============================================================================
-int DrawerScreen::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+int DrawerPostEffect::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
 	const D3DXCOLOR* pColorFade, const float* pProportionFade )
 {
@@ -150,9 +150,9 @@ int DrawerScreen::Reinitialize( const EffectParameter* pParameter, Effect* pEffe
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : DrawerScreen* pOut						: コピー先アドレス
+// Arg    : DrawerPostEffect* pOut				: コピー先アドレス
 //==============================================================================
-int DrawerScreen::Copy( DrawerScreen* pOut ) const
+int DrawerPostEffect::Copy( DrawerPostEffect* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -171,7 +171,7 @@ int DrawerScreen::Copy( DrawerScreen* pOut ) const
 // Return : void								: なし
 // Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 //==============================================================================
-void DrawerScreen::Draw( const D3DXMATRIX& matrixWorld )
+void DrawerPostEffect::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// パラメータの設定
 	D3DXMATRIX	matrixWorldSet;		// 設定するワールドマトリクス
@@ -201,7 +201,7 @@ void DrawerScreen::Draw( const D3DXMATRIX& matrixWorld )
 // Return : void								: なし
 // Arg    : IDirect3DTexture9* pValue			: 設定する値
 //==============================================================================
-void DrawerScreen::SetTexture( IDirect3DTexture9* pValue )
+void DrawerPostEffect::SetTexture( IDirect3DTexture9* pValue )
 {
 	// 値の設定
 	pTexture_ = pValue;
@@ -212,7 +212,7 @@ void DrawerScreen::SetTexture( IDirect3DTexture9* pValue )
 // Return : IDirect3DTexture9*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-IDirect3DTexture9* DrawerScreen::GetTexture( void ) const
+IDirect3DTexture9* DrawerPostEffect::GetTexture( void ) const
 {
 	// 値の返却
 	return pTexture_;
@@ -223,7 +223,7 @@ IDirect3DTexture9* DrawerScreen::GetTexture( void ) const
 // Return : void								: なし
 // Arg    : Polygon2D* pValue					: 設定する値
 //==============================================================================
-void DrawerScreen::SetPolygon( Polygon2D* pValue )
+void DrawerPostEffect::SetPolygon( Polygon2D* pValue )
 {
 	// 値の設定
 	pPolygon_ = pValue;
@@ -234,7 +234,7 @@ void DrawerScreen::SetPolygon( Polygon2D* pValue )
 // Return : Polygon2D*							: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-Polygon2D* DrawerScreen::GetPolygon( void ) const
+Polygon2D* DrawerPostEffect::GetPolygon( void ) const
 {
 	// 値の返却
 	return pPolygon_;
@@ -245,7 +245,7 @@ Polygon2D* DrawerScreen::GetPolygon( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void DrawerScreen::InitializeSelf( void )
+void DrawerPostEffect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pEffectParameter_ = nullptr;

@@ -1,19 +1,17 @@
 //==============================================================================
 //
-// File   : ObjectScreen.cpp
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : ObjectMerge.cpp
+// Brief  : 総合3D描画オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ObjectScreen.h"
-#include "../framework/resource/Texture.h"
-#include "../framework/system/Fade.h"
-#include "../graphic/graphic/GraphicScreen.h"
+#include "ObjectMerge.h"
+#include "../graphic/graphic/GraphicMerge.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -33,7 +31,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScreen::ObjectScreen( void ) : ObjectMovement()
+ObjectMerge::ObjectMerge( void ) : Object()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +42,7 @@ ObjectScreen::ObjectScreen( void ) : ObjectMovement()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScreen::~ObjectScreen( void )
+ObjectMerge::~ObjectMerge( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,9 +52,8 @@ ObjectScreen::~ObjectScreen( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
-// Arg    : Fade* pFade							: フェード
 //==============================================================================
-int ObjectScreen::Initialize( int priority, Fade* pFade )
+int ObjectMerge::Initialize( int priority )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -65,9 +62,6 @@ int ObjectScreen::Initialize( int priority, Fade* pFade )
 	{
 		return result;
 	}
-
-	// メンバ変数の設定
-	pFade_ = pFade;
 
 	// 正常終了
 	return 0;
@@ -78,7 +72,7 @@ int ObjectScreen::Initialize( int priority, Fade* pFade )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int ObjectScreen::Finalize( void )
+int ObjectMerge::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -99,9 +93,8 @@ int ObjectScreen::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
-// Arg    : Fade* pFade							: フェード
 //==============================================================================
-int ObjectScreen::Reinitialize( int priority, Fade* pFade )
+int ObjectMerge::Reinitialize( int priority )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -112,15 +105,15 @@ int ObjectScreen::Reinitialize( int priority, Fade* pFade )
 	}
 
 	// 初期化処理
-	return Initialize( priority, pFade );
+	return Initialize( priority );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ObjectScreen* pOut						: コピー先アドレス
+// Arg    : ObjectMerge* pOut					: コピー先アドレス
 //==============================================================================
-int ObjectScreen::Copy( ObjectScreen* pOut ) const
+int ObjectMerge::Copy( ObjectMerge* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -139,13 +132,10 @@ int ObjectScreen::Copy( ObjectScreen* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectScreen::Update( void )
+void ObjectMerge::Update( void )
 {
-	// フェードの更新
-	proportionFade_ = pFade_->GetProportion();
-
 	// 基本クラスの処理
-	ObjectMovement::Update();
+	Object::Update();
 }
 
 //==============================================================================
@@ -154,28 +144,22 @@ void ObjectScreen::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLight	: ライトありテクスチャ
+// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : Texture* pTexture					: テクスチャ
+// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 //==============================================================================
-int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture )
+int ObjectMerge::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd )
 {
 	// グラフィックの生成
-	int					result;				// 実行結果
-	IDirect3DTexture9*	pTextureSet;		// 設定するテクスチャ
-	pTextureSet = nullptr;
-	if( pTexture != nullptr )
-	{
-		pTextureSet = pTexture->pTexture_;
-	}
-	pGraphic_ = new GraphicScreen();
+	int		result;				// 実行結果
+	pGraphic_ = new GraphicMerge();
 	if( pGraphic_ == nullptr )
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTexture3D, pTexture2D, pTextureMask, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd );
 	if( result != 0 )
 	{
 		return result;
@@ -189,16 +173,16 @@ int ObjectScreen::CreateGraphic( int priority, const EffectParameter* pParameter
 		scale_.y = pParameter->GetHeightScreen();
 	}
 
-	// 正常終了
+	// 値の返却
 	return 0;
 }
 
 //==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : GraphicScreen* pValue						: 設定する値
+// Arg    : GraphicMerge* pValue			: 設定する値
 //==============================================================================
-void ObjectScreen::SetGraphic( GraphicScreen* pValue )
+void ObjectMerge::SetGraphic( GraphicMerge* pValue )
 {
 	// 値の設定
 	pGraphic_ = pValue;
@@ -207,10 +191,10 @@ void ObjectScreen::SetGraphic( GraphicScreen* pValue )
 
 //==============================================================================
 // Brief  : 描画クラスの取得
-// Return : GraphicScreen*							: 返却する値
+// Return : GraphicMerge*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen* ObjectScreen::GetGraphic( void ) const
+GraphicMerge* ObjectMerge::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
@@ -221,10 +205,8 @@ GraphicScreen* ObjectScreen::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectScreen::InitializeSelf( void )
+void ObjectMerge::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;
-	pFade_ = nullptr;
-	proportionFade_ = 0.0f;
 }

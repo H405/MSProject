@@ -39,12 +39,13 @@ class InputMouse;
 class InputPad;
 class VirtualController;
 class Model;
-class ObjectScreen;
+class Motion;
 class Sound;
 class Texture;
 class Window;
 template < class Effect > class ManagerEffect;
 template < class Model > class ManagerModel;
+template < class Motion > class ManagerMotion;
 template < class Sound > class ManagerSound;
 template < class Texture > class ManagerTexture;
 
@@ -72,7 +73,6 @@ public:
 	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
 	Fade*						pFade_;					// フェード管理クラス
 	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
-	ObjectScreen*				pObjectScreen_;			// 画面オブジェクト
 	CWiiController*				pWiiController_;		// wiiリモコン入力クラス
 	InputKeyboard*				pKeyboard_;				// キーボード入力クラス
 	InputMouse*					pMouse_;				// マウス入力クラス
@@ -80,6 +80,7 @@ public:
 	VirtualController*			pVirtualController_;	// 仮想コントローラ管理クラス
 	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
 	ManagerModel< Model >*		pModel_;				// モデル管理クラス
+	ManagerMotion< Motion >*	pMotion_;				// モーション管理クラス
 	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス
 	ManagerSound< Sound >*		pSound_;				// サウンド管理クラス
 

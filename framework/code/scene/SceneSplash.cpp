@@ -27,6 +27,7 @@
 #include "../framework/resource/Effect.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
+#include "../framework/resource/ManagerMotion.h"
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
@@ -36,6 +37,7 @@
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectModel.h"
+#include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectSky.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
@@ -101,7 +103,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		1000.0f,
-		D3DXVECTOR3( 0.0f, 30.0f, -150.0f ),
+		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ),
 		D3DXVECTOR3( 0.0f, 0.0f, 20.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
@@ -220,6 +222,29 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectModel_[ 2 ].Initialize( 0 );
 	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
+	pObjectModel_[ 2 ].SetPositionY( 20.0f );
+
+	// ビルボードの生成
+	Effect*		pEffectBillboard = nullptr;			// エフェクト
+	Texture*	pTextureBillboard = nullptr;		// テクスチャ
+	pEffectBillboard = pArgument->pEffect_->Get( _T( "Billboard.fx" ) );
+	pTextureBillboard = pArgument_->pTexture_->Get( _T( "common/finger.png" ) );
+	pObjectBoard_ = new ObjectBillboard();
+	pObjectBoard_->Initialize( 0 );
+	pObjectBoard_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectBillboard, pTextureBillboard );
+	pObjectBoard_->SetScale( pObjectBoard_->GetScaleX() * 0.1f, pObjectBoard_->GetScaleY() * 0.1f, 1.0f );
+	pObjectBoard_->SetPosition( -50.0f, 90.0f, 0.0f );
+
+	// スキンメッシュの生成
+	Effect*	pEffectSkinMesh = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;		// モデル
+	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
+	pObjectSkinMesh_ = new ObjectSkinMesh();
+	pObjectSkinMesh_->Initialize( 0, 1 );
+	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
+	pObjectSkinMesh_->SetPositionX( -100.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -238,7 +263,15 @@ int SceneSplash::Finalize( void )
 	// ポイントライトの個数を設定
 	pArgument_->pEffectParameter_->SetCountLightPoint( 0 );
 
-	// モデルの破棄
+	// スキンメッシュの開放
+	delete pObjectSkinMesh_;
+	pObjectSkinMesh_ = nullptr;
+
+	// ビルボードの開放
+	delete pObjectBoard_;
+	pObjectBoard_ = nullptr;
+
+	// モデルの開放
 	delete[] pObjectModel_;
 	pObjectModel_ = nullptr;
 
@@ -343,7 +376,7 @@ void SceneSplash::Update( void )
 
 	// モデルの回転
 	pObjectModel_[ 0 ].AddRotationY( 0.01f );
-
+	pObjectBoard_->AddRotationZ( 0.1f );
 #if 0
 	// ライトの回転
 	static float	rotL = 0.0f;
@@ -438,5 +471,7 @@ void SceneSplash::InitializeSelf( void )
 	pObjectMesh_ = nullptr;
 	pObjectSky_ = nullptr;
 	pObjectModel_ = nullptr;
+	pObjectBoard_ = nullptr;
+	pObjectSkinMesh_ = nullptr;
 	timerLight_ = 0;
 }

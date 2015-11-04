@@ -165,83 +165,26 @@ void DrawerMesh::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 変換行列
 	D3DXMATRIX		matrixTransform;				// 変換行列
-	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション行列
+	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
+	D3DXMATRIX		matrixWorldView;				// ワールドビュー変換行列
+	D3DXMATRIX		matrixView;						// ビュー変換行列
 	const Camera*	pCamera = nullptr;				// カメラ
 	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
 	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
 	pRenderMatrix = pCamera->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
+	pRenderMatrix->GetMatrixView( &matrixView );
 	D3DXMatrixMultiply( &matrixTransform, &matrixWorld, &matrixViewProjection );
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
-
-	// ワールドマトリクス
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
 
-	// 視点座標
-	D3DXVECTOR3	positionEye;		// 視点座標
-	pCamera->GetPositionCamera( &positionEye );
-	pEffect_->SetFloatArray( PARAMETER_POSITION_EYE, &positionEye.x, 3 );
-
-	// 環境光色
-	D3DXCOLOR	colorAmbient;		// 環境光色
-	pEffectParameter_->GetColorAmbient( &colorAmbient );
-	pEffect_->SetFloatArray( PARAMETER_COLOR_AMBIENT, &colorAmbient.r, 3 );
-
-	// ディレクショナルライトのベクトル
-	const LightDirection*	pLightDirection = nullptr;		// ディレクショナルライト
-	D3DXVECTOR3				vectorLight;					// ディレクショナルライトベクトル
-	pLightDirection = pEffectParameter_->GetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL );
-	pLightDirection->GetVector( &vectorLight );
-	pEffect_->SetFloatArray( PARAMETER_VECTOR_LIGHT_DIRECTION, &vectorLight.x, 3 );
-
-	// ディレクショナルライトの色
-	D3DXCOLOR	colorLightDirection;		// ディレクショナルライトの色
-	pLightDirection->GetDiffuse( &colorLightDirection );
-	pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_DIRECTION, &colorLightDirection.r, 3 );
-
-	// ポイントライトの設定
-	int					countPoint;				// ポイントライトの数
-	const LightPoint*	pLightPoint;			// ポイントライト
-	D3DXVECTOR3			positionPoint;			// ポイントライトの座標
-	D3DXCOLOR			colorPoint;				// ポイントライトの色
-	D3DXVECTOR3			attemuationPoint;		// ポイントライトの減衰率
-	float				pPositionPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];			// ポイントライトの座標
-	float				pColorPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];			// ポイントライトの色
-	float				pAttemuationPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];		// ポイントライトの減衰率
-	countPoint = pEffectParameter_->GetCountLightPoint();
-	for( int counterLight = 0; counterLight < countPoint; ++counterLight )
-	{
-		// ポイントライトの座標
-		pLightPoint = pEffectParameter_->GetLightPoint( counterLight );
-		pLightPoint->GetPosition( &positionPoint );
-		pPositionPoint[ 3 * counterLight + 0 ] = positionPoint.x;
-		pPositionPoint[ 3 * counterLight + 1 ] = positionPoint.y;
-		pPositionPoint[ 3 * counterLight + 2 ] = positionPoint.z;
-
-		// ポイントライトの色
-		pLightPoint->GetDiffuse( &colorPoint );
-		pColorPoint[ 3 * counterLight + 0 ] = colorPoint.r;
-		pColorPoint[ 3 * counterLight + 1 ] = colorPoint.g;
-		pColorPoint[ 3 * counterLight + 2 ] = colorPoint.b;
-
-		// ポイントライトの減衰率
-		pLightPoint->GetAttemuation( &attemuationPoint );
-		pAttemuationPoint[ 3 * counterLight + 0 ] = attemuationPoint.x;
-		pAttemuationPoint[ 3 * counterLight + 1 ] = attemuationPoint.y;
-		pAttemuationPoint[ 3 * counterLight + 2 ] = attemuationPoint.z;
-	}
-
-	// ポイントライトの座標
-	pEffect_->SetFloatArray( PARAMETER_POSITION_LIGHT_POINT, pPositionPoint, 3 * countPoint );
-
-	// ポイントライトの色
-	pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_POINT, pColorPoint, 3 * countPoint );
-
-	// ポイントライトの減衰率
-	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, pAttemuationPoint, 3 * countPoint );
-
-	// ポイントライトの数
-	pEffect_->SetInteger( PARAMETER_COUNT_LIGHT_POINT, countPoint );
+	// カメラのクリップ値
+	float	pClipCamera[ 2 ];		// カメラのクリップ値
+	pClipCamera[ 0 ] = pCamera->GetClipNear();
+	pClipCamera[ 1 ] = pCamera->GetClipFar();
+	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
 
 	// テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );

@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectScreen.h
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : ManagerMotion.h
+// Brief  : モーション管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SCREEN_H
-#define MY_OBJECT_SCREEN_H
+#ifndef MY_MANAGER_MOTION_H
+#define MY_MANAGER_MOTION_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/ObjectMovement.h"
+#include "ManagerResource.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,16 +29,13 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
-class EffectParameter;
-class Fade;
-class GraphicScreen;
-class Texture;
+class Motion;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectScreen : public ObjectMovement
+template< class TypeItem >
+class ManagerMotion : public ManagerResource< TypeItem >
 {
 public:
 	//==============================================================================
@@ -46,22 +43,22 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectScreen( void );
+	ManagerMotion( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectScreen( void );
+	~ManagerMotion( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : TCHAR* pDirectory					: 基準ディレクトリ
+	// Arg    : int maximumItem						: 最大要素数
 	//==============================================================================
-	int Initialize( int priority, Fade* pFade );
+	int Initialize( TCHAR* pDirectory, int maximumItem );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -73,55 +70,27 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : TCHAR* pDirectory					: 基準ディレクトリ
+	// Arg    : int maximumItem						: 最大要素数
 	//==============================================================================
-	int Reinitialize( int priority, Fade* pFade );
+	int Reinitialize( TCHAR* pDirectory, int maximumItem );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectScreen* pOut						: コピー先アドレス
+	// Arg    : ManagerMotion* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectScreen* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture = nullptr );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	void SetGraphic( GraphicScreen* pValue );
-	GraphicScreen* GetGraphic( void ) const;
+	int Copy( ManagerMotion* pOut ) const;
 
 protected:
-	GraphicScreen*	pGraphic_;		// 描画クラス
 
 private:
-	void InitializeSelf( void );
-	ObjectScreen( const ObjectScreen& );
-	ObjectScreen operator=( const ObjectScreen& );
+	ManagerMotion( const ManagerMotion& );
+	ManagerMotion operator=( const ManagerMotion& );
 
-	Fade*	pFade_;					// フェード
-	float	proportionFade_;		// フェード割合
+	void InitializeSelf( void );
+	int LoadResource( TCHAR* pPath, int index );
+	void ReleaseResource( int index );
 };
 
-#endif	// MY_OBJECT_SCREEN_H
+#endif	// MY_MANAGER_MOTION_H

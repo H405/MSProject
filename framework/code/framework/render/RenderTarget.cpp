@@ -50,43 +50,23 @@ RenderTarget::~RenderTarget( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : int width							: 幅
+// Arg    : int height							: 高さ
+// Arg    : D3DFORMAT format					: テクスチャフォーマット
 //==============================================================================
-int RenderTarget::Initialize( IDirect3DDevice9* pDevice )
+int RenderTarget::Initialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format )
 {
 	// メンバ変数の設定
 	pDevice_ = pDevice;
 
 	// テクスチャサーフェイスの生成
-	IDirect3DSurface9*	pSurfaceDepthCurrent = nullptr;		// 現在のレンダーターゲット
-	D3DSURFACE_DESC		descSurfaceDepth;					// サーフェイス情報
-	unsigned int		widthSurface;						// サーフェイスの幅
-	unsigned int		heightSurface;						// サーフェイスの高さ
-	int					result;								// 実行結果
-	pDevice_->GetRenderTarget( 0, &pSurfaceDepthCurrent );
-	pSurfaceDepthCurrent->GetDesc( &descSurfaceDepth );
-	widthSurface = descSurfaceDepth.Width;
-	heightSurface = descSurfaceDepth.Height;
-	pSurfaceDepthCurrent->Release();
-	pSurfaceDepthCurrent = nullptr;
-	result = D3DXCreateTexture( pDevice_, widthSurface, heightSurface, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &pTexture_ );
+	int		result;		// 実行結果
+	result = D3DXCreateTexture( pDevice_, width, height, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &pTexture_ );
 	if( result != 0 )
 	{
 		return 0;
 	}
-
-	// 深度バッファの生成
-	D3DSURFACE_DESC	descSurfaceTexture;		// サーフェイス情報
-	unsigned int	widthTexture;			// サーフェイスの幅
-	unsigned int	heightTexture;			// サーフェイスの高さ
 	pTexture_->GetSurfaceLevel( 0, &pSurfaceTexture_ );
-	pSurfaceTexture_->GetDesc( &descSurfaceTexture );
-	widthTexture = descSurfaceTexture.Width;
-	heightTexture = descSurfaceTexture.Height;
-	result = pDevice_->CreateDepthStencilSurface( widthTexture, heightTexture, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, FALSE, &pSurfaceDepth_, nullptr );
-	if( result != 0 )
-	{
-		return 0;
-	}
 
 	// 正常終了
 	return 0;
@@ -99,13 +79,6 @@ int RenderTarget::Initialize( IDirect3DDevice9* pDevice )
 //==============================================================================
 int RenderTarget::Finalize( void )
 {
-	// テクスチャの開放
-	if( pTexture_ != nullptr )
-	{
-		pTexture_->Release();
-		pTexture_ = nullptr;
-	}
-
 	// テクスチャサーフェイスの開放
 	if( pSurfaceTexture_ != nullptr )
 	{
@@ -113,11 +86,11 @@ int RenderTarget::Finalize( void )
 		pSurfaceTexture_ = nullptr;
 	}
 
-	// 深度バッファの開放
-	if( pSurfaceDepth_ != nullptr )
+	// テクスチャの開放
+	if( pTexture_ != nullptr )
 	{
-		pSurfaceDepth_->Release();
-		pSurfaceDepth_ = nullptr;
+		pTexture_->Release();
+		pTexture_ = nullptr;
 	}
 
 	// クラス内部の初期化
@@ -131,8 +104,11 @@ int RenderTarget::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
+// Arg    : int width							: 幅
+// Arg    : int height							: 高さ
+// Arg    : D3DFORMAT format					: テクスチャフォーマット
 //==============================================================================
-int RenderTarget::Reinitialize( IDirect3DDevice9* pDevice )
+int RenderTarget::Reinitialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -143,7 +119,7 @@ int RenderTarget::Reinitialize( IDirect3DDevice9* pDevice )
 	}
 
 	// 初期化処理
-	return Initialize( pDevice );
+	return Initialize( pDevice, width, height, format );
 }
 
 //==============================================================================
@@ -166,22 +142,10 @@ void RenderTarget::Set( int index )
 {
 	// デバイスにレンダーターゲットを設定
 	pDevice_->SetRenderTarget( index, pSurfaceTexture_ );
-	pDevice_->SetDepthStencilSurface( pSurfaceDepth_ );
 }
 
 //==============================================================================
-// Brief  : 登録IDの設定
-// Return : void								: なし
-// Arg    : IDirect3DTexture9* pValue			: 設定する値
-//==============================================================================
-void RenderTarget::SetTexture( IDirect3DTexture9* pValue )
-{
-	// 値の設定
-	pTexture_ = pValue;
-}
-
-//==============================================================================
-// Brief  : 登録IDの取得
+// Brief  : テクスチャの取得
 // Return : IDirect3DTexture9*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
@@ -189,17 +153,6 @@ IDirect3DTexture9* RenderTarget::GetTexture( void ) const
 {
 	// 値の返却
 	return pTexture_;
-}
-
-//==============================================================================
-// Brief  : テクスチャサーフェイスの設定
-// Return : void								: なし
-// Arg    : IDirect3DSurface9* pValue			: 設定する値
-//==============================================================================
-void RenderTarget::SetSurfaceTexture( IDirect3DSurface9* pValue )
-{
-	// 値の設定
-	pSurfaceTexture_ = pValue;
 }
 
 //==============================================================================
@@ -211,28 +164,6 @@ IDirect3DSurface9* RenderTarget::GetSurfaceTexture( void ) const
 {
 	// 値の返却
 	return pSurfaceTexture_;
-}
-
-//==============================================================================
-// Brief  : 深度バッファの設定
-// Return : void								: なし
-// Arg    : IDirect3DSurface9* pValue			: 設定する値
-//==============================================================================
-void RenderTarget::SetSurfaceDepth( IDirect3DSurface9* pValue )
-{
-	// 値の設定
-	pSurfaceDepth_ = pValue;
-}
-
-//==============================================================================
-// Brief  : 深度バッファの取得
-// Return : IDirect3DSurface9*					: 返却する値
-// Arg    : void								: なし
-//==============================================================================
-IDirect3DSurface9* RenderTarget::GetSurfaceDepth( void ) const
-{
-	// 値の返却
-	return pSurfaceDepth_;
 }
 
 //==============================================================================
@@ -279,6 +210,5 @@ void RenderTarget::InitializeSelf( void )
 	pDevice_ = nullptr;
 	pTexture_ = nullptr;
 	pSurfaceTexture_ = nullptr;
-	pSurfaceDepth_ = nullptr;
 	isEnable_ = true;
 }

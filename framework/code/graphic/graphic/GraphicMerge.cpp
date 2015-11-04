@@ -1,17 +1,19 @@
 //==============================================================================
 //
-// File   : GraphicScreen.cpp
-// Brief  : 画面ポリゴン描画処理の管理クラス
+// File   : GraphicMerge.cpp
+// Brief  : 総合3D描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicScreen.h"
-#include "../drawer/DrawerScreen.h"
+#include "GraphicMerge.h"
+#include "../drawer/DrawerMerge.h"
+#include "../../framework/resource/Effect.h"
+#include "../../system/EffectParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -30,7 +32,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen::GraphicScreen( void ) : GraphicMain()
+GraphicMerge::GraphicMerge( void ) : GraphicMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -41,7 +43,7 @@ GraphicScreen::GraphicScreen( void ) : GraphicMain()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicScreen::~GraphicScreen( void )
+GraphicMerge::~GraphicMerge( void )
 {
 	// 終了処理
 	Finalize();
@@ -53,14 +55,13 @@ GraphicScreen::~GraphicScreen( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : const float* pProportionFade		: フェード割合
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLight	: ライトありテクスチャ
+// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 //==============================================================================
-int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
+int GraphicMerge::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -70,18 +71,15 @@ int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, 
 		return result;
 	}
 
-	// メンバ変数の設定
-	pTexture_ = pTexture;
-
 	// 描画クラスの生成
-	DrawerScreen*	pDrawerScreen = nullptr;		// 描画クラス
-	pDrawerScreen = new DrawerScreen();
-	if( pDrawerScreen == nullptr )
+	DrawerMerge*	pDrawerMerge = nullptr;		// 描画クラス
+	pDrawerMerge = new DrawerMerge();
+	if( pDrawerMerge == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerScreen->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture3D, pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
-	ppDraw_[ GraphicMain::PASS_SCREEN ] = pDrawerScreen;
+	result = pDrawerMerge->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd );
+	ppDraw_[ GraphicMain::PASS_3D_MERGE ] = pDrawerMerge;
 
 	// 正常終了
 	return 0;
@@ -92,7 +90,7 @@ int GraphicScreen::Initialize( int priority, const EffectParameter* pParameter, 
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicScreen::Finalize( void )
+int GraphicMerge::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -115,14 +113,13 @@ int GraphicScreen::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : const float* pProportionFade		: フェード割合
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLight	: ライトありテクスチャ
+// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 //==============================================================================
-int GraphicScreen::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
+int GraphicMerge::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -133,15 +130,15 @@ int GraphicScreen::Reinitialize( int priority, const EffectParameter* pParameter
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pProportionFade, pTexture3D, pTexture2D, pTextureMask, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicScreen* pOut						: コピー先アドレス
+// Arg    : GraphicMerge* pOut					: コピー先アドレス
 //==============================================================================
-int GraphicScreen::Copy( GraphicScreen* pOut ) const
+int GraphicMerge::Copy( GraphicMerge* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -160,9 +157,7 @@ int GraphicScreen::Copy( GraphicScreen* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicScreen::InitializeSelf( void )
+void GraphicMerge::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	pTexture_ = nullptr;
-	colorFade_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 }

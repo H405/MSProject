@@ -1,17 +1,17 @@
 //==============================================================================
 //
-// File   : DrawerScreen.h
-// Brief  : 画面ポリゴン描画クラス
+// File   : DrawerLightEffect.h
+// Brief  : ライト描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_DRAWER_SCREEN_H
-#define MY_DRAWER_SCREEN_H
+#ifndef MY_DRAWER_LIGHT_EFFECT_H
+#define MY_DRAWER_LIGHT_EFFECT_H
 
 //******************************************************************************
 // インクルード
@@ -36,22 +36,33 @@ class Polygon2D;
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class DrawerScreen : public Drawer
+class DrawerLightEffect : public Drawer
 {
 public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,			// ワールドマトリクス
-		PARAMETER_TEXTURE,					// テクスチャ
-		PARAMETER_TEXTURE_3D,				// 3D描画テクスチャ
-		PARAMETER_TEXTURE_2D,				// 2D描画テクスチャ
-		PARAMETER_TEXTURE_MASK,				// マスクテクスチャ
-		PARAMETER_COLOR_FADE,				// フェードの色
-		PARAMETER_WIDTH_SCREEN_HALF,		// 画面幅の半分
-		PARAMETER_HEIGHT_SCREEN_HALF,		// 画面高さの半分
-		PARAMETER_PROPORTION_FADE,			// フェードの割合
-		PARAMETER_MAX						// 最大値
+		PARAMETER_MATRIX_WORLD = 0,					// ワールド変換行列
+		PARAMETER_SIZE_SCREEN,						// 画面サイズ
+
+		PARAMETER_TEXTURE_DIFFUSE,					// ディフューズテクスチャ
+		PARAMETER_TEXTURE_SPECULAR,					// スペキュラテクスチャ
+		PARAMETER_TEXTURE_NORMAL,					// 法線テクスチャ
+		PARAMETER_TEXTURE_DEPTH,					// 深度テクスチャ
+
+		PARAMETER_MATRIX_PROJECTION_INVERSE,		// プロジェクション変換逆行列
+		PARAMETER_MATRIX_VIEW_INVERSE,				// ビュー変換逆行列
+		PARAMETER_POSITION_EYE,						// 視点座標
+		PARAMETER_CLIP_CAMERA,						// カメラのクリップ値
+		PARAMETER_COLOR_AMBIENT,					// 環境光色
+		PARAMETER_VECTOR_LIGHT_DIRECTION,			// ディレクショナルライトのベクトル
+		PARAMETER_COLOR_LIGHT_DIRECTION,			// ディレクショナルライトの色
+		PARAMETER_POSITION_LIGHT_POINT,				// ポイントライトの座標
+		PARAMETER_COLOR_LIGHT_POINT,				// ポイントライトの色
+		PARAMETER_ATTENUATION_LIGHT_POINT,			// ポイントライトの減衰率
+		PARAMETER_COUNT_LIGHT_POINT,				// ポイントライトの数
+
+		PARAMETER_MAX								// 最大値
 	};
 
 	//==============================================================================
@@ -59,31 +70,27 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	DrawerScreen( void );
+	DrawerLightEffect( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~DrawerScreen( void );
+	~DrawerLightEffect( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
-	// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
-	// Arg    : const D3DXCOLOR* pColorFade			: フェードの色
-	// Arg    : const float* pProportionFade		: フェードの割合
+	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+	// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
-		const D3DXCOLOR* pColorFade, const float* pProportionFade );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -97,24 +104,20 @@ public:
 	// Return : int									: 実行結果
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
-	// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
-	// Arg    : const D3DXCOLOR* pColorFade			: フェードの色
-	// Arg    : const float* pProportionFade		: フェードの割合
+	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+	// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
-		const D3DXCOLOR* pColorFade, const float* pProportionFade );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : DrawerScreen* pOut						: コピー先アドレス
+	// Arg    : DrawerLightEffect* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( DrawerScreen* pOut ) const;
+	int Copy( DrawerLightEffect* pOut ) const;
 
 	//==============================================================================
 	// Brief  : 描画処理
@@ -126,27 +129,29 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetTexture( IDirect3DTexture9* pValue );
-	IDirect3DTexture9* GetTexture( void ) const;
-	void SetPolygon( Polygon2D* pValue );
-	Polygon2D* GetPolygon( void ) const;
+	void SetTextureDiffuse( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTextureDiffuse( void ) const;
+	void SetTextureSpecular( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTextureSpecular( void ) const;
+	void SetTextureNormal( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTextureNormal( void ) const;
+	void SetTextureDepth( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTextureDepth( void ) const;
 
 protected:
 	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
 	Effect*					pEffect_;				// エフェクト
-	IDirect3DTexture9*		pTexture_;				// テクスチャ
-	IDirect3DTexture9*		pTexture3D_;			// 3D描画テクスチャ
-	IDirect3DTexture9*		pTexture2D_;			// 2D描画テクスチャ
-	IDirect3DTexture9*		pTextureMask_;			// マスクテクスチャ
+	IDirect3DTexture9*		pTextureDiffuse_;		// ディフューズ情報テクスチャ
+	IDirect3DTexture9*		pTextureSpecular_;		// スペキュラ情報テクスチャ
+	IDirect3DTexture9*		pTextureNormal_;		// 法線情報テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;			// 深度情報テクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン
-	const D3DXCOLOR*		pColorFade_;			// フェード色
-	const float*			pProportionFade_;		// フェード割合
 
 private:
 	void InitializeSelf( void );
-	DrawerScreen( const DrawerScreen& );
-	DrawerScreen operator=( const DrawerScreen& );
+	DrawerLightEffect( const DrawerLightEffect& );
+	DrawerLightEffect operator=( const DrawerLightEffect& );
 
 };
 
-#endif	// MY_DRAWER_SCREEN_H
+#endif	// MY_DRAWER_LIGHT_EFFECT_H

@@ -56,13 +56,13 @@ void SceneArgumentMain::InitializeSelf( void )
 	pDevice_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
-	pObjectScreen_ = nullptr;
 	pKeyboard_ = nullptr;
 	pMouse_ = nullptr;
 	pPad_ = nullptr;
 	pVirtualController_ = nullptr;
 	pTexture_ = nullptr;
 	pModel_ = nullptr;
+	pMotion_ = nullptr;
 	pEffect_ = nullptr;
 	pSound_ = nullptr;
 }

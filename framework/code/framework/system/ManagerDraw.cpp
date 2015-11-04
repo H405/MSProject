@@ -184,22 +184,29 @@ int ManagerDraw< TypeItem >::Execute( void )
 		for( int counterPass = 0; counterPass < countPass_; ++counterPass )
 		{
 			// レンダーターゲットの設定
-			int		countRenderTarget;		// レンダーターゲット数
+			int			countRenderTarget;		// レンダーターゲット数
+			DWORD		flagClear;				// クリアフラグ
+			D3DCOLOR	clearTarget;			// レンダーターゲットのクリア値
+			float		clearZBuffer;			// Zバッファのクリア値
+			DWORD		clearStencil;			// ステンシルバッファのクリア値
 			if( counterPass < countPass_ - 1 )
 			{
 				countRenderTarget = pRenderPass_[ counterPass ].GetCountRenderTarget();
-				for( int counterRenderTarget = 0; counterRenderTarget < countRenderTarget; ++counterRenderTarget )
-				{
-					RenderTarget*	pRenderTarget;		// レンダーターゲット
-					pRenderTarget = pRenderPass_[ counterPass ].GetRenderTarget( counterRenderTarget );
-					pRenderTarget->Set( counterRenderTarget );
-				}
+				pRenderPass_[ counterPass ].Set();
+				flagClear = pRenderPass_[ counterPass ].GetFlagClear();
+				clearTarget = pRenderPass_[ counterPass ].GetClearTarget();
+				clearZBuffer = pRenderPass_[ counterPass ].GetClearZBuffer();
+				clearStencil = pRenderPass_[ counterPass ].GetClearStencil();
 			}
 			else
 			{
 				countRenderTarget = 1;
 				pDevice_->SetRenderTarget( 0, pSurfaceRenderOrigin );
 				pDevice_->SetDepthStencilSurface( pSurfaceDepthOrigin );
+				flagClear = (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER);
+				clearTarget = D3DCOLOR_RGBA( 0, 0, 0, 0 );
+				clearZBuffer = 1.0f;
+				clearStencil = 0;
 			}
 			for( int counterRenderTarget = countRenderTarget; counterRenderTarget < maximumRenderTarget_; ++counterRenderTarget )
 			{
@@ -207,7 +214,7 @@ int ManagerDraw< TypeItem >::Execute( void )
 			}
 
 			// バッファのクリア
-			pDevice_->Clear( 0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA( 0, 0, 0, 0 ), 1.0f, 0 );
+			pDevice_->Clear( 0, NULL, flagClear, clearTarget, clearZBuffer, clearStencil );
 
 			// オブジェクトの描画
 			int		indexItemCurrent;		// 現在の要素番号
