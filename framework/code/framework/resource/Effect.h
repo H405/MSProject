@@ -117,6 +117,15 @@ public:
 	void SetMatrix( int indexParameter, const D3DXMATRIX& matrix );
 
 	//==============================================================================
+	// Brief  : 行列配列の設定
+	// Return : void								: なし
+	// Arg    : int indexParameter					: パラメータ番号
+	// Arg    : const D3DXMATRIX& matrix			: 設定する行列
+	// Arg    : int count							: 設定する要素数
+	//==============================================================================
+	void SetMatrixArray( int indexParameter, const D3DXMATRIX* pMatrix, int count );
+
+	//==============================================================================
 	// Brief  : 色の設定
 	// Return : void								: なし
 	// Arg    : int indexParameter					: パラメータ番号

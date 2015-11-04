@@ -270,6 +270,18 @@ unsigned long Model::GetCountBone( void ) const
 }
 
 //==============================================================================
+// Brief  : ボーンの初期姿勢行列の取得
+// Return : void								: なし
+// Arg    : int index							: 設定する番号
+// Arg    : D3DXMATRIX* pOut					: 値の格納アドレス
+//==============================================================================
+void Model::GetMatrixBone( int index, D3DXMATRIX* pOut ) const
+{
+	// 値の返却
+	D3DXMatrixIdentity( pOut );
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし

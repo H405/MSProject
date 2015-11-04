@@ -153,8 +153,13 @@ int ObjectSkinMesh::Copy( ObjectSkinMesh* pOut ) const
 void ObjectSkinMesh::Update( void )
 {
 	// ボーン変換行列の更新
-	unsigned long	countBone;		// ボーン数
+	unsigned long	countBone;				// ボーン数
+	D3DXMATRIX		matrixBoneMotion;		// モーションのボーン変換行列
 	countBone = pModel_->GetCountBone();
+	for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
+	{
+		pModel_->GetMatrixBone( counterBone, &pMatrixBoneCurrent_[ counterBone ] );
+	}
 	if( indexMotionNext_ >= 0 )
 	{
 		// 合成割合を求める
@@ -171,13 +176,13 @@ void ObjectSkinMesh::Update( void )
 		// ボーン変換行列を計算
 		for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
 		{
-			ppTableMotion_[ indexMotionCurrent_ ]->GetMatrixBone( indexFrame_, counterBone, &pMatrixBoneCurrent_[ counterBone ] );
+			ppTableMotion_[ indexMotionCurrent_ ]->GetMatrixBone( indexFrame_, counterBone, &matrixBoneMotion );
 			if( proportion > 0.0f && indexMotionNext_ >= 0 )
 			{
 				D3DXMATRIX	matrixBoneNext;		// 次のモーションのボーン変換行列
 				ppTableMotion_[ indexMotionNext_ ]->GetMatrixBone( indexFrame_, counterBone, &matrixBoneNext );
-				pMatrixBoneCurrent_[ counterBone ] *= 1.0f - proportion;
-				pMatrixBoneCurrent_[ counterBone ] += proportion * matrixBoneNext;
+				matrixBoneMotion *= 1.0f - proportion;
+				matrixBoneMotion += proportion * matrixBoneNext;
 			}
 		}
 	}
@@ -185,8 +190,12 @@ void ObjectSkinMesh::Update( void )
 	{
 		for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
 		{
-			ppTableMotion_[ indexMotionCurrent_ ]->GetMatrixBone( indexFrame_, counterBone, &pMatrixBoneCurrent_[ counterBone ] );
+			ppTableMotion_[ indexMotionCurrent_ ]->GetMatrixBone( indexFrame_, counterBone, &matrixBoneMotion );
 		}
+	}
+	for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
+	{
+		D3DXMatrixMultiply( &pMatrixBoneCurrent_[ counterBone ], &pMatrixBoneCurrent_[ counterBone ], &matrixBoneMotion );
 	}
 
 	// フレームを進める

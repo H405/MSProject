@@ -13,6 +13,8 @@
 float4x4	matrixTransform_;		// 変換行列
 float4x4	matrixWorld_;			// ワールド変換行列
 float4x4	matrixWorldView_;		// ワールドビュー変換行列
+float4x4	matrixBone_[ 70 ];		// ボーン変換行列
+int			countBone_;				// ボーン数
 float2		clipCamera_;			// カメラのクリップ値
 texture		texture_;				// テクスチャ
 float3		colorSpecular_;			// スペキュラ色
@@ -62,10 +64,17 @@ struct PixelOutput
 // Arg    : float2 positionTexture			: テクスチャ座標
 // Arg    : float4 colorDiffuse				: ディフューズ色
 //==============================================================================
-VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNormalLocal : NORMAL, float2 textureCoord : TEXCOORD0 )
+VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 weight : BLENDWEIGHT, float4 indices : BLENDINDICES, float3 vectorNormalLocal : NORMAL, float2 textureCoord : TEXCOORD0 )
 {
 	// 頂点の変換
-	VertexOutput	output;		// 頂点シェーダ出力
+	VertexOutput	output;			// 頂点シェーダ出力
+//	float4x4		matrixBone;		// ボーン変換行列
+//	matrixBone = matrixBone_[ indices[ 0 ] ] * weight[ 0 ];
+//	matrixBone += matrixBone_[ indices[ 1 ] ] * weight[ 1 ];
+//	matrixBone += matrixBone_[ indices[ 2 ] ] * weight[ 2 ];
+//	matrixBone += matrixBone_[ indices[ 3 ] ] * (1.0f - weight[ 0 ] - weight[ 1 ] - weight[ 2 ]);
+//	output.position_ = mul( float4( positionLocal, 1.0f ), matrixBone );
+//	output.position_ = mul( output.position_, matrixTransform_ );
 	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
 
 	// 法線の変換

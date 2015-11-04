@@ -105,6 +105,7 @@ public:
 	void SetTexture( int index, IDirect3DTexture9* pValue );
 	virtual IDirect3DTexture9* GetTexture( int index ) const;
 	virtual unsigned long GetCountBone( void ) const;
+	virtual void GetMatrixBone( int index, D3DXMATRIX* pOut ) const;
 
 protected:
 	IDirect3DDevice9*	pDevice_;			// Direct3Dデバイス

@@ -181,6 +181,10 @@ void DrawerSkinMesh::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
 
+	// ボーン変換行列
+	pEffect_->SetMatrixArray( PARAMETER_MATRIX_BONE, pMatrixBone_, countBone_ );
+	pEffect_->SetInteger( PARAMETER_COUNT_BONE, countBone_ );
+
 	// カメラのクリップ値
 	float	pClipCamera[ 2 ];		// カメラのクリップ値
 	pClipCamera[ 0 ] = pCamera->GetClipNear();
