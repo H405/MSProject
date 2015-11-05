@@ -76,9 +76,6 @@
     <Filter Include="ソース ファイル\framework\sound">
       <UniqueIdentifier>{b99a1f9b-773b-4c97-a145-8f1f6008b2ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\framework\target">
-      <UniqueIdentifier>{bec3158b-cc76-490c-918c-055e0249a770}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\system\fireworks">
       <UniqueIdentifier>{43f16352-7869-4b2b-aaaf-7f32889a4123}</UniqueIdentifier>
     </Filter>

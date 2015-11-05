@@ -191,11 +191,8 @@ void ObjectSkinMesh::Update( void )
 		for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
 		{
 			ppTableMotion_[ indexMotionCurrent_ ]->GetMatrixBone( indexFrame_, counterBone, &matrixBoneMotion );
+			D3DXMatrixMultiply( &pMatrixBoneCurrent_[ counterBone ], &pMatrixBoneCurrent_[ counterBone ], &matrixBoneMotion );
 		}
-	}
-	for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
-	{
-		D3DXMatrixMultiply( &pMatrixBoneCurrent_[ counterBone ], &pMatrixBoneCurrent_[ counterBone ], &matrixBoneMotion );
 	}
 
 	// ƒtƒŒ[ƒ€‚ði‚ß‚é

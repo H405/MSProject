@@ -13,7 +13,6 @@
 float4x4	matrixTransform_;		// 変換行列
 float4x4	matrixWorld_;			// ワールド変換行列
 float4x4	matrixWorldView_;		// ワールドビュー変換行列
-float2		clipCamera_;			// カメラのクリップ値
 float3		materialColor_;			// マテリアル色
 float3		colorSpecular_;			// スペキュラ色
 float		reflection_;			// 反射率
@@ -71,7 +70,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;
 
 	// 深度の計算
-	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z / clipCamera_.y;
+	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;
 
 	// 出力値の格納
 	output.textureCoord_ = textureCoord;

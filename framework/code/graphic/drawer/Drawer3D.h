@@ -46,7 +46,6 @@ public:
 		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
 		PARAMETER_MATRIX_WORLD,				// ワールド変換行列
 		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
-		PARAMETER_CLIP_CAMERA,				// カメラのクリップ値
 		PARAMETER_TEXTURE,					// テクスチャ
 		PARAMETER_COLOR_SPECULAR,			// スペキュラ色
 		PARAMETER_REFLECTION,				// 反射率

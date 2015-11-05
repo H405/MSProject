@@ -88,7 +88,7 @@ technique ShadeNormal
 	// í èÌïœä∑
 	pass PassNormal
 	{
-		VertexShader = compile vs_2_0 TransformVertex();
-		PixelShader = compile ps_2_0 DrawPixel();
+		VertexShader = compile vs_3_0 TransformVertex();
+		PixelShader = compile ps_3_0 DrawPixel();
 	}
 }

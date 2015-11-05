@@ -173,7 +173,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float3	colorDiffuse = dataDiffuse.rgb;
 	float3	colorSpecular = dataSpecular.rgb;
 	float3	vectorNormal = dataNormal.xyz * 2.0f - 1.0f;
-	float	depth = dataDepth * clipCamera_.y;
+	float	depth = dataDepth;
 	float	power = dataSpecular.a * 64.0f;
 
 	// ƒ[ƒ‹ƒhÀ•W‚ğ‹‚ß‚é

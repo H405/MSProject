@@ -183,13 +183,6 @@ void DrawerSkinMesh::Draw( const D3DXMATRIX& matrixWorld )
 
 	// ボーン変換行列
 	pEffect_->SetMatrixArray( PARAMETER_MATRIX_BONE, pMatrixBone_, countBone_ );
-	pEffect_->SetInteger( PARAMETER_COUNT_BONE, countBone_ );
-
-	// カメラのクリップ値
-	float	pClipCamera[ 2 ];		// カメラのクリップ値
-	pClipCamera[ 0 ] = pCamera->GetClipNear();
-	pClipCamera[ 1 ] = pCamera->GetClipFar();
-	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
 
 	// 描画
 	unsigned int		countMaterial;			// マテリアル数

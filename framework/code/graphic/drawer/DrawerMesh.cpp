@@ -180,12 +180,6 @@ void DrawerMesh::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
 
-	// カメラのクリップ値
-	float	pClipCamera[ 2 ];		// カメラのクリップ値
-	pClipCamera[ 0 ] = pCamera->GetClipNear();
-	pClipCamera[ 1 ] = pCamera->GetClipFar();
-	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
-
 	// テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
 
