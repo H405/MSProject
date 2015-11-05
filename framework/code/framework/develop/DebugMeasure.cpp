@@ -116,7 +116,7 @@ DebugMeasure::DebugMeasure( TCHAR* pFormat, ... )
 	_tcscat_s( pBuffer_, 256, pStringAdd );
 
 	// 計測の開始
-	timeBegin_ = timeGetTime();
+	QueryPerformanceCounter( &timeBegin_ );
 }
 
 //==============================================================================
@@ -127,13 +127,17 @@ DebugMeasure::DebugMeasure( TCHAR* pFormat, ... )
 DebugMeasure::~DebugMeasure( void )
 {
 	// 計測の終了
-	DWORD	time;		// 時間
-	time = timeGetTime() - timeBegin_;
+	LARGE_INTEGER	frequency;		// 周波数
+	LARGE_INTEGER	count;			// 現在のカウント
+	DWORD			time;			// 時間
+	QueryPerformanceFrequency( &frequency );
+	QueryPerformanceCounter( &count );
+	time = static_cast< DWORD >( (count.QuadPart - timeBegin_.QuadPart) * 1000000 / frequency.QuadPart );
 
 	// ログの設定
 	TCHAR	pLog[ 256 ] = {};			// ログ
 	TCHAR	pMeasure[ 64 ] = {};		// 計測結果文字列
-	_stprintf_s( pMeasure, 64, _T( " : %5dms\n" ), time );
+	_stprintf_s( pMeasure, 64, _T( " : %10d ns\n" ), time );
 	_tcscpy_s( pLog, 256, pBuffer_ );
 	_tcscat_s( pLog, 256, pMeasure );
 	ManagerDebugMeasure::SetLog( pLog );

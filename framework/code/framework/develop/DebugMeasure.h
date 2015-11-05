@@ -92,8 +92,8 @@ public:
 	~DebugMeasure( void );
 
 private:
-	TCHAR*	pBuffer_;		// 文字列格納用バッファ
-	DWORD	timeBegin_;		// 計測開始時間
+	TCHAR*			pBuffer_;		// 文字列格納用バッファ
+	LARGE_INTEGER	timeBegin_;		// 計測開始時間
 };
 
 #endif	// MY_DEBUG_MEASURE_H
