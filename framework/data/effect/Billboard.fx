@@ -95,6 +95,9 @@ technique ShadeNormal
 		AlphaBlendEnable = True;
 		SrcBlend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
+		AlphaTestEnable = True;
+		AlphaRef = 0x00000000;
+		AlphaFunc = Greater;
 
 		// シェーダの設定
 		VertexShader = compile vs_3_0 TransformVertex();

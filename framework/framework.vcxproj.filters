@@ -82,6 +82,9 @@
     <Filter Include="ソース ファイル\system\target">
       <UniqueIdentifier>{4f1d4a8b-9026-4765-843b-85c1b7d55488}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\camera">
+      <UniqueIdentifier>{a5b3a5fe-b914-4a94-aaf4-80e53e7f58bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -444,6 +447,12 @@
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterial.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\system\Utility.h">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\camera\CameraStateSpline.h">
+      <Filter>ソース ファイル\system\camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -799,6 +808,12 @@
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterial.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\system\Utility.cpp">
+      <Filter>ソース ファイル\framework\system</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\camera\CameraStateSpline.cpp">
+      <Filter>ソース ファイル\system\camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -65,21 +65,26 @@ struct PixelOutput
 //==============================================================================
 VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 weight : BLENDWEIGHT, float4 indices : BLENDINDICES, float3 vectorNormalLocal : NORMAL, float2 textureCoord : TEXCOORD0 )
 {
-	// 頂点の変換
-	VertexOutput	output;			// 頂点シェーダ出力
-	float4x3		matrixBone;		// ボーン変換行列
+	// 頂点のボーン行列変換
+	VertexOutput	output;				// 頂点シェーダ出力
+	float4x3		matrixBone;			// ボーン変換行列
+	float4x4		matrixBone4x4;		// 4x4ボーン変換行列
 	matrixBone = matrixBone_[ indices[ 0 ] ] * weight.x;
 	matrixBone += matrixBone_[ indices[ 1 ] ] * weight.y;
 	matrixBone += matrixBone_[ indices[ 2 ] ] * weight.z;
 	matrixBone += matrixBone_[ indices[ 3 ] ] * (1.0f - weight.x - weight.y - weight.z);
-	output.position_ = mul( float4( positionLocal, 1.0f ), float4x4( matrixBone[ 0 ], 0.0f, matrixBone[ 1 ], 0.0f, matrixBone[ 2 ], 0.0f, matrixBone[ 3 ], 1.0f ) );
+	matrixBone4x4 = float4x4( matrixBone[ 0 ], 0.0f, matrixBone[ 1 ], 0.0f, matrixBone[ 2 ], 0.0f, matrixBone[ 3 ], 1.0f );
+	output.position_ = mul( float4( positionLocal, 1.0f ), matrixBone4x4 );
+
+	// 深度の計算
+	output.depth_ = mul( output.position_, matrixWorldView_ ).z;
+
+	// 頂点の変換
 	output.position_ = mul( output.position_, matrixTransform_ );
 
 	// 法線の変換
-	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;
-
-	// 深度の計算
-	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;
+	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixBone4x4 ) ).xyz;
+	output.vectorNormalWorld_ = normalize( mul( float4( output.vectorNormalWorld_, 0.0f ), matrixWorld_ ) ).xyz;
 
 	// 出力値の格納
 	output.textureCoord_ = textureCoord;

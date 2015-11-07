@@ -72,6 +72,7 @@
     <ClInclude Include="code\framework\system\ManagerDraw.h" />
     <ClInclude Include="code\framework\system\ManagerExector.h" />
     <ClInclude Include="code\framework\system\ManagerUpdate.h" />
+    <ClInclude Include="code\framework\system\Utility.h" />
     <ClInclude Include="code\framework\system\Window.h" />
     <ClInclude Include="code\framework\vertex\Vertex.h" />
     <ClInclude Include="code\framework\vertex\VertexBuffer.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="code\scene\SceneResult.h" />
     <ClInclude Include="code\scene\SceneSplash.h" />
     <ClInclude Include="code\scene\SceneTitle.h" />
+    <ClInclude Include="code\system\camera\CameraStateSpline.h" />
     <ClInclude Include="code\system\EffectParameter.h" />
     <ClInclude Include="code\system\fireworks\Fireworks.h" />
     <ClInclude Include="code\system\fireworks\FireworksState.h" />
@@ -192,6 +194,7 @@
     <ClCompile Include="code\framework\system\ManagerDraw.cpp" />
     <ClCompile Include="code\framework\system\ManagerExector.cpp" />
     <ClCompile Include="code\framework\system\ManagerUpdate.cpp" />
+    <ClCompile Include="code\framework\system\Utility.cpp" />
     <ClCompile Include="code\framework\system\Window.cpp" />
     <ClCompile Include="code\framework\vertex\Vertex.cpp" />
     <ClCompile Include="code\framework\vertex\VertexBuffer.cpp" />
@@ -238,6 +241,7 @@
     <ClCompile Include="code\scene\SceneResult.cpp" />
     <ClCompile Include="code\scene\SceneSplash.cpp" />
     <ClCompile Include="code\scene\SceneTitle.cpp" />
+    <ClCompile Include="code\system\camera\CameraStateSpline.cpp" />
     <ClCompile Include="code\system\EffectParameter.cpp" />
     <ClCompile Include="code\system\fireworks\Fireworks.cpp" />
     <ClCompile Include="code\system\fireworks\FireworksState.cpp" />

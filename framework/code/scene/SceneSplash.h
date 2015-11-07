@@ -30,6 +30,7 @@
 // クラス前方宣言
 //******************************************************************************
 class CameraObject;
+class CameraStateSpline;
 class LightDirection;
 class LightPoint;
 class ManagerPoint;
@@ -119,6 +120,8 @@ private:
 	ObjectSkinMesh*		pObjectSkinMesh_;		// スキンメッシュ
 
 	int					timerLight_;			// ライト用タイマー
+
+	CameraStateSpline*	pCameraState_;			// カメラ処理
 };
 
 #endif	// MY_SCENE_SPLASH_H

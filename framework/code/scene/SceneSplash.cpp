@@ -15,6 +15,7 @@
 #include "../framework/develop/DebugProc.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/system/Fade.h"
+#include "../framework/system/Utility.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 
@@ -39,6 +40,7 @@
 #include "../object/ObjectModel.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectSky.h"
+#include "../system/camera/CameraStateSpline.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
 
@@ -91,6 +93,24 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 
+	// カメラ処理の生成
+	pCameraState_ = new CameraStateSpline();
+	if( pCameraState_ == nullptr )
+	{
+		return 1;
+	}
+	result = pCameraState_->Initialize( 2, 2, 2 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pCameraState_->SetControlPointCamera( 0, D3DXVECTOR3( -50.0f, 20.0f, -50.0f ), D3DXVECTOR3( 150.0f, 150.0f, 0.0f ) );
+	pCameraState_->SetControlPointCamera( 1, D3DXVECTOR3( 100.0f, 70.0f, 100.0f ), D3DXVECTOR3( 0.0f, 150.0f, 150.0f ) );
+	pCameraState_->SetControlPointLookAt( 0, D3DXVECTOR3( 100.0f, 70.0f, 100.0f ), D3DXVECTOR3( 0.0f, 150.0f, 150.0f ) );
+	pCameraState_->SetControlPointLookAt( 1, D3DXVECTOR3( -50.0f, 20.0f, -50.0f ), D3DXVECTOR3( 150.0f, 150.0f, 0.0f ) );
+	pCameraState_->SetSection( 0, 60, 0, 1, 0, 1 );
+	pCameraState_->SetSection( 1, 120, -1, 0, -1, 0 );
+
 	// カメラの生成
 	pCamera_ = new CameraObject();
 	if( pCamera_ == nullptr )
@@ -112,6 +132,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	{
 		return result;
 	}
+	pCamera_->SetState( pCameraState_ );
 	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// ライトの生成
@@ -305,6 +326,10 @@ int SceneSplash::Finalize( void )
 	pCamera_ = nullptr;
 	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
+	// カメラ処理の開放
+	delete pCameraState_;
+	pCameraState_ = nullptr;
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = SceneMain::Finalize();
@@ -409,6 +434,16 @@ void SceneSplash::Update( void )
 	pPointLight_[ 1 ].GetPosition( &positionPointB );
 	positionPointB.x = 30.0f * cosf( angleLight + D3DX_PI );
 	positionPointB.z = 30.0f * sinf( angleLight + D3DX_PI );
+	if( timerLight_ % 240 < 120 )
+	{
+		Utility::SplineVector3( D3DXVECTOR3( -50.0f, 20.0f, -50.0f ), D3DXVECTOR3( 150.0f, 150.0f, 0.0f ), D3DXVECTOR3( 100.0f, 70.0f, 100.0f ), D3DXVECTOR3( 0.0f, 150.0f, 150.0f ),
+			static_cast< float >( timerLight_ % 120 ) / 120.0f, &positionPointB );
+	}
+	else
+	{
+		Utility::SplineVector3( D3DXVECTOR3( 100.0f, 70.0f, 100.0f ), D3DXVECTOR3( 0.0f, 150.0f, 150.0f ), D3DXVECTOR3( -50.0f, 20.0f, -50.0f ), D3DXVECTOR3( 150.0f, 150.0f, 0.0f ),
+			static_cast< float >( (timerLight_ % 240) - 120 ) / 120.0f, &positionPointB );
+	}
 	pPointLight_[ 1 ].SetPosition( positionPointB );
 
 	// 緑ポイントライトの移動
@@ -474,4 +509,5 @@ void SceneSplash::InitializeSelf( void )
 	pObjectBoard_ = nullptr;
 	pObjectSkinMesh_ = nullptr;
 	timerLight_ = 0;
+	pCameraState_ = nullptr;
 }
