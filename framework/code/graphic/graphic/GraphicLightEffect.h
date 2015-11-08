@@ -29,6 +29,7 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
+class DrawerLightEffect;
 class Effect;
 class EffectParameter;
 
@@ -57,13 +58,13 @@ public:
 	// Return : int									: 実行結果
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	int Initialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
 		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
@@ -78,13 +79,13 @@ public:
 	// Return : int									: 実行結果
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
 		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
@@ -94,6 +95,13 @@ public:
 	//==============================================================================
 	int Copy( GraphicLightEffect* pOut ) const;
 
+	//==============================================================================
+	// Brief  : 描画処理
+	// Return : void								: なし
+	// Arg    : int index							: 描画番号
+	//==============================================================================
+	void Draw( int index );
+
 protected:
 
 private:
@@ -101,6 +109,8 @@ private:
 	GraphicLightEffect( const GraphicLightEffect& );
 	GraphicLightEffect operator=( const GraphicLightEffect& );
 
+	const EffectParameter*	pParameter_;		// エフェクトパラメータ
+	DrawerLightEffect*		pDrawerLight_;		// ライト描画クラス
 };
 
 #endif	// MY_GRAPHIC_LIGHT_EFFECT_H

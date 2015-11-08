@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "GraphicLightEffect.h"
 #include "../drawer/DrawerLightEffect.h"
+#include "../../system/EffectParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -52,13 +53,13 @@ GraphicLightEffect::~GraphicLightEffect( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 //==============================================================================
-int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
 	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
@@ -69,15 +70,24 @@ int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParame
 		return result;
 	}
 
+	// メンバ変数の設定
+	pParameter_ = pParameter;
+
 	// 描画クラスの生成
-	DrawerLightEffect*	pDrawerLightEffect = nullptr;		// 描画クラス
-	pDrawerLightEffect = new DrawerLightEffect();
-	if( pDrawerLightEffect == nullptr )
+	pDrawerLight_ = new DrawerLightEffect[ GraphicMain::LIGHT_POINT_MAX + 1 ];
+	if( pDrawerLight_ == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerLightEffect->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
-	ppDraw_[ GraphicMain::PASS_LIGHT_EFFECT ] = pDrawerLightEffect;
+	for( int counterDrawer = 0; counterDrawer <= GraphicMain::LIGHT_POINT_MAX; ++counterDrawer )
+	{
+		result = pDrawerLight_[ counterDrawer ].Initialize( pParameter, ppEffectGeneral[ counterDrawer ], pPolygon2D_, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
+		if( result != 0 )
+		{
+			return result;
+		}
+	}
+	ppDraw_[ GraphicMain::PASS_LIGHT_EFFECT ] = &pDrawerLight_[ 0 ];
 
 	// 正常終了
 	return 0;
@@ -90,6 +100,11 @@ int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParame
 //==============================================================================
 int GraphicLightEffect::Finalize( void )
 {
+	// 格納領域の開放
+	delete[] pDrawerLight_;
+	pDrawerLight_ = nullptr;
+	ppDraw_[ GraphicMain::PASS_LIGHT_EFFECT ] = nullptr;
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = GraphicMain::Finalize();
@@ -110,13 +125,13 @@ int GraphicLightEffect::Finalize( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureDiffuse	: ディフューズ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 //==============================================================================
-int GraphicLightEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+int GraphicLightEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
 	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
@@ -128,7 +143,7 @@ int GraphicLightEffect::Reinitialize( int priority, const EffectParameter* pPara
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
+	return Initialize( priority, pParameter, ppEffectGeneral, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
 }
 
 //==============================================================================
@@ -151,6 +166,20 @@ int GraphicLightEffect::Copy( GraphicLightEffect* pOut ) const
 }
 
 //==============================================================================
+// Brief  : 描画処理
+// Return : void								: なし
+// Arg    : int index							: 描画番号
+//==============================================================================
+void GraphicLightEffect::Draw( int index )
+{
+	// ライトの数に応じて描画クラスを変更
+	ppDraw_[ GraphicMain::PASS_LIGHT_EFFECT ] = &pDrawerLight_[ pParameter_->GetCountLightPoint() ];
+
+	// 基本クラスの処理
+	Graphic::Draw( index );
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -158,4 +187,6 @@ int GraphicLightEffect::Copy( GraphicLightEffect* pOut ) const
 void GraphicLightEffect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
+	pParameter_ = nullptr;
+	pDrawerLight_ = nullptr;
 }

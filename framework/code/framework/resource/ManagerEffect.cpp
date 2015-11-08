@@ -168,7 +168,13 @@ int ManagerEffect< TypeItem >::LoadResource( TCHAR* pPath, int index )
 	// エフェクトの読み込み
 	int				result;					// 実行結果
 	ID3DXEffect*	pEffect = nullptr;		// エフェクト
-	result = D3DXCreateEffectFromFile( pDevice_, pPath, nullptr, nullptr, 0, nullptr, &pEffect, nullptr );
+	DWORD			flagLoad;				// 読み込みフラグ
+#ifdef _DEBUG
+	flagLoad = 0;
+#else
+	flagLoad = D3DXSHADER_SKIPVALIDATION;
+#endif
+	result = D3DXCreateEffectFromFile( pDevice_, pPath, nullptr, nullptr, flagLoad, nullptr, &pEffect, nullptr );
 	if( result != 0 )
 	{
 		TCHAR	pStringError[ 512 ] = {};		// エラー文字列

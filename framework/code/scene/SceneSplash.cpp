@@ -179,6 +179,17 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	}
 	pArgument->pEffectParameter_->SetLightPoint( 2, &pPointLight_[ 2 ] );
 
+	for( int i = 3; i < 10; ++i )
+	{
+		result = pPointLight_[ i ].Initialize( D3DXCOLOR( 1.0f, 1.0f, 0.5f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+			D3DXVECTOR3( 1.0f * (rand() % 100) - 50.0f - 100.0f, 10.0f, 1.0f * (rand() % 100) - 50.0f + 100.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.002f ) );
+		if( result != 0 )
+		{
+			return result;
+		}
+		pArgument->pEffectParameter_->SetLightPoint( i, &pPointLight_[ i ] );
+	}
+
 	// ポイントライトの個数を設定
 	pArgument->pEffectParameter_->SetCountLightPoint( 3 );
 
@@ -265,7 +276,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectSkinMesh_->Initialize( 0, 1 );
 	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
 	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
-	pObjectSkinMesh_->SetPositionX( -100.0f );
+	pObjectSkinMesh_->SetPosition( -100.0f, 0.0f, 100.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );

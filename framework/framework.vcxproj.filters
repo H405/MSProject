@@ -85,6 +85,9 @@
     <Filter Include="ソース ファイル\system\camera">
       <UniqueIdentifier>{a5b3a5fe-b914-4a94-aaf4-80e53e7f58bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\effect">
+      <UniqueIdentifier>{84292b18-d92a-427c-8a5b-52919c9824ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -815,5 +818,43 @@
     <ClCompile Include="code\system\camera\CameraStateSpline.cpp">
       <Filter>ソース ファイル\system\camera</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="code\effect\Polygon3D.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Model.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightEffect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Merge.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Point.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\PostEffect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Sky.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Polygon2D.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkinMesh.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Billboard.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Mesh.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelMat.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
   </ItemGroup>
 </Project>

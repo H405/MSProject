@@ -256,6 +256,20 @@
     <ClCompile Include="code\system\target\Target.cpp" />
     <ClCompile Include="code\system\WindowMain.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="code\effect\Billboard.fx" />
+    <None Include="code\effect\LightEffect.fx" />
+    <None Include="code\effect\Merge.fx" />
+    <None Include="code\effect\Mesh.fx" />
+    <None Include="code\effect\Model.fx" />
+    <None Include="code\effect\ModelMat.fx" />
+    <None Include="code\effect\Point.fx" />
+    <None Include="code\effect\Polygon2D.fx" />
+    <None Include="code\effect\Polygon3D.fx" />
+    <None Include="code\effect\PostEffect.fx" />
+    <None Include="code\effect\SkinMesh.fx" />
+    <None Include="code\effect\Sky.fx" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B2726EF-0828-4EAB-B277-780FF656195F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -324,6 +338,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Windows Kits\8.1\Lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

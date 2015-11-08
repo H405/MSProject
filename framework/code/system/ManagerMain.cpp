@@ -338,12 +338,17 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pMotion_->Get( _T( "test.motion" ) );
 
 	// エフェクト管理クラスの生成
+#ifdef _DEBUG
+	TCHAR	pPathEffect[] = _T( "code/effect/" );
+#else
+	TCHAR	pPathEffect[] = _T( "data/effect/" );
+#endif
 	pEffect_ = new ManagerEffect< Effect >();
 	if( pEffect_ == nullptr )
 	{
 		return 1;
 	}
-	result = pEffect_->Initialize( _T( "data/effect/" ), 32, pDevice );
+	result = pEffect_->Initialize( pPathEffect, 32, pDevice );
 	if( result != 0 )
 	{
 		return result;
@@ -405,7 +410,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	GraphicMain::SetPolygon3D( pPolygon3D_ );
 
 	// ライティングオブジェクトの生成
-	Effect*	pEffectLightEffect = nullptr;		// ライティングエフェクト
+	Effect*	ppEffectLightEffect[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// ライティングエフェクト
+	TCHAR	pNameFileEffectLight[ _MAX_PATH ];								// ライティングエフェクトファイル名
 	pObjectLightEffect_ = new ObjectLightEffect();
 	if( pObjectLightEffect_ == nullptr )
 	{
@@ -416,8 +422,12 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pEffectLightEffect = pEffect_->Get( _T( "LightEffect.fx" ) );
-	result = pObjectLightEffect_->CreateGraphic( 0, pEffectParameter_, pEffectLightEffect,
+	for( int counterEffect = 0; counterEffect <= GraphicMain::LIGHT_POINT_MAX; ++counterEffect )
+	{
+		_stprintf_s( pNameFileEffectLight, _MAX_PATH, _T( "LightEffect_%02d.fx" ), counterEffect );
+		ppEffectLightEffect[ counterEffect ] = pEffect_->Get( pNameFileEffectLight );
+	}
+	result = pObjectLightEffect_->CreateGraphic( 0, pEffectParameter_, ppEffectLightEffect,
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE ),
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_SPECULAR ),
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_NORMAL ),
