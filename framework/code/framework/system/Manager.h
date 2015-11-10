@@ -102,7 +102,7 @@ public:
 	bool IsEnd( void ) const;
 	void SetWindow( Window* pValue );
 	Window* GetWindow( void ) const;
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	void SetFpsUpdate( unsigned long value );
 	void SetFpsDraw( unsigned long value );
 #endif
@@ -111,7 +111,7 @@ protected:
 	bool	isEnd_;			// 終了フラグ
 	Window*	pWindow_;		// ウィンドウ
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	int		fpsUpdate_;		// 更新FPS
 	int		fpsDraw_;		// 描画FPS
 #endif

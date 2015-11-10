@@ -151,7 +151,7 @@ public:
 protected:
 	CameraState*		pState_;				// ステート
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	CameraState*		pStateOriginal_;		// 元のステート
 	CameraStateDebug*	pStateDebug_;			// デバッグステート
 	bool				isDebugMode_;			// デバッグモードフラグ

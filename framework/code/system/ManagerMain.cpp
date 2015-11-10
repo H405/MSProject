@@ -119,7 +119,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	widthWindow = pWindow_->GetWidth();
 	heightWindow = pWindow_->GetHeight();
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	// デバッグ用計測クラスの初期化
 	ManagerDebugMeasure::Initialize();
 #endif
@@ -194,7 +194,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	CameraStateDebug::SetInputMouse( pMouse_ );
 #endif
 
@@ -297,7 +297,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	Graphic::SetManagerDraw( pDraw_ );
 
 	// 描画表示クラスの初期化
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	result = DebugProc::Initialize( pDevice );
 #endif
 	if( result != 0 )
@@ -558,7 +558,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 #ifdef _DEBUG
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #else
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif
 	if( result != 0 )
 	{
@@ -637,7 +637,7 @@ int ManagerMain::Finalize( void )
 	pUpdate_ = nullptr;
 
 	// 描画表示クラスの終了
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	DebugProc::Finalize();
 #endif
 
@@ -685,7 +685,7 @@ int ManagerMain::Finalize( void )
 	delete pDevice_;
 	pDevice_ = nullptr;
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	// デバッグ用計測クラスの終了
 	ManagerDebugMeasure::Finalize();
 #endif
@@ -750,7 +750,7 @@ void ManagerMain::Update( void )
 	Assert( pScene_ != nullptr, _T( "シーン管理クラスが生成されていません。" ) );
 
 	// FPSの表示
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	DebugProc::Print( _T( "FPS : %2d\n" ), fpsUpdate_ );
 #endif
 
@@ -779,7 +779,7 @@ void ManagerMain::Update( void )
 		pUpdate_->Execute();
 	}
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	// デバッグ用計測クラスの更新
 	ManagerDebugMeasure::Update();
 #endif

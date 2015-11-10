@@ -28,7 +28,7 @@
 //******************************************************************************
 // É}ÉNÉçíËã`
 //******************************************************************************
-#ifdef _DEBUG
+#ifdef _DEVELOP
 #define MeasureTime( pFormat, ... )		DebugMeasure debugMeasure( pFormat, __VA_ARGS__ )
 #else
 #define MeasureTime( pFormat, ... )		static_cast< void >( 0 )

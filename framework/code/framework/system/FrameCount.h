@@ -146,7 +146,7 @@ private:
 	unsigned long	countFrameDraw_;		// 描画フレーム数
 	int				typeCountFrame_;		// フレームカウントの種類
 	Manager*		pManager_;				// マネージャクラス格納用
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	unsigned long	fpsUpdate_;				// 更新FPS
 	unsigned long	fpsDraw_;				// 描画FPS
 #endif

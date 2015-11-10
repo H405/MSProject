@@ -156,7 +156,7 @@ int FrameCount::Execute( void )
 		countFrameUpdate_ = 
 		countFrameDraw_ = 0;
 		typeCountFrame_ = TYPE_FRAME_COUNT_DRAW;
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		fpsUpdate_ = 0;
 		fpsDraw_ = 0;
 #endif
@@ -296,7 +296,7 @@ void FrameCount::InitializeSelf( void )
 		ppFunctionCountFrame_[ counterItem ] = nullptr;
 	}
 	pManager_ = nullptr;
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	fpsUpdate_ = 0;
 	fpsDraw_ = 0;
 #endif
@@ -314,7 +314,7 @@ void FrameCount::CountFrameDraw( FrameCount* pThis )
 	timeCurrent = timeGetTime();
 	if( (timeCurrent - pThis->timeLastUpdate_) >= static_cast< unsigned int >( pThis->intervalUpdateFps_ ) )
 	{
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		pThis->fpsUpdate_ = pThis->countFrameUpdate_ * 1000 / (timeCurrent - pThis->timeLastUpdate_);
 		pThis->fpsDraw_ = pThis->countFrameDraw_ * 1000 / (timeCurrent - pThis->timeLastUpdate_);
 #endif
@@ -330,7 +330,7 @@ void FrameCount::CountFrameDraw( FrameCount* pThis )
 		pThis->timeLastExecute_ = timeCurrent;
 
 		// FPS�̒ʒm
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		pThis->pManager_->SetFpsUpdate( pThis->fpsUpdate_ );
 		pThis->pManager_->SetFpsDraw( pThis->fpsDraw_ );
 #endif
@@ -364,7 +364,7 @@ void FrameCount::CountFrameUpdate( FrameCount* pThis )
 	timeCurrent = timeGetTime();
 	if( (timeCurrent - pThis->timeLastUpdate_) >= static_cast< unsigned int >( pThis->intervalUpdateFps_ ) )
 	{
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		pThis->fpsUpdate_ = pThis->countFrameUpdate_ * 1000 / (timeCurrent - pThis->timeLastUpdate_);
 		pThis->fpsDraw_ = pThis->countFrameDraw_ * 1000 / (timeCurrent - pThis->timeLastUpdate_);
 #endif
@@ -377,7 +377,7 @@ void FrameCount::CountFrameUpdate( FrameCount* pThis )
 	if( (timeCurrent - pThis->timeBeginGame_) >= (1000.0f / pThis->destinationFps_) * pThis->countFrameTotal_ )
 	{
 		// FPS�̒ʒm
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		pThis->pManager_->SetFpsUpdate( pThis->fpsUpdate_ );
 		pThis->pManager_->SetFpsDraw( pThis->fpsDraw_ );
 #endif

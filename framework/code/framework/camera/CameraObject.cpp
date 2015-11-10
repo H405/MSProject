@@ -70,7 +70,7 @@ int CameraObject::Initialize( float viewField, int widthScreen, int heightScreen
 		return result;
 	}
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	// デバッグステートの生成
 	pStateDebug_ = new CameraStateDebug();
 	if( pStateDebug_ == nullptr )
@@ -95,7 +95,7 @@ int CameraObject::Initialize( float viewField, int widthScreen, int heightScreen
 //==============================================================================
 int CameraObject::Finalize( void )
 {
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	// デバッグステートの開放
 	delete pStateDebug_;
 	pStateDebug_ = nullptr;
@@ -169,7 +169,7 @@ int CameraObject::Copy( CameraObject* pOut ) const
 void CameraObject::Update( void )
 {
 	// デバッグモード切替
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	if( GetKeyState( VK_F3 ) & 0x80 )
 	{
 		SetDebug( true );
@@ -197,7 +197,7 @@ void CameraObject::Update( void )
 //==============================================================================
 void CameraObject::SetDebug( bool value )
 {
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	// 現在の状態と同じなら終了
 	if( value == isDebugMode_ )
 	{
@@ -714,7 +714,7 @@ void CameraObject::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pState_ = nullptr;
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	pStateOriginal_ = nullptr;
 	pStateDebug_ = nullptr;
 	isDebugMode_ = false;

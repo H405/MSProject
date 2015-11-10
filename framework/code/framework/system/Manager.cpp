@@ -171,7 +171,7 @@ bool Manager::IsEnd( void ) const
 	return isEnd_;
 }
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 //==============================================================================
 // Brief  : XVFPS‚Ìİ’è
 // Return : void								: ‚È‚µ
@@ -205,7 +205,7 @@ void Manager::InitializeSelf( void )
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
 	isEnd_ = false;
 	pWindow_ = nullptr;
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	fpsUpdate_ = 0;
 	fpsDraw_ = 0;
 #endif

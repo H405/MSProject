@@ -30,7 +30,7 @@
 //******************************************************************************
 // É}ÉNÉçíËã`
 //******************************************************************************
-#ifdef _DEBUG
+#ifdef _DEVELOP
 #define PrintDebug( pFormat, ... )	DebugProc::Print( pFormat, __VA_ARGS__ )
 #else
 #define PrintDebug( pFormat, ... )	static_cast< void >( 0 )

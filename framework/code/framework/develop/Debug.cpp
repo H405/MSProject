@@ -22,7 +22,7 @@
 //******************************************************************************
 // value
 //******************************************************************************
-#ifdef _DEBUG
+#ifdef _DEVELOP
 DWORD	g_dwDebugMeasureStartTime = 0;			// 計測開始時間
 BOOL	g_bWindowModeDebug = TRUE;				// ウィンドウモード
 #endif
@@ -47,7 +47,7 @@ void PrintMessageToMessageBox( TCHAR *pFormat, ... )
 	MessageBox( g_hWndDebug, &aStr[ 0 ], _T( "Message" ), MB_OK );
 }
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 //==============================================================================
 // Brief  ： 初期化処理
 // Return ： void							： なし

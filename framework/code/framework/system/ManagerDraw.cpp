@@ -228,7 +228,7 @@ int ManagerDraw< TypeItem >::Execute( void )
 			}
 		}
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		// デバッグ文字の描画
 		DebugProc::Draw();
 		DebugProc::ClearBuffer();
