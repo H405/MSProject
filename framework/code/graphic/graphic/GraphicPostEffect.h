@@ -60,12 +60,14 @@ public:
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : const float* pProportionFade		: フェード割合
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
 	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTexture = nullptr );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -82,12 +84,14 @@ public:
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : const float* pProportionFade		: フェード割合
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
 	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture = nullptr );
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTexture = nullptr );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectPostEffect.h
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : GraphicBlur.h
+// Brief  : ブラー基描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_POST_EFFECT_H
-#define MY_OBJECT_POST_EFFECT_H
+#ifndef MY_GRAPHIC_BLUR_BASE_H
+#define MY_GRAPHIC_BLUR_BASE_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/Object.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,14 +31,11 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class Fade;
-class GraphicPostEffect;
-class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectPostEffect : public Object
+class GraphicBlur : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -46,22 +43,27 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectPostEffect( void );
+	GraphicBlur( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectPostEffect( void );
+	~GraphicBlur( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectX					: X方向ブラーエフェクト
+	// Arg    : Effect* pEffectY					: Y方向ブラーエフェクト
+	// Arg    : IDirect3DTexture9* pTextureX		: X方向ブラーを掛けるテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureY		: Y方向ブラーを掛けるテクスチャ
 	//==============================================================================
-	int Initialize( int priority, Fade* pFade );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectX, Effect* pEffectY,
+		IDirect3DTexture9* pTextureX, IDirect3DTexture9* pTextureY );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -73,57 +75,30 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectX					: X方向ブラーエフェクト
+	// Arg    : Effect* pEffectY					: Y方向ブラーエフェクト
+	// Arg    : IDirect3DTexture9* pTextureX		: X方向ブラーを掛けるテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureY		: Y方向ブラーを掛けるテクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, Fade* pFade );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectX, Effect* pEffectY,
+		IDirect3DTexture9* pTextureX, IDirect3DTexture9* pTextureY );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
+	// Arg    : GraphicBlur* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectPostEffect* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-		Texture* pTexture = nullptr );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	void SetGraphic( GraphicPostEffect* pValue );
-	GraphicPostEffect* GetGraphic( void ) const;
+	int Copy( GraphicBlur* pOut ) const;
 
 protected:
-	GraphicPostEffect*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	ObjectPostEffect( const ObjectPostEffect& );
-	ObjectPostEffect operator=( const ObjectPostEffect& );
+	GraphicBlur( const GraphicBlur& );
+	GraphicBlur operator=( const GraphicBlur& );
 
-	Fade*	pFade_;					// フェード
-	float	proportionFade_;		// フェード割合
 };
 
-#endif	// MY_OBJECT_POST_EFFECT_H
+#endif	// MY_GRAPHIC_BLUR_BASE_H

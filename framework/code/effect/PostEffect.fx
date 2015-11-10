@@ -13,6 +13,7 @@
 float4x4	matrixWorld_;			// ワールドマトリクス
 texture		texture_;				// テクスチャ
 texture		texture3D_;				// 3D描画テクスチャ
+texture		textureLuminance_;		// 輝度テクスチャ
 texture		texture2D_;				// 2D描画テクスチャ
 texture		textureMask_;			// マスクテクスチャ
 float4		colorFade_;				// フェードの色
@@ -36,6 +37,16 @@ sampler samplerTexture = sampler_state
 sampler samplerTexture3D = sampler_state
 {
 	Texture = < texture3D_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureLuminance = sampler_state
+{
+	Texture = < textureLuminance_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -107,10 +118,11 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
 	// 通常描画色の決定
+	float3	color3D = tex2D( samplerTexture3D, vertex.textureCoord_ ).rgb + tex2D( samplerTextureLuminance, vertex.textureCoord_ ).rgb;
 	float	mask = tex2D( samplerTextureMask, vertex.textureCoord_ ).r;
-	float4	colorGeneral = (1.0f - mask) * tex2D( samplerTexture3D, vertex.textureCoord_ ) + mask * tex2D( samplerTexture2D, vertex.textureCoord_ );
-	float4	colorFade = tex2D( samplerTexture, vertex.textureCoord_ ) * colorFade_;
-	return (1.0f - proportionFade_) * colorGeneral + proportionFade_ * colorFade_;
+	float3	colorGeneral = (1.0f - mask) * color3D + mask * tex2D( samplerTexture2D, vertex.textureCoord_ ).rgb;
+	float3	colorFade = tex2D( samplerTexture, vertex.textureCoord_ ).rgb * colorFade_;
+	return float4( (1.0f - proportionFade_) * colorGeneral + proportionFade_ * colorFade_, 1.0f );
 }
 
 //==============================================================================

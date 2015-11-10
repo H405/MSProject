@@ -58,6 +58,18 @@ RenderPass::~RenderPass( void )
 //==============================================================================
 int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, const RenderPassParameter* pParameter )
 {
+	// メンバ変数の設定
+	if( pParameter != nullptr )
+	{
+		width_ = static_cast< unsigned int >( pParameter->width_ );
+		height_ = static_cast< unsigned int >( pParameter->height_ );
+		flagClear_ = pParameter->flagClear_;
+		clearTarget_ = pParameter->clearTarget_;
+		clearZBuffer_ = pParameter->clearZBuffer_;
+		clearStencil_ = pParameter->clearStencil_;
+		pSurfaceDepth_ = pParameter->pSurfaceDepth_;
+	}
+
 	// サイズの決定
 	if( pParameter == nullptr || pParameter->width_ < 0 || pParameter->height_ < 0 )
 	{
@@ -71,7 +83,7 @@ int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, co
 		pSurfaceDepthCurrent = nullptr;
 	}
 
-	// メンバ変数の設定
+	// レンダーターゲットの生成
 	int		result;		// 実行結果
 	pDevice_ = pDevice;
 	countRenderTarget_ = countRenderTarget;
@@ -92,16 +104,6 @@ int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, co
 		{
 			return result;
 		}
-	}
-	if( pParameter != nullptr )
-	{
-		width_ = static_cast< unsigned int >( pParameter->width_ );
-		height_ = static_cast< unsigned int >( pParameter->height_ );
-		flagClear_ = pParameter->flagClear_;
-		clearTarget_ = pParameter->clearTarget_;
-		clearZBuffer_ = pParameter->clearZBuffer_;
-		clearStencil_ = pParameter->clearStencil_;
-		pSurfaceDepth_ = pParameter->pSurfaceDepth_;
 	}
 
 	// 深度バッファの生成

@@ -1,19 +1,18 @@
 //==============================================================================
 //
-// File   : ObjectPostEffect.cpp
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : ObjectBlur.cpp
+// Brief  : ブラー基描画オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ObjectPostEffect.h"
-#include "../framework/resource/Texture.h"
-#include "../framework/system/Fade.h"
-#include "../graphic/graphic/GraphicPostEffect.h"
+#include "ObjectBlur.h"
+#include "../framework/resource/Effect.h"
+#include "../graphic/graphic/GraphicBlur.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -33,7 +32,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectPostEffect::ObjectPostEffect( void ) : Object()
+ObjectBlur::ObjectBlur( void ) : Object()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +43,7 @@ ObjectPostEffect::ObjectPostEffect( void ) : Object()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectPostEffect::~ObjectPostEffect( void )
+ObjectBlur::~ObjectBlur( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,9 +53,8 @@ ObjectPostEffect::~ObjectPostEffect( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
-// Arg    : Fade* pFade							: フェード
 //==============================================================================
-int ObjectPostEffect::Initialize( int priority, Fade* pFade )
+int ObjectBlur::Initialize( int priority )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -65,9 +63,6 @@ int ObjectPostEffect::Initialize( int priority, Fade* pFade )
 	{
 		return result;
 	}
-
-	// メンバ変数の設定
-	pFade_ = pFade;
 
 	// 正常終了
 	return 0;
@@ -78,7 +73,7 @@ int ObjectPostEffect::Initialize( int priority, Fade* pFade )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int ObjectPostEffect::Finalize( void )
+int ObjectBlur::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -99,9 +94,8 @@ int ObjectPostEffect::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
-// Arg    : Fade* pFade							: フェード
 //==============================================================================
-int ObjectPostEffect::Reinitialize( int priority, Fade* pFade )
+int ObjectBlur::Reinitialize( int priority )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -112,15 +106,15 @@ int ObjectPostEffect::Reinitialize( int priority, Fade* pFade )
 	}
 
 	// 初期化処理
-	return Initialize( priority, pFade );
+	return Initialize( priority );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
+// Arg    : ObjectBlur* pOut					: コピー先アドレス
 //==============================================================================
-int ObjectPostEffect::Copy( ObjectPostEffect* pOut ) const
+int ObjectBlur::Copy( ObjectBlur* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -139,11 +133,8 @@ int ObjectPostEffect::Copy( ObjectPostEffect* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectPostEffect::Update( void )
+void ObjectBlur::Update( void )
 {
-	// フェードの更新
-	proportionFade_ = pFade_->GetProportion();
-
 	// 基本クラスの処理
 	Object::Update();
 }
@@ -153,32 +144,22 @@ void ObjectPostEffect::Update( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : Texture* pTexture					: テクスチャ
+// Arg    : Effect* pEffectX					: X方向ブラーエフェクト
+// Arg    : Effect* pEffectY					: Y方向ブラーエフェクト
+// Arg    : IDirect3DTexture9* pTextureX		: X方向ブラーを掛けるテクスチャ
+// Arg    : IDirect3DTexture9* pTextureY		: Y方向ブラーを掛けるテクスチャ
 //==============================================================================
-int ObjectPostEffect::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-	Texture* pTexture )
+int ObjectBlur::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectX, Effect* pEffectY,
+	IDirect3DTexture9* pTextureX, IDirect3DTexture9* pTextureY )
 {
 	// グラフィックの生成
-	int					result;				// 実行結果
-	IDirect3DTexture9*	pTextureSet;		// 設定するテクスチャ
-	pTextureSet = nullptr;
-	if( pTexture != nullptr )
-	{
-		pTextureSet = pTexture->pTexture_;
-	}
-	pGraphic_ = new GraphicPostEffect();
+	int		result;				// 実行結果
+	pGraphic_ = new GraphicBlur();
 	if( pGraphic_ == nullptr )
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTexture3D, pTextureLuminance,
-		pTexture2D, pTextureMask, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectX, pEffectY, pTextureX, pTextureY );
 	if( result != 0 )
 	{
 		return result;
@@ -192,16 +173,16 @@ int ObjectPostEffect::CreateGraphic( int priority, const EffectParameter* pParam
 		scale_.y = pParameter->GetHeightScreen();
 	}
 
-	// 正常終了
+	// 値の返却
 	return 0;
 }
 
 //==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : GraphicPostEffect* pValue			: 設定する値
+// Arg    : GraphicBlur* pValue					: 設定する値
 //==============================================================================
-void ObjectPostEffect::SetGraphic( GraphicPostEffect* pValue )
+void ObjectBlur::SetGraphic( GraphicBlur* pValue )
 {
 	// 値の設定
 	pGraphic_ = pValue;
@@ -210,10 +191,10 @@ void ObjectPostEffect::SetGraphic( GraphicPostEffect* pValue )
 
 //==============================================================================
 // Brief  : 描画クラスの取得
-// Return : GraphicPostEffect*					: 返却する値
+// Return : GraphicBlur*						: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-GraphicPostEffect* ObjectPostEffect::GetGraphic( void ) const
+GraphicBlur* ObjectBlur::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
@@ -224,10 +205,8 @@ GraphicPostEffect* ObjectPostEffect::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectPostEffect::InitializeSelf( void )
+void ObjectBlur::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;
-	pFade_ = nullptr;
-	proportionFade_ = 0.0f;
 }

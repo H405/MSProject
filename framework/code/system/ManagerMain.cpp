@@ -42,6 +42,7 @@
 #include "../framework/system/ManagerDraw.h"
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
+#include "../object/ObjectBlur.h"
 #include "../object/ObjectLightEffect.h"
 #include "../object/ObjectMerge.h"
 #include "../object/ObjectPostEffect.h"
@@ -102,6 +103,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 
 	// ウィンドウの生成
 	HWND	windowHandle;		// ウィンドウハンドル
+	int		widthWindow;		// ウィンドウ幅
+	int		heightWindow;		// ウィンドウ高さ
 	pWindow_ = new WindowMain();
 	if( pWindow_ == nullptr )
 	{
@@ -113,6 +116,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 	windowHandle = pWindow_->GetWindowHandle();
+	widthWindow = pWindow_->GetWidth();
+	heightWindow = pWindow_->GetHeight();
 
 #ifdef _DEBUG
 	// デバッグ用計測クラスの初期化
@@ -226,6 +231,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	// パスクラスの生成
 	RenderPassParameter	parameterPass3D;			// 3D描画パスのパラメータ
 	RenderPassParameter	parameterPassNotLight;		// ライティングなし3D描画パスのパラメータ
+	RenderPassParameter	parameterPassBlur;			// ブラーパスのパラメータ
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
 	{
@@ -250,6 +256,18 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 	result = pRenderPass_[ GraphicMain::PASS_3D_MERGE ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MERGE_MAX );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassBlur.width_ = widthWindow / 4;
+	parameterPassBlur.height_ = heightWindow / 4;
+	result = pRenderPass_[ GraphicMain::PASS_BLUR_X ].Initialize( pDevice, GraphicMain::RENDER_PASS_BLUR_X_MAX, &parameterPassBlur );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pRenderPass_[ GraphicMain::PASS_BLUR_Y ].Initialize( pDevice, GraphicMain::RENDER_PASS_BLUR_Y_MAX, &parameterPassBlur );
 	if( result != 0 )
 	{
 		return result;
@@ -377,8 +395,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pEffectParameter_->SetWidthScreen( static_cast< float >( pWindow_->GetWidth() ) );
-	pEffectParameter_->SetHeightScreen( static_cast< float >( pWindow_->GetHeight() ) );
+	pEffectParameter_->SetWidthScreen( static_cast< float >( widthWindow ) );
+	pEffectParameter_->SetHeightScreen( static_cast< float >( heightWindow ) );
 
 	// 環境光の設定
 	pEffectParameter_->SetColorAmbient( 0.1f, 0.1f, 0.1f );
@@ -462,6 +480,30 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	pObjectMerge_->SetPositionY( 1.0f );
 
+	// ブラーオブジェクトの生成
+	Effect*	pBlurX = nullptr;		// X方向ブラーエフェクト
+	Effect*	pBlurY = nullptr;		// Y方向ブラーエフェクト
+	pObjectBlur_ = new ObjectBlur();
+	if( pObjectBlur_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectBlur_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pBlurX = pEffect_->Get( _T( "BlurX.fx" ) );
+	pBlurY = pEffect_->Get( _T( "BlurY.fx" ) );
+	result = pObjectBlur_->CreateGraphic( 0, pEffectParameter_, pBlurX, pBlurY,
+		pRenderPass_[ GraphicMain::PASS_3D_MERGE ].GetTexture( GraphicMain::RENDER_PASS_3D_MERGE_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_BLUR_X ].GetTexture( GraphicMain::RENDER_PASS_BLUR_X_COLOR ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectBlur_->SetPositionY( 1.0f );
+
 	// ポストエフェクトオブジェクトの生成
 	Effect*	pEffectPostEffect = nullptr;		// ポストエフェクト
 	pObjectPostEffect_ = new ObjectPostEffect();
@@ -477,6 +519,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pEffectPostEffect = pEffect_->Get( _T( "PostEffect.fx" ) );
 	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectPostEffect,
 		pRenderPass_[ GraphicMain::PASS_3D_MERGE ].GetTexture( GraphicMain::RENDER_PASS_3D_MERGE_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_BLUR_Y ].GetTexture( GraphicMain::RENDER_PASS_BLUR_Y_LUMINANCE ),
 		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_MASK ) );
 	if( result != 0 )
@@ -544,6 +587,10 @@ int ManagerMain::Finalize( void )
 	// ポストエフェクトオブジェクトの開放
 	delete pObjectPostEffect_;
 	pObjectPostEffect_ = nullptr;
+
+	// ブラー基オブジェクトの開放
+	delete pObjectBlur_;
+	pObjectBlur_ = nullptr;
 
 	// 総合3D描画オブジェクトの開放
 	delete pObjectMerge_;
@@ -769,6 +816,7 @@ void ManagerMain::InitializeSelf( void )
 	pXAudio_ = nullptr;
 	pFade_ = nullptr;
 	pEffectParameter_ = nullptr;
+	pObjectBlur_ = nullptr;
 	pObjectLightEffect_ = nullptr;
 	pObjectMerge_ = nullptr;
 	pObjectPostEffect_ = nullptr;

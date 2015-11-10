@@ -45,6 +45,8 @@ public:
 		PASS_3D_NOT_LIGHT,		// ライティングなし3D描画
 		PASS_LIGHT_EFFECT,		// ライティング
 		PASS_3D_MERGE,			// 総合3D描画
+		PASS_BLUR_X,			// X方向ブラー
+		PASS_BLUR_Y,			// Y方向ブラー
 		PASS_2D,				// 2D描画
 		PASS_POST_EFFECT,		// ポストエフェクト
 		PASS_MAX				// 最大数
@@ -81,6 +83,21 @@ public:
 	{
 		RENDER_PASS_3D_MERGE_COLOR = 0,			// 色
 		RENDER_PASS_3D_MERGE_MAX				// 最大値
+	};
+
+	// X方向ブラー
+	enum
+	{
+		RENDER_PASS_BLUR_X_COLOR = 0,			// 色
+		RENDER_PASS_BLUR_X_MAX					// 最大値
+	};
+
+	// Y方向ブラー
+	enum
+	{
+		RENDER_PASS_BLUR_Y_COLOR = 0,			// 色
+		RENDER_PASS_BLUR_Y_LUMINANCE,			// 輝度
+		RENDER_PASS_BLUR_Y_MAX					// 最大値
 	};
 
 	// 2D描画

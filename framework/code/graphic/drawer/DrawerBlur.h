@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectPostEffect.h
-// Brief  : 画面ポリゴンオブジェクトクラス
+// File   : DrawerBlur.h
+// Brief  : ブラー基描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_POST_EFFECT_H
-#define MY_OBJECT_POST_EFFECT_H
+#ifndef MY_DRAWER_BLUR_BASE_H
+#define MY_DRAWER_BLUR_BASE_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/Object.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,37 +31,48 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class Fade;
-class GraphicPostEffect;
-class Texture;
+class Polygon2D;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectPostEffect : public Object
+class DrawerBlur : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_WORLD = 0,		// ワールド変換行列
+		PARAMETER_SIZE_SCREEN_HALF,		// 画面サイズの半分
+		PARAMETER_TEXTURE,				// ブラーを掛けるテクスチャ
+		PARAMETER_OFFSET,				// オフセット
+		PARAMETER_MAX					// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectPostEffect( void );
+	DrawerBlur( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectPostEffect( void );
+	~DrawerBlur( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: ブラーを掛けるテクスチャ
+	// Arg    : const D3DXVECTOR2& offset			: オフセット
 	//==============================================================================
-	int Initialize( int priority, Fade* pFade );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTexture, const D3DXVECTOR2& offset );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -73,57 +84,45 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : Fade* pFade							: フェード
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: ブラーを掛けるテクスチャ
+	// Arg    : const D3DXVECTOR2& offset			: オフセット
 	//==============================================================================
-	int Reinitialize( int priority, Fade* pFade );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTexture, const D3DXVECTOR2& offset );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectPostEffect* pOut				: コピー先アドレス
+	// Arg    : DrawerBlur* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectPostEffect* pOut ) const;
+	int Copy( DrawerBlur* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
-	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-		Texture* pTexture = nullptr );
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicPostEffect* pValue );
-	GraphicPostEffect* GetGraphic( void ) const;
+	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTexture( void ) const;
 
 protected:
-	GraphicPostEffect*	pGraphic_;		// 描画クラス
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	IDirect3DTexture9*		pTexture_;				// ブラーを掛けるテクスチャ
+	Polygon2D*				pPolygon_;				// ポリゴン
 
 private:
 	void InitializeSelf( void );
-	ObjectPostEffect( const ObjectPostEffect& );
-	ObjectPostEffect operator=( const ObjectPostEffect& );
+	DrawerBlur( const DrawerBlur& );
+	DrawerBlur operator=( const DrawerBlur& );
 
-	Fade*	pFade_;					// フェード
-	float	proportionFade_;		// フェード割合
 };
 
-#endif	// MY_OBJECT_POST_EFFECT_H
+#endif	// MY_DRAWER_BLUR_BASE_H

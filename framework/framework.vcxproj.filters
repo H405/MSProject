@@ -456,6 +456,15 @@
     <ClInclude Include="code\system\camera\CameraStateSpline.h">
       <Filter>ソース ファイル\system\camera</Filter>
     </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerBlur.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicBlur.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectBlur.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -818,6 +827,15 @@
     <ClCompile Include="code\system\camera\CameraStateSpline.cpp">
       <Filter>ソース ファイル\system\camera</Filter>
     </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerBlur.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicBlur.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectBlur.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -854,6 +872,15 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\ModelMat.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\BlurBase.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\BlurY.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\BlurX.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

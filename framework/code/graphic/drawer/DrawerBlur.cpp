@@ -1,18 +1,18 @@
 //==============================================================================
 //
-// File   : DrawerPostEffect.cpp
-// Brief  : 画面ポリゴン描画クラス
+// File   : DrawerBlur.cpp
+// Brief  : ブラー基描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "DrawerPostEffect.h"
-#include "../../framework/resource/Effect.h"
+#include "DrawerBlur.h"
 #include "../../framework/polygon/Polygon2D.h"
+#include "../../framework/resource/Effect.h"
 #include "../../system/EffectParameter.h"
 
 //******************************************************************************
@@ -32,7 +32,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerPostEffect::DrawerPostEffect( void ) : Drawer()
+DrawerBlur::DrawerBlur( void ) : Drawer()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -43,7 +43,7 @@ DrawerPostEffect::DrawerPostEffect( void ) : Drawer()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerPostEffect::~DrawerPostEffect( void )
+DrawerBlur::~DrawerBlur( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,18 +54,12 @@ DrawerPostEffect::~DrawerPostEffect( void )
 // Return : int									: 実行結果
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
-// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
-// Arg    : const D3DXCOLOR* pColorFade			: フェードの色
-// Arg    : const float* pProportionFade		: フェードの割合
+// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+// Arg    : IDirect3DTexture9* pTexture			: ブラーを掛けるテクスチャ
+// Arg    : const D3DXVECTOR2& offset			: オフセット
 //==============================================================================
-int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-	IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade )
+int DrawerBlur::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	IDirect3DTexture9* pTexture, const D3DXVECTOR2& offset )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -79,13 +73,7 @@ int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEf
 	pEffectParameter_ = pParameter;
 	pEffect_ = pEffect;
 	pTexture_ = pTexture;
-	pTexture3D_ = pTexture3D;
-	pTextureLuminance_ = pTextureLuminance;
-	pTexture2D_ = pTexture2D;
-	pTextureMask_ = pTextureMask;
 	pPolygon_ = pPolygon;
-	pColorFade_ = pColorFade;
-	pProportionFade_ = pProportionFade;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -93,6 +81,9 @@ int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEf
 	{
 		return result;
 	}
+
+	// オフセットの設定
+	pEffect->SetFloatArray( PARAMETER_OFFSET, &offset.x, 2 );
 
 	// 正常終了
 	return 0;
@@ -103,7 +94,7 @@ int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEf
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int DrawerPostEffect::Finalize( void )
+int DrawerBlur::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -125,18 +116,12 @@ int DrawerPostEffect::Finalize( void )
 // Return : int									: 実行結果
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
-// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
-// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
-// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
-// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
-// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
-// Arg    : const D3DXCOLOR* pColorFade			: フェードの色
-// Arg    : const float* pProportionFade		: フェードの割合
+// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
+// Arg    : IDirect3DTexture9* pTexture			: ブラーを掛けるテクスチャ
+// Arg    : const D3DXVECTOR2& offset			: オフセット
 //==============================================================================
-int DrawerPostEffect::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-	IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade )
+int DrawerBlur::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	IDirect3DTexture9* pTexture, const D3DXVECTOR2& offset )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -147,16 +132,15 @@ int DrawerPostEffect::Reinitialize( const EffectParameter* pParameter, Effect* p
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTexture, pTexture3D, pTextureLuminance,
-		pTexture2D, pTextureMask, pColorFade, pProportionFade );
+	return Initialize( pParameter, pEffect, pPolygon, pTexture, offset );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : DrawerPostEffect* pOut				: コピー先アドレス
+// Arg    : DrawerBlur* pOut					: コピー先アドレス
 //==============================================================================
-int DrawerPostEffect::Copy( DrawerPostEffect* pOut ) const
+int DrawerBlur::Copy( DrawerBlur* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -175,25 +159,21 @@ int DrawerPostEffect::Copy( DrawerPostEffect* pOut ) const
 // Return : void								: なし
 // Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 //==============================================================================
-void DrawerPostEffect::Draw( const D3DXMATRIX& matrixWorld )
+void DrawerBlur::Draw( const D3DXMATRIX& matrixWorld )
 {
-	// パラメータの設定
-	D3DXMATRIX	matrixWorldSet;		// 設定するワールドマトリクス
-	D3DCOLOR	colorFade;			// フェード色
+	// 頂点シェーダ用パラメータ
+	D3DXMATRIX	matrixWorldSet;			// 設定するワールドマトリクス
+	float		pSizeScreen[ 2 ];		// 画面のサイズ
 	matrixWorldSet = matrixWorld;
 	matrixWorldSet._41 -= 0.5f;
 	matrixWorldSet._42 -= 0.5f;
-	colorFade = *pColorFade_;
+	pSizeScreen[ 0 ] = 0.5f * pEffectParameter_->GetWidthScreen();
+	pSizeScreen[ 1 ] = 0.5f * pEffectParameter_->GetHeightScreen();
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
+	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN_HALF, pSizeScreen, 2 );
+
+	// テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_3D, pTexture3D_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_LUMINANCE, pTextureLuminance_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_2D, pTexture2D_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_MASK, pTextureMask_ );
-	pEffect_->SetColor( PARAMETER_COLOR_FADE, colorFade );
-	pEffect_->SetFloat( PARAMETER_WIDTH_SCREEN_HALF, pEffectParameter_->GetWidthScreen() * 0.5f );
-	pEffect_->SetFloat( PARAMETER_HEIGHT_SCREEN_HALF, pEffectParameter_->GetHeightScreen() * 0.5f );
-	pEffect_->SetFloat( PARAMETER_PROPORTION_FADE, *pProportionFade_ );
 
 	// 描画
 	pEffect_->Begin( 0 );
@@ -202,47 +182,25 @@ void DrawerPostEffect::Draw( const D3DXMATRIX& matrixWorld )
 }
 
 //==============================================================================
-// Brief  : テクスチャの設定
+// Brief  : ブラーを掛けるテクスチャの設定
 // Return : void								: なし
 // Arg    : IDirect3DTexture9* pValue			: 設定する値
 //==============================================================================
-void DrawerPostEffect::SetTexture( IDirect3DTexture9* pValue )
+void DrawerBlur::SetTexture( IDirect3DTexture9* pValue )
 {
 	// 値の設定
 	pTexture_ = pValue;
 }
 
 //==============================================================================
-// Brief  : テクスチャの取得
+// Brief  : ブラーを掛けるテクスチャの取得
 // Return : IDirect3DTexture9*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-IDirect3DTexture9* DrawerPostEffect::GetTexture( void ) const
+IDirect3DTexture9* DrawerBlur::GetTexture( void ) const
 {
 	// 値の返却
 	return pTexture_;
-}
-
-//==============================================================================
-// Brief  : ポリゴンの設定
-// Return : void								: なし
-// Arg    : Polygon2D* pValue					: 設定する値
-//==============================================================================
-void DrawerPostEffect::SetPolygon( Polygon2D* pValue )
-{
-	// 値の設定
-	pPolygon_ = pValue;
-}
-
-//==============================================================================
-// Brief  : ポリゴンの取得
-// Return : Polygon2D*							: 返却する値
-// Arg    : void								: なし
-//==============================================================================
-Polygon2D* DrawerPostEffect::GetPolygon( void ) const
-{
-	// 値の返却
-	return pPolygon_;
 }
 
 //==============================================================================
@@ -250,17 +208,11 @@ Polygon2D* DrawerPostEffect::GetPolygon( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void DrawerPostEffect::InitializeSelf( void )
+void DrawerBlur::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pEffectParameter_ = nullptr;
 	pEffect_ = nullptr;
 	pTexture_ = nullptr;
-	pTexture3D_ = nullptr;
-	pTextureLuminance_ = nullptr;
-	pTexture2D_ = nullptr;
-	pTextureMask_ = nullptr;
 	pPolygon_ = nullptr;
-	pColorFade_ = nullptr;
-	pProportionFade_ = nullptr;
 }
