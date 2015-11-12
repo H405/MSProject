@@ -222,6 +222,12 @@ int CameraStateSpline::Copy( CameraStateSpline* pOut ) const
 //==============================================================================
 void CameraStateSpline::Update( CameraObject* pCamera )
 {
+	// 有効なときのみ処理する
+	if( !isEnable_ )
+	{
+		return;
+	}
+
 	// 視点座標を設定
 	int			indexPointCameraBegin;		// 開始視点番号
 	int			indexPointCameraEnd;		// 終了視点番号
@@ -325,6 +331,39 @@ void CameraStateSpline::SetControlPointLookAt( int index, const D3DXVECTOR3& pos
 }
 
 //==============================================================================
+// Brief  : 有効フラグの設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void CameraStateSpline::SetIsEnable( bool value )
+{
+	// 値の設定
+	isEnable_ = value;
+}
+
+//==============================================================================
+// Brief  : 有効フラグの取得
+// Return : bool								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+bool CameraStateSpline::GetIsEnable( void ) const
+{
+	// 値の返却
+	return isEnable_;
+}
+
+//==============================================================================
+// Brief  : 有効フラグの判定
+// Return : bool								: 判定結果
+// Arg    : void								: なし
+//==============================================================================
+bool CameraStateSpline::IsEnable( void ) const
+{
+	// 値の返却
+	return isEnable_;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -344,4 +383,5 @@ void CameraStateSpline::InitializeSelf( void )
 	pIndexPointCameraEnd_ = nullptr;
 	pIndexPointLookAtBegin_ = nullptr;
 	pIndexPointLookAtEnd_ = nullptr;
+	isEnable_ = true;
 }

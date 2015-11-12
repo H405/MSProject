@@ -59,9 +59,11 @@ DrawerMerge::~DrawerMerge( void )
 // Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
 int DrawerMerge::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd )
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
+	IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -78,6 +80,7 @@ int DrawerMerge::Initialize( const EffectParameter* pParameter, Effect* pEffect,
 	pTextureNotLight_ = pTextureNotLight;
 	pTextureMask_ = pTextureMask;
 	pTextureAdd_ = pTextureAdd;
+	pTextureDepth_ = pTextureDepth;
 	pPolygon_ = pPolygon;
 
 	// ハンドルの読み込み
@@ -123,9 +126,11 @@ int DrawerMerge::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
 int DrawerMerge::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd )
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
+	IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -136,7 +141,7 @@ int DrawerMerge::Reinitialize( const EffectParameter* pParameter, Effect* pEffec
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd );
+	return Initialize( pParameter, pEffect, pPolygon, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd, pTextureDepth );
 }
 
 //==============================================================================
@@ -171,16 +176,20 @@ void DrawerMerge::Draw( const D3DXMATRIX& matrixWorld )
 	matrixWorldSet = matrixWorld;
 	matrixWorldSet._41 -= 0.5f;
 	matrixWorldSet._42 -= 0.5f;
-	pSizeScreen[ 0 ] = pEffectParameter_->GetWidthScreen();
-	pSizeScreen[ 1 ] = pEffectParameter_->GetHeightScreen();
+	pSizeScreen[ 0 ] = 0.5f * pEffectParameter_->GetWidthScreen();
+	pSizeScreen[ 1 ] = 0.5f * pEffectParameter_->GetHeightScreen();
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
-	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN, pSizeScreen, 2 );
+	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN_HALF, pSizeScreen, 2 );
+
+	// 焦点距離の設定
+	pEffect_->SetFloat( PARAMETER_FORCUS, pEffectParameter_->GetForcus() );
 
 	// 3D情報テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE_LIGHT, pTextureLight_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_NOT_LIGHT, pTextureNotLight_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_MASK, pTextureMask_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_ADD, pTextureAdd_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
 
 	// 描画
 	pEffect_->Begin( 0 );
@@ -268,5 +277,6 @@ void DrawerMerge::InitializeSelf( void )
 	pTextureNotLight_ = nullptr;
 	pTextureMask_ = nullptr;
 	pTextureAdd_ = nullptr;
+	pTextureDepth_ = nullptr;
 	pPolygon_ = nullptr;
 }

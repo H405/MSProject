@@ -56,13 +56,15 @@ GraphicPostEffect::~GraphicPostEffect( void )
 // Arg    : const float* pProportionFade		: フェード割合
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 // Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
 int GraphicPostEffect::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-	IDirect3DTexture9* pTexture )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -83,7 +85,7 @@ int GraphicPostEffect::Initialize( int priority, const EffectParameter* pParamet
 		return 1;
 	}
 	result = pDrawerPostEffect->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTexture3D, pTextureLuminance,
-		pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
+		pTextureBlur, pTextureDepth, pTexture2D, pTextureMask, pTexture, &colorFade_, pProportionFade );
 	ppDraw_[ GraphicMain::PASS_POST_EFFECT ] = pDrawerPostEffect;
 
 	// 正常終了
@@ -121,13 +123,15 @@ int GraphicPostEffect::Finalize( void )
 // Arg    : const float* pProportionFade		: フェード割合
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 // Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
 int GraphicPostEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, const float* pProportionFade,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
-	IDirect3DTexture9* pTexture )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -138,7 +142,8 @@ int GraphicPostEffect::Reinitialize( int priority, const EffectParameter* pParam
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pProportionFade, pTexture3D, pTexture2D, pTextureMask, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pProportionFade, pTexture3D, pTextureLuminance, pTextureBlur, pTextureDepth,
+		pTexture2D, pTextureMask, pTexture );
 }
 
 //==============================================================================

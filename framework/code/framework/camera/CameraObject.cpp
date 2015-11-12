@@ -13,6 +13,7 @@
 #include "CameraObject.h"
 #include "CameraState.h"
 #include "CameraStateDebug.h"
+#include "../render/RenderMatrix.h"
 
 //******************************************************************************
 // ライブラリ
@@ -324,6 +325,45 @@ void CameraObject::Move( const D3DXVECTOR3& vectorMove )
 
 	// 移動
 	SetPosition( positionCamera_ + vectorMoveTransform );
+}
+
+//==============================================================================
+// Brief  : ビュー空間のZ値を取得
+// Return : float								: Z値
+// Arg    : const D3DXVECTOR3& position			: 座標
+//==============================================================================
+float CameraObject::GetViewZ( const D3DXVECTOR3& position )
+{
+	// ビュー座標に変換
+	D3DXVECTOR3	positionView;		// ビュー空間での座標
+	D3DXMATRIX	matrixView;			// ビュー変換行列
+	pRenderMatrix_->GetMatrixView( &matrixView );
+	D3DXVec3TransformCoord( &positionView, &position, &matrixView );
+
+	// 値を返す
+	return positionView.z / clipFar_;
+}
+
+//==============================================================================
+// Brief  : プロジェクション空間のZ値を取得
+// Return : float								: Z値
+// Arg    : const D3DXVECTOR3& position			: 座標
+//==============================================================================
+float CameraObject::GetProjectionZ( const D3DXVECTOR3& position )
+{
+	// ビュー座標に変換
+	D3DXVECTOR4	positionWorld;				// ワールド空間での座標
+	D3DXVECTOR4	positionProjection;			// プロジェクション空間での座標
+	D3DXMATRIX	matrixViewProjection;		// ビュープロジェクション変換行列
+	pRenderMatrix_->GetMatrixViewProjection( &matrixViewProjection );
+	positionWorld.x = position.x;
+	positionWorld.y = position.y;
+	positionWorld.z = position.z;
+	positionWorld.w = 1.0f;
+	D3DXVec4Transform( &positionProjection, &positionWorld, &matrixViewProjection );
+
+	// 値を返す
+	return positionProjection.z / positionProjection.w;
 }
 
 //==============================================================================

@@ -57,6 +57,8 @@ DrawerPostEffect::~DrawerPostEffect( void )
 // Arg    : Polygon2D* pPolygon					: 画面ポリゴン
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 // Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
@@ -64,7 +66,8 @@ DrawerPostEffect::~DrawerPostEffect( void )
 // Arg    : const float* pProportionFade		: フェードの割合
 //==============================================================================
 int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
 	IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade )
 {
 	// 基本クラスの処理
@@ -81,6 +84,8 @@ int DrawerPostEffect::Initialize( const EffectParameter* pParameter, Effect* pEf
 	pTexture_ = pTexture;
 	pTexture3D_ = pTexture3D;
 	pTextureLuminance_ = pTextureLuminance;
+	pTextureBlur_ = pTextureBlur;
+	pTextureDepth_ = pTextureDepth;
 	pTexture2D_ = pTexture2D;
 	pTextureMask_ = pTextureMask;
 	pPolygon_ = pPolygon;
@@ -128,6 +133,8 @@ int DrawerPostEffect::Finalize( void )
 // Arg    : Polygon2D* pPolygon					: 画面ポリゴン
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 // Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
@@ -135,7 +142,8 @@ int DrawerPostEffect::Finalize( void )
 // Arg    : const float* pProportionFade		: フェードの割合
 //==============================================================================
 int DrawerPostEffect::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
 	IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade )
 {
 	// 終了処理
@@ -148,7 +156,7 @@ int DrawerPostEffect::Reinitialize( const EffectParameter* pParameter, Effect* p
 
 	// 初期化処理
 	return Initialize( pParameter, pEffect, pPolygon, pTexture, pTexture3D, pTextureLuminance,
-		pTexture2D, pTextureMask, pColorFade, pProportionFade );
+		pTexture2D, pTextureMask, pTextureBlur, pTextureDepth, pColorFade, pProportionFade );
 }
 
 //==============================================================================
@@ -177,23 +185,34 @@ int DrawerPostEffect::Copy( DrawerPostEffect* pOut ) const
 //==============================================================================
 void DrawerPostEffect::Draw( const D3DXMATRIX& matrixWorld )
 {
-	// パラメータの設定
-	D3DXMATRIX	matrixWorldSet;		// 設定するワールドマトリクス
-	D3DCOLOR	colorFade;			// フェード色
+	// 頂点シェーダ用パラメータの設定
+	D3DXMATRIX	matrixWorldSet;				// 設定するワールドマトリクス
+	float		pSizeScreenHalf[ 2 ];		// 画面サイズの半分
 	matrixWorldSet = matrixWorld;
 	matrixWorldSet._41 -= 0.5f;
 	matrixWorldSet._42 -= 0.5f;
-	colorFade = *pColorFade_;
+	pSizeScreenHalf[ 0 ] = pEffectParameter_->GetWidthScreen() * 0.5f;
+	pSizeScreenHalf[ 1 ] = pEffectParameter_->GetHeightScreen() * 0.5f;
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
+
+	// フェード用パラメータの設定
+	D3DCOLOR	colorFade;		// フェード色
+	colorFade = *pColorFade_;
+	pEffect_->SetColor( PARAMETER_COLOR_FADE, colorFade );
+	pEffect_->SetFloat( PARAMETER_PROPORTION_FADE, *pProportionFade_ );
+
+	// 焦点距離の設定
+	pEffect_->SetFloat( PARAMETER_FORCUS, pEffectParameter_->GetForcus() );
+
+	// テクスチャの設定
+	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN_HALF, pSizeScreenHalf, 2 );
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_3D, pTexture3D_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_LUMINANCE, pTextureLuminance_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_BLUR, pTextureBlur_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_2D, pTexture2D_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_MASK, pTextureMask_ );
-	pEffect_->SetColor( PARAMETER_COLOR_FADE, colorFade );
-	pEffect_->SetFloat( PARAMETER_WIDTH_SCREEN_HALF, pEffectParameter_->GetWidthScreen() * 0.5f );
-	pEffect_->SetFloat( PARAMETER_HEIGHT_SCREEN_HALF, pEffectParameter_->GetHeightScreen() * 0.5f );
-	pEffect_->SetFloat( PARAMETER_PROPORTION_FADE, *pProportionFade_ );
 
 	// 描画
 	pEffect_->Begin( 0 );
@@ -258,6 +277,8 @@ void DrawerPostEffect::InitializeSelf( void )
 	pTexture_ = nullptr;
 	pTexture3D_ = nullptr;
 	pTextureLuminance_ = nullptr;
+	pTextureBlur_ = nullptr;
+	pTextureDepth_ = nullptr;
 	pTexture2D_ = nullptr;
 	pTextureMask_ = nullptr;
 	pPolygon_ = nullptr;

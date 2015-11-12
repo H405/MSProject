@@ -92,7 +92,8 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	output.diffuse_ = float4( tex2D( samplerTexture, vertex.textureCoord_ ).rgb, reflection_ );
 	output.specular_ = float4( colorSpecular_, power_ * 0.015625f );
 	output.normal_ = float4( (vertex.vectorNormalWorld_ * 0.5f + 0.5f), refractive_ );
-	output.depth_ = float4( vertex.depth_, 1.0f, 1.0f, 1.0f );
+	output.depth_.gba = 0.0f;
+	output.depth_ = vertex.depth_;
 
 	// ピクセルシェーダ出力を返す
 	return output;

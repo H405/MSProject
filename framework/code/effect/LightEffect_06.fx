@@ -83,6 +83,13 @@ struct VertexOutput
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
 
+// ピクセルシェーダ出力
+struct PixelOutput
+{
+	float4	color_			: COLOR0;			// 色
+	float4	depth_			: COLOR1;			// 深度
+};
+
 //==============================================================================
 // Brief  : ディフューズの計算
 // Return : float3							: 色
@@ -158,10 +165,10 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 
 //==============================================================================
 // Brief  : ピクセル描画
-// Return : float4 : COLOR0					: 色
+// Return : PixelOutput						: ピクセルシェーダ出力
 // Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
-float4 DrawPixel( VertexOutput vertex ) : COLOR0
+PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// テクスチャから情報を取得
 	float4	dataDiffuse = tex2D( samplerTextureDiffuse , vertex.textureCoord_ );
@@ -337,7 +344,11 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	color += (colorDiffuse * diffusePoint + colorSpecular * specularPoint + rimPoint) / attenuation;
 
 	// ピクセル色を返す
-	return float4( color, 1.0f );
+	PixelOutput	output;
+	output.color_ = float4( color, 1.0f );
+	output.depth_.gba = 0.0f;
+	output.depth_.r = dataDepth / clipCamera_.y;
+	return output;
 }
 
 //==============================================================================

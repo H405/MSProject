@@ -126,7 +126,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 
 	// Direct3Dデバイスの生成
 	IDirect3DDevice9*	pDevice = nullptr;			// Direct3Dデバイス
-	bool				isWindowMode = true;		// ウィンドウモードフラグ
+	bool				isWindowMode = false;		// ウィンドウモードフラグ
 #ifdef _DEBUG
 	isWindowMode = true;
 #endif
@@ -231,6 +231,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	// パスクラスの生成
 	RenderPassParameter	parameterPass3D;			// 3D描画パスのパラメータ
 	RenderPassParameter	parameterPassNotLight;		// ライティングなし3D描画パスのパラメータ
+	RenderPassParameter	parameterLightEffect;		// ライティングパスのパラメータ
+	RenderPassParameter	parameterPassMerge;			// 総合3D描画パスのパラメータ
 	RenderPassParameter	parameterPassBlur;			// ブラーパスのパラメータ
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
@@ -250,12 +252,14 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_LIGHT_EFFECT_MAX );
+	parameterLightEffect.pFormat_[ GraphicMain::RENDER_PASS_LIGHT_EFFECT_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_LIGHT_EFFECT_MAX, &parameterLightEffect );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pRenderPass_[ GraphicMain::PASS_3D_MERGE ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MERGE_MAX );
+	parameterPassMerge.pFormat_[ GraphicMain::RENDER_PASS_3D_MERGE_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_3D_MERGE ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MERGE_MAX, &parameterPassMerge );
 	if( result != 0 )
 	{
 		return result;
@@ -473,7 +477,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_MASK ),
-		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_ADD ) );
+		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_ADD ),
+		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;
@@ -520,6 +525,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	result = pObjectPostEffect_->CreateGraphic( 0, pEffectParameter_, pEffectPostEffect,
 		pRenderPass_[ GraphicMain::PASS_3D_MERGE ].GetTexture( GraphicMain::RENDER_PASS_3D_MERGE_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_BLUR_Y ].GetTexture( GraphicMain::RENDER_PASS_BLUR_Y_LUMINANCE ),
+		pRenderPass_[ GraphicMain::PASS_BLUR_Y ].GetTexture( GraphicMain::RENDER_PASS_BLUR_Y_COLOR ),
+		pRenderPass_[ GraphicMain::PASS_3D_MERGE ].GetTexture( GraphicMain::RENDER_PASS_3D_MERGE_DEPTH ),
 		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_2D ].GetTexture( GraphicMain::RENDER_PASS_2D_MASK ) );
 	if( result != 0 )
@@ -556,7 +563,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif

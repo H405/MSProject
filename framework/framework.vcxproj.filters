@@ -836,6 +836,9 @@
     <ClCompile Include="code\object\ObjectBlur.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
+    <ClCompile Include="code\scene\SceneGameResult.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">

@@ -495,6 +495,28 @@ float EffectParameter::GetHeightScreen( void ) const
 }
 
 //==============================================================================
+// Brief  : 焦点距離の設定
+// Return : void								: なし
+// Arg    : float value							: 設定する値
+//==============================================================================
+void EffectParameter::SetForcus( float value )
+{
+	// 値の設定
+	forcus_ = value;
+}
+
+//==============================================================================
+// Brief  : 焦点距離の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetForcus( void ) const
+{
+	// 値の返却
+	return forcus_;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -514,4 +536,5 @@ void EffectParameter::InitializeSelf( void )
 	colorAmbient_ = D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f );
 	widthScreen_ = 0.0f;
 	heightScreen_ = 0.0f;
+	forcus_ = 0.0f;
 }

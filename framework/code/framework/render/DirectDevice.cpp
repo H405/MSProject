@@ -113,13 +113,15 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 	}
 
 	// デバイスのプレゼンテーションパラメータの設定
+	BOOL	flagWindowed;		// ウィンドウモード
+	flagWindowed = (isWindowMode_ ? TRUE : FALSE);
 	ZeroMemory( &presentParameter, sizeof( presentParameter ) );		// ワークをゼロクリア
 	presentParameter.BackBufferCount		= 1;						// バックバッファの数
 	presentParameter.BackBufferWidth		= width;					// ゲーム画面サイズ(幅)
 	presentParameter.BackBufferHeight		= height;					// ゲーム画面サイズ(高さ)
 	presentParameter.BackBufferFormat		= D3DFMT_UNKNOWN;			// バックバッファのフォーマットは現在設定されているものを使う
 	presentParameter.SwapEffect				= D3DSWAPEFFECT_DISCARD;	// 映像信号に同期してフリップする
-	presentParameter.Windowed				= isWindowMode_;			// ウィンドウモード
+	presentParameter.Windowed				= flagWindowed;				// ウィンドウモード
 	presentParameter.EnableAutoDepthStencil	= TRUE;						// デプスバッファ（Ｚバッファ）とステンシルバッファを作成
 	presentParameter.AutoDepthStencilFormat	= D3DFMT_D24S8;				// デプスバッファとして16bitを使う( 対応しているか確認した方がよい ) D3DFMT_D24S8 が良い
 	presentParameter.hDeviceWindow			= windowHandle;
@@ -139,12 +141,12 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 
 	// デバイスオブジェクトの生成
 	// [デバイス作成制御]<描画>と<頂点処理>をハードウェアで行なう
-	if( FAILED( pDirect3D->CreateDevice(	D3DADAPTER_DEFAULT,												// ディスプレイアダプタ
-											D3DDEVTYPE_HAL,													// ディスプレイタイプ
-											windowHandle,													// フォーカスするウインドウへのハンドル
-											D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,	// デバイス作成制御の組み合わせ
-											&presentParameter,												// デバイスのプレゼンテーションパラメータ
-											&pDevice_ ) ) )													// デバイスインターフェースへのポインタ
+	if( FAILED( pDirect3D->CreateDevice(	D3DADAPTER_DEFAULT,						// ディスプレイアダプタ
+											D3DDEVTYPE_HAL,							// ディスプレイタイプ
+											windowHandle,							// フォーカスするウインドウへのハンドル
+											D3DCREATE_HARDWARE_VERTEXPROCESSING,	// デバイス作成制御の組み合わせ
+											&presentParameter,						// デバイスのプレゼンテーションパラメータ
+											&pDevice_ ) ) )							// デバイスインターフェースへのポインタ
 	{
 		// [デバイス作成制御]<描画>と<頂点処理>をハードウェアで行なう
 		presentParameter.AutoDepthStencilFormat	= D3DFMT_D16;

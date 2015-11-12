@@ -121,6 +121,13 @@ public:
 	//==============================================================================
 	void SetControlPointLookAt( int index, const D3DXVECTOR3& position, const D3DXVECTOR3& vector );
 
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetIsEnable( bool value );
+	bool GetIsEnable( void ) const;
+	bool IsEnable( void ) const;
+
 protected:
 
 private:
@@ -140,6 +147,7 @@ private:
 	int*							pIndexPointCameraEnd_;			// 終了視点コントロールポイント番号
 	int*							pIndexPointLookAtBegin_;		// 開始注視点コントロールポイント番号
 	int*							pIndexPointLookAtEnd_;			// 終了注視点コントロールポイント番号
+	bool							isEnable_;						// 有効フラグ
 };
 
 #endif	// MY_CAMERA_STATE_SPLINE_H

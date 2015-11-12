@@ -75,6 +75,7 @@ public:
 	enum
 	{
 		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,		// 色
+		RENDER_PASS_LIGHT_EFFECT_DEPTH,			// 深度
 		RENDER_PASS_LIGHT_EFFECT_MAX			// 最大値
 	};
 
@@ -82,6 +83,7 @@ public:
 	enum
 	{
 		RENDER_PASS_3D_MERGE_COLOR = 0,			// 色
+		RENDER_PASS_3D_MERGE_DEPTH,				// 深度
 		RENDER_PASS_3D_MERGE_MAX				// 最大値
 	};
 
