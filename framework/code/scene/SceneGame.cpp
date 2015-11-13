@@ -118,6 +118,9 @@ void SceneGame::InitializeSelf( void )
 	chooseObject = nullptr;
 	pushChooseObjectFlashingCount = 0;
 	chooseFlag = false;
+
+	// SceneGame2のクラス内初期化
+	InitializeSelf2();
 }
 
 //==============================================================================
@@ -203,7 +206,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pTexture = pArgument_->pTexture_->Get( _T( "common/field.jpg" ) );
 	pEffect = pArgument_->pEffect_->Get( _T( "Mesh.fx" ) );
 	field = new ObjectMesh();
-	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
+	field->Initialize( 0, pArgument->pDevice_, 20, 20, 50.0f, 50.0f, 1.0f, 1.0f );
 	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
 
 
@@ -451,8 +454,15 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		chooseObject = nullptr;
 
 
+	// SceneGame2の初期化
+	result = Initialize2();
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	//	更新関数設定
-	fpUpdate = &SceneGame::normalUpdate;
+	fpUpdate = &SceneGame::UpdatePreviousGame;
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -468,6 +478,14 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneGame::Finalize( void )
 {
+	// SceneGame2の終了
+	int		result;		// 実行結果
+	result = Finalize2();
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// スカイドームの開放
 	delete pObjectSky_;
 	pObjectSky_ = nullptr;
@@ -544,7 +562,6 @@ int SceneGame::Finalize( void )
 	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// 基本クラスの処理
-	int		result;		// 実行結果
 	result = SceneMain::Finalize();
 	if( result != 0 )
 	{

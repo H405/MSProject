@@ -836,7 +836,7 @@
     <ClCompile Include="code\object\ObjectBlur.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
-    <ClCompile Include="code\scene\SceneGameResult.cpp">
+    <ClCompile Include="code\scene\SceneGame2.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
   </ItemGroup>

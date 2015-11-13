@@ -62,6 +62,13 @@ public:
 	int Initialize( int countSection, int countControlPointCamera, int countControlPointLookAt );
 
 	//==============================================================================
+	// Brief  : 初期化処理
+	// Return : int									: 実行結果
+	// Arg    : const TCHAR* pNameFile				: ファイル名
+	//==============================================================================
+	int Initialize( const TCHAR* pNameFile );
+
+	//==============================================================================
 	// Brief  : 終了処理
 	// Return : int									: 実行結果
 	// Arg    : void								: なし
@@ -122,6 +129,13 @@ public:
 	void SetControlPointLookAt( int index, const D3DXVECTOR3& position, const D3DXVECTOR3& vector );
 
 	//==============================================================================
+	// Brief  : 総フレーム数の取得
+	// Return : int									: 総フレーム数
+	// Arg    : void								: カメラクラス
+	//==============================================================================
+	int GetCountFrame( void );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	void SetIsEnable( bool value );
@@ -131,9 +145,12 @@ public:
 protected:
 
 private:
-	void InitializeSelf( void );
 	CameraStateSpline( const CameraStateSpline& );
 	CameraStateSpline operator=( const CameraStateSpline& );
+
+	void InitializeSelf( void );
+	unsigned int GetStringNumber( const TCHAR* pBuffer, unsigned int indexBegin, unsigned int indexEnd, int sizeOut, TCHAR* pOut );
+	int GetIndexFromId( const int* pBuffer, int countItem, int id );
 
 	int								countSection_;					// セクション数
 	int								countControlPointCamera_;		// 視点コントロールポイント数
