@@ -11,14 +11,17 @@
 // 変数宣言
 //******************************************************************************
 float4x4	matrixWorld_;			// ワールドマトリクス
+float2		sizeScreenHalf_;		// 画面サイズの半分
+float4		colorFade_;				// フェードの色
+float		proportionFade_;		// フェード割合
+float		forcus_;				// 焦点距離
 texture		texture_;				// テクスチャ
 texture		texture3D_;				// 3D描画テクスチャ
+texture		textureLuminance_;		// 輝度テクスチャ
+texture		textureBlur_;			// ブラーテクスチャ
+texture		textureDepth_;			// 深度テクスチャ
 texture		texture2D_;				// 2D描画テクスチャ
 texture		textureMask_;			// マスクテクスチャ
-float4		colorFade_;				// フェードの色
-float		widthScreenHalf_;		// 画面幅の半分
-float		heightScreenHalf_;		// 画面高さの半分
-float		proportionFade_;		// フェード割合
 
 //******************************************************************************
 // サンプリング
@@ -36,6 +39,36 @@ sampler samplerTexture = sampler_state
 sampler samplerTexture3D = sampler_state
 {
 	Texture = < texture3D_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureLuminance = sampler_state
+{
+	Texture = < textureLuminance_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureBlur = sampler_state
+{
+	Texture = < textureBlur_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepth = sampler_state
+{
+	Texture = < textureDepth_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -88,8 +121,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
 	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.x /= widthScreenHalf_;
-	output.position_.y /= heightScreenHalf_;
+	output.position_.xy /= sizeScreenHalf_;
 
 	// 値を格納
 	output.textureCoord_ = textureCoord;
@@ -106,11 +138,31 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 //==============================================================================
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
+	// フォーカスの算出
+	float	proportion = forcus_ - tex2D( samplerTextureDepth, vertex.textureCoord_ ).r;
+	if( proportion < 0.0f )
+	{
+		proportion += (1.0f - forcus_) * 0.2f;
+		proportion = max( -proportion, 0.0f );
+		proportion /= (1.0f - forcus_) * 0.9f + 0.00001f;
+	}
+	else
+	{
+		proportion -= forcus_ * 0.2f;
+		proportion = max( proportion, 0.0f );
+		proportion /= forcus_ * 0.9f + 0.00001f;
+	}
+//	proportion *= proportion;
+//	proportion = min( 4.0f * proportion, 1.0f );
+//	return float4( proportion, proportion, proportion, 1.0f );
+
 	// 通常描画色の決定
+	float3	color3D = (1.0f - proportion) * tex2D( samplerTexture3D, vertex.textureCoord_ ).rgb + proportion * tex2D( samplerTextureBlur, vertex.textureCoord_ ).rgb;
+	float3	color3DLuminance = color3D + tex2D( samplerTextureLuminance, vertex.textureCoord_ ).rgb;
 	float	mask = tex2D( samplerTextureMask, vertex.textureCoord_ ).r;
-	float4	colorGeneral = (1.0f - mask) * tex2D( samplerTexture3D, vertex.textureCoord_ ) + mask * tex2D( samplerTexture2D, vertex.textureCoord_ );
-	float4	colorFade = tex2D( samplerTexture, vertex.textureCoord_ ) * colorFade_;
-	return (1.0f - proportionFade_) * colorGeneral + proportionFade_ * colorFade_;
+	float3	colorGeneral = (1.0f - mask) * color3DLuminance + mask * tex2D( samplerTexture2D, vertex.textureCoord_ ).rgb;
+	float3	colorFade = tex2D( samplerTexture, vertex.textureCoord_ ).rgb * colorFade_;
+	return float4( (1.0f - proportionFade_) * colorGeneral + proportionFade_ * colorFade_, 1.0f );
 }
 
 //==============================================================================

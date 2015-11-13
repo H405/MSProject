@@ -410,6 +410,11 @@ void SceneSplash::Update( void )
 	// ポイントスプライト管理クラスの更新
 	pPoint_->Update();
 
+	// 焦点距離の更新
+	D3DXVECTOR3	positionLookAt;		// 注視点
+	pCamera_[ GraphicMain::CAMERA_GENERAL ].GetPositionLookAt( &positionLookAt );
+	pArgument_->pEffectParameter_->SetForcus( pCamera_[ GraphicMain::CAMERA_GENERAL ].GetViewZ( positionLookAt ) );
+
 	// モデルの回転
 	pObjectModel_[ 0 ].AddRotationY( 0.01f );
 	pObjectBoard_->AddRotationZ( 0.1f );

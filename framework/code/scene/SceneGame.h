@@ -45,6 +45,7 @@ typedef enum
 // クラス前方宣言
 //******************************************************************************
 class CameraObject;
+class CameraStateSpline;
 class LightDirection;
 class ManagerPoint;
 class ManagerFireworks;
@@ -295,6 +296,36 @@ private:
 	// Arg    : float								: 円の中心から点への距離
 	//==============================================================================
 	bool hitCheckPointCircle(D3DXVECTOR3 _pointPos, D3DXVECTOR3 _circlePos, float _hitCheckOffset, float* _hitPosLength);
+
+	//==============================================================================
+	// ↓白川追加
+	//==============================================================================
+	CameraStateSpline*	pStateCameraPrevious_;		// ゲーム開始前カメラ処理
+	CameraStateSpline*	pStateCameraResult_;		// リザルト前カメラ処理
+	int					timerSceneGame_;			// ゲームシーン経過時間
+
+	int Initialize2( void );
+	int Finalize2( void );
+	void InitializeSelf2( void );
+
+	// ゲーム開始前更新
+	void UpdatePreviousGame( void );
+
+	// ゲーム開始前カウントダウン更新
+	void UpdateCountDownGame( void );
+
+	// リザルト待機更新
+	void UpdateWaitResult( void );
+
+	// リザルト前更新
+	void UpdatePreviousResult( void );
+
+	// リザルト更新
+	void UpdateResult( void );
+
+	//==============================================================================
+	// ↑白川追加
+	//==============================================================================
 
 	//	更新関数格納用ポインタ
 	void (SceneGame::*fpUpdate)(void);

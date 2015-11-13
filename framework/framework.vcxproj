@@ -64,6 +64,7 @@
     <ClInclude Include="code\framework\scene\ManagerScene.h" />
     <ClInclude Include="code\framework\scene\Scene.h" />
     <ClInclude Include="code\framework\scene\SceneArgument.h" />
+    <ClInclude Include="code\framework\screenShot\CScreenShot.h" />
     <ClInclude Include="code\framework\sound\XAudio.h" />
     <ClInclude Include="code\framework\system\Fade.h" />
     <ClInclude Include="code\framework\system\File.h" />
@@ -79,6 +80,7 @@
     <ClInclude Include="code\graphic\drawer\Drawer2D.h" />
     <ClInclude Include="code\graphic\drawer\Drawer3D.h" />
     <ClInclude Include="code\graphic\drawer\DrawerBillboard.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerBlur.h" />
     <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerMerge.h" />
     <ClInclude Include="code\graphic\drawer\DrawerMesh.h" />
@@ -91,6 +93,7 @@
     <ClInclude Include="code\graphic\graphic\Graphic2D.h" />
     <ClInclude Include="code\graphic\graphic\Graphic3D.h" />
     <ClInclude Include="code\graphic\graphic\GraphicBillboard.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicBlur.h" />
     <ClInclude Include="code\graphic\graphic\GraphicLightEffect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMain.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMerge.h" />
@@ -104,6 +107,7 @@
     <ClInclude Include="code\object\Object2D.h" />
     <ClInclude Include="code\object\Object3D.h" />
     <ClInclude Include="code\object\ObjectBillboard.h" />
+    <ClInclude Include="code\object\ObjectBlur.h" />
     <ClInclude Include="code\object\ObjectFire.h" />
     <ClInclude Include="code\object\ObjectLightEffect.h" />
     <ClInclude Include="code\object\ObjectMerge.h" />
@@ -114,6 +118,7 @@
     <ClInclude Include="code\object\ObjectPostEffect.h" />
     <ClInclude Include="code\object\ObjectSkinMesh.h" />
     <ClInclude Include="code\object\ObjectSky.h" />
+    <ClInclude Include="code\object\ObjectWaterwheel.h" />
     <ClInclude Include="code\scene\SceneGame.h" />
     <ClInclude Include="code\scene\SceneRanking.h" />
     <ClInclude Include="code\scene\SceneResult.h" />
@@ -123,6 +128,8 @@
     <ClInclude Include="code\system\EffectParameter.h" />
     <ClInclude Include="code\system\fireworks\Fireworks.h" />
     <ClInclude Include="code\system\fireworks\FireworksState.h" />
+    <ClInclude Include="code\system\fire\Fire.h" />
+    <ClInclude Include="code\system\fire\FireState.h" />
     <ClInclude Include="code\system\Main.h" />
     <ClInclude Include="code\system\ManagerFireworks.h" />
     <ClInclude Include="code\system\ManagerMain.h" />
@@ -186,6 +193,7 @@
     <ClCompile Include="code\framework\scene\ManagerScene.cpp" />
     <ClCompile Include="code\framework\scene\Scene.cpp" />
     <ClCompile Include="code\framework\scene\SceneArgument.cpp" />
+    <ClCompile Include="code\framework\screenShot\CScreenShot.cpp" />
     <ClCompile Include="code\framework\sound\XAudio.cpp" />
     <ClCompile Include="code\framework\system\Fade.cpp" />
     <ClCompile Include="code\framework\system\File.cpp" />
@@ -201,6 +209,7 @@
     <ClCompile Include="code\graphic\drawer\Drawer2D.cpp" />
     <ClCompile Include="code\graphic\drawer\Drawer3D.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerBillboard.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerBlur.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerMerge.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp" />
@@ -213,6 +222,7 @@
     <ClCompile Include="code\graphic\graphic\Graphic2D.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic3D.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicBillboard.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicBlur.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicLightEffect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMain.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMerge.cpp" />
@@ -226,6 +236,7 @@
     <ClCompile Include="code\object\Object2D.cpp" />
     <ClCompile Include="code\object\Object3D.cpp" />
     <ClCompile Include="code\object\ObjectBillboard.cpp" />
+    <ClCompile Include="code\object\ObjectBlur.cpp" />
     <ClCompile Include="code\object\ObjectFire.cpp" />
     <ClCompile Include="code\object\ObjectLightEffect.cpp" />
     <ClCompile Include="code\object\ObjectMerge.cpp" />
@@ -236,7 +247,9 @@
     <ClCompile Include="code\object\ObjectPostEffect.cpp" />
     <ClCompile Include="code\object\ObjectSkinMesh.cpp" />
     <ClCompile Include="code\object\ObjectSky.cpp" />
+    <ClCompile Include="code\object\ObjectWaterwheel.cpp" />
     <ClCompile Include="code\scene\SceneGame.cpp" />
+    <ClCompile Include="code\scene\SceneGame2.cpp" />
     <ClCompile Include="code\scene\SceneRanking.cpp" />
     <ClCompile Include="code\scene\SceneResult.cpp" />
     <ClCompile Include="code\scene\SceneSplash.cpp" />
@@ -245,6 +258,8 @@
     <ClCompile Include="code\system\EffectParameter.cpp" />
     <ClCompile Include="code\system\fireworks\Fireworks.cpp" />
     <ClCompile Include="code\system\fireworks\FireworksState.cpp" />
+    <ClCompile Include="code\system\fire\Fire.cpp" />
+    <ClCompile Include="code\system\fire\FireState.cpp" />
     <ClCompile Include="code\system\Main.cpp" />
     <ClCompile Include="code\system\ManagerFireworks.cpp" />
     <ClCompile Include="code\system\ManagerMain.cpp" />
@@ -258,6 +273,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Billboard.fx" />
+    <None Include="code\effect\BlurBase.fx" />
+    <None Include="code\effect\BlurX.fx" />
+    <None Include="code\effect\BlurY.fx" />
     <None Include="code\effect\LightEffect.fx" />
     <None Include="code\effect\Merge.fx" />
     <None Include="code\effect\Mesh.fx" />
@@ -310,7 +328,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_DEVELOP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -327,7 +345,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_DEVELOP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

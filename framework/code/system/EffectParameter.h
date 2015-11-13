@@ -117,6 +117,8 @@ public:
 	float GetWidthScreen( void ) const;
 	void SetHeightScreen( float value );
 	float GetHeightScreen( void ) const;
+	void SetForcus( float value );
+	float GetForcus( void ) const;
 
 protected:
 
@@ -137,6 +139,7 @@ private:
 	D3DXCOLOR				colorAmbient_;				// ŠÂ‹«Œõ
 	float					widthScreen_;				// ‰æ–Ê•
 	float					heightScreen_;				// ‰æ–Ê‚‚³
+	float					forcus_;					// Å“_‹——£
 };
 
 #endif	// MY_EFFECT_PARAMETER_H

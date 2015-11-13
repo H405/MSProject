@@ -43,12 +43,15 @@ public:
 	enum
 	{
 		PARAMETER_MATRIX_WORLD = 0,			// ワールド変換行列
-		PARAMETER_SIZE_SCREEN,				// 画面サイズ
+		PARAMETER_SIZE_SCREEN_HALF,			// 画面サイズの半分
+
+		PARAMETER_FORCUS,					// 焦点距離
 
 		PARAMETER_TEXTURE_LIGHT,			// ライトありテクスチャ
 		PARAMETER_TEXTURE_NOT_LIGHT,		// ライトなしテクスチャ
 		PARAMETER_TEXTURE_MASK,				// マスクテクスチャ
 		PARAMETER_TEXTURE_ADD,				// 加算合成テクスチャ
+		PARAMETER_TEXTURE_DEPTH,			// 深度テクスチャ
 
 		PARAMETER_MAX						// 最大値
 	};
@@ -77,9 +80,11 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd );
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
+		IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -98,9 +103,11 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureNotLight	: ライトなしテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd );
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
+		IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -133,6 +140,7 @@ protected:
 	IDirect3DTexture9*		pTextureNotLight_;		// ライトなしテクスチャ
 	IDirect3DTexture9*		pTextureMask_;			// マスクテクスチャ
 	IDirect3DTexture9*		pTextureAdd_;			// 加算合成テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;			// 深度テクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン
 
 private:

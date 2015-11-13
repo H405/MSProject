@@ -44,6 +44,7 @@ class ManagerSceneMain;
 class Model;
 class Motion;
 class Object;
+class ObjectBlur;
 class ObjectLightEffect;
 class ObjectPostEffect;
 class ObjectMerge;
@@ -152,6 +153,7 @@ private:
 	XAudio*						pXAudio_;					// XAudio2インターフェース
 	Fade*						pFade_;						// フェード
 	EffectParameter*			pEffectParameter_;			// エフェクトパラメータ
+	ObjectBlur*					pObjectBlur_;				// ブラー基オブジェクト
 	ObjectLightEffect*			pObjectLightEffect_;		// ライティングオブジェクト
 	ObjectMerge*				pObjectMerge_;				// 総合3D描画オブジェクト
 	ObjectPostEffect*			pObjectPostEffect_;			// ポストエフェクトオブジェクト

@@ -230,7 +230,7 @@ void CameraStateDebug::Update( CameraObject* pCamera )
 	PrintDebug( "\n" );
 }
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 //==============================================================================
 // Brief  : マウス入力クラスの設定
 // Return : void								: なし

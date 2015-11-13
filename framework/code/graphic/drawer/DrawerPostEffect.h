@@ -43,14 +43,17 @@ public:
 	enum
 	{
 		PARAMETER_MATRIX_WORLD = 0,			// ワールドマトリクス
+		PARAMETER_SIZE_SCREEN_HALF,			// 画面サイズの半分
+		PARAMETER_COLOR_FADE,				// フェードの色
+		PARAMETER_PROPORTION_FADE,			// フェードの割合
+		PARAMETER_FORCUS,					// 焦点距離
 		PARAMETER_TEXTURE,					// テクスチャ
 		PARAMETER_TEXTURE_3D,				// 3D描画テクスチャ
+		PARAMETER_TEXTURE_LUMINANCE,		// 輝度テクスチャ
+		PARAMETER_TEXTURE_BLUR,				// ブラーテクスチャ
+		PARAMETER_TEXTURE_DEPTH,			// 深度テクスチャ
 		PARAMETER_TEXTURE_2D,				// 2D描画テクスチャ
 		PARAMETER_TEXTURE_MASK,				// マスクテクスチャ
-		PARAMETER_COLOR_FADE,				// フェードの色
-		PARAMETER_WIDTH_SCREEN_HALF,		// 画面幅の半分
-		PARAMETER_HEIGHT_SCREEN_HALF,		// 画面高さの半分
-		PARAMETER_PROPORTION_FADE,			// フェードの割合
 		PARAMETER_MAX						// 最大値
 	};
 
@@ -75,6 +78,9 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
@@ -82,8 +88,9 @@ public:
 	// Arg    : const float* pProportionFade		: フェードの割合
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
-		const D3DXCOLOR* pColorFade, const float* pProportionFade );
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+		IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -99,6 +106,9 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 画面ポリゴン
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
@@ -106,8 +116,9 @@ public:
 	// Arg    : const float* pProportionFade		: フェードの割合
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTexture,
-		const D3DXCOLOR* pColorFade, const float* pProportionFade );
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+		IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTexture, const D3DXCOLOR* pColorFade, const float* pProportionFade );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -136,6 +147,9 @@ protected:
 	Effect*					pEffect_;				// エフェクト
 	IDirect3DTexture9*		pTexture_;				// テクスチャ
 	IDirect3DTexture9*		pTexture3D_;			// 3D描画テクスチャ
+	IDirect3DTexture9*		pTextureLuminance_;		// 輝度テクスチャ
+	IDirect3DTexture9*		pTextureBlur_;			// ブラーテクスチャ
+	IDirect3DTexture9*		pTextureDepth_;			// 深度テクスチャ
 	IDirect3DTexture9*		pTexture2D_;			// 2D描画テクスチャ
 	IDirect3DTexture9*		pTextureMask_;			// マスクテクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン

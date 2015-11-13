@@ -159,6 +159,9 @@ void SceneGame::InitializeSelf( void )
 
 	cameraState = CAMERA_STATE_FRONT;
 	targetAppearCount = 0;
+
+	// SceneGame2のクラス内初期化
+	InitializeSelf2();
 }
 
 //==============================================================================
@@ -244,6 +247,12 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
 		chooseObject = nullptr;
 
+	// SceneGame2の初期化
+	result = Initialize2();
+	if( result != 0 )
+	{
+		return result;
+	}
 
 	//	更新関数設定
 	fpUpdate = &SceneGame::normalUpdate;
@@ -620,6 +629,16 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 //==============================================================================
 int SceneGame::Finalize( void )
 {
+	// SceneGame2の終了
+	int		result;		// 実行結果
+	result = Finalize2();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	delete player;
+
 	delete waterWheel[0];
 	delete waterWheel[1];
 	delete waterWheel[2];
@@ -637,7 +656,7 @@ int SceneGame::Finalize( void )
 	house[2] = nullptr;
 
 	delete bridge;
-	bridge = nullptr;;
+	bridge = nullptr;
 
 	// スカイドームの開放
 	delete pObjectSky_;
@@ -718,7 +737,6 @@ int SceneGame::Finalize( void )
 	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// 基本クラスの処理
-	int		result;		// 実行結果
 	result = SceneMain::Finalize();
 	if( result != 0 )
 	{

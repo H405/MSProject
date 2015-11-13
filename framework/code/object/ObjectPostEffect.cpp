@@ -155,12 +155,16 @@ void ObjectPostEffect::Update( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLuminance	: 輝度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureBlur		: ブラーテクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 // Arg    : IDirect3DTexture9* pTexture2D		: 2D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
 int ObjectPostEffect::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture )
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureLuminance, IDirect3DTexture9* pTextureBlur, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTexture2D, IDirect3DTexture9* pTextureMask, Texture* pTexture )
 {
 	// グラフィックの生成
 	int					result;				// 実行結果
@@ -175,7 +179,8 @@ int ObjectPostEffect::CreateGraphic( int priority, const EffectParameter* pParam
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTexture3D, pTexture2D, pTextureMask, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, &proportionFade_, pTexture3D, pTextureLuminance,
+		pTextureBlur, pTextureDepth, pTexture2D, pTextureMask, pTextureSet );
 	if( result != 0 )
 	{
 		return result;

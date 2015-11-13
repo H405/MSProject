@@ -11,12 +11,14 @@
 // 変数宣言
 //******************************************************************************
 float4x4	matrixWorld_;			// ワールド変換行列
-float2		sizeScreen_;			// 画面サイズ
+float2		sizeScreenHalf_;		// 画面サイズの半分
+float		forcus_;				// 焦点距離
 
 texture		textureLight_;			// ライトありテクスチャ
 texture		textureNotLight_;		// ライトなしテクスチャ
 texture		textureMask_;			// マスクテクスチャ
 texture		textureAdd_;			// 加算合成テクスチャ
+texture		textureDepth_;			// 深度テクスチャ
 
 //******************************************************************************
 // サンプリング
@@ -61,6 +63,16 @@ sampler samplerTextureAdd = sampler_state
 	AddressV  = Clamp;
 };
 
+sampler samplerTextureDepth = sampler_state
+{
+	Texture = < textureDepth_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
 //******************************************************************************
 // 構造体定義
 //******************************************************************************
@@ -69,6 +81,13 @@ struct VertexOutput
 {
 	float4	position_		: POSITION;			// 座標
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
+};
+
+// ピクセルシェーダ出力
+struct PixelOutput
+{
+	float4	color_			: COLOR0;			// 座標
+	float4	depth_			: COLOR1;			// 深度
 };
 
 //==============================================================================
@@ -84,7 +103,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
 	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.xy /= 0.5f * sizeScreen_;
+	output.position_.xy /= sizeScreenHalf_;
 
 	// 値を格納
 	output.textureCoord_ = textureCoord;
@@ -95,17 +114,21 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 
 //==============================================================================
 // Brief  : ピクセル描画
-// Return : float4 : COLOR0					: 色
+// Return : PixelOutput						: ピクセルシェーダ出力
 // Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
-float4 DrawPixel( VertexOutput vertex ) : COLOR0
+PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// ピクセル色を返す
+	PixelOutput	output;
 	float	proportion = tex2D( samplerTextureMask , vertex.textureCoord_ );
 	float3	colorLight = tex2D( samplerTextureLight , vertex.textureCoord_ ).rgb;
 	float3	colorNotLight = tex2D( samplerTextureNotLight , vertex.textureCoord_ ).rgb;
 	float3	colorAdd = tex2D( samplerTextureAdd , vertex.textureCoord_ ).rgb;
-	return float4( (1.0f - proportion) * colorLight + proportion * colorNotLight + colorAdd, 1.0f );
+	output.color_ = float4( (1.0f - proportion) * colorLight + proportion * colorNotLight + colorAdd, 1.0f );
+	output.depth_.gba = 0.0f;
+	output.depth_.r = (1.0f - proportion) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + proportion * forcus_;
+	return output;
 }
 
 //==============================================================================

@@ -45,7 +45,7 @@ typedef enum
 // ƒvƒƒgƒ^ƒCƒvéŒ¾
 //******************************************************************************
 void PrintMessageToMessageBox( TCHAR *pFormat, ... );									// ƒƒbƒZ[ƒW•\¦
-#ifdef _DEBUG
+#ifdef _DEVELOP
 void DebugInitDebug( HWND hWnd, BOOL bWndMode );										// ‰Šú‰»ˆ—
 void PrintMessageToDebugWindow( TCHAR *pFormat, ... );									// ƒfƒoƒbƒOƒƒbƒZ[ƒW•\¦
 void DebugWarning( TCHAR *pFileName, int nLine, TCHAR *pFormat, ... );					// Œx
@@ -59,7 +59,7 @@ DWORD DebugEndMeasureTime( DEBUG_MEASURE_DISP_TYPE type );								// ŠÔŒv‘ªI—
 //******************************************************************************
 #define PrintMsgBox						PrintMessageToMessageBox
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 
 #define InitDebug( hWnd, bWndMode )		DebugInitDebug( hWnd, bWndMode )
 #define PrintDebugWnd( pFormat, ... )	PrintMessageToDebugWindow( pFormat, __VA_ARGS__ )

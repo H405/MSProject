@@ -148,7 +148,7 @@ void DebugProc::ClearBuffer( void )
 void DebugProc::Print( const TCHAR *pFormat, ... )
 {
 	// エラーチェック
-#ifndef _DEBUG
+#ifndef _DEVELOP
 	MessageBox( NULL, _T( "PrintDebug関数呼び出しエラー" ), _T( "エラー" ), MB_OK );
 	abort();
 #endif

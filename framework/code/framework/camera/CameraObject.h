@@ -123,6 +123,20 @@ public:
 	void Move( const D3DXVECTOR3& vectorMove );
 
 	//==============================================================================
+	// Brief  : ビュー空間のZ値を取得
+	// Return : float								: Z値
+	// Arg    : const D3DXVECTOR3& position			: 座標
+	//==============================================================================
+	float GetViewZ( const D3DXVECTOR3& position );
+
+	//==============================================================================
+	// Brief  : プロジェクション空間のZ値を取得
+	// Return : float								: Z値
+	// Arg    : const D3DXVECTOR3& position			: 座標
+	//==============================================================================
+	float GetProjectionZ( const D3DXVECTOR3& position );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	void SetPosition( const D3DXVECTOR3& value );
@@ -151,7 +165,7 @@ public:
 protected:
 	CameraState*		pState_;				// ステート
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 	CameraState*		pStateOriginal_;		// 元のステート
 	CameraStateDebug*	pStateDebug_;			// デバッグステート
 	bool				isDebugMode_;			// デバッグモードフラグ

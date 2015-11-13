@@ -238,7 +238,6 @@ int ManagerDraw< TypeItem >::Execute( void )
 			}
 		}
 
-
 //	NAGASAKI変更
 #ifdef SCREENSHOT_ON
 		//	スクリーンショット作成
@@ -250,7 +249,7 @@ int ManagerDraw< TypeItem >::Execute( void )
 #endif
 //	NAGASAKI変更
 
-#ifdef _DEBUG
+#ifdef _DEVELOP
 		// デバッグ文字の描画
 		DebugProc::Draw();
 		DebugProc::ClearBuffer();
