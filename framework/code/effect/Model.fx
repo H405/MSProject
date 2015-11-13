@@ -28,8 +28,8 @@ sampler samplerTexture = sampler_state
 	MinFilter = Linear;
 	MagFilter = Linear;
 	MipFilter = None;
-	AddressU = Clamp;
-	AddressV = Clamp;
+	AddressU = WRAP;
+	AddressV = WRAP;
 };
 
 //******************************************************************************

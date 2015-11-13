@@ -506,6 +506,10 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pEffect_ = pEffect_;
 	pArgument_->pSound_ = pSound_;
 
+//	NAGASAKI変更
+	pArgument_->pDraw_ = pDraw_;
+//	NAGASAKI変更
+
 	// シーン管理クラスの生成
 	pScene_ = new ManagerSceneMain();
 	if( pScene_ == nullptr )
@@ -513,7 +517,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_GAME, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #endif
@@ -753,6 +757,16 @@ void ManagerMain::Draw( void )
 		MeasureTime( _T( "描画" ) );
 		pDraw_->Execute();
 	}
+}
+
+//==============================================================================
+// Brief  : スクリーンショット撮影
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ManagerMain::screenShotON()
+{
+	pDraw_->screenShotON();
 }
 
 //==============================================================================

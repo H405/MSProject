@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "../develop/DebugProc.h"
+#include "../develop/DebugMeasure.h"
 
 //*****************************************************************************
 //	’è”’è‹`
@@ -439,6 +440,8 @@ void CWiiController::batteryLightingLED()
 //=============================================================================
 void CWiiController::CommonUpdate()
 {
+	MeasureTime("CWiiContollerUpdate");
+
 	//	wiiƒŠƒ‚ƒRƒ“‚ªÚ‘±‚³‚ê‚Ä‚¢‚ê‚Î
 	if(wiiRemote != nullptr)
 	{

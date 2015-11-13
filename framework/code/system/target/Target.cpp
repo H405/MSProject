@@ -28,13 +28,14 @@
 
 #define APPEAR_COUNT_CROSS (50)
 #define APPEAR_COUNT_ARROW (25)
+#define APPEAR_COUNT_ARROW2 (80)
 #define APPEAR_COUNT_CIRCLE (50)
 #define DISAPPEAR_COUNT_MAX (200)
 
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-static const float targetSize = 32.0f;
+static const float targetSize = 50.0f;
 static const float targetCrossDifferentPosition = -50.0f;
 
 //==============================================================================
@@ -237,6 +238,7 @@ void Target::updateAppearCross( void )
 //==============================================================================
 void Target::updateAppearArrow( void )
 {
+	/*
 	targetArrow->AddRotationZ(D3DX_PI / (float)APPEAR_COUNT_ARROW);
 
 	//	だんだんと出現
@@ -254,6 +256,36 @@ void Target::updateAppearArrow( void )
 
 		//	更新関数セット
 		fpUpdate = &Target::updateAppearCircle;
+	}
+	*/
+	if(counter < APPEAR_COUNT_ARROW2 / 2)
+	{
+		targetArrow->AddColorA(1.0f/ (float)(APPEAR_COUNT_ARROW2 / 2));
+		targetArrow->AddRotationZ(D3DX_PI / (float)(APPEAR_COUNT_ARROW2 / 2));
+	}
+	if(counter > 20)
+	{
+		//	だんだんと出現
+		targetCircle->AddColorA(1.0f / (float)(60));
+
+		//	だんだん大きく
+		float addSize = targetSize / (float)(60);
+		targetCircle->AddScale(addSize, addSize, addSize);
+	}
+
+	counter++;
+	if(counter == APPEAR_COUNT_ARROW2 / 2)
+	{
+		//	可視化
+		targetCircle->SetEnableGraphic(true);
+	}
+
+	if(counter >= APPEAR_COUNT_ARROW2)
+	{
+		counter = 0;
+
+		//	更新関数セット
+		fpUpdate = &Target::updateDisAppear;
 	}
 }
 //==============================================================================
@@ -321,5 +353,18 @@ void Target::updateDisAppear( void )
 //==============================================================================
 void Target::Dissappear()
 {
-	Finalize();
+	counter = 0;
+	enable = false;
+
+	//	不可視化
+	targetCross->SetEnableGraphic(false);
+	targetArrow->SetEnableGraphic(false);
+	targetCircle->SetEnableGraphic(false);
+}
+//==============================================================================
+// アクセサ
+//==============================================================================
+float Target::getScale()
+{
+	return targetSize;
 }

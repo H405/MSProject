@@ -25,7 +25,7 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define FIREWORKS_MAX (160)
+#define FIREWORKS_MAX (16)
 
 //******************************************************************************
 // クラス前方宣言
@@ -79,11 +79,11 @@ public:
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void Update( void );
+	void Update(int* _table , int* _fireworksTableIndex);
 
 	//==============================================================================
 	// Brief  : 花火発射処理
-	// Return : void								: なし
+	// Return : int								: 配列番号
 	// Arg    : int indexState						: ステート番号
 	// Arg   : ManagerPoint*						: ポイントスプライト生成用マネージャ
 	// Arg   : D3DXVECTOR3							: 発生位置
@@ -91,7 +91,7 @@ public:
 	// Arg   : float								: 更新ごとの回転量
 	// Arg   : float								: ↑に加算する回転量（大きすぎると変になるから注意）
 	//==============================================================================
-	void Add(
+	int Add(
 		int _indexState,
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
@@ -114,25 +114,24 @@ public:
 	void Burn();
 
 	//==============================================================================
-	// Brief  : 花火を打ち上げた順番通りに格納する
+	// Brief  : テーブルのソート処理
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void sort();
+	void Sort(int* _table, int _deleteIndex);
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	Fireworks* getFireworks(int _index){return &fireworks[_index];}
-	int getBurnIndex(){return burnIndex;}
 
 protected:
 
 	//	花火の配列
 	Fireworks* fireworks;
 
-	//	爆発させる花火
-	int burnIndex;
+	//	花火の自然消滅認識用フラグ
+	bool enableOld[FIREWORKS_MAX];
 
 	// ステートテーブル
 	FireworksState* ppState_[ STATE_MAX ];

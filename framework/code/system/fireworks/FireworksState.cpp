@@ -21,7 +21,6 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
-#define FIRE_MAX (36)
 #define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
 #define DELETECOUNT_MAX (200)
 #define RANDAM(value) (float)((rand() % value) - (rand() % value))
@@ -40,7 +39,7 @@ static const int fireNum[] =
 };
 
 //	生成する花火エフェクトの大きさ
-static const float effectSize = 15.0f;
+static const float effectSize = 30.0f;
 
 //	生成する花火エフェクトの消えるまでの時間
 static const int effectExistTime = 50;

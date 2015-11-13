@@ -87,6 +87,12 @@ int ManagerDraw< TypeItem >::Initialize( int maximumItem, IDirect3DDevice9* pDev
 	pDevice->GetDeviceCaps( &capacity );
 	maximumRenderTarget_ = capacity.NumSimultaneousRTs;
 
+//	NAGASAKI変更
+#ifdef SCREENSHOT_ON
+	screenShot = new CScreenShot(pDevice);
+#endif
+//	NAGASAKI変更
+
 	// 正常終了
 	return 0;
 }
@@ -99,6 +105,10 @@ int ManagerDraw< TypeItem >::Initialize( int maximumItem, IDirect3DDevice9* pDev
 template< class TypeItem >
 int ManagerDraw< TypeItem >::Finalize( void )
 {
+//	NAGASAKI変更
+	delete screenShot;
+//	NAGASAKI変更
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = ManagerExector::Finalize();
@@ -228,6 +238,18 @@ int ManagerDraw< TypeItem >::Execute( void )
 			}
 		}
 
+
+//	NAGASAKI変更
+#ifdef SCREENSHOT_ON
+		//	スクリーンショット作成
+		if (screenShotFlag == true)
+		{
+			screenShot->Create();
+			screenShotFlag = false;
+		}
+#endif
+//	NAGASAKI変更
+
 #ifdef _DEBUG
 		// デバッグ文字の描画
 		DebugProc::Draw();
@@ -265,4 +287,9 @@ void ManagerDraw< TypeItem >::InitializeSelf( void )
 	pDevice_ = nullptr;
 	countPass_ = 0;
 	pRenderPass_ = nullptr;
+
+//	NAGASAKI変更
+	screenShotFlag = false;
+	screenShot = nullptr;
+//	NAGASAKI変更
 }

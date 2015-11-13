@@ -20,6 +20,10 @@
 #include "d3dx9.h"
 #include "ManagerExector.h"
 
+//	NAGASAKI変更
+#include "../screenShot/CScreenShot.h"
+//	NAGASAKI変更
+
 //******************************************************************************
 // ライブラリ
 //******************************************************************************
@@ -96,6 +100,15 @@ public:
 	//==============================================================================
 	int Execute( void );
 
+
+	//	NAGASAKI変更
+	//==============================================================================
+	// Brief  : スクリーンショット撮影
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void screenShotON(){screenShotFlag = true;}
+
 protected:
 
 private:
@@ -107,6 +120,12 @@ private:
 	int					maximumRenderTarget_;		// 最大レンダーターゲット数
 	int					countPass_;					// 描画パス数
 	RenderPass*			pRenderPass_;				// 描画パス
+
+
+//	NAGASAKI変更
+	CScreenShot* screenShot;	//	スクリーンショット生成
+	bool screenShotFlag;
+//	NAGASAKI変更
 };
 
 #endif	// MY_MANAGER_DRAW_H

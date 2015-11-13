@@ -43,6 +43,12 @@ class Motion;
 class Sound;
 class Texture;
 class Window;
+class Graphic;
+
+//	NAGASAKI変更
+template < class Graphic > class ManagerDraw;
+//	NAGASAKI変更
+
 template < class Effect > class ManagerEffect;
 template < class Model > class ManagerModel;
 template < class Motion > class ManagerMotion;
@@ -83,6 +89,10 @@ public:
 	ManagerMotion< Motion >*	pMotion_;				// モーション管理クラス
 	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス
 	ManagerSound< Sound >*		pSound_;				// サウンド管理クラス
+
+//	NAGASAKI変更
+	ManagerDraw< Graphic >*		pDraw_;						// 描画管理クラス
+//	NAGASAKI変更
 
 protected:
 

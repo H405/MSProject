@@ -25,12 +25,14 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
+#define FIRE_MAX (36)
 
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
 class ManagerPoint;
 class FireworksState;
+class Fire;
 
 //******************************************************************************
 // 構造体定義
@@ -55,8 +57,15 @@ typedef struct
 	//	使用可能フラグ
 	bool enable;
 
+	//	破裂フラグ
+	bool burnFlag;
+
 	//	自然消滅までのカウンタ
 	int deleteCount;
+
+	Fire* fire;
+
+	int fireMax;
 
 }FIREWORKS_PARAM;
 
@@ -113,7 +122,9 @@ public:
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void burn();
+	void burn(
+		float _hitCheckOffset,
+		float _hitPosLength);
 
 	//==============================================================================
 	// Brief  : ステートの設定
@@ -140,6 +151,7 @@ public:
 
 	bool IsEnable(){return param.enable;}
 	void setEnable(bool _flag){param.enable = _flag;}
+	bool IsBurnFlag(){return param.burnFlag;}
 
 	ManagerPoint* getManagerPoint(){return param.managerPoint;};
 
@@ -156,6 +168,24 @@ protected:
 
 	//	花火用パラメータ
 	FIREWORKS_PARAM param;
+
+
+	//==============================================================================
+	// Brief  : 更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void NormalUpdate( void );
+
+	//==============================================================================
+	// Brief  : 更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void BurnUpdate( void );
+
+	//	更新関数格納用ポインタ
+	void (Fireworks::*fpUpdate)(void);
 
 private:
 	void InitializeSelf( void );

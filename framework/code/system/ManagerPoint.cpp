@@ -22,6 +22,7 @@
 #include "../framework/vertex/VertexBuffer.h"
 
 #include "../framework/develop/DebugProc.h"
+#include "../framework/develop/DebugMeasure.h"
 
 //******************************************************************************
 // ƒ‰ƒCƒuƒ‰ƒŠ
@@ -223,6 +224,7 @@ void ManagerPoint::Update( void )
 		D3DXCOLOR	color;			// F
 		countPoint, pPoint_[ counterPoint ].GetPosition( &position );
 		countPoint, pPoint_[ counterPoint ].GetColor( &color );
+
 		pVertexBuffer_->SetPosition( countPoint, position );
 		pVertexBuffer_->SetColorDiffuse( countPoint, color );
 		pVertexBuffer_->SetPointSize( countPoint, pPoint_[ counterPoint ].GetSize() );

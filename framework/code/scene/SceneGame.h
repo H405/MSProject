@@ -17,6 +17,7 @@
 // インクルード
 //******************************************************************************
 #include "../system/SceneMain.h"
+#include "d3dx9.h"
 
 //******************************************************************************
 // ライブラリ
@@ -25,6 +26,20 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
+#define FIREWORKS_MAX (16)
+#define TARGET_MAX (16)
+
+//******************************************************************************
+// 列挙体
+//******************************************************************************
+typedef enum
+{
+	CAMERA_STATE_FRONT = 0,
+	CAMERA_STATE_LEFT,
+	CAMERA_STATE_BACK,
+	CAMERA_STATE_RIGHT,
+	CAMERA_STATE_MAX
+}CAMERA_STATE;
 
 //******************************************************************************
 // クラス前方宣言
@@ -44,6 +59,8 @@ class PolygonMesh;
 class ObjectMesh;
 class ObjectSky;
 class ObjectBillboard;
+class ObjectSkinMesh;
+class ObjectWaterwheel;
 
 class GraphicPoint;
 class PolygonPoint;
@@ -112,8 +129,23 @@ private:
 
 	CameraObject*		pCamera_;		// カメラ
 	LightDirection*		pLight_;		// ライト
-
 	ObjectSky*			pObjectSky_;	// スカイドーム
+
+	//	水車オブジェクト
+	ObjectWaterwheel* waterWheel[3];
+
+	//	家
+	ObjectModelMaterial* house[3];
+
+	//	橋
+	ObjectModelMaterial* bridge;
+
+	//	フィールド
+	ObjectModel* field;
+
+	//	プレイヤー
+	ObjectModelMaterial* player;
+	ObjectModelMaterial* playerArm;
 
 	//	「スコア」文字
 	Object2D* stringScore;
@@ -149,13 +181,6 @@ private:
 	Object2D* chooseObject;
 	Object2D* chooseObjectPrev;
 
-	//	テスト用
-	ObjectModelMaterial* testArm;
-	ObjectModelMaterial* testObj[4];
-
-	//	仮フィールド
-	ObjectMesh* field;
-
 	// ポイントスプライト管理クラス
 	ManagerPoint* managerPoint;
 
@@ -165,6 +190,21 @@ private:
 	//	ターゲット管理クラス
 	ManagerTarget* managerTarget;
 
+	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
+
+
+
+
+	//	打ち上げに関するフラグとカウンタ
+	bool launchFlag;
+	int launchCount;
+
+	//	ターゲットと花火の当たり判定用テーブル
+	int fireworksTable[FIREWORKS_MAX];
+	int targetTable[TARGET_MAX];
+	int fireworksTableIndex;
+	int targetTableIndex;
+
 	//	chooseObject点滅用
 	int pushChooseObjectFlashingCount;
 
@@ -172,6 +212,9 @@ private:
 	//	true = wiiリモコン（IR）
 	//	false = 方向キー	とする
 	bool chooseFlag;
+
+	//	カメラの方向
+	CAMERA_STATE cameraState;
 
 	//==============================================================================
 	// Brief  : 通常時用の更新処理
@@ -222,10 +265,41 @@ private:
 	//==============================================================================
 	void collision_fireworks_target();
 
+	//==============================================================================
+	// Brief  : ステージ関連の読み込み処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void InitializeStage(SceneArgumentMain* pArgument);
+
+	//==============================================================================
+	// Brief  : その他３Dオブジェクトの読み込み処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void Initialize3DObject(SceneArgumentMain* pArgument);
+
+	//==============================================================================
+	// Brief  : UI関連の読み込み処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void InitializeUI(SceneArgumentMain* pArgument);
+
+	//==============================================================================
+	// Brief  : 点と円の当たり判定処理
+	// Return : bool								: 当たったか当たってないか
+	// Arg    : D3DXVECTOR3							: 点の位置
+	// Arg    : D3DXVECTOR3							: 円の位置
+	// Arg    : D3DXVECTOR3							: 当たってると判定する最大距離
+	// Arg    : float								: 円の中心から点への距離
+	//==============================================================================
+	bool hitCheckPointCircle(D3DXVECTOR3 _pointPos, D3DXVECTOR3 _circlePos, float _hitCheckOffset, float* _hitPosLength);
+
 	//	更新関数格納用ポインタ
 	void (SceneGame::*fpUpdate)(void);
 
-	bool buffFlag;
+	int targetAppearCount;
 };
 
 #endif	// MY_SCENE_GAME_H

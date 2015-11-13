@@ -88,6 +88,12 @@
     <Filter Include="ソース ファイル\effect">
       <UniqueIdentifier>{84292b18-d92a-427c-8a5b-52919c9824ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\framework\screenShot">
+      <UniqueIdentifier>{6a5fbe0b-d95b-4270-8ee0-b4c9077f0726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\fire">
+      <UniqueIdentifier>{a4fab29d-0fb9-41da-97eb-ace3d0e8f7a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -456,6 +462,18 @@
     <ClInclude Include="code\system\camera\CameraStateSpline.h">
       <Filter>ソース ファイル\system\camera</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectWaterwheel.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\screenShot\CScreenShot.h">
+      <Filter>ソース ファイル\framework\screenShot</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\fire\FireState.h">
+      <Filter>ソース ファイル\system\fire</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\fire\Fire.h">
+      <Filter>ソース ファイル\system\fire</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -817,6 +835,18 @@
     </ClCompile>
     <ClCompile Include="code\system\camera\CameraStateSpline.cpp">
       <Filter>ソース ファイル\system\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectWaterwheel.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\screenShot\CScreenShot.cpp">
+      <Filter>ソース ファイル\framework\screenShot</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\fire\FireState.cpp">
+      <Filter>ソース ファイル\system\fire</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\fire\Fire.cpp">
+      <Filter>ソース ファイル\system\fire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

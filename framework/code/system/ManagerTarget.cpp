@@ -46,6 +46,9 @@ void ManagerTarget::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	target = nullptr;
+
+	for(int count = 0;count < TARGET_MAX;count++)
+		enableOld[count] = false;
 }
 //==============================================================================
 // Brief  : デストラクタ
@@ -112,10 +115,21 @@ int ManagerTarget::Finalize( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ManagerTarget::Update( void )
+void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
 	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[counterPoint] == true &&
+			target[counterPoint].IsEnable() == false)
+		{
+			Sort(_table, counterPoint);
+			*_targetTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[ counterPoint ] = target[ counterPoint ].IsEnable();
+
 		// 使用されていないとき次へ
 		if( !target[ counterPoint ].IsEnable() )
 		{
@@ -126,21 +140,62 @@ void ManagerTarget::Update( void )
 	}
 }
 //==============================================================================
+// Brief  : テーブルのソート処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ManagerTarget::Sort(int* _table, int _deleteIndex)
+{
+	//	消去するテーブル番号の一時保存
+	int tempIndex;
+
+	//	テーブルを全て一時保存
+	int tempTable[TARGET_MAX];
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		//	テーブルを全て一時保存
+		tempTable[count] = _table[count];
+
+		//	消去するテーブル番号の一時保存
+		if(_table[count] == _deleteIndex)
+			tempIndex = count;
+	}
+
+	//	配列保存用の一時カウンタ
+	int tempCount = 0;
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		//	削除する番号以外
+		if(count != tempIndex)
+		{
+			_table[tempCount] = tempTable[count];
+			tempCount++;
+		}
+	}
+
+	//	最後に-1追加
+	_table[TARGET_MAX - 1] = -1;
+}
+//==============================================================================
 // Brief  : ターゲット発射処理
 // Return : void								: なし
 // Arg2   : D3DXVECTOR3							: 発生位置
 //==============================================================================
-void ManagerTarget::Add(D3DXVECTOR3 _pos)
+int ManagerTarget::Add(D3DXVECTOR3 _pos)
 {
 	int index = GetIndex();
 	if(index < 0)
 	{
 		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
-		return;
+		return -1;
 	}
 
 	//	ターゲットのセット
 	target[index].Set(_pos);
+
+	return index;
 }
 //==============================================================================
 // Brief  : インデックス取得処理

@@ -46,11 +46,9 @@ void ManagerFireworks::InitializeSelf( void )
 	// メンバ変数の初期化
 	fireworks = nullptr;
 	managerPoint = nullptr;
-	burnIndex = 0;
 
-	//list.top = nullptr;
-	//list.cur = nullptr;
-	//list.prev = nullptr;
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+		enableOld[count] = false;
 }
 //==============================================================================
 // Brief  : デストラクタ
@@ -115,10 +113,21 @@ int ManagerFireworks::Finalize( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ManagerFireworks::Update( void )
+void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 {
 	for( int count = 0; count < FIREWORKS_MAX; ++count )
 	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[count] == true &&
+			fireworks[count].IsEnable() == false)
+		{
+			Sort(_table, count);
+			*_fireworksTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[ count ] = fireworks[ count ].IsEnable();
+
 		// 使用されていないとき次へ
 		if( !fireworks[ count ].IsEnable() )
 		{
@@ -127,9 +136,45 @@ void ManagerFireworks::Update( void )
 
 		fireworks[count].Update();
 	}
+}
+//==============================================================================
+// Brief  : テーブルのソート処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ManagerFireworks::Sort(int* _table, int _deleteIndex)
+{
+	//	消去するテーブル番号の一時保存
+	int tempIndex;
 
-	//	リスト作成
-	sort();
+	//	テーブルを全て一時保存
+	int tempTable[FIREWORKS_MAX];
+
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+	{
+		//	テーブルを全て一時保存
+		tempTable[count] = _table[count];
+
+		//	消去するテーブル番号の一時保存
+		if(_table[count] == _deleteIndex)
+			tempIndex = count;
+	}
+
+	//	配列保存用の一時カウンタ
+	int tempCount = 0;
+
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+	{
+		//	削除する番号以外
+		if(count != tempIndex)
+		{
+			_table[tempCount] = tempTable[count];
+			tempCount++;
+		}
+	}
+
+	//	最後に-1追加
+	_table[FIREWORKS_MAX - 1] = -1;
 }
 //==============================================================================
 // Brief  : 花火発射処理
@@ -141,7 +186,7 @@ void ManagerFireworks::Update( void )
 // Arg   : float								: 更新ごとの回転量
 // Arg   : float								: ↑に加算する回転量（大きすぎると変になるから注意）
 //==============================================================================
-void ManagerFireworks::Add(
+int ManagerFireworks::Add(
 	int _indexState,
 	ManagerPoint* _managerPoint,
 	D3DXVECTOR3 _pos,
@@ -153,7 +198,7 @@ void ManagerFireworks::Add(
 	if(index < 0)
 	{
 		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
-		return;
+		return -1;
 	}
 
 	//	花火のセット
@@ -165,6 +210,8 @@ void ManagerFireworks::Add(
 		_rot,
 		_rotSpeed
 		);
+
+	return index;
 }
 //==============================================================================
 // Brief  : インデックス取得処理
@@ -174,14 +221,7 @@ void ManagerFireworks::Add(
 int ManagerFireworks::GetIndex()
 {
 	// 空き番号を探す
-	for( int count = burnIndex; count < FIREWORKS_MAX; ++count )
-	{
-		if( !fireworks[ count ].IsEnable() )
-		{
-			return count;
-		}
-	}
-	for( int count = 0; count < burnIndex; ++count )
+	for( int count = 0; count < FIREWORKS_MAX; ++count )
 	{
 		if( !fireworks[ count ].IsEnable() )
 		{
@@ -199,61 +239,4 @@ int ManagerFireworks::GetIndex()
 //==============================================================================
 void ManagerFireworks::Burn()
 {
-	//	指定の花火の爆発
-	fireworks[burnIndex].burn();
-
-	//	インデックスの更新
-	burnIndex++;
-	if(burnIndex >= FIREWORKS_MAX)
-		burnIndex = 0;
-}
-//==============================================================================
-// Brief  : 花火を打ち上げた順番通りに格納する
-//			※多分もっとうまい方法あるけど、どりあえずカウンタの値を見てバブルソートする
-// Return : void								: なし
-// Arg    : void								: なし
-//==============================================================================
-void ManagerFireworks::sort()
-{
-	int sortList[FIREWORKS_MAX];
-
-	//	リストを全部初期化
-	for( int count = 0; count < FIREWORKS_MAX; ++count )
-	{
-		fireworksList[count] = nullptr;
-	}
-
-	//	花火ごとのカウンタ格納用
-	int counterList[FIREWORKS_MAX];
-
-	//	有効化されている花火のカウンタを取得
-	for( int count = 0; count < FIREWORKS_MAX; ++count )
-	{
-		if(fireworks[count].IsEnable() == true)
-			counterList[count] = fireworks[count].getDeleteCount();
-		else
-			counterList[count] = -1;
-	}
-
-	//	ソート結果（インデックス番号）格納用
-	int counter1 = 0;
-	int counter2 = 0;
-	int temp = 0;
-
-	//	バブルソート
-	for(counter1 = 0;counter1 < FIREWORKS_MAX - 1;counter1++)
-	{
-		for(counter2 = FIREWORKS_MAX - 1;counter2 > counter1;counter2--)
-		{
-			//	前の要素の方が大きければ交換
-			if(counterList[counter2 - 1] > counterList[counter2])
-			{
-				temp = counterList[counter2];
-				counterList[counter2] = counterList[counter2 - 1];
-				counterList[counter2 - 1] = temp;
-
-
-			}
-		}
-	}
 }
