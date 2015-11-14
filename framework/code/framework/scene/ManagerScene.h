@@ -121,7 +121,7 @@ private:
 	ManagerScene operator=( const ManagerScene& );
 
 	SceneArgument*	pArgument_;		// シーン引数
-	Scene*			pScene_;		// シーン
+	Scene*	pScene_;				// シーン
 };
 
 #endif	// MY_MANAGER_SCENE_H

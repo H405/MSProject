@@ -66,4 +66,6 @@ void SceneArgumentMain::InitializeSelf( void )
 	pMotion_ = nullptr;
 	pEffect_ = nullptr;
 	pSound_ = nullptr;
+	pDraw_ = nullptr;
+	pUpdate_ = nullptr;
 }

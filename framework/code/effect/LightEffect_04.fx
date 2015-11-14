@@ -28,7 +28,6 @@ float3		colorLightDirection_;				// ディレクショナルライトの色
 float3		positionLightPoint_[ 4 ];			// ポイントライトライトの座標
 float3		colorLightPoint_[ 4 ];				// ポイントライトライトの色
 float3		attenuationLightPoint_[ 4 ];		// ポイントライトの減衰率
-int			countLightPoint_;					// ポイントライトの数
 
 //******************************************************************************
 // サンプリング

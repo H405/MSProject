@@ -13,6 +13,7 @@
 #include "DrawerLightEffect.h"
 #include "../graphic/GraphicMain.h"
 #include "../../framework/camera/Camera.h"
+#include "../../framework/develop/DebugMeasure.h"
 #include "../../framework/graphic/Material.h"
 #include "../../framework/light/LightDirection.h"
 #include "../../framework/light/LightPoint.h"
@@ -278,9 +279,6 @@ void DrawerLightEffect::Draw( const D3DXMATRIX& matrixWorld )
 
 	// ポイントライトの減衰率
 	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, pAttemuationPoint, 3 * countPoint );
-
-	// ポイントライトの数
-	pEffect_->SetInteger( PARAMETER_COUNT_LIGHT_POINT, countPoint );
 
 	// 描画
 	pEffect_->Begin( 0 );

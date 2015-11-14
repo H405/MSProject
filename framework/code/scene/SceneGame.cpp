@@ -28,6 +28,7 @@
 #include "../framework/resource/ManagerMotion.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
+#include "../framework/system/ManagerUpdate.h"
 #include "../framework/system/Window.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
@@ -966,7 +967,7 @@ void SceneGame::normalUpdate(void)
 		fpUpdate = &SceneGame::pauseUpdate;
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		//	•`‰æÄŠJ
 		pauseFrame->SetEnableGraphic(true);
@@ -1021,7 +1022,7 @@ void SceneGame::pauseUpdate(void)
 				fpUpdate = &SceneGame::normalUpdate;
 
 				//	Object‚ÌXV‚ğÄŠJ
-				updateFlag = true;
+				pArgument_->pUpdate_->SetIsEnable( true );
 
 				//	•`‰æ’â~
 				pauseFrame->SetEnableGraphic(false);
@@ -1171,7 +1172,7 @@ void SceneGame::pauseUpdate(void)
 		fpUpdate = &SceneGame::normalUpdate;
 
 		//	Object‚ÌXV‚ğÄŠJ
-		updateFlag = true;
+		pArgument_->pUpdate_->SetIsEnable( true );
 
 		//	•`‰æ’â~
 		pauseFrame->SetEnableGraphic(false);
@@ -1269,7 +1270,7 @@ void SceneGame::reConnectWiimoteUpdate(void)
 		fpUpdate = &SceneGame::pauseUpdate;
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		//	•`‰æ‚â‚ß‚é
 		reConnectWiimote->SetEnableGraphic(false);
@@ -1303,7 +1304,7 @@ void SceneGame::reConnectWiiboardUpdate(void)
 		fpUpdate = &SceneGame::pauseUpdate;
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		//	•`‰æ‚â‚ß‚é
 		reConnectWiiboard->SetEnableGraphic(false);
@@ -1336,7 +1337,7 @@ bool SceneGame::wiiLostCheck(void)
 		reConnectWiimote->SetEnableGraphic(true);
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		return false;
 	}
@@ -1351,7 +1352,7 @@ bool SceneGame::wiiLostCheck(void)
 		reConnectWiiboard->SetEnableGraphic(true);
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		return false;
 	}

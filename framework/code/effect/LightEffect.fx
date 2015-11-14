@@ -28,7 +28,6 @@ float3		colorLightDirection_;				// ディレクショナルライトの色
 float3		positionLightPoint_[ 32 ];			// ポイントライトライトの座標
 float3		colorLightPoint_[ 32 ];				// ポイントライトライトの色
 float3		attenuationLightPoint_[ 32 ];		// ポイントライトの減衰率
-int			countLightPoint_;					// ポイントライトの数
 
 //******************************************************************************
 // サンプリング
@@ -215,7 +214,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	float3	diffusePoint;
 	float3	specularPoint;
 	float3	rimPoint;
-	for( int counterLight = 0; counterLight < countLightPoint_; ++counterLight )
+	for( int counterLight = 0; counterLight < 10; ++counterLight )
 	{
 		// ポイントライトの減衰率を計算
 		distanceLightToVertex = distance( positionWorld, positionLightPoint_[ counterLight ] );

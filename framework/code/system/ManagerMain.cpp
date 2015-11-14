@@ -569,10 +569,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pMotion_ = pMotion_;
 	pArgument_->pEffect_ = pEffect_;
 	pArgument_->pSound_ = pSound_;
-
-//	NAGASAKI変更
 	pArgument_->pDraw_ = pDraw_;
-//	NAGASAKI変更
+	pArgument_->pUpdate_ = pUpdate_;
 
 	// シーン管理クラスの生成
 	pScene_ = new ManagerSceneMain();
@@ -778,9 +776,12 @@ void ManagerMain::Update( void )
 	// エラーチェック
 	Assert( pScene_ != nullptr, _T( "シーン管理クラスが生成されていません。" ) );
 
-	// FPSの表示
 #ifdef _DEVELOP
+	// FPSの表示
 	DebugProc::Print( _T( "FPS : %2d\n" ), fpsUpdate_ );
+
+	// デバッグ用計測クラスの更新
+	ManagerDebugMeasure::Update();
 #endif
 
 	// 入力の更新
@@ -789,12 +790,23 @@ void ManagerMain::Update( void )
 	//pPad_->Update();
 	pVirtualController_->update();
 
+	// デバッグポーズ
+#ifdef _DEVELOP
+	if( pKeyboard_->IsTrigger( DIK_F11 ) )
+	{
+		isPausing_ = !isPausing_;
+	}
+	if( !pKeyboard_->IsTrigger( DIK_F12 ) && isPausing_ )
+	{
+		return;
+	}
+#endif
+
 	// フェードの更新
 	pFade_->Update();
 
 	// シーンの更新
-	{
-		MeasureTime( _T( "シーンの更新" ) );
+	{ MeasureTime( _T( "シーンの更新" ) );
 		pScene_->Update();
 	}
 	if( pScene_->IsEnd() )
@@ -803,7 +815,7 @@ void ManagerMain::Update( void )
 	}
 
 	// オブジェクトの更新
-	if( pScene_->IsUpdate() )
+	if( pUpdate_->IsEnable() )
 	{
 		pUpdate_->Execute();
 	}
@@ -823,11 +835,6 @@ void ManagerMain::Update( void )
 	{
 		pEffectParameter_->SetLightPoint( counterLight, pLight_->GetLightPointEnable( counterLight ) );
 	}
-
-#ifdef _DEVELOP
-	// デバッグ用計測クラスの更新
-	ManagerDebugMeasure::Update();
-#endif
 }
 
 //==============================================================================
@@ -891,4 +898,8 @@ void ManagerMain::InitializeSelf( void )
 	pEffect_ = nullptr;
 	pPolygon2D_ = nullptr;
 	pPolygon3D_ = nullptr;
+
+#ifdef _DEVELOP
+	isPausing_ = false;
+#endif
 }

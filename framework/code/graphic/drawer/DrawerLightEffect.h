@@ -60,7 +60,6 @@ public:
 		PARAMETER_POSITION_LIGHT_POINT,				// ポイントライトの座標
 		PARAMETER_COLOR_LIGHT_POINT,				// ポイントライトの色
 		PARAMETER_ATTENUATION_LIGHT_POINT,			// ポイントライトの減衰率
-		PARAMETER_COUNT_LIGHT_POINT,				// ポイントライトの数
 
 		PARAMETER_MAX								// 最大値
 	};

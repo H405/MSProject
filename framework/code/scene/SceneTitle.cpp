@@ -26,6 +26,7 @@
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
+#include "../framework/system/ManagerUpdate.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
@@ -750,7 +751,7 @@ void SceneTitle::reConnectWiimoteUpdate(void)
 		fpUpdatePrev = nullptr;
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = true;
+		pArgument_->pUpdate_->SetIsEnable( true );
 
 		//	•`‰æ‚â‚ß‚é
 		reConnectWiimote->SetEnableGraphic(false);
@@ -782,7 +783,7 @@ void SceneTitle::reConnectWiiboardUpdate(void)
 		fpUpdatePrev = nullptr;
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = true;
+		pArgument_->pUpdate_->SetIsEnable( true );
 
 		//	•`‰æ‚â‚ß‚é
 		reConnectWiiboard->SetEnableGraphic(false);
@@ -813,7 +814,7 @@ bool SceneTitle::wiiLostCheck(void)
 		reConnectWiimote->SetEnableGraphic(true);
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		return false;
 	}
@@ -829,7 +830,7 @@ bool SceneTitle::wiiLostCheck(void)
 		reConnectWiiboard->SetEnableGraphic(true);
 
 		//	Object‚ÌXV‚ğ~‚ß‚é
-		updateFlag = false;
+		pArgument_->pUpdate_->SetIsEnable( false );
 
 		return false;
 	}

@@ -175,6 +175,10 @@ private:
 	ManagerSound< Sound >*		pSound_;					// サウンド管理クラス
 	Polygon2D*					pPolygon2D_;				// 2Dポリゴン
 	Polygon3D*					pPolygon3D_;				// 3Dポリゴン
+
+#ifdef _DEVELOP
+	bool						isPausing_;					// ポーズフラグ
+#endif
 };
 
 #endif	// MY_MANAGER_MAIN_H
