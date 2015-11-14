@@ -300,9 +300,27 @@ private:
 	//==============================================================================
 	// ↓白川追加
 	//==============================================================================
-	CameraStateSpline*	pStateCameraPrevious_;		// ゲーム開始前カメラ処理
-	CameraStateSpline*	pStateCameraResult_;		// リザルト前カメラ処理
-	int					timerSceneGame_;			// ゲームシーン経過時間
+	// ランキング画像
+	enum
+	{
+		IMAGE_RANKING_LOGO = 0,		// ロゴ
+		IMAGE_RANKING_RANK_1,		// ランク1
+		IMAGE_RANKING_RANK_2,		// ランク2
+		IMAGE_RANKING_RANK_3,		// ランク3
+		IMAGE_RANKING_RANK_4,		// ランク4
+		IMAGE_RANKING_RANK_5,		// ランク5
+		IMAGE_RANKING_MAXIMUM		// 最大値
+	};
+
+	static const int	MAXIMUM_RANK = 5;		// ランキング最大数
+
+	CameraStateSpline*	pStateCameraPrevious_;				// ゲーム開始前カメラ処理
+	CameraStateSpline*	pStateCameraResult_;				// リザルト前カメラ処理
+	int					timerSceneGame_;					// ゲームシーン経過時間
+	int					pRankingScore_[ MAXIMUM_RANK ];		// ランキングのスコア
+	int					indexRank_;							// ランクの番号
+	Object2D*			pObjectRanking_;					// ランキング画像オブジェクト
+	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
 	int Initialize2( void );
 	int Finalize2( void );
@@ -322,6 +340,9 @@ private:
 
 	// リザルト更新
 	void UpdateResult( void );
+
+	// ランキング更新
+	void UpdateRanking( void );
 
 	//==============================================================================
 	// ↑白川追加
