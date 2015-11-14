@@ -53,10 +53,9 @@ public:
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-	// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
+	// Arg    : void								: なし
 	//==============================================================================
-	virtual int Initialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular );
+	virtual int Initialize( void );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -68,10 +67,9 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-	// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
+	// Arg    : void								: なし
 	//==============================================================================
-	virtual int Reinitialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular );
+	virtual int Reinitialize( void );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -81,8 +79,23 @@ public:
 	virtual int Copy( Light* pOut ) const;
 
 	//==============================================================================
+	// Brief  : 使用
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void Use( void );
+
+	//==============================================================================
+	// Brief  : 開放
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void Release( void );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	void Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular );
 	void SetDiffuse( const D3DXCOLOR& value );
 	void SetDiffuse( float r, float g, float b, float a );
 	void SetDiffuse( float r, float g, float b );
@@ -109,10 +122,17 @@ public:
 	float GetSpecularG( void ) const;
 	float GetSpecularB( void ) const;
 	float GetSpecularA( void ) const;
+	void SetIsEnable( bool value );
+	bool GetIsEnable( void ) const;
+	bool IsEnable( void ) const;
+	bool GetIsUsed( void ) const;
+	bool IsUsed( void ) const;
 
 protected:
 	D3DXCOLOR	diffuse_;		// ディフューズカラー
 	D3DXCOLOR	specular_;		// スペキュラカラー
+	bool		isEnable_;		// 有効フラグ
+	bool		isUsed_;		// 使用フラグ
 
 private:
 	virtual void InitializeSelf( void );

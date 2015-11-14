@@ -297,6 +297,7 @@ void ManagerPoint::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
 	maximumItem_ = 0;
+	indexCurrent_ = 0;
 	pPoint_ = nullptr;
 	pPolygon_ = nullptr;
 	pGraphic_ = nullptr;
@@ -313,9 +314,14 @@ int ManagerPoint::GetIndex( void )
 	// ‹ó‚«”Ô†‚ğ’T‚·
 	for( int counterPoint = 0; counterPoint < maximumItem_; ++counterPoint )
 	{
-		if( !pPoint_[ counterPoint ].IsEnable() )
+		++indexCurrent_;
+		if( indexCurrent_ >= maximumItem_ )
 		{
-			return counterPoint;
+			indexCurrent_ = 0;
+		}
+		if( !pPoint_[ indexCurrent_ ].IsEnable() )
+		{
+			return indexCurrent_;
 		}
 	}
 

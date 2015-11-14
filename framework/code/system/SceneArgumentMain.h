@@ -30,22 +30,23 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
+class CWiiController;
 class Effect;
 class EffectParameter;
 class Fade;
-class CWiiController;
 class InputKeyboard;
 class InputMouse;
 class InputPad;
-class VirtualController;
+class ManagerLight;
 class Model;
 class Motion;
 class Sound;
 class Texture;
+class VirtualController;
 class Window;
-class Graphic;
 
 //	NAGASAKI変更
+class Graphic;
 template < class Graphic > class ManagerDraw;
 //	NAGASAKI変更
 
@@ -78,6 +79,7 @@ public:
 	Window*						pWindow_;				// ウィンドウ
 	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
 	Fade*						pFade_;					// フェード管理クラス
+	ManagerLight*				pLight_;				// ライト管理クラス
 	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
 	CWiiController*				pWiiController_;		// wiiリモコン入力クラス
 	InputKeyboard*				pKeyboard_;				// キーボード入力クラス

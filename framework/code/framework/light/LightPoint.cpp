@@ -49,24 +49,17 @@ LightPoint::~LightPoint( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
-// Arg    : const D3DXVECTOR3& position			: 座標
-// Arg    : const D3DXVECTOR3& attemuation		: 減衰率
+// Arg    : void								: なし
 //==============================================================================
-int LightPoint::Initialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation )
+int LightPoint::Initialize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Light::Initialize( diffuse, specular );
+	result = Light::Initialize();
 	if( result != 0 )
 	{
 		return result;
 	}
-
-	// メンバ変数の設定
-	position_ = position;
-	attemuation_ = attemuation;
 
 	// 正常終了
 	return 0;
@@ -97,12 +90,9 @@ int LightPoint::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
-// Arg    : const D3DXVECTOR3& position			: 座標
-// Arg    : const D3DXVECTOR3& attemuation		: 減衰率
+// Arg    : void								: なし
 //==============================================================================
-int LightPoint::Reinitialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation )
+int LightPoint::Reinitialize( void )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -113,7 +103,7 @@ int LightPoint::Reinitialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specula
 	}
 
 	// 初期化処理
-	return Initialize( diffuse, specular, position, attemuation );
+	return Initialize();
 }
 
 //==============================================================================
@@ -133,6 +123,24 @@ int LightPoint::Copy( LightPoint* pOut ) const
 
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 設定
+// Return : void								: なし
+// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
+// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
+// Arg    : const D3DXVECTOR3& position			: 座標
+// Arg    : const D3DXVECTOR3& attemuation		: 減衰率
+//==============================================================================
+void LightPoint::Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation )
+{
+	// 基本クラスの処理
+	Light::Set( diffuse, specular );
+
+	// メンバ変数の設定
+	position_ = position;
+	attemuation_ = attemuation;
 }
 
 //==============================================================================

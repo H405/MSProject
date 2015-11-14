@@ -483,6 +483,9 @@
     <ClInclude Include="code\system\fire\Fire.h">
       <Filter>ソース ファイル\system\fire</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\light\ManagerLight.h">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -868,6 +871,9 @@
     </ClCompile>
     <ClCompile Include="code\system\fire\Fire.cpp">
       <Filter>ソース ファイル\system\fire</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\light\ManagerLight.cpp">
+      <Filter>ソース ファイル\framework\light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

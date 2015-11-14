@@ -224,13 +224,19 @@ void DrawerLightEffect::Draw( const D3DXMATRIX& matrixWorld )
 	const LightDirection*	pLightDirection = nullptr;		// ディレクショナルライト
 	D3DXVECTOR3				vectorLight;					// ディレクショナルライトベクトル
 	pLightDirection = pEffectParameter_->GetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL );
-	pLightDirection->GetVector( &vectorLight );
-	pEffect_->SetFloatArray( PARAMETER_VECTOR_LIGHT_DIRECTION, &vectorLight.x, 3 );
+	if( pLightDirection != nullptr )
+	{
+		pLightDirection->GetVector( &vectorLight );
+		pEffect_->SetFloatArray( PARAMETER_VECTOR_LIGHT_DIRECTION, &vectorLight.x, 3 );
+	}
 
 	// ディレクショナルライトの色
 	D3DXCOLOR	colorLightDirection;		// ディレクショナルライトの色
-	pLightDirection->GetDiffuse( &colorLightDirection );
-	pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_DIRECTION, &colorLightDirection.r, 3 );
+	if( pLightDirection != nullptr )
+	{
+		pLightDirection->GetDiffuse( &colorLightDirection );
+		pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_DIRECTION, &colorLightDirection.r, 3 );
+	}
 
 	// ポイントライトの設定
 	int					countPoint;				// ポイントライトの数

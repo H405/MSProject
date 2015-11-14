@@ -147,6 +147,7 @@ private:
 
 	PointState*		ppState_[ STATE_MAX ];		// ステートテーブル
 	int				maximumItem_;				// 最大要素数
+	int				indexCurrent_;				// 現在の要素番号
 	Point*			pPoint_;					// ポイント情報
 	PolygonPoint*	pPolygon_;					// ポリゴン
 	GraphicPoint*	pGraphic_;					// 描画クラス

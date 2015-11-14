@@ -1,22 +1,21 @@
 //==============================================================================
 //
-// File   : SceneTitle.h
-// Brief  : タイトルシーンクラス
+// File   : ManagerLight.h
+// Brief  : ライト管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/13 tue : Taiga Shirakawa : create
+// Date   : 2015/11/14 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_TITLE_H
-#define MY_SCENE_TITLE_H
+#ifndef MY_MANAGER_LIGHT_H
+#define MY_MANAGER_LIGHT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,20 +28,13 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
+class LightPoint;
 class LightDirection;
-
-class Object2D;
-class Object3D;
-class Material;
-class ObjectModel;
-class PolygonMesh;
-class ObjectMesh;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneTitle : public SceneMain
+class ManagerLight
 {
 public:
 	//==============================================================================
@@ -50,21 +42,22 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneTitle( void );
+	ManagerLight( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneTitle( void );
+	~ManagerLight( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int maximumDirection				: 最大ディレクショナルライト数
+	// Arg    : int maximumPoint					: 最大ポイントライト数
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int maximumDirection, int maximumPoint );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -76,126 +69,71 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int maximumDirection				: 最大ディレクショナルライト数
+	// Arg    : int maximumPoint					: 最大ポイントライト数
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int maximumDirection, int maximumPoint );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneTitle* pOut					: コピー先アドレス
+	// Arg    : ManagerLight* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneTitle* pOut ) const;
+	int Copy( ManagerLight* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
+	// Brief  : ディレクショナルライトの取得
+	// Return : LightDirection*						: ディレクショナルライト
 	// Arg    : void								: なし
 	//==============================================================================
-	void Update( void );
+	LightDirection* GetLightDirection( void );
+
+	//==============================================================================
+	// Brief  : ポイントライトの取得
+	// Return : LightPoint*							: ポイントライト
+	// Arg    : void								: なし
+	//==============================================================================
+	LightPoint* GetLightPoint( void );
+
+	//==============================================================================
+	// Brief  : ディレクショナルライト数の取得
+	// Return : int									: ディレクショナルライト数
+	// Arg    : void								: なし
+	//==============================================================================
+	int GetCountLightDirection( void );
+
+	//==============================================================================
+	// Brief  : ポイントライト数の取得
+	// Return : int									: ポイントライト数
+	// Arg    : void								: なし
+	//==============================================================================
+	int GetCountLightPoint( void );
+
+	//==============================================================================
+	// Brief  : 有効なディレクショナルライトの取得
+	// Return : LightDirection*						: ディレクショナルライト
+	// Arg    : int index							: 番号
+	//==============================================================================
+	LightDirection* GetLightDirectionEnable( int index );
+
+	//==============================================================================
+	// Brief  : 有効なポイントライトの取得
+	// Return : LightPoint*							: ポイントライト
+	// Arg    : int index							: 番号
+	//==============================================================================
+	LightPoint* GetLightPointEnable( int index );
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	SceneTitle( const SceneTitle& );
-	SceneTitle operator=( const SceneTitle& );
+	ManagerLight( const ManagerLight& );
+	ManagerLight operator=( const ManagerLight& );
 
-	CameraObject*	pCamera_;		// カメラ
-	LightDirection*	pLight_;		// ライト
-
-	//	タイトルロゴ
-	Object2D* titleLogo;
-
-	//	「演舞開始」文字
-	Object2D* startGame;
-
-	//	「練習開始」文字
-	Object2D* startTutorial;
-
-	//	「Aボタンを押してね」文字
-	Object2D* pushAKey;
-
-	//	wiiリモコンで操作する指
-	Object2D* finger;
-
-
-	//	「wiiリモコン再接続要求」オブジェクト
-	Object2D* reConnectWiimote;
-
-	//	「wiiボード再接続要求」オブジェクト
-	Object2D* reConnectWiiboard;
-
-
-	//	選択肢のうち、選ばれているオブジェクトのポインタ
-	Object2D* chooseObject;
-	Object2D* chooseObjectPrev;
-
-	//	プレイヤーオブジェクト
-	ObjectModel* player;
-
-	//	家オブジェクト
-	ObjectModel* house[3];
-
-	//	仮フィールド
-	ObjectMesh* field;
-
-	//	pushAKey点滅用
-	int pushAKeyFlashingCount;
-
-	//	chooseObject点滅用
-	int pushChooseObjectFlashingCount;
-
-	//	選択肢の選択方法用のフラグ
-	//	true = wiiリモコン（IR）
-	//	false = 方向キー	とする
-	bool chooseFlag;
-
-	//==============================================================================
-	// Brief  : 更新処理1(「Aボタンを押してね」の点滅)
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void firstUpdate( void );
-
-	//==============================================================================
-	// Brief  : 更新処理2(ゲーム開始・チュートリアル開始の選択処理)
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void secondUpdate( void );
-
-	//==============================================================================
-	// Brief  : 更新処理(決定キー押された後の遷移処理)
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void fadeUpdate( void );
-
-	//==============================================================================
-	// Brief  : 再接続要求時用の更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void reConnectWiimoteUpdate(void);
-
-	//==============================================================================
-	// Brief  : 再接続要求時用の更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void reConnectWiiboardUpdate(void);
-
-	//==============================================================================
-	// Brief  : wiiリモコンのロストチェック処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	bool wiiLostCheck(void);
-
-	//	更新関数格納用ポインタ
-	void (SceneTitle::*fpUpdate)(void);
-	void (SceneTitle::*fpUpdatePrev)(void);
+	int				maximumDirection_;		// 最大ディレクショナルライト数
+	int				maximumPoint_;			// 最大ポイントライト数
+	LightDirection*	pLightDirection_;		// ディレクショナルライト
+	LightPoint*		pLightPoint_;			// ポイントライト
 };
 
-#endif	// MY_SCENE_TITLE_H
+#endif	// MY_MANAGER_LIGHT_H

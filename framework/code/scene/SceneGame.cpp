@@ -19,6 +19,7 @@
 #include "../framework/input/VirtualController.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/light/LightDirection.h"
+#include "../framework/light/ManagerLight.h"
 #include "../framework/object/Object.h"
 #include "../framework/resource/Effect.h"
 #include "../framework/resource/ManagerEffect.h"
@@ -214,17 +215,12 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// ライトの生成
-	pLight_ = new LightDirection();
+	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
 	{
 		return 1;
 	}
-	result = pLight_->Initialize( D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( 0.0f, -0.7f, 0.7f ) );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, pLight_ );
+	pLight_->Set( D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( 0.0f, -0.7f, 0.7f ) );
 
 
 
@@ -727,9 +723,11 @@ int SceneGame::Finalize( void )
 	reConnectWiiboard = nullptr;
 
 	// ライトの開放
-	delete pLight_;
-	pLight_ = nullptr;
-	pArgument_->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, nullptr );
+	if( pLight_ != nullptr )
+	{
+		pLight_->Release();
+		pLight_ = nullptr;
+	}
 
 	// カメラの開放
 	delete pCamera_;

@@ -34,6 +34,7 @@
     <ClInclude Include="code\framework\light\Light.h" />
     <ClInclude Include="code\framework\light\LightDirection.h" />
     <ClInclude Include="code\framework\light\LightPoint.h" />
+    <ClInclude Include="code\framework\light\ManagerLight.h" />
     <ClInclude Include="code\framework\object\Object.h" />
     <ClInclude Include="code\framework\object\ObjectMovement.h" />
     <ClInclude Include="code\framework\point\Point.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="code\framework\light\Light.cpp" />
     <ClCompile Include="code\framework\light\LightDirection.cpp" />
     <ClCompile Include="code\framework\light\LightPoint.cpp" />
+    <ClCompile Include="code\framework\light\ManagerLight.cpp" />
     <ClCompile Include="code\framework\object\Object.cpp" />
     <ClCompile Include="code\framework\object\ObjectMovement.cpp" />
     <ClCompile Include="code\framework\point\Point.cpp" />
