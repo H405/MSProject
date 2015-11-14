@@ -13,6 +13,7 @@
 #include "FireState.h"
 #include "Fire.h"
 #include "../../system/ManagerPoint.h"
+#include "../../framework/radianTable/radianTable.h"
 
 //******************************************************************************
 // ライブラリ
@@ -78,8 +79,8 @@ void FireStateNormal::Update( Fire* _fireworks )
 	//	位置情報加算.
 	float f1 = sinf(param->rot);
 	float f2 = cosf(param->rot);
-	param->pos.x += (sinf(param->rot) * param->speed.x);
-	param->pos.y += (cosf(param->rot) * param->speed.y);
+	param->pos.x += (CRadianTable::mySinf(param->rot) * param->speed.x);
+	param->pos.y += (CRadianTable::myCosf(param->rot) * param->speed.y);
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成
@@ -115,8 +116,8 @@ void FireStateSlow::Update( Fire* _fireworks )
 	param->rot -= param->rotSpeed;
 
 	//	位置情報加算
-	param->pos.x += (sinf(param->rot) * param->speed.x);
-	param->pos.y += (cosf(param->rot) * param->speed.y) + 0.5f;
+	param->pos.x += (CRadianTable::mySinf(param->rot) * param->speed.x);
+	param->pos.y += (CRadianTable::myCosf(param->rot) * param->speed.y) + 0.5f;
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成

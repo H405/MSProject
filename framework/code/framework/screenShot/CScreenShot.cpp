@@ -53,7 +53,8 @@ void CScreenShot::Create()
 
 	//	ファイルからスクリーンショット数情報読み取り
 	//-------------------------------------------------------------------------------
-	if ((fp = fopen("data/screenShot/screenShot.txt", "r")) == NULL)
+	fopen_s(&fp, "data/screenShot/screenShot.txt", "r");
+	if (fp == NULL)
 	{
 #ifdef _DEBUG
 		PrintDebugWnd("スクリーンショット用ファイルのオープン失敗");
@@ -71,7 +72,7 @@ void CScreenShot::Create()
 	nImageNum = atoi(cImageNum);
 
 	//	ファイル名保存( 識別子もここで保存 )
-	sprintf(fileName, "data/screenShot/image%d.bmp", nImageNum);
+	sprintf_s(fileName, "data/screenShot/image%d.bmp", nImageNum);
 
 	nImageNum++;
 
@@ -81,7 +82,8 @@ void CScreenShot::Create()
 
 	//	スクリーンショット数情報書き込み
 	//-------------------------------------------------------------------------------
-	if ((fp = fopen("data/screenShot/screenShot.txt", "w")) == NULL)
+	fopen_s(&fp, "data/screenShot/screenShot.txt", "w");
+	if (fp == NULL)
 	{
 #ifdef _DEBUG
 		PrintDebugWnd("スクリーンショット用ファイルのオープン失敗");

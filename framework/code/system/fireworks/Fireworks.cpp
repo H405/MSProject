@@ -189,21 +189,21 @@ void Fireworks::burn(
 	{
 		param.fireMax = FIRE_MAX / 3;
 		param.fireMax = 36;
-		buffValue = (D3DX_PI * 2.0f) / (float)(param.fireMax);
+		buffValue = 360.0f / (float)(param.fireMax);
 	}
 	//	—Ç
 	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
 	{
 		param.fireMax = FIRE_MAX / 2;
 		param.fireMax = 12;
-		buffValue = (D3DX_PI * 2.0f) / (float)(param.fireMax);
+		buffValue = 360.0f / (float)(param.fireMax);
 	}
 	//	—D
 	else
 	{
 		param.fireMax = FIRE_MAX;
 		param.fireMax = 4;
-		buffValue = (D3DX_PI * 2.0f) / (float)(param.fireMax);
+		buffValue = 360.0f / (float)(param.fireMax);
 	}
 
 	for(int count = 0;count < param.fireMax;count++)
@@ -214,7 +214,7 @@ void Fireworks::burn(
 				param.pos,
 				D3DXVECTOR3(2.0f, 2.0f, param.speed.z),
 				(float)(count * buffValue),
-				0.01f);
+				1.0f);
 		}
 
 	//	XVŠÖ”Ý’è

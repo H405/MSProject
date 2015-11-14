@@ -94,6 +94,12 @@
     <Filter Include="ソース ファイル\system\fire">
       <UniqueIdentifier>{a4fab29d-0fb9-41da-97eb-ace3d0e8f7a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\framework\radianTable">
+      <UniqueIdentifier>{5b5e5cf8-7ede-4a12-a160-429510a62091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\framework\fileReader">
+      <UniqueIdentifier>{6e455263-8f15-4a6d-a6fc-ebc3f14530d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -483,6 +489,12 @@
     <ClInclude Include="code\system\fire\Fire.h">
       <Filter>ソース ファイル\system\fire</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\radianTable\radianTable.h">
+      <Filter>ソース ファイル\framework\radianTable</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\fileReader\fileReader.h">
+      <Filter>ソース ファイル\framework\fileReader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -868,6 +880,15 @@
     </ClCompile>
     <ClCompile Include="code\system\fire\Fire.cpp">
       <Filter>ソース ファイル\system\fire</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scene\SceneGameInitialize.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\radianTable\radianTable.cpp">
+      <Filter>ソース ファイル\framework\radianTable</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\fileReader\fileReader.cpp">
+      <Filter>ソース ファイル\framework\fileReader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
