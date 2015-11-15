@@ -300,16 +300,30 @@ private:
 	//==============================================================================
 	// ↓白川追加
 	//==============================================================================
+	// リザルト画像
+	enum
+	{
+		IMAGE_RESULT_BACK = 0,			// 背景
+		IMAGE_RESULT_LOGO,				// ロゴ
+		IMAGE_RESULT_SYNCRONIZE,		// シンクロ
+		IMAGE_RESULT_JUDGE_0,			// 判定0
+		IMAGE_RESULT_JUDGE_1,			// 判定1
+		IMAGE_RESULT_JUDGE_2,			// 判定2
+		IMAGE_RESULT_TO_RANKING,		// ランキングへ
+		IMAGE_RESULT_TO_TITLE,			// タイトルへ
+		IMAGE_RESULT_MAXIMUM			// 最大値
+	};
+
 	// ランキング画像
 	enum
 	{
-		IMAGE_RANKING_LOGO = 0,		// ロゴ
-		IMAGE_RANKING_RANK_1,		// ランク1
-		IMAGE_RANKING_RANK_2,		// ランク2
-		IMAGE_RANKING_RANK_3,		// ランク3
-		IMAGE_RANKING_RANK_4,		// ランク4
-		IMAGE_RANKING_RANK_5,		// ランク5
-		IMAGE_RANKING_MAXIMUM		// 最大値
+		IMAGE_RANKING_LOGO = 0,			// ロゴ
+		IMAGE_RANKING_RANK_1,			// ランク1
+		IMAGE_RANKING_RANK_2,			// ランク2
+		IMAGE_RANKING_RANK_3,			// ランク3
+		IMAGE_RANKING_RANK_4,			// ランク4
+		IMAGE_RANKING_RANK_5,			// ランク5
+		IMAGE_RANKING_MAXIMUM			// 最大値
 	};
 
 	static const int	MAXIMUM_RANK = 5;		// ランキング最大数
@@ -317,6 +331,9 @@ private:
 	CameraStateSpline*	pStateCameraPrevious_;				// ゲーム開始前カメラ処理
 	CameraStateSpline*	pStateCameraResult_;				// リザルト前カメラ処理
 	int					timerSceneGame_;					// ゲームシーン経過時間
+
+	Object2D*			pObjectResult_;						// リザルト画像オブジェクト
+
 	int					pRankingScore_[ MAXIMUM_RANK ];		// ランキングのスコア
 	int					indexRank_;							// ランクの番号
 	Object2D*			pObjectRanking_;					// ランキング画像オブジェクト
@@ -343,6 +360,12 @@ private:
 
 	// ランキング更新
 	void UpdateRanking( void );
+
+	// リザルトオブジェクトを非表示にする
+	void DisableObjectResult( void );
+
+	// ランキングオブジェクトを非表示にする
+	void DisableObjectRanking( void );
 
 	//==============================================================================
 	// ↑白川追加

@@ -800,6 +800,14 @@ void SceneGame::Update( void )
 	// テスト
 	PrintDebug( _T( "ゲームシーン\n" ) );
 
+	// 更新関数の変更
+#ifdef _DEVELOP
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_F9 ) )
+	{
+		fpUpdate = &SceneGame::UpdateResult;
+	}
+#endif
+
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
 

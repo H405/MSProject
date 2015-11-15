@@ -68,24 +68,129 @@ int SceneGame::Initialize2( void )
 		return result;
 	}
 
-	// ランキング画像オブジェクトの生成
+	// リザルト画像オブジェクトの生成
 	Effect*	pEffect2D = nullptr;		// 2D描画エフェクト
 	pEffect2D = pArgument_->pEffect_->Get( "Polygon2D.fx" );
+	pObjectResult_ = new Object2D[ IMAGE_RESULT_MAXIMUM ];
+	if( pObjectResult_ == nullptr )
+	{
+		return 1;
+	}
+
+	// リザルト背景
+	Texture*	pTextureResultBack = nullptr;		// リザルト背景テクスチャ
+	pTextureResultBack = pArgument_->pTexture_->Get( _T( "result/back.png" ) );
+	result = pObjectResult_[ IMAGE_RESULT_BACK ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectResult_[ IMAGE_RESULT_BACK ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureResultBack );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_BACK ].SetPosition( 320.0f, 0.0f, 0.0f );
+
+	// リザルトロゴ
+	Texture*	pTextureResultLogo = nullptr;		// ロゴテクスチャ
+	pTextureResultLogo = pArgument_->pTexture_->Get( _T( "result/result_logo.png" ) );
+	result = pObjectResult_[ IMAGE_RESULT_LOGO ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectResult_[ IMAGE_RESULT_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureResultLogo );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetPosition( 320.0f, 300.0f, 0.0f );
+
+	// シンクロ率
+	Texture*	pTextureSyncronize = nullptr;		// ロゴテクスチャ
+	pTextureSyncronize = pArgument_->pTexture_->Get( _T( "result/synchronize.png" ) );
+	result = pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureSyncronize );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetPosition( 280.0f, 100.0f, 0.0f );
+
+	// 判定
+	Texture*	pTextureJudge = nullptr;		// 判定テクスチャ
+	float		heightJudge;					// 判定画像の高さ
+	pTextureJudge = pArgument_->pTexture_->Get( _T( "result/judge.png" ) );
+	for( int counterJudge = 0; counterJudge < 3; ++counterJudge )
+	{
+		result = pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].Initialize( 0 );
+		if( result != 0 )
+		{
+			return result;
+		}
+		result = pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureJudge );
+		if( result != 0 )
+		{
+			return result;
+		}
+		heightJudge = pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].GetScaleY();
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetScaleY( heightJudge / 4.0f );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPositionTextureY( 0.25f * counterJudge );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetScaleTextureY( 4.0f );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPosition( 400.0f, -100.0f * counterJudge, 0.0f );
+	}
+
+	// ランキングへ
+	Texture*	pTextureToRanking = nullptr;		// ランキングへテクスチャ
+	pTextureToRanking = pArgument_->pTexture_->Get( _T( "result/to_ranking.png" ) );
+	result = pObjectResult_[ IMAGE_RESULT_TO_RANKING ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectResult_[ IMAGE_RESULT_TO_RANKING ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureToRanking );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetPosition( 280.0f, -300.0f, 0.0f );
+
+	// タイトルへ
+	Texture*	pTextureToTitle = nullptr;		// タイトルへテクスチャ
+	pTextureToTitle = pArgument_->pTexture_->Get( _T( "result/to_title.png" ) );
+	result = pObjectResult_[ IMAGE_RESULT_TO_TITLE ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectResult_[ IMAGE_RESULT_TO_TITLE ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureToTitle );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetPosition( 480.0f, -300.0f, 0.0f );
+
+	// ランキング画像オブジェクトの生成
 	pObjectRanking_ = new Object2D[ IMAGE_RANKING_MAXIMUM ];
 	if( pObjectRanking_ == nullptr )
 	{
 		return 1;
 	}
 
-	// ロゴ
-	Texture*	pTextureLogo = nullptr;		// ロゴテクスチャ
-	pTextureLogo = pArgument_->pTexture_->Get( _T( "ranking/ranking_logo.png" ) );
+	// ランキングロゴ
+	Texture*	pTextureRankingLogo = nullptr;		// ロゴテクスチャ
+	pTextureRankingLogo = pArgument_->pTexture_->Get( _T( "ranking/ranking_logo.png" ) );
 	result = pObjectRanking_[ IMAGE_RANKING_LOGO ].Initialize( 0 );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pObjectRanking_[ IMAGE_RANKING_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureLogo );
+	result = pObjectRanking_[ IMAGE_RANKING_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureRankingLogo );
 	if( result != 0 )
 	{
 		return result;
@@ -139,6 +244,12 @@ int SceneGame::Initialize2( void )
 		pObjectScoreRanking_[ counterRank ].SetPos( -250.0f, 170.0f - 120.0f * counterRank, 0.0f );
 	}
 
+	// リザルトオブジェクトの非表示
+	DisableObjectResult();
+
+	// ランキングオブジェクトの非表示
+	DisableObjectRanking();
+
 	// 正常終了
 	return 0;
 }
@@ -157,6 +268,10 @@ int SceneGame::Finalize2( void )
 	// ランキング画像オブジェクトの開放
 	delete[] pObjectRanking_;
 	pObjectRanking_ = nullptr;
+
+	// リザルト画像オブジェクトの開放
+	delete[] pObjectResult_;
+	pObjectResult_ = nullptr;
 
 	// リザルト前カメラ処理の開放
 	delete pStateCameraResult_;
@@ -308,8 +423,54 @@ void SceneGame::UpdateResult( void )
 		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( nullptr );
 	}
 
+	// 背景の表示
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectResult_[ IMAGE_RESULT_BACK ].SetEnableGraphic( true );
+	}
+
+	// ロゴの表示
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectResult_[ IMAGE_RESULT_LOGO ].SetEnableGraphic( true );
+	}
+
+	// シンクロ率の表示
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetEnableGraphic( true );
+	}
+
+	// 判定の表示
+	if( timerSceneGame_ == 0 )
+	{
+		for( int counterJudge = 0; counterJudge < 3; ++counterJudge )
+		{
+			pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetEnableGraphic( true );
+		}
+	}
+
+	// ランキングへの表示
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetEnableGraphic( true );
+	}
+
+	// タイトルへの表示
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetEnableGraphic( true );
+	}
+
 	// タイマーの経過
 	++timerSceneGame_;
+
+	// 更新処理の切り替え
+	if( pArgument_->pVirtualController_->IsTrigger( VC_DESIDE ) )
+	{
+		timerSceneGame_ = 0;
+		fpUpdate = &SceneGame::UpdateRanking;
+	}
 }
 
 //==============================================================================
@@ -324,6 +485,12 @@ void SceneGame::UpdateRanking( void )
 	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
 	{
 		PrintDebug( _T( "Rank%d : %10d\n" ), counterRank, pRankingScore_[ counterRank ] );
+	}
+
+	// その他の画像を非表示にする
+	if( timerSceneGame_ == 0 )
+	{
+		DisableObjectResult();
 	}
 
 	// ランキングデータの読み込み
@@ -367,6 +534,7 @@ void SceneGame::UpdateRanking( void )
 					pRankingScore_[ counterRank ] = pRankingScore_[ counterRank - 1 ];
 				}
 				pRankingScore_[ indexRank_ ] = scoreCurrent;
+				break;
 			}
 		}
 	}
@@ -408,6 +576,64 @@ void SceneGame::UpdateRanking( void )
 		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( nullptr );
 	}
 
+	// ロゴの表示
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectRanking_[ IMAGE_RANKING_LOGO ].SetEnableGraphic( true );
+	}
+
+	// ランクの表示
+	if( timerSceneGame_ == 0 )
+	{
+		for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
+		{
+			pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetEnableGraphic( true );
+		}
+	}
+
+	// スコアの表示
+	if( timerSceneGame_ == 0 )
+	{
+		for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
+		{
+			pObjectScoreRanking_[ counterRank ].SetPos( -250.0f, 170.0f - 120.0f * counterRank, 0.0f );
+		}
+	}
+
 	// タイマーの経過
 	++timerSceneGame_;
+}
+
+//==============================================================================
+// Brief  : リザルトオブジェクトを非表示にする
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::DisableObjectResult( void )
+{
+	// オブジェクトを非表示にする
+	for( int counterObject = 0; counterObject < IMAGE_RESULT_MAXIMUM; ++counterObject )
+	{
+		pObjectResult_[ counterObject ].SetEnableGraphic( false );
+	}
+}
+
+//==============================================================================
+// Brief  : ランキングオブジェクトを非表示にする
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::DisableObjectRanking( void )
+{
+	// オブジェクトを非表示にする
+	for( int counterObject = 0; counterObject < IMAGE_RANKING_MAXIMUM; ++counterObject )
+	{
+		pObjectRanking_[ counterObject ].SetEnableGraphic( false );
+	}
+
+	// スコアを非表示にする
+	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
+	{
+		pObjectScoreRanking_[ counterRank ].SetPos( 2500.0f, 170.0f - 120.0f * counterRank, 0.0f );
+	}
 }
