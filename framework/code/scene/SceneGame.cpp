@@ -82,7 +82,7 @@ static const float stringXX_NormalSizeY = 120.0f;
 static const float addFlashingAlpha = 0.02f;
 
 //	打ち上げ間隔
-static const int launchCountMax = 120;
+static const int launchCountMax = 20;
 
 static const D3DXVECTOR3 targetAppearPos[CAMERA_STATE_MAX] =
 {
@@ -301,14 +301,7 @@ void SceneGame::normalUpdate(void)
 		MeasureTime("managerFireworksUpdate");
 		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
 	}
-
-
-	{
-		//	ターゲット管理クラスの更新
-		MeasureTime("managerTargetUpdate");
-		managerTarget->Update(targetTable, &targetTableIndex);
-	}
-
+	managerTarget->Update(targetTable, &targetTableIndex);
 	{
 		// ポイントスプライト管理クラスの更新
 		MeasureTime("managerPoint");
@@ -324,29 +317,52 @@ void SceneGame::normalUpdate(void)
 	waterWheel[2]->Update();
 
 
+
+	//	テスト用ここから
+	//---------------------------------------------------------------------------------------------------------
 	//for(int count = 0;count < TARGET_MAX;count++)
 	//	PrintDebug( _T( "index[%d] = %d\n"), count, targetTable[count] );
 	//
 	//PrintDebug( _T( "\ntargetTableIndex = %d\n\n"), targetTableIndex );
 
-	//	テスト用ここから
-	//---------------------------------------------------------------------------------------------------------
-	/*if(launchFlag == false)
+	//	打ち上げ可能なら
+	if(launchFlag == false)
 	{
-		if(pArgument_->pWiiController_->getAccelerationY() >= 2.5f)
+		//	Bボタンを離した時の
+		if(pArgument_->pWiiController_->getAccelerationY() >= 1.0f &&
+			pArgument_->pWiiController_->getRelease(WC_B))
 		{
+			buffWiiAccel = pArgument_->pWiiController_->getAcceleration();
+			buffWiiRot = pArgument_->pWiiController_->getRot();
+
 			int buff;
 			D3DXVECTOR3 buffPos;
 			playerArm->GetPosition(&buffPos);
 
-			buff = managerFireworks->Add(
-				ManagerFireworks::STATE_NORMAL,
-				managerPoint,
-				buffPos,
-				D3DXVECTOR3(0.1f, 0.1f, 0.0f),
-				DEG_TO_RAD(5.0f),
-				DEG_TO_RAD(1.0f)
-				);
+			if(buffWiiAccel.x >= 0.0f)
+			{
+				buff = managerFireworks->Add(
+					ManagerFireworks::STATE_RIGHT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(buffWiiAccel.x, 1.0f, 0.0f),
+					buffWiiAccel.x * 20.0f,
+					buffWiiAccel.x * 0.5f
+					);
+			}
+			else
+			{
+				buff = managerFireworks->Add(
+					ManagerFireworks::STATE_LEFT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(buffWiiAccel.x, 1.0f, 0.0f),
+					buffWiiAccel.x * 20.0f,
+					buffWiiAccel.x * 0.5f
+					);
+			}
+
+
 			if(buff != -1)
 			{
 				fireworksTable[fireworksTableIndex] = buff;
@@ -364,9 +380,18 @@ void SceneGame::normalUpdate(void)
 			launchCount = 0;
 			launchFlag = false;
 		}
-	}*/
+	}
 
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_A) == true)
+
+	PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
+	PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
+	PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
+	PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
+	PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
+	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
+
+
+	/*if(pArgument_->pKeyboard_->IsTrigger(DIK_A) == true)
 	{
 		if(fireworksTableIndex < FIREWORKS_MAX)
 		{
@@ -375,7 +400,7 @@ void SceneGame::normalUpdate(void)
 			playerArm->GetPosition(&buffPos);
 
 			buff = managerFireworks->Add(
-				ManagerFireworks::STATE_NORMAL,
+				ManagerFireworks::STATE_RIGHT,
 				managerPoint,
 				buffPos,
 				D3DXVECTOR3(0.1f, 0.1f, 0.0f),
@@ -388,7 +413,7 @@ void SceneGame::normalUpdate(void)
 				fireworksTableIndex++;
 			}
 		}
-	}
+	}*/
 
 	if(pArgument_->pWiiController_->getPress(WC_PLUS) && pArgument_->pWiiController_->getPress(WC_MINUS))
 		pArgument_->pWiiController_->rotReset();
@@ -398,7 +423,7 @@ void SceneGame::normalUpdate(void)
 	playerArm->SetRotation(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
 
 
-	/*targetAppearCount++;
+	targetAppearCount++;
 	if(targetAppearCount == 50)
 	{
 		int buff;
@@ -412,8 +437,8 @@ void SceneGame::normalUpdate(void)
 		}
 
 		targetAppearCount = 0;
-	}*/
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_R) == true)
+	}
+	/*if(pArgument_->pKeyboard_->IsTrigger(DIK_R) == true)
 	{
 		int buff;
 		buff = managerTarget->Add(
@@ -425,7 +450,7 @@ void SceneGame::normalUpdate(void)
 			targetTable[targetTableIndex] = buff;
 			targetTableIndex++;
 		}
-	}
+	}*/
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
 

@@ -42,8 +42,8 @@ class ManagerFireworks
 public:
 	enum
 	{
-		STATE_NORMAL = 0,
-		STATE_SLOW,
+		STATE_RIGHT = 0,
+		STATE_LEFT,
 		STATE_MAX
 	}STATE;
 

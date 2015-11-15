@@ -331,6 +331,11 @@ private:
 	void (SceneGame::*fpUpdate)(void);
 
 	int targetAppearCount;
+
+
+	//	ˆê•Ï”
+	D3DXVECTOR3 buffWiiAccel;
+	D3DXVECTOR3 buffWiiRot;
 };
 
 #endif	// MY_SCENE_GAME_H

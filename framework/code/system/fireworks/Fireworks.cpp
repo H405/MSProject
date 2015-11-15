@@ -209,7 +209,7 @@ void Fireworks::burn(
 	for(int count = 0;count < param.fireMax;count++)
 		{
 			param.fire[count].Set(
-				Fire::STATE_NORMAL,
+				Fire::STATE_RIGHT,
 				param.managerPoint,
 				param.pos,
 				D3DXVECTOR3(2.0f, 2.0f, param.speed.z),

@@ -76,7 +76,8 @@ void Fire::InitializeState()
 	// ステートテーブルの作成
 	//	FireStateArrangeにクラス追加したら、これのヘッダーにステート（enum）増やして
 	//	ここにテーブルを追加すること！
-	ppState_[ STATE_NORMAL ] = new FireStateNormal();
+	ppState_[ STATE_RIGHT ] = new FireStateRight();
+	ppState_[ STATE_LEFT ] = new FireStateLeft();
 }
 //==============================================================================
 // Brief  : ステートの設定

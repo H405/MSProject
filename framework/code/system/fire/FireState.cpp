@@ -68,7 +68,7 @@ void FireState::Update( Fire* _fireworks )
 // Return : void								: なし
 // Arg    : Fire* pFire						: 対象
 //==============================================================================
-void FireStateNormal::Update( Fire* _fireworks )
+void FireStateRight::Update( Fire* _fireworks )
 {
 	//	パラメータへアクセス
 	FIRE_PARAM* param = _fireworks->getParam();
@@ -79,8 +79,8 @@ void FireStateNormal::Update( Fire* _fireworks )
 	//	位置情報加算.
 	float f1 = sinf(param->rot);
 	float f2 = cosf(param->rot);
-	param->pos.x += (CRadianTable::mySinf(param->rot) * param->speed.x);
-	param->pos.y += (CRadianTable::myCosf(param->rot) * param->speed.y);
+	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
+	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y);
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成
@@ -107,7 +107,7 @@ void FireStateNormal::Update( Fire* _fireworks )
 // Return : void								: なし
 // Arg    : Fire* pFire						: 対象
 //==============================================================================
-void FireStateSlow::Update( Fire* _fireworks )
+void FireStateLeft::Update( Fire* _fireworks )
 {
 	//	パラメータへアクセス
 	FIRE_PARAM* param = _fireworks->getParam();
@@ -116,8 +116,8 @@ void FireStateSlow::Update( Fire* _fireworks )
 	param->rot -= param->rotSpeed;
 
 	//	位置情報加算
-	param->pos.x += (CRadianTable::mySinf(param->rot) * param->speed.x);
-	param->pos.y += (CRadianTable::myCosf(param->rot) * param->speed.y) + 0.5f;
+	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
+	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y) + 0.5f;
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成

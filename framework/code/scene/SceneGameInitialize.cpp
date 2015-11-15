@@ -135,6 +135,9 @@ void SceneGame::InitializeSelf( void )
 
 	// SceneGame2のクラス内初期化
 	InitializeSelf2();
+
+	buffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	buffWiiRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //==============================================================================
@@ -284,7 +287,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 	//	家生成
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "head.x" ) );
+	pModel = pArgument->pModel_->Get( _T( "house_002.x" ) );
 	house[0] = new ObjectModelMaterial();
 	house[0]->Initialize(0);
 	house[0]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
@@ -374,6 +377,12 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	player->Initialize(0);
 	player->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 
+	player->SetPositionX(-30.0f);
+	player->SetPositionY(100.0f);
+	player->SetPositionZ(-2000.0f);
+	player->SetScale(2.0f, 2.0f, 2.0f);
+
+
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
 	pModel = pArgument_->pModel_->Get( _T( "arm_r.x" ) );
 	playerArm = new ObjectModelMaterial();
@@ -381,13 +390,9 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	playerArm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 
 	playerArm->SetPositionY(150.0f);
-	playerArm->SetPositionX(30.0f);
+	playerArm->SetPositionX(0.0f);
 	playerArm->SetPositionZ(-2000.0f);
 	playerArm->SetScale(3.0f, 3.0f, 3.0f);
-
-	player->SetPositionY(100.0f);
-	player->SetPositionZ(-2000.0f);
-	player->SetScale(2.0f, 2.0f, 2.0f);
 
 
 	// スキンメッシュの生成

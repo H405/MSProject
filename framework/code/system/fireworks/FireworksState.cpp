@@ -67,17 +67,21 @@ void FireworksState::Update( Fireworks* _fireworks )
 // Return : void								: なし
 // Arg    : Fireworks* pFireworks						: 対象
 //==============================================================================
-void FireworksStateNormal::Update( Fireworks* _fireworks )
+void FireworksStateRight::Update( Fireworks* _fireworks )
 {
 	//	パラメータへアクセス
 	FIREWORKS_PARAM* param = _fireworks->getParam();
 
-	//	回転量加算.
+	//	回転量加算
 	param->rot += param->rotSpeed;
+	if(param->rot < 0)
+		param->rot = 0.0f;
+	else if(param->rot > 90)
+		param->rot = 90.0f;
 
 	//	位置情報加算.
-	param->pos.x += (CRadianTable::mySinf(param->rot) * param->speed.x);
-	param->pos.y += (CRadianTable::myCosf(param->rot) * param->speed.y) + 1.0f;
+	param->pos.x += (CRadianTable::mySinf((double)param->rot) * -param->speed.x);
+	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y) + 1.0f;
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成
@@ -104,17 +108,21 @@ void FireworksStateNormal::Update( Fireworks* _fireworks )
 // Return : void								: なし
 // Arg    : Fireworks* pFireworks						: 対象
 //==============================================================================
-void FireworksStateSlow::Update( Fireworks* _fireworks )
+void FireworksStateLeft::Update( Fireworks* _fireworks )
 {
 	//	パラメータへアクセス
 	FIREWORKS_PARAM* param = _fireworks->getParam();
 
 	//	回転量加算
-	param->rot -= param->rotSpeed;
+	param->rot += param->rotSpeed;
+	if(param->rot > 0)
+		param->rot = 0.0f;
+	else if(param->rot < -90)
+		param->rot = -90.0f;
 
 	//	位置情報加算
-	param->pos.x += (CRadianTable::mySinf(param->rot) * param->speed.x);
-	param->pos.y += (CRadianTable::myCosf(param->rot) * param->speed.y) + 0.5f;
+	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
+	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y) + 1.0f;
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成

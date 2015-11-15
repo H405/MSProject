@@ -76,8 +76,8 @@ int ManagerFireworks::Initialize(ManagerPoint* _managerPoint)
 	// ステートテーブルの作成
 	//	FireworksStateArrangeにクラス追加したら、これのヘッダーにステート（enum）増やして
 	//	ここにテーブルを追加すること！
-	ppState_[ STATE_NORMAL ] = new FireworksStateNormal();
-	ppState_[ STATE_SLOW ] = new FireworksStateSlow();
+	ppState_[ STATE_RIGHT ] = new FireworksStateRight();
+	ppState_[ STATE_LEFT ] = new FireworksStateLeft();
 	Fireworks::SetState( ppState_ );
 
 	// 正常終了

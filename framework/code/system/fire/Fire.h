@@ -70,7 +70,8 @@ friend class FireState;
 public:
 	enum
 	{
-		STATE_NORMAL = 0,
+		STATE_RIGHT = 0,
+		STATE_LEFT,
 		STATE_MAX
 	}STATE;
 
