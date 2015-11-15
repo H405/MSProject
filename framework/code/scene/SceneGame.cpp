@@ -129,96 +129,81 @@ int SceneGame::Finalize( void )
 		return result;
 	}
 
-	delete player;
+	delete stringScore;
+	stringScore = nullptr;
 
-	delete waterWheel[0];
-	delete waterWheel[1];
-	delete waterWheel[2];
+	delete score;
+	score = nullptr;
 
-	waterWheel[0] = nullptr;
-	waterWheel[1] = nullptr;
-	waterWheel[2] = nullptr;
+	delete pauseFrame;
+	pauseFrame = nullptr;
 
-	delete house[0];
-	delete house[1];
-	delete house[2];
+	delete stringReturn;
+	stringReturn = nullptr;
 
-	house[0] = nullptr;
-	house[1] = nullptr;
-	house[2] = nullptr;
+	delete stringStop;
+	stringStop = nullptr;
 
-	delete bridge;
-	bridge = nullptr;
+	delete stringRetry;
+	stringRetry = nullptr;
 
-	// スカイドームの開放
-	delete pObjectSky_;
-	pObjectSky_ = nullptr;
+	delete finger;
+	finger = nullptr;
 
-	//	スキンメッシュの解放
-	delete pObjectSkinMesh_[0];
-	delete pObjectSkinMesh_[1];
-	delete pObjectSkinMesh_[2];
-	pObjectSkinMesh_[0] = nullptr;
-	pObjectSkinMesh_[1] = nullptr;
-	pObjectSkinMesh_[2] = nullptr;
+	delete reConnectWiimote;
+	reConnectWiimote = nullptr;
 
-	// 仮フィールドの開放
-	delete field;
-	field = nullptr;
+	delete reConnectWiiboard;
+	reConnectWiiboard = nullptr;
 
-	//	テストオブジェクトの解放
-	delete playerArm;
-	playerArm = nullptr;
-
-	//	ターゲット管理クラスの解放
-	delete managerTarget;
-	managerTarget = nullptr;
-
-	//	花火管理クラスの解放
-	delete managerFireworks;
-	managerFireworks = nullptr;
-
-	// ポイントスプライト管理クラスの開放
 	delete managerPoint;
 	managerPoint = nullptr;
 
 	Fire::FinalizeState();
 
-	// ポーズ用背景の開放
-	delete pauseFrame;
-	pauseFrame = nullptr;
+	delete managerFireworks;
+	managerFireworks = nullptr;
 
-	//	スコアオブジェクトの解放
-	delete score;
-	score = nullptr;
+	delete managerTarget;
+	managerTarget = nullptr;
 
-	// 「スコア」文字オブジェクトの開放
-	delete stringScore;
-	stringScore = nullptr;
+	delete player;
+	player = nullptr;
 
-	// 「再開」文字オブジェクトの開放
-	delete stringReturn;
-	stringReturn = nullptr;
+	delete playerArm;
+	playerArm = nullptr;
 
-	// 「中止」文字オブジェクトの開放
-	delete stringStop;
-	stringStop = nullptr;
+	delete pObjectSkinMesh_[2];
+	delete pObjectSkinMesh_[1];
+	delete pObjectSkinMesh_[0];
+	pObjectSkinMesh_[2] = nullptr;
+	pObjectSkinMesh_[1] = nullptr;
+	pObjectSkinMesh_[0] = nullptr;
 
-	// 「初めから」文字オブジェクトの開放
-	delete stringRetry;
-	stringRetry = nullptr;
+	delete pObjectSky_;
+	pObjectSky_ = nullptr;
 
-	// 指オブジェクトの開放
-	delete finger;
-	finger = nullptr;
+	delete field;
+	field = nullptr;
 
-	//	「wiiリモコン再接続要求」オブジェクト解放
-	delete reConnectWiimote;
-	reConnectWiimote = nullptr;
+	delete waterWheel[2];
+	delete waterWheel[1];
+	delete waterWheel[0];
 
-	//	「wiiボード再接続要求」オブジェクトの解放
-	delete reConnectWiiboard;
-	reConnectWiiboard = nullptr;
+	waterWheel[2] = nullptr;
+	waterWheel[1] = nullptr;
+	waterWheel[0] = nullptr;
+
+	delete house[2];
+	delete house[1];
+	delete house[0];
+
+	house[2] = nullptr;
+	house[1] = nullptr;
+	house[0] = nullptr;
+
+	delete bridge;
+	bridge = nullptr;
 
 	// ライトの開放
 	delete pLight_;

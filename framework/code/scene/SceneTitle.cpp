@@ -23,6 +23,7 @@
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
 #include "../framework/resource/ManagerTexture.h"
+#include "../framework/resource/ManagerMotion.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
 #include "../system/EffectParameter.h"
@@ -34,8 +35,14 @@
 #include "../object/Object2D.h"
 #include "../object/Object3D.h"
 #include "../object/ObjectModel.h"
+#include "../object/ObjectModelMaterial.h"
 #include "../object/ObjectMesh.h"
+#include "../object/ObjectSky.h"
+#include "../object/ObjectSkinMesh.h"
 #include "../framework/polygon/PolygonMesh.h"
+#include "../system/ManagerPoint.h"
+#include "../system/ManagerFireworks.h"
+#include "../system/fire/Fire.h"
 
 //******************************************************************************
 // ライブラリ
@@ -44,6 +51,7 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
+#define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
 
 //******************************************************************************
 // 静的メンバ変数
@@ -85,22 +93,49 @@ void SceneTitle::InitializeSelf( void )
 	pCamera_ = nullptr;
 	pLight_ = nullptr;
 
+	//	タイトルUI関係
+	//----------------------------------------------------------
 	titleLogo = nullptr;
+	pushAKey = nullptr;
 	startGame = nullptr;
 	startTutorial = nullptr;
-	pushAKey = nullptr;
 	finger = nullptr;
 	reConnectWiimote = nullptr;
 	reConnectWiiboard = nullptr;
 
-	player = nullptr;
-
 	chooseObject = nullptr;
+	chooseObjectPrev = nullptr;
 
 	pushAKeyFlashingCount = 0;
 	pushChooseObjectFlashingCount = 0;
 
 	chooseFlag = false;
+	//----------------------------------------------------------
+
+
+
+	//	タイトル用ステージ・３Dオブジェクト関係
+	//----------------------------------------------------------
+	pObjectSky_ = nullptr;
+	field = nullptr;
+	bridge = nullptr;
+	managerPoint = nullptr;
+	managerFireworks = nullptr;
+	pObjectSkinMesh_[0] = nullptr;
+	pObjectSkinMesh_[1] = nullptr;
+	pObjectSkinMesh_[2] = nullptr;
+
+	launchFlag = false;
+	launchCount = 0;
+
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+		fireworksTable[count] = -1;
+
+	fireworksTableIndex = 0;
+	//----------------------------------------------------------
+
+
+
 
 	fpUpdate = nullptr;
 	fpUpdatePrev = nullptr;
@@ -143,9 +178,9 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		1280,
 		720,
 		0.1f,
-		1000.0f,
-		D3DXVECTOR3( 0.0f, 30.0f, -100.0f ),
-		D3DXVECTOR3( 0.0f, 30.0f, 10.0f ),
+		10000.0f,
+		D3DXVECTOR3( 0.0f, 120.0f, -2400.0f ),
+		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
 	if( result != 0 )
 	{
@@ -171,47 +206,94 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
-	//	プレイヤー生成
-	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "head.x" ) );
 
-	player = new ObjectModel;
-	player->Initialize(0);
-	player->CreateGraphic(
-		0,
-		pModel,
-		pArgument->pEffectParameter_,
-		pEffect );
+	// スカイドームの生成
+	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.jpg" ) );
+	pObjectSky_ = new ObjectSky();
+	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 5000.0f, 1.0f, 1.0f );
+	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
 
-	player->SetPositionZ(-30.0f);
 
-	//	家の生成
-	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
-
-	for(int count = 0;count < 3;count++)
-	{
-		house[count] = new ObjectModel;
-		house[count]->Initialize(0);
-		house[count]->CreateGraphic(
-			0,
-			pModel,
-			pArgument->pEffectParameter_,
-			pEffect);
-	}
-
-	house[0]->SetPositionX(-50.0f);
-	house[2]->SetPositionX(50.0f);
-
-	house[0]->SetPositionZ(100.0f);
-	house[1]->SetPositionZ(100.0f);
-	house[2]->SetPositionZ(100.0f);
 
 	//	仮のフィールド
-	pTexture = pArgument_->pTexture_->Get( _T( "title/titlelogo.png" ) );
-	pEffect = pArgument_->pEffect_->Get( _T( "Mesh.fx" ) );
-	field = new ObjectMesh();
-	field->Initialize( 0, pArgument->pDevice_, 10, 20, 40.0f, 40.0f, 1.0f, 1.0f );
-	field->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect, pTexture );
+	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
+	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
+	field = new ObjectModel();
+	field->Initialize(0);
+	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect);
+	field->SetScale(5.0f, 5.0f, 5.0f);
+	field->AddPositionY(-300.0f);
+
+
+
+	//	橋生成
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pModel = pArgument->pModel_->Get( _T( "bridge.x" ) );
+	bridge = new ObjectModelMaterial();
+	bridge->Initialize(0);
+	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	bridge->SetPosition(0.0f, 1000.0f, 2300.0f);
+	bridge->SetScale(350.0f, 350.0f, 350.0f);
+	bridge->SetRotationY(DEG_TO_RAD(90));
+
+
+
+
+
+
+
+
+	//	ポイントスプライト管理オブジェクト生成
+	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
+	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
+	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
+	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
+	managerPoint = new ManagerPoint();
+	if( managerPoint == nullptr )
+	{
+		//return 1;
+	}
+	result = managerPoint->Initialize( 10000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
+	if( result != 0 )
+	{
+		//return result;
+	}
+
+	//	火花オブジェクトのステート初期化
+	Fire::InitializeState();
+
+	//	花火管理オブジェクト生成
+	managerFireworks = new ManagerFireworks;
+	managerFireworks->Initialize(managerPoint);
+
+
+
+
+	// スキンメッシュの生成
+	Effect*	pEffectSkinMesh = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;		// モデル
+	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
+	pObjectSkinMesh_[0] = new ObjectSkinMesh();
+	pObjectSkinMesh_[0]->Initialize( 0, 1 );
+	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_[0]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
+	pObjectSkinMesh_[0]->SetPosition( 300.0f, 100.0f, 0.0f );
+
+	pObjectSkinMesh_[1] = new ObjectSkinMesh();
+	pObjectSkinMesh_[1]->Initialize( 0, 1 );
+	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_[1]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
+	pObjectSkinMesh_[1]->SetPosition( 0.0f, 100.0f, 0.0f );
+
+	pObjectSkinMesh_[2] = new ObjectSkinMesh();
+	pObjectSkinMesh_[2]->Initialize( 0, 1 );
+	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_[2]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
+	pObjectSkinMesh_[2]->SetPosition( -300.0f, 100.0f, 0.0f );
+
+
 
 
 	//	タイトルロゴ
@@ -241,7 +323,6 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		pTexture);
 
 	pushAKey->SetPosition(0.0f, -200.0f, 0.0f);
-
 
 
 	//	「演舞開始」文字オブジェクトの生成
@@ -353,29 +434,20 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneTitle::Finalize( void )
 {
+	delete reConnectWiiboard;
+	reConnectWiiboard = nullptr;
+
+	delete reConnectWiimote;
+	reConnectWiimote = nullptr;
+
 	delete finger;
 	finger = nullptr;
 
-	delete field;
-	field = nullptr;
-
-	delete house[0];
-	house[0] = nullptr;
-
-	delete house[1];
-	house[1] = nullptr;
-
-	delete house[2];
-	house[2] = nullptr;
-
-	delete player;
-	player = nullptr;
+	delete startTutorial;
+	startTutorial = nullptr;
 
 	delete startGame;
 	startGame = nullptr;
-
-	delete startTutorial;
-	startTutorial = nullptr;
 
 	delete pushAKey;
 	pushAKey = nullptr;
@@ -383,13 +455,31 @@ int SceneTitle::Finalize( void )
 	delete titleLogo;
 	titleLogo = nullptr;
 
-	//	「wiiリモコン再接続要求」オブジェクト解放
-	delete reConnectWiimote;
-	reConnectWiimote = nullptr;
+	delete pObjectSkinMesh_[2];
+	pObjectSkinMesh_[2] = nullptr;
 
-	//	「wiiボード再接続要求」オブジェクトの解放
-	delete reConnectWiiboard;
-	reConnectWiiboard = nullptr;
+	delete pObjectSkinMesh_[1];
+	pObjectSkinMesh_[1] = nullptr;
+
+	delete pObjectSkinMesh_[0];
+	pObjectSkinMesh_[0] = nullptr;
+
+	delete managerFireworks;
+	managerFireworks = nullptr;
+
+	Fire::FinalizeState();
+
+	delete managerPoint;
+	managerPoint = nullptr;
+
+	delete bridge;
+	bridge = nullptr;
+
+	delete field;
+	field = nullptr;
+
+	delete pObjectSky_;
+	pObjectSky_ = nullptr;
 
 	// ライトの開放
 	delete pLight_;

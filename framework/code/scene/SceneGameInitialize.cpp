@@ -84,15 +84,45 @@ void SceneGame::InitializeSelf( void )
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
 	pLight_ = nullptr;
-	pObjectSky_ = nullptr;
-	pauseFrame = nullptr;
+
+	//	ゲームUI関係
+	//----------------------------------------------------------
 	stringScore = nullptr;
+	score = nullptr;
+	pauseFrame = nullptr;
 	stringReturn = nullptr;
 	stringStop = nullptr;
 	stringRetry = nullptr;
 	stringNext = nullptr;
+	reConnectWiimote = nullptr;
+	reConnectWiiboard = nullptr;
+	finger = nullptr;
+	chooseObject = nullptr;
+	chooseObjectPrev = nullptr;
 
+	pushChooseObjectFlashingCount = 0;
+	chooseFlag = false;
+	//----------------------------------------------------------
+
+
+
+	//	ゲーム用ステージ・３Dオブジェクト関係
+	//----------------------------------------------------------
+	pObjectSky_ = nullptr;
+	waterWheel[0] = nullptr;
+	waterWheel[1] = nullptr;
+	waterWheel[2] = nullptr;
+	house[0] = nullptr;
+	house[1] = nullptr;
+	house[2] = nullptr;
+
+	bridge = nullptr;
+	field = nullptr;
+
+	player = nullptr;
 	playerArm = nullptr;
+
+	managerPoint = nullptr;
 	managerFireworks = nullptr;
 	managerTarget = nullptr;
 
@@ -100,26 +130,8 @@ void SceneGame::InitializeSelf( void )
 	pObjectSkinMesh_[1] = nullptr;
 	pObjectSkinMesh_[2] = nullptr;
 
-	waterWheel[0] = nullptr;
-	waterWheel[1] = nullptr;
-	waterWheel[2] = nullptr;
-
-	house[0] = nullptr;
-	house[1] = nullptr;
-	house[2] = nullptr;
-
-	bridge = nullptr;
-
-	fpUpdate = nullptr;
-	finger = nullptr;
-	reConnectWiimote = nullptr;
-	reConnectWiiboard = nullptr;
-	chooseObject = nullptr;
-	pushChooseObjectFlashingCount = 0;
-	chooseFlag = false;
-
-	launchCount = 0;
 	launchFlag = false;
+	launchCount = 0;
 
 	for(int count = 0;count < FIREWORKS_MAX;count++)
 		fireworksTable[count] = -1;
@@ -129,13 +141,20 @@ void SceneGame::InitializeSelf( void )
 
 	fireworksTableIndex = 0;
 	targetTableIndex = 0;
+	//----------------------------------------------------------
+
 
 	cameraState = CAMERA_STATE_FRONT;
-	targetAppearCount = 0;
+	fpUpdate = nullptr;
+
+
 
 	// SceneGame2のクラス内初期化
 	InitializeSelf2();
 
+
+
+	targetAppearCount = 0;
 	buffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	buffWiiRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
@@ -170,8 +189,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		10000.0f,
-		D3DXVECTOR3( 0.0f, 200.0f, -2400.0f ),
-		D3DXVECTOR3( 0.0f, 200.0f, 0.0f ),
+		D3DXVECTOR3( 0.0f, 120.0f, -2400.0f ),
+		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
 

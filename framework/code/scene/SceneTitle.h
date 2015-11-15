@@ -25,18 +25,22 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-
+#define FIREWORKS_MAX (16)
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
 class CameraObject;
 class LightDirection;
-
+class ManagerPoint;
+class ManagerFireworks;
 class Object2D;
 class Object3D;
 class Material;
 class ObjectModel;
+class ObjectModelMaterial;
 class PolygonMesh;
+class ObjectSky;
+class ObjectSkinMesh;
 class ObjectMesh;
 
 //******************************************************************************
@@ -104,8 +108,14 @@ private:
 	CameraObject*		pCamera_;				// カメラ
 	LightDirection*		pLight_;				// ライト
 
+
+	//	タイトルUI関係
+	//----------------------------------------------------------
 	//	タイトルロゴ
 	Object2D* titleLogo;
+
+	//	「Aボタンを押してね」文字
+	Object2D* pushAKey;
 
 	//	「演舞開始」文字
 	Object2D* startGame;
@@ -113,12 +123,8 @@ private:
 	//	「練習開始」文字
 	Object2D* startTutorial;
 
-	//	「Aボタンを押してね」文字
-	Object2D* pushAKey;
-
 	//	wiiリモコンで操作する指
 	Object2D* finger;
-
 
 	//	「wiiリモコン再接続要求」オブジェクト
 	Object2D* reConnectWiimote;
@@ -126,19 +132,9 @@ private:
 	//	「wiiボード再接続要求」オブジェクト
 	Object2D* reConnectWiiboard;
 
-
 	//	選択肢のうち、選ばれているオブジェクトのポインタ
 	Object2D* chooseObject;
 	Object2D* chooseObjectPrev;
-
-	//	プレイヤーオブジェクト
-	ObjectModel* player;
-
-	//	家オブジェクト
-	ObjectModel* house[3];
-
-	//	仮フィールド
-	ObjectMesh* field;
 
 	//	pushAKey点滅用
 	int pushAKeyFlashingCount;
@@ -150,6 +146,35 @@ private:
 	//	true = wiiリモコン（IR）
 	//	false = 方向キー	とする
 	bool chooseFlag;
+	//----------------------------------------------------------
+
+
+	//	タイトル用ステージ・３Dオブジェクト関係
+	//----------------------------------------------------------
+	ObjectSky*			pObjectSky_;	// スカイドーム
+
+	//	仮フィールド
+	ObjectModel* field;
+
+	//	橋
+	ObjectModelMaterial* bridge;
+
+	// ポイントスプライト管理クラス
+	ManagerPoint* managerPoint;
+
+	//	花火管理クラス
+	ManagerFireworks* managerFireworks;
+
+	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
+
+
+	//	打ち上げに関するフラグとカウンタ
+	bool launchFlag;
+	int launchCount;
+
+	int fireworksTable[FIREWORKS_MAX];
+	int fireworksTableIndex;
+	//----------------------------------------------------------
 
 	//==============================================================================
 	// Brief  : 更新処理1(「Aボタンを押してね」の点滅)

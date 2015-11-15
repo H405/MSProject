@@ -130,24 +130,10 @@ private:
 
 	CameraObject*		pCamera_;		// カメラ
 	LightDirection*		pLight_;		// ライト
-	ObjectSky*			pObjectSky_;	// スカイドーム
 
-	//	水車オブジェクト
-	ObjectWaterwheel* waterWheel[3];
 
-	//	家
-	ObjectModelMaterial* house[3];
-
-	//	橋
-	ObjectModelMaterial* bridge;
-
-	//	フィールド
-	ObjectModel* field;
-
-	//	プレイヤー
-	ObjectModelMaterial* player;
-	ObjectModelMaterial* playerArm;
-
+	//	ゲームUI関係
+	//----------------------------------------------------------
 	//	「スコア」文字
 	Object2D* stringScore;
 
@@ -182,6 +168,37 @@ private:
 	Object2D* chooseObject;
 	Object2D* chooseObjectPrev;
 
+	//	chooseObject点滅用
+	int pushChooseObjectFlashingCount;
+
+	//	選択肢の選択方法用のフラグ
+	//	true = wiiリモコン（IR）
+	//	false = 方向キー	とする
+	bool chooseFlag;
+	//----------------------------------------------------------
+
+
+	//	ゲーム用ステージ・３Dオブジェクト関係
+	//----------------------------------------------------------
+
+	ObjectSky*			pObjectSky_;	// スカイドーム
+
+	//	水車オブジェクト
+	ObjectWaterwheel* waterWheel[3];
+
+	//	家
+	ObjectModelMaterial* house[3];
+
+	//	橋
+	ObjectModelMaterial* bridge;
+
+	//	フィールド
+	ObjectModel* field;
+
+	//	プレイヤー
+	ObjectModelMaterial* player;
+	ObjectModelMaterial* playerArm;
+
 	// ポイントスプライト管理クラス
 	ManagerPoint* managerPoint;
 
@@ -193,9 +210,6 @@ private:
 
 	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
 
-
-
-
 	//	打ち上げに関するフラグとカウンタ
 	bool launchFlag;
 	int launchCount;
@@ -205,14 +219,7 @@ private:
 	int targetTable[TARGET_MAX];
 	int fireworksTableIndex;
 	int targetTableIndex;
-
-	//	chooseObject点滅用
-	int pushChooseObjectFlashingCount;
-
-	//	選択肢の選択方法用のフラグ
-	//	true = wiiリモコン（IR）
-	//	false = 方向キー	とする
-	bool chooseFlag;
+	//----------------------------------------------------------
 
 	//	カメラの方向
 	CAMERA_STATE cameraState;
@@ -330,10 +337,8 @@ private:
 	//	更新関数格納用ポインタ
 	void (SceneGame::*fpUpdate)(void);
 
-	int targetAppearCount;
-
-
 	//	一時変数
+	int targetAppearCount;
 	D3DXVECTOR3 buffWiiAccel;
 	D3DXVECTOR3 buffWiiRot;
 };
