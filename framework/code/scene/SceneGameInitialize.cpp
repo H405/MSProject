@@ -49,6 +49,7 @@
 #include "../object/ObjectScore.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectWaterwheel.h"
+#include "../system/player/Player.h"
 
 #include "../framework/system/ManagerDraw.h"
 #include "../graphic/graphic/GraphicPoint.h"
@@ -120,7 +121,6 @@ void SceneGame::InitializeSelf( void )
 	field = nullptr;
 
 	player = nullptr;
-	playerArm = nullptr;
 
 	managerPoint = nullptr;
 	managerFireworks = nullptr;
@@ -390,28 +390,10 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 
 
 	//	プレイヤーオブジェクト
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
-	pModel = pArgument_->pModel_->Get( _T( "kuma.x" ) );
-	player = new ObjectModelMaterial();
-	player->Initialize(0);
-	player->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
-
-	player->SetPositionX(-30.0f);
-	player->SetPositionY(100.0f);
-	player->SetPositionZ(-2000.0f);
-	player->SetScale(2.0f, 2.0f, 2.0f);
-
-
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
-	pModel = pArgument_->pModel_->Get( _T( "arm_r.x" ) );
-	playerArm = new ObjectModelMaterial();
-	playerArm->Initialize(0);
-	playerArm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
-
-	playerArm->SetPositionY(150.0f);
-	playerArm->SetPositionX(0.0f);
-	playerArm->SetPositionZ(-2000.0f);
-	playerArm->SetScale(3.0f, 3.0f, 3.0f);
+	player = new Player;
+	player->Initialize(
+		D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
+		pArgument);
 
 
 	// スキンメッシュの生成
@@ -628,4 +610,116 @@ int SceneGame::Reinitialize( SceneArgumentMain* pArgument )
 
 	// 初期化処理
 	return Initialize( pArgument );
+}
+
+//==============================================================================
+// Brief  : 終了処理
+// Return : int									: 実行結果
+// Arg    : void								: なし
+//==============================================================================
+int SceneGame::Finalize( void )
+{
+	// SceneGame2の終了
+	int		result;		// 実行結果
+	result = Finalize2();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	delete stringScore;
+	stringScore = nullptr;
+
+	delete score;
+	score = nullptr;
+
+	delete pauseFrame;
+	pauseFrame = nullptr;
+
+	delete stringReturn;
+	stringReturn = nullptr;
+
+	delete stringStop;
+	stringStop = nullptr;
+
+	delete stringRetry;
+	stringRetry = nullptr;
+
+	delete finger;
+	finger = nullptr;
+
+	delete reConnectWiimote;
+	reConnectWiimote = nullptr;
+
+	delete reConnectWiiboard;
+	reConnectWiiboard = nullptr;
+
+	delete managerPoint;
+	managerPoint = nullptr;
+
+	Fire::FinalizeState();
+
+	delete managerFireworks;
+	managerFireworks = nullptr;
+
+	delete managerTarget;
+	managerTarget = nullptr;
+
+	delete player;
+	player = nullptr;
+
+	delete pObjectSkinMesh_[2];
+	delete pObjectSkinMesh_[1];
+	delete pObjectSkinMesh_[0];
+	pObjectSkinMesh_[2] = nullptr;
+	pObjectSkinMesh_[1] = nullptr;
+	pObjectSkinMesh_[0] = nullptr;
+
+	delete pObjectSky_;
+	pObjectSky_ = nullptr;
+
+	delete field;
+	field = nullptr;
+
+	delete waterWheel[2];
+	delete waterWheel[1];
+	delete waterWheel[0];
+
+	waterWheel[2] = nullptr;
+	waterWheel[1] = nullptr;
+	waterWheel[0] = nullptr;
+
+	delete house[2];
+	delete house[1];
+	delete house[0];
+
+	house[2] = nullptr;
+	house[1] = nullptr;
+	house[0] = nullptr;
+
+	delete bridge;
+	bridge = nullptr;
+
+	// ライトの開放
+	delete pLight_;
+	pLight_ = nullptr;
+	pArgument_->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, nullptr );
+
+	// カメラの開放
+	delete pCamera_;
+	pCamera_ = nullptr;
+	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
+
+	// 基本クラスの処理
+	result = SceneMain::Finalize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// クラス内の初期化処理
+	InitializeSelf();
+
+	// 正常終了
+	return 0;
 }

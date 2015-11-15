@@ -187,35 +187,67 @@ void Fireworks::burn(
 	//	‰Â
 	if(_hitPosLength <= (_hitCheckOffset * 0.1f))
 	{
-		param.fireMax = FIRE_MAX / 3;
-		param.fireMax = 36;
+		param.fireMax = FIRE_MAX;
 		buffValue = 360.0f / (float)(param.fireMax);
 	}
 	//	—Ç
 	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
 	{
 		param.fireMax = FIRE_MAX / 2;
-		param.fireMax = 12;
 		buffValue = 360.0f / (float)(param.fireMax);
 	}
 	//	—D
 	else
 	{
-		param.fireMax = FIRE_MAX;
-		param.fireMax = 4;
+		param.fireMax = FIRE_MAX / 3;
 		buffValue = 360.0f / (float)(param.fireMax);
 	}
 
 	for(int count = 0;count < param.fireMax;count++)
+	{
+		float value = (float)(count * buffValue) + (buffValue * 0.1f);
+
+		if(value == 0.0f)
+		{
+			param.fire[count].Set(
+				Fire::STATE_UP,
+				param.managerPoint,
+				param.pos,
+				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				value,
+				0.1f);
+		}
+		else if(value == 180.0f)
+		{
+			param.fire[count].Set(
+				Fire::STATE_DOWN,
+				param.managerPoint,
+				param.pos,
+				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				value,
+				1.0f);
+		}
+		else if(value > 180.0f && value < 360.0f)
+		{
+			param.fire[count].Set(
+				Fire::STATE_LEFT,
+				param.managerPoint,
+				param.pos,
+				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				value,
+				0.2f);
+		}
+		else
 		{
 			param.fire[count].Set(
 				Fire::STATE_RIGHT,
 				param.managerPoint,
 				param.pos,
-				D3DXVECTOR3(2.0f, 2.0f, param.speed.z),
-				(float)(count * buffValue),
-				1.0f);
+				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				value,
+				0.2f);
 		}
+	}
 
 	//	XVŠÖ”Ý’è
 	fpUpdate = &Fireworks::BurnUpdate;

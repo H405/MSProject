@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : Fire.h
-// Brief  : 火花オブジェクトクラス
+// File   : Player.h
+// Brief  : プレイヤーオブジェクトクラス
 // Author : Kotaro Nagasaki
 // Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
 //
@@ -10,13 +10,13 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_FIRE_H
-#define MY_FIRE_H
+#ifndef MY_PLAYER_H_
+#define MY_PLAYER_H_
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "d3dx9.h"
+#include "../../framework/object/ObjectMovement.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,79 +29,36 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class ManagerPoint;
-class FireState;
-
-//******************************************************************************
-// 構造体定義
-//******************************************************************************
-typedef struct
-{
-	//	位置情報
-	D3DXVECTOR3 pos;
-
-	//	移動の回転方向
-	float rot;
-
-	//	Z軸の回転速度（１アップデートでどのくらい回転するか）
-	float rotSpeed;
-
-	//	移動速度
-	D3DXVECTOR3 speed;
-
-	//	ポイントスプライトクラス管理オブジェクト
-	ManagerPoint* managerPoint;
-
-	//	使用可能フラグ
-	bool enable;
-
-	//	自然消滅までのカウンタ
-	int deleteCount;
-
-}FIRE_PARAM;
+class ObjectModelMaterial;
+class SceneArgumentMain;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class Fire
+class Player
 {
-friend class FireState;
-
 public:
-	enum
-	{
-		STATE_RIGHT = 0,
-		STATE_LEFT,
-		STATE_UP,
-		STATE_DOWN,
-		STATE_MAX
-	}STATE;
-
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	Fire( void );
+	Player( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~Fire( void );
+	~Player( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	//==============================================================================
-	int Set(
-		int _indexState,
-		ManagerPoint* _managerPoint,
+	int Initialize(
 		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _speed,
-		float _rot,
-		float _rotSpeed);
+		SceneArgumentMain* pArgument);
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -118,63 +75,23 @@ public:
 	void Update( void );
 
 	//==============================================================================
-	// Brief  : 火花の爆発処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void burn();
-
-	//==============================================================================
-	// Brief  : ステートの設定
-	// Return : void								: なし
-	//==============================================================================
-	static void InitializeState();
-
-	//==============================================================================
-	// Brief  : ステートの設定
-	// Return : void								: なし
-	//==============================================================================
-	static void FinalizeState();
-
-	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	D3DXVECTOR3 getSpeed(){return param.speed;}
-
-	D3DXVECTOR3 getPosition(){return param.pos;}
-	void addPosition(float _x, float _y, float _z){param.pos.x += _x;param.pos.y += _y;param.pos.z += _z;}
-	void addPositionX(float _x){param.pos.x += _x;}
-	void addPositionY(float _y){param.pos.y += _y;}
-	void addPositionZ(float _z){param.pos.z += _z;}
-
-	float getRotation(){return param.rot;}
-	void addRotationSpeed(float _value){param.rot += _value;}
-
-	float getRotationSpeed(){return param.rotSpeed;}
-
-	bool IsEnable(){return param.enable;}
-	void setEnable(bool _flag){param.enable = _flag;}
-
-	ManagerPoint* getManagerPoint(){return param.managerPoint;};
-
-	int getDeleteCount(){return param.deleteCount;}
-	void deleteCountPP(){param.deleteCount++;}
-
-	FIRE_PARAM* getParam(){return &param;}
+	D3DXVECTOR3 getPosition(){return pos;}
+	void setRotationArm(float _x, float _y, float _z);
 
 protected:
 
-	// ステート
-	static FireState*	ppState_[ STATE_MAX ];
-	int indexState;
+	//	位置情報
+	D3DXVECTOR3 pos;
 
-	//	火花用パラメータ
-	FIRE_PARAM param;
+	ObjectModelMaterial* body;
+	ObjectModelMaterial* arm;
 
 private:
 	void InitializeSelf( void );
-	Fire( const Fire& );
-	Fire operator=( const Fire& );
+	Player( const Player& );
+	Player operator=( const Player& );
 };
 
-#endif	// MY_FIRE_H
+#endif

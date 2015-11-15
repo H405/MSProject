@@ -49,6 +49,7 @@
 #include "../object/ObjectScore.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectWaterwheel.h"
+#include "../system/player/Player.h"
 
 #include "../framework/system/ManagerDraw.h"
 #include "../graphic/graphic/GraphicPoint.h"
@@ -112,121 +113,6 @@ SceneGame::~SceneGame( void )
 {
 	// 終了処理
 	Finalize();
-}
-
-//==============================================================================
-// Brief  : 終了処理
-// Return : int									: 実行結果
-// Arg    : void								: なし
-//==============================================================================
-int SceneGame::Finalize( void )
-{
-	// SceneGame2の終了
-	int		result;		// 実行結果
-	result = Finalize2();
-	if( result != 0 )
-	{
-		return result;
-	}
-
-	delete stringScore;
-	stringScore = nullptr;
-
-	delete score;
-	score = nullptr;
-
-	delete pauseFrame;
-	pauseFrame = nullptr;
-
-	delete stringReturn;
-	stringReturn = nullptr;
-
-	delete stringStop;
-	stringStop = nullptr;
-
-	delete stringRetry;
-	stringRetry = nullptr;
-
-	delete finger;
-	finger = nullptr;
-
-	delete reConnectWiimote;
-	reConnectWiimote = nullptr;
-
-	delete reConnectWiiboard;
-	reConnectWiiboard = nullptr;
-
-	delete managerPoint;
-	managerPoint = nullptr;
-
-	Fire::FinalizeState();
-
-	delete managerFireworks;
-	managerFireworks = nullptr;
-
-	delete managerTarget;
-	managerTarget = nullptr;
-
-	delete player;
-	player = nullptr;
-
-	delete playerArm;
-	playerArm = nullptr;
-
-	delete pObjectSkinMesh_[2];
-	delete pObjectSkinMesh_[1];
-	delete pObjectSkinMesh_[0];
-	pObjectSkinMesh_[2] = nullptr;
-	pObjectSkinMesh_[1] = nullptr;
-	pObjectSkinMesh_[0] = nullptr;
-
-	delete pObjectSky_;
-	pObjectSky_ = nullptr;
-
-	delete field;
-	field = nullptr;
-
-	delete waterWheel[2];
-	delete waterWheel[1];
-	delete waterWheel[0];
-
-	waterWheel[2] = nullptr;
-	waterWheel[1] = nullptr;
-	waterWheel[0] = nullptr;
-
-	delete house[2];
-	delete house[1];
-	delete house[0];
-
-	house[2] = nullptr;
-	house[1] = nullptr;
-	house[0] = nullptr;
-
-	delete bridge;
-	bridge = nullptr;
-
-	// ライトの開放
-	delete pLight_;
-	pLight_ = nullptr;
-	pArgument_->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, nullptr );
-
-	// カメラの開放
-	delete pCamera_;
-	pCamera_ = nullptr;
-	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
-
-	// 基本クラスの処理
-	result = SceneMain::Finalize();
-	if( result != 0 )
-	{
-		return result;
-	}
-
-	// クラス内の初期化処理
-	InitializeSelf();
-
-	// 正常終了
-	return 0;
 }
 
 //==============================================================================
@@ -301,7 +187,8 @@ void SceneGame::normalUpdate(void)
 	waterWheel[1]->Update();
 	waterWheel[2]->Update();
 
-
+	//	プレイヤー更新
+	player->Update();
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
@@ -321,8 +208,7 @@ void SceneGame::normalUpdate(void)
 			buffWiiRot = pArgument_->pWiiController_->getRot();
 
 			int buff;
-			D3DXVECTOR3 buffPos;
-			playerArm->GetPosition(&buffPos);
+			D3DXVECTOR3 buffPos = player->getPosition();
 
 			if(buffWiiAccel.x >= 0.0f)
 			{
@@ -405,7 +291,7 @@ void SceneGame::normalUpdate(void)
 
 
 	D3DXVECTOR3 buffRot = pArgument_->pWiiController_->getRot();
-	playerArm->SetRotation(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
+	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
 
 
 	targetAppearCount++;

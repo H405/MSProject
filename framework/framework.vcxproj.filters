@@ -100,6 +100,9 @@
     <Filter Include="ソース ファイル\framework\fileReader">
       <UniqueIdentifier>{6e455263-8f15-4a6d-a6fc-ebc3f14530d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\player">
+      <UniqueIdentifier>{eb9ff396-24a4-4ed3-ac3f-63e08909095b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -495,6 +498,9 @@
     <ClInclude Include="code\framework\fileReader\fileReader.h">
       <Filter>ソース ファイル\framework\fileReader</Filter>
     </ClInclude>
+    <ClInclude Include="code\system\player\Player.h">
+      <Filter>ソース ファイル\system\player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -889,6 +895,9 @@
     </ClCompile>
     <ClCompile Include="code\framework\fileReader\fileReader.cpp">
       <Filter>ソース ファイル\framework\fileReader</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\player\Player.cpp">
+      <Filter>ソース ファイル\system\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

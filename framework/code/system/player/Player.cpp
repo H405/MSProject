@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : Fire.cpp
-// Brief  : 火花オブジェクトクラス
+// File   : Player.cpp
+// Brief  : プレイヤーオブジェクトクラス
 // Author : Kotaro Nagasaki
 // Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
 //
@@ -10,10 +10,11 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "Fire.h"
-#include "FireState.h"
-#include "../../system/ManagerPoint.h"
-#include "../../framework/radianTable/radianTable.h"
+#include "Player.h"
+#include "../../Object/ObjectModelMaterial.h"
+#include "../../framework/resource/ManagerEffect.h"
+#include "../../framework/resource/ManagerModel.h"
+#include "../../system/SceneArgumentMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -26,93 +27,80 @@
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-
-//	ステートテーブル
-FireState* Fire::ppState_[STATE_MAX];
+static const float offsetPosX = -30.0f;
+static const float offsetPosY = -50.0f;
 
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Fire::Fire( void )
+Player::Player( void )
 {
 	// クラス内の初期化処理
 	InitializeSelf();
 }
+
 //==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fire::InitializeSelf( void )
+void Player::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	param.managerPoint = nullptr;
-	param.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	param.rot = 0.0f;
-	param.rotSpeed = 0.0f;
-	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	param.enable = false;
-	param.deleteCount = 0;
-	indexState = 0;
+	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	body = nullptr;
+	arm = nullptr;
 }
+
 //==============================================================================
 // Brief  : デストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Fire::~Fire( void )
+Player::~Player( void )
 {
 	// 終了処理
 	Finalize();
 }
-//==============================================================================
-// Brief  : ステートの設定
-// Return : void								: なし
-//==============================================================================
-void Fire::InitializeState()
-{
-	// ステートテーブルの作成
-	//	FireStateArrangeにクラス追加したら、これのヘッダーにステート（enum）増やして
-	//	ここにテーブルを追加すること！
-	ppState_[ STATE_RIGHT ] = new FireStateRight();
-	ppState_[ STATE_LEFT ] = new FireStateLeft();
-	ppState_[ STATE_UP ] = new FireStateUp();
-	ppState_[ STATE_DOWN ] = new FireStateDown();
-}
-//==============================================================================
-// Brief  : ステートの設定
-// Return : void								: なし
-//==============================================================================
-void Fire::FinalizeState()
-{
-	for(int count = 0;count < STATE_MAX;count++)
-		delete ppState_[count];
-}
+
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 //==============================================================================
-int Fire::Set(
-	int _indexState,
-	ManagerPoint* _managerPoint,
+int Player::Initialize(
 	D3DXVECTOR3 _pos,
-	D3DXVECTOR3 _speed,
-	float _rot,
-	float _rotSpeed )
+	SceneArgumentMain* pArgument)
 {
-	//	変数の保存と初期化
-	param.managerPoint = _managerPoint;
-	param.pos = _pos;
-	param.speed = _speed;
-	param.rot = _rot;
-	param.rotSpeed = _rotSpeed;
+	pos = _pos;
 
-	param.enable = true;
-	param.deleteCount = 0;
+	//	オブジェクトの生成開始
+	Effect*		pEffect = nullptr;
+	Model*		pModel = nullptr;
 
-	indexState = _indexState;
+	//	プレイヤー固定用の台生成
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
+	body = new ObjectModelMaterial();
+	body->Initialize(0);
+	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	body->SetPosition(pos);
+	body->AddPositionX(offsetPosX);
+	body->AddPositionY(offsetPosY);
+
+	//	プレイヤー生成
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pModel = pArgument->pModel_->Get( _T( "arm_r.x" ) );
+	arm = new ObjectModelMaterial();
+	arm->Initialize(0);
+	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	arm->SetPosition(pos);
+
+
+	body->SetScale(2.0f, 2.0f, 2.0f);
+	arm->SetScale(2.0f, 2.0f, 2.0f);
+
 
 	// 正常終了
 	return 0;
@@ -123,8 +111,11 @@ int Fire::Set(
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int Fire::Finalize( void )
+int Player::Finalize( void )
 {
+	delete body;
+	delete arm;
+
 	// クラス内の初期化処理
 	InitializeSelf();
 
@@ -136,17 +127,14 @@ int Fire::Finalize( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fire::Update( void )
+void Player::Update( void )
 {
-	//	ステート毎の更新処理へ
-	ppState_[indexState]->Update(this);
 }
+
 //==============================================================================
-// Brief  : 火花の爆発処理
-// Return : void								: なし
-// Arg    : void								: なし
+//	アクセサ
 //==============================================================================
-void Fire::burn()
+void Player::setRotationArm(float _x, float _y, float _z)
 {
-	Finalize();
+	arm->SetRotation(_x, _y, _z);
 }

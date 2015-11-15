@@ -62,6 +62,7 @@ class ObjectSky;
 class ObjectBillboard;
 class ObjectSkinMesh;
 class ObjectWaterwheel;
+class Player;
 
 class GraphicPoint;
 class PolygonPoint;
@@ -196,8 +197,7 @@ private:
 	ObjectModel* field;
 
 	//	プレイヤー
-	ObjectModelMaterial* player;
-	ObjectModelMaterial* playerArm;
+	Player* player;
 
 	// ポイントスプライト管理クラス
 	ManagerPoint* managerPoint;
