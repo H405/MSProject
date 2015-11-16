@@ -57,6 +57,7 @@ void SceneArgumentMain::InitializeSelf( void )
 	pFade_ = nullptr;
 	pLight_ = nullptr;
 	pEffectParameter_ = nullptr;
+	pWiiController_ = nullptr;
 	pKeyboard_ = nullptr;
 	pMouse_ = nullptr;
 	pPad_ = nullptr;

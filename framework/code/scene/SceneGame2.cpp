@@ -416,6 +416,7 @@ void SceneGame::UpdateResult( void )
 {
 	// テスト
 	PrintDebug( _T( "UpdateResult\n" ) );
+	PrintDebug( _T( "Timer : %05d\n" ), timerSceneGame_ );
 
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
@@ -424,42 +425,129 @@ void SceneGame::UpdateResult( void )
 	}
 
 	// 背景の表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_BACK )
 	{
 		pObjectResult_[ IMAGE_RESULT_BACK ].SetEnableGraphic( true );
 	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_BACK && timerSceneGame_ < TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_BACK) ) / COUNT_RESULT_BEGIN_BACK;
+		pObjectResult_[ IMAGE_RESULT_BACK ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+	}
 
 	// ロゴの表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_LOGO )
 	{
 		pObjectResult_[ IMAGE_RESULT_LOGO ].SetEnableGraphic( true );
 	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_LOGO && timerSceneGame_ < TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_LOGO) ) / COUNT_RESULT_BEGIN_LOGO;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectResult_[ IMAGE_RESULT_LOGO ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectResult_[ IMAGE_RESULT_LOGO ].SetScale( pObjectResult_[ IMAGE_RESULT_LOGO ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_LOGO ].GetHeight() * scale, 1.0f );
+	}
 
 	// シンクロ率の表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_SYNCRONIZE )
 	{
 		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetEnableGraphic( true );
 	}
-
-	// 判定の表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_SYNCRONIZE && timerSceneGame_ < TIME_RESULT_BEGIN_SYNCRONIZE + COUNT_RESULT_BEGIN_SYNCRONIZE )
 	{
-		for( int counterJudge = 0; counterJudge < 3; ++counterJudge )
-		{
-			pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetEnableGraphic( true );
-		}
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_SYNCRONIZE) ) / COUNT_RESULT_BEGIN_SYNCRONIZE;
+		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetPositionY( Utility::Easing( 90.0f, 100.0f, proportion ) );
 	}
 
+	// 判定0の表示
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_JUDGE_0 )
+	{
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_JUDGE_0 && timerSceneGame_ < TIME_RESULT_BEGIN_JUDGE_0 + COUNT_RESULT_BEGIN_JUDGE_0 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_JUDGE_0) ) / COUNT_RESULT_BEGIN_JUDGE_0;
+		scale = Utility::Easing( 1.5f, 1.0f, proportion );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].SetScale( pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].GetHeight() / 4.0f * scale, 1.0f );
+	}
+
+	// 判定1の表示
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_JUDGE_1 )
+	{
+		pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_JUDGE_1 && timerSceneGame_ < TIME_RESULT_BEGIN_JUDGE_1 + COUNT_RESULT_BEGIN_JUDGE_1 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_JUDGE_1) ) / COUNT_RESULT_BEGIN_JUDGE_1;
+		scale = Utility::Easing( 1.5f, 1.0f, proportion );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].SetScale( pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].GetHeight() / 4.0f * scale, 1.0f );
+	}
+
+	// 判定2の表示
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_JUDGE_2 )
+	{
+		pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_JUDGE_2 && timerSceneGame_ < TIME_RESULT_BEGIN_JUDGE_2 + COUNT_RESULT_BEGIN_JUDGE_2 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_JUDGE_2) ) / COUNT_RESULT_BEGIN_JUDGE_2;
+		scale = Utility::Easing( 1.25f, 1.0f, proportion );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].SetScale( pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].GetHeight() / 4.0f * scale, 1.0f );
+	}
+
+
 	// ランキングへの表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_TO_RANKING )
 	{
 		pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetEnableGraphic( true );
 	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_TO_RANKING && timerSceneGame_ < TIME_RESULT_BEGIN_TO_RANKING + COUNT_RESULT_BEGIN_TO_RANKING )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_RANKING) ) / COUNT_RESULT_BEGIN_TO_RANKING;
+		pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+	}
 
 	// タイトルへの表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_TO_TITLE )
 	{
 		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_TO_TITLE && timerSceneGame_ < TIME_RESULT_BEGIN_TO_TITLE + COUNT_RESULT_BEGIN_TO_TITLE )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_TITLE) ) / COUNT_RESULT_BEGIN_TO_TITLE;
+		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+	}
+
+	// ランキングへの点滅
+	if( timerSceneGame_ >= TIME_RESULT_END )
+	{
+		float	proportion;		// 割合
+		proportion = D3DX_PI * 2.0f * static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_RANKING) % 120 ) / 120;
+		pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetColorAlpha( 0.2f * cosf( proportion ) + 0.8f );
+	}
+
+	// タイトルへの点滅
+	if( timerSceneGame_ >= TIME_RESULT_END )
+	{
+		float	proportion;		// 割合
+		proportion = D3DX_PI * 2.0f * static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_TITLE) % 120 ) / 120;
+		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetColorAlpha( 0.2f * cosf( proportion ) + 0.8f );
 	}
 
 	// タイマーの経過

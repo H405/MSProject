@@ -804,6 +804,7 @@ void SceneGame::Update( void )
 #ifdef _DEVELOP
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F9 ) )
 	{
+		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::UpdateResult;
 	}
 #endif
