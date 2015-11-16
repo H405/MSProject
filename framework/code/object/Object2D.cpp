@@ -168,11 +168,13 @@ int Object2D::CreateGraphic( int priority, const EffectParameter* pParameter, Ef
 	}
 	Object::pGraphic_ = pGraphic_;
 
-	// 拡縮の設定
+	// サイズの設定
 	if( pTexture != nullptr )
 	{
-		scale_.x = static_cast< float >( pTexture->width_ );
-		scale_.y = static_cast< float >( pTexture->height_ );
+		width_ = static_cast< float >( pTexture->width_ );
+		height_ = static_cast< float >( pTexture->height_ );
+		scale_.x = width_;
+		scale_.y = height_;
 	}
 
 	// 正常終了
@@ -200,6 +202,50 @@ Graphic2D* Object2D::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
+}
+
+//==============================================================================
+// Brief  : 幅の設定
+// Return : void								: なし
+// Arg    : float value							: 設定する値
+//==============================================================================
+void Object2D::SetWidth( float value )
+{
+	// 値の設定
+	width_ = value;
+}
+
+//==============================================================================
+// Brief  : 幅の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float Object2D::GetWidth( void ) const
+{
+	// 値の返却
+	return width_;
+}
+
+//==============================================================================
+// Brief  : 高さの設定
+// Return : void								: なし
+// Arg    : float value							: 設定する値
+//==============================================================================
+void Object2D::SetHeight( float value )
+{
+	// 値の設定
+	height_ = value;
+}
+
+//==============================================================================
+// Brief  : 高さの取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float Object2D::GetHeight( void ) const
+{
+	// 値の返却
+	return height_;
 }
 
 //==============================================================================
@@ -712,6 +758,8 @@ void Object2D::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;
+	width_ = 0.0f;
+	height_ = 0.0f;
 	color_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	positionTexture_ = D3DXVECTOR2( 0.0f, 0.0f );
 	scaleTexture_ = D3DXVECTOR2( 1.0f, 1.0f );

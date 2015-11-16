@@ -138,6 +138,4 @@ void SceneMain::InitializeSelf( void )
 {
 	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
 	pArgument_ = nullptr;
-
-	updateFlag = true;
 }

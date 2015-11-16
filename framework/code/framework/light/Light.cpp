@@ -49,15 +49,10 @@ Light::~Light( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
+// Arg    : void								: なし
 //==============================================================================
-int Light::Initialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular )
+int Light::Initialize( void )
 {
-	// メンバ変数の設定
-	diffuse_ = diffuse;
-	specular_ = specular;
-
 	// 正常終了
 	return 0;
 }
@@ -79,10 +74,9 @@ int Light::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
+// Arg    : void								: なし
 //==============================================================================
-int Light::Reinitialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular )
+int Light::Reinitialize( void )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -93,7 +87,7 @@ int Light::Reinitialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular )
 	}
 
 	// 初期化処理
-	return Initialize( diffuse, specular );
+	return Initialize();
 }
 
 //==============================================================================
@@ -105,6 +99,41 @@ int Light::Copy( Light* pOut ) const
 {
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 使用
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void Light::Use( void )
+{
+	// 使用フラグをONにする
+	isUsed_ = true;
+}
+
+//==============================================================================
+// Brief  : 開放
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void Light::Release( void )
+{
+	// 使用フラグをOFFにする
+	isUsed_ = false;
+}
+
+//==============================================================================
+// Brief  : 設定
+// Return : void								: なし
+// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
+// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
+//==============================================================================
+void Light::Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular )
+{
+	// メンバ変数の設定
+	diffuse_ = diffuse;
+	specular_ = specular;
 }
 
 //==============================================================================
@@ -414,6 +443,61 @@ float Light::GetSpecularA( void ) const
 }
 
 //==============================================================================
+// Brief  : 有効フラグの設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void Light::SetIsEnable( bool value )
+{
+	// 値の設定
+	isEnable_ = value;
+}
+
+//==============================================================================
+// Brief  : 有効フラグの取得
+// Return : bool								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+bool Light::GetIsEnable( void ) const
+{
+	// 値の返却
+	return isEnable_;
+}
+
+//==============================================================================
+// Brief  : 有効フラグの判定
+// Return : bool								: 判定結果
+// Arg    : void								: なし
+//==============================================================================
+bool Light::IsEnable( void ) const
+{
+	// 値の返却
+	return isEnable_;
+}
+
+//==============================================================================
+// Brief  : 使用フラグの取得
+// Return : bool								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+bool Light::GetIsUsed( void ) const
+{
+	// 値の返却
+	return isUsed_;
+}
+
+//==============================================================================
+// Brief  : 使用フラグの判定
+// Return : bool								: 判定結果
+// Arg    : void								: なし
+//==============================================================================
+bool Light::IsUsed( void ) const
+{
+	// 値の返却
+	return isUsed_;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -423,4 +507,6 @@ void Light::InitializeSelf( void )
 	// メンバ変数の初期化
 	diffuse_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	specular_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	isEnable_ = true;
+	isUsed_ = false;
 }

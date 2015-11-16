@@ -161,7 +161,7 @@ int ManagerExector< TypeItem >::Register( TypeItem* pItem, int priority )
 	}
 	if( id >= countItem_ )
 	{
-		PrintDebugWnd( _T( "描画管理クラスの要素に空きがありません。" ) );
+		PrintDebugWnd( _T( "管理クラスの要素に空きがありません。\n" ) );
 		return -1;
 	}
 
@@ -430,6 +430,7 @@ void ManagerExector< TypeItem >::UnregisterNeed( void )
 		indexItemNext = pBufferItem_[ indexItemCurrent ].indexNext_;
 		if( pBufferItem_[ indexItemCurrent ].needsUnregister_ )
 		{
+			pBufferItem_[ indexItemCurrent ].isEnable_ = false;
 			UnregisterItem( indexItemCurrent );
 		}
 	}

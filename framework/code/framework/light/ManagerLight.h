@@ -1,17 +1,17 @@
 //==============================================================================
 //
-// File   : ManagerScene.h
-// Brief  : シーン管理クラス
+// File   : ManagerLight.h
+// Brief  : ライト管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/11 sun : Taiga Shirakawa : create
+// Date   : 2015/11/14 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_MANAGER_SCENE_H
-#define MY_MANAGER_SCENE_H
+#ifndef MY_MANAGER_LIGHT_H
+#define MY_MANAGER_LIGHT_H
 
 //******************************************************************************
 // インクルード
@@ -28,13 +28,13 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class SceneArgument;
-class Scene;
+class LightPoint;
+class LightDirection;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ManagerScene
+class ManagerLight
 {
 public:
 	//==============================================================================
@@ -42,86 +42,98 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ManagerScene( void );
+	ManagerLight( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	virtual ~ManagerScene( void );
+	~ManagerLight( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int typeSceneBegin					: 開始シーン
-	// Arg    : SceneArgument* pArgument			: シーン引数
+	// Arg    : int maximumDirection				: 最大ディレクショナルライト数
+	// Arg    : int maximumPoint					: 最大ポイントライト数
 	//==============================================================================
-	virtual int Initialize( int typeSceneBegin, SceneArgument* pArgument );
+	int Initialize( int maximumDirection, int maximumPoint );
 
 	//==============================================================================
 	// Brief  : 終了処理
 	// Return : int									: 実行結果
 	// Arg    : void								: なし
 	//==============================================================================
-	virtual int Finalize( void );
+	int Finalize( void );
 
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int typeSceneBegin					: 開始シーン
-	// Arg    : SceneArgument* pArgument			: シーン引数
+	// Arg    : int maximumDirection				: 最大ディレクショナルライト数
+	// Arg    : int maximumPoint					: 最大ポイントライト数
 	//==============================================================================
-	virtual int Reinitialize( int typeSceneBegin, SceneArgument* pArgument );
+	int Reinitialize( int maximumDirection, int maximumPoint );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ManagerScene* pOut					: コピー先アドレス
+	// Arg    : ManagerLight* pOut					: コピー先アドレス
 	//==============================================================================
-	virtual int Copy( ManagerScene* pOut ) const;
+	int Copy( ManagerLight* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
+	// Brief  : ディレクショナルライトの取得
+	// Return : LightDirection*						: ディレクショナルライト
 	// Arg    : void								: なし
 	//==============================================================================
-	virtual void Update( void );
+	LightDirection* GetLightDirection( void );
 
 	//==============================================================================
-	// Brief  : シーンの切り替え
-	// Return : void								: なし
-	// Arg    : int typeScene						: 切り替えるシーン
+	// Brief  : ポイントライトの取得
+	// Return : LightPoint*							: ポイントライト
+	// Arg    : void								: なし
 	//==============================================================================
-	void ShiftScene( int typeScene );
+	LightPoint* GetLightPoint( void );
 
 	//==============================================================================
-	// アクセサ
+	// Brief  : ディレクショナルライト数の取得
+	// Return : int									: ディレクショナルライト数
+	// Arg    : void								: なし
 	//==============================================================================
-	int GetTypeSceneCurrent( void ) const;
-	void SetTypeSceneNext( int value );
-	int GetTypeSceneNext( void ) const;
-	bool GetIsShifting( void ) const;
-	bool IsShifting( void ) const;
-	bool GetIsEnd( void ) const;
-	bool IsEnd( void ) const;
-	bool GetNeedsDelete( void ) const;
-	bool NeedsDelete( void ) const;
+	int GetCountLightDirection( void );
+
+	//==============================================================================
+	// Brief  : ポイントライト数の取得
+	// Return : int									: ポイントライト数
+	// Arg    : void								: なし
+	//==============================================================================
+	int GetCountLightPoint( void );
+
+	//==============================================================================
+	// Brief  : 有効なディレクショナルライトの取得
+	// Return : LightDirection*						: ディレクショナルライト
+	// Arg    : int index							: 番号
+	//==============================================================================
+	LightDirection* GetLightDirectionEnable( int index );
+
+	//==============================================================================
+	// Brief  : 有効なポイントライトの取得
+	// Return : LightPoint*							: ポイントライト
+	// Arg    : int index							: 番号
+	//==============================================================================
+	LightPoint* GetLightPointEnable( int index );
 
 protected:
-	int		typeSceneCurrent_;		// 現在のシーン
-	int		typeSceneNext_;			// 次のシーン
-	bool	isShifting_;			// シーン切り替え中フラグ
-	bool	isEnd_;					// シーン終了フラグ
-	bool	needsDelete_;			// シーン管理クラス破棄フラグ
 
 private:
-	virtual void InitializeSelf( void );
-	ManagerScene( const ManagerScene& );
-	ManagerScene operator=( const ManagerScene& );
+	void InitializeSelf( void );
+	ManagerLight( const ManagerLight& );
+	ManagerLight operator=( const ManagerLight& );
 
-	SceneArgument*	pArgument_;		// シーン引数
-	Scene*	pScene_;				// シーン
+	int				maximumDirection_;		// 最大ディレクショナルライト数
+	int				maximumPoint_;			// 最大ポイントライト数
+	LightDirection*	pLightDirection_;		// ディレクショナルライト
+	LightPoint*		pLightPoint_;			// ポイントライト
 };
 
-#endif	// MY_MANAGER_SCENE_H
+#endif	// MY_MANAGER_LIGHT_H

@@ -53,12 +53,9 @@ public:
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-	// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
-	// Arg    : const D3DXVECTOR3& position			: 座標
-	// Arg    : const D3DXVECTOR3& attemuation		: 減衰率
+	// Arg    : void								: なし
 	//==============================================================================
-	int Initialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation );
+	int Initialize( void );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -70,12 +67,9 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
-	// Arg    : const D3DXCOLOR& specular			: スペキュラカラー
-	// Arg    : const D3DXVECTOR3& position			: 座標
-	// Arg    : const D3DXVECTOR3& attemuation		: 減衰率
+	// Arg    : void								: なし
 	//==============================================================================
-	int Reinitialize( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation );
+	int Reinitialize( void );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -87,6 +81,7 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	void Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation );
 	void SetPosition( const D3DXVECTOR3& value );
 	void SetPosition( float x, float y, float z );
 	void SetPositionX( float x );

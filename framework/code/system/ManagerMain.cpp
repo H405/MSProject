@@ -26,6 +26,7 @@
 #include "../framework/input/InputMouse.h"
 #include "../framework/input/InputPad.h"
 #include "../framework/input/VirtualController.h"
+#include "../framework/light/ManagerLight.h"
 #include "../framework/object/Object.h"
 #include "../framework/polygon/Polygon2D.h"
 #include "../framework/polygon/Polygon3D.h"
@@ -149,6 +150,18 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 	result = pFade_->Initialize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// ライト管理クラスの生成
+	pLight_ = new ManagerLight();
+	if( pLight_ == nullptr )
+	{
+		return 1;
+	}
+	result = pLight_->Initialize( GraphicMain::LIGHT_DIRECTIONAL_MAX, GraphicMain::LIGHT_POINT_MAX );
 	if( result != 0 )
 	{
 		return result;
@@ -293,7 +306,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pDraw_->Initialize( 256, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
+	result = pDraw_->Initialize( 1028, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
 	if( result != 0 )
 	{
 		return result;
@@ -315,7 +328,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pUpdate_->Initialize( 256 );
+	result = pUpdate_->Initialize( 1028 );
 	if( result != 0 )
 	{
 		return result;
@@ -544,6 +557,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pWindow_ = pWindow_;
 	pArgument_->pDevice_ = pDevice;
 	pArgument_->pFade_ = pFade_;
+	pArgument_->pLight_ = pLight_;
 	pArgument_->pEffectParameter_ = pEffectParameter_;
 	pArgument_->pWiiController_ = pWiiController_;
 	pArgument_->pKeyboard_ = pKeyboard_;
@@ -555,10 +569,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pMotion_ = pMotion_;
 	pArgument_->pEffect_ = pEffect_;
 	pArgument_->pSound_ = pSound_;
-
-//	NAGASAKI変更
 	pArgument_->pDraw_ = pDraw_;
-//	NAGASAKI変更
+	pArgument_->pUpdate_ = pUpdate_;
 
 	// シーン管理クラスの生成
 	pScene_ = new ManagerSceneMain();
@@ -567,7 +579,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_GAME, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif
@@ -684,6 +696,10 @@ int ManagerMain::Finalize( void )
 	delete pWiiController_;
 	pWiiController_ = nullptr;
 
+	// ライト管理クラスの開放
+	delete pLight_;
+	pLight_ = nullptr;
+
 	// フェードクラスの開放
 	delete pFade_;
 	pFade_ = nullptr;
@@ -760,9 +776,12 @@ void ManagerMain::Update( void )
 	// エラーチェック
 	Assert( pScene_ != nullptr, _T( "シーン管理クラスが生成されていません。" ) );
 
-	// FPSの表示
 #ifdef _DEVELOP
+	// FPSの表示
 	DebugProc::Print( _T( "FPS : %2d\n" ), fpsUpdate_ );
+
+	// デバッグ用計測クラスの更新
+	ManagerDebugMeasure::Update();
 #endif
 
 	// 入力の更新
@@ -771,12 +790,23 @@ void ManagerMain::Update( void )
 	//pPad_->Update();
 	pVirtualController_->update();
 
+	// デバッグポーズ
+#ifdef _DEVELOP
+	if( pKeyboard_->IsTrigger( DIK_F11 ) )
+	{
+		isPausing_ = !isPausing_;
+	}
+	if( !pKeyboard_->IsTrigger( DIK_F12 ) && isPausing_ )
+	{
+		return;
+	}
+#endif
+
 	// フェードの更新
 	pFade_->Update();
 
 	// シーンの更新
-	{
-		MeasureTime( _T( "シーンの更新" ) );
+	{ MeasureTime( _T( "シーンの更新" ) );
 		pScene_->Update();
 	}
 	if( pScene_->IsEnd() )
@@ -784,16 +814,27 @@ void ManagerMain::Update( void )
 		isEnd_ = true;
 	}
 
-	if( pScene_->IsUpdate() )
+	// オブジェクトの更新
+	if( pUpdate_->IsEnable() )
 	{
-		// オブジェクトの更新
 		pUpdate_->Execute();
 	}
 
-#ifdef _DEVELOP
-	// デバッグ用計測クラスの更新
-	ManagerDebugMeasure::Update();
-#endif
+	// エフェクトパラメータにライトを設定
+	int		countLightDirection;		// ディレクショナルライト数
+	int		countLightPoint;			// ポイントライト数
+	countLightDirection = pLight_->GetCountLightDirection();
+	countLightPoint = pLight_->GetCountLightPoint();
+	pEffectParameter_->SetCountLightDirection( countLightDirection );
+	for( int counterLight = 0; counterLight < countLightDirection; ++counterLight )
+	{
+		pEffectParameter_->SetLightDirection( counterLight, pLight_->GetLightDirectionEnable( counterLight ) );
+	}
+	pEffectParameter_->SetCountLightPoint( countLightPoint );
+	for( int counterLight = 0; counterLight < countLightPoint; ++counterLight )
+	{
+		pEffectParameter_->SetLightPoint( counterLight, pLight_->GetLightPointEnable( counterLight ) );
+	}
 }
 
 //==============================================================================
@@ -836,6 +877,7 @@ void ManagerMain::InitializeSelf( void )
 	pDevice_ = nullptr;
 	pXAudio_ = nullptr;
 	pFade_ = nullptr;
+	pLight_ = nullptr;
 	pEffectParameter_ = nullptr;
 	pObjectBlur_ = nullptr;
 	pObjectLightEffect_ = nullptr;
@@ -856,4 +898,8 @@ void ManagerMain::InitializeSelf( void )
 	pEffect_ = nullptr;
 	pPolygon2D_ = nullptr;
 	pPolygon3D_ = nullptr;
+
+#ifdef _DEVELOP
+	isPausing_ = false;
+#endif
 }

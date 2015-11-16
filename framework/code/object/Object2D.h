@@ -104,6 +104,10 @@ public:
 	//==============================================================================
 	void SetGraphic( Graphic2D* pValue );
 	Graphic2D* GetGraphic( void ) const;
+	void SetWidth( float value );
+	float GetWidth( void ) const;
+	void SetHeight( float value );
+	float GetHeight( void ) const;
 	void SetColor( const D3DXCOLOR& value );
 	void SetColor( float r, float g, float b, float a );
 	void SetColor( float r, float g, float b );
@@ -150,6 +154,8 @@ public:
 
 protected:
 	Graphic2D*	pGraphic_;				// 描画クラス
+	float		width_;					// 幅
+	float		height_;				// 高さ
 	D3DXCOLOR	color_;					// 色
 	D3DXVECTOR2	positionTexture_;		// テクスチャ座標
 	D3DXVECTOR2	scaleTexture_;			// テクスチャ拡縮

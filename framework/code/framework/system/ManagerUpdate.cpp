@@ -11,6 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "ManagerUpdate.h"
+#include "../develop/DebugProc.h"
 #include "../object/Object.h"
 
 //******************************************************************************
@@ -147,6 +148,7 @@ int ManagerUpdate< TypeItem >::Execute( void )
 {
 	// オブジェクトの更新
 	int		indexItemCurrent;		// 現在の要素番号
+	int	a = 0;
 	for( indexItemCurrent = indexTop_; indexItemCurrent >= 0; indexItemCurrent = pBufferItem_[ indexItemCurrent ].indexNext_ )
 	{
 		if( pBufferItem_[ indexItemCurrent ].needsUnregister_ || !pBufferItem_[ indexItemCurrent ].isEnable_ || !pBufferItem_[ indexItemCurrent ].pItem_->IsEnable() )
@@ -154,7 +156,9 @@ int ManagerUpdate< TypeItem >::Execute( void )
 			continue;
 		}
 		pBufferItem_[ indexItemCurrent ].pItem_->Update();
+		++a;
 	}
+	PrintDebug( "Update : %d", a );
 
 	// 基本クラスの処理
 	int		result;		// 実行結果

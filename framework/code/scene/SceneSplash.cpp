@@ -25,6 +25,7 @@
 #include "../framework/input/VirtualController.h"
 #include "../framework/light/LightDirection.h"
 #include "../framework/light/LightPoint.h"
+#include "../framework/light/ManagerLight.h"
 #include "../framework/resource/Effect.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
@@ -136,62 +137,39 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// ライトの生成
-	pLight_ = new LightDirection();
+	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
 	{
 		return 1;
 	}
-	result = pLight_->Initialize( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, 1.0f ) );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, pLight_ );
+	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, 1.0f ) );
 
 	// ポイントライトの生成
-	pPointLight_ = new LightPoint[ GraphicMain::LIGHT_POINT_MAX ];
-	if( pPointLight_ == nullptr )
+	ppPointLight_ = new LightPoint*[ GraphicMain::LIGHT_POINT_MAX ];
+	if( ppPointLight_ == nullptr )
 	{
 		return 1;
 	}
 
-	result = pPointLight_[ 0 ].Initialize( D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+	ppPointLight_[ 0 ] = pArgument->pLight_->GetLightPoint();
+	ppPointLight_[ 0 ]->Set( D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		D3DXVECTOR3( -20.0f, 10.0f, 0.0f ),  D3DXVECTOR3( 0.0f, 0.02f, 0.001f ) );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetLightPoint( 0, &pPointLight_[ 0 ] );
 
-	result = pPointLight_[ 1 ].Initialize( D3DXCOLOR( 0.25f, 0.25f, 1.0f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+	ppPointLight_[ 1 ] = pArgument->pLight_->GetLightPoint();
+	ppPointLight_[ 1 ]->Set( D3DXCOLOR( 0.25f, 0.25f, 1.0f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		D3DXVECTOR3( 20.0f, 10.0f, 0.0f ),  D3DXVECTOR3( 0.0f, 0.02f, 0.001f ) );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetLightPoint( 1, &pPointLight_[ 1 ] );
 
-	result = pPointLight_[ 2 ].Initialize( D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+	ppPointLight_[ 2 ] = pArgument->pLight_->GetLightPoint();
+	ppPointLight_[ 2 ]->Set( D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		D3DXVECTOR3( 0.0f, 10.0f, -100.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.002f ) );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetLightPoint( 2, &pPointLight_[ 2 ] );
 
 	for( int i = 3; i < 10; ++i )
 	{
-		result = pPointLight_[ i ].Initialize( D3DXCOLOR( 1.0f, 1.0f, 0.5f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+		ppPointLight_[ i ] = pArgument->pLight_->GetLightPoint();
+		ppPointLight_[ i ]->Set( D3DXCOLOR( 1.0f, 1.0f, 0.5f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 			D3DXVECTOR3( 1.0f * (rand() % 100) - 50.0f - 100.0f, 10.0f, 1.0f * (rand() % 100) - 50.0f + 100.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.002f ) );
-		if( result != 0 )
-		{
-			return result;
-		}
-		pArgument->pEffectParameter_->SetLightPoint( i, &pPointLight_[ i ] );
+		ppPointLight_[ i ]->SetIsEnable( false );
 	}
-
-	// ポイントライトの個数を設定
-	pArgument->pEffectParameter_->SetCountLightPoint( 3 );
 
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
@@ -292,9 +270,6 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneSplash::Finalize( void )
 {
-	// ポイントライトの個数を設定
-	pArgument_->pEffectParameter_->SetCountLightPoint( 0 );
-
 	// スキンメッシュの開放
 	delete pObjectSkinMesh_;
 	pObjectSkinMesh_ = nullptr;
@@ -324,13 +299,23 @@ int SceneSplash::Finalize( void )
 	pPoint_ = nullptr;
 
 	// ポイントライトの開放
-	delete[] pPointLight_;
-	pPointLight_ = nullptr;
+	for( int counterLight = 0; counterLight < GraphicMain::LIGHT_POINT_MAX; ++counterLight )
+	{
+		if( ppPointLight_[ counterLight ] != nullptr )
+		{
+			ppPointLight_[ counterLight ]->Release();
+			ppPointLight_[ counterLight ] = nullptr;
+		}
+	}
+	delete[] ppPointLight_;
+	ppPointLight_ = nullptr;
 
 	// ライトの開放
-	delete pLight_;
-	pLight_ = nullptr;
-	pArgument_->pEffectParameter_->SetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL, nullptr );
+	if( pLight_ != nullptr )
+	{
+		pLight_->Release();
+		pLight_ = nullptr;
+	}
 
 	// カメラの開放
 	delete pCamera_;
@@ -440,14 +425,14 @@ void SceneSplash::Update( void )
 
 	// 赤ポイントライトの移動
 	D3DXVECTOR3	positionPointR;		// ポイントライトの座標
-	pPointLight_[ 0 ].GetPosition( &positionPointR );
+	ppPointLight_[ 0 ]->GetPosition( &positionPointR );
 	positionPointR.x = 30.0f * cosf( angleLight );
 	positionPointR.z = 30.0f * sinf( angleLight );
-	pPointLight_[ 0 ].SetPosition( positionPointR );
+	ppPointLight_[ 0 ]->SetPosition( positionPointR );
 
 	// 青ポイントライトの移動
 	D3DXVECTOR3	positionPointB;		// ポイントライトの座標
-	pPointLight_[ 1 ].GetPosition( &positionPointB );
+	ppPointLight_[ 1 ]->GetPosition( &positionPointB );
 	positionPointB.x = 30.0f * cosf( angleLight + D3DX_PI );
 	positionPointB.z = 30.0f * sinf( angleLight + D3DX_PI );
 	if( timerLight_ % 240 < 120 )
@@ -460,11 +445,11 @@ void SceneSplash::Update( void )
 		Utility::SplineVector3( D3DXVECTOR3( 100.0f, 70.0f, 100.0f ), D3DXVECTOR3( 0.0f, 150.0f, 150.0f ), D3DXVECTOR3( -50.0f, 20.0f, -50.0f ), D3DXVECTOR3( 150.0f, 150.0f, 0.0f ),
 			static_cast< float >( (timerLight_ % 240) - 120 ) / 120.0f, &positionPointB );
 	}
-	pPointLight_[ 1 ].SetPosition( positionPointB );
+	ppPointLight_[ 1 ]->SetPosition( positionPointB );
 
 	// 緑ポイントライトの移動
 	D3DXVECTOR3	positionPointG;		// ポイントライトの座標
-	pPointLight_[ 2 ].GetPosition( &positionPointG );
+	ppPointLight_[ 2 ]->GetPosition( &positionPointG );
 	if( pArgument_->pVirtualController_->IsPress( VC_LEFT ) )
 	{
 		positionPointG.x -= 1.0f;
@@ -481,7 +466,7 @@ void SceneSplash::Update( void )
 	{
 		positionPointG.z += 1.0f;
 	}
-	pPointLight_[ 2 ].SetPosition( positionPointG );
+	ppPointLight_[ 2 ]->SetPosition( positionPointG );
 
 	// エフェクトの発生
 	pPoint_->Add( 20, positionPointR, D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ), 50.0f,
@@ -490,6 +475,24 @@ void SceneSplash::Update( void )
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
 	pPoint_->Add( 20, positionPointG, D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), 50.0f,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+
+	// 点光源を有効にする
+	if( pArgument_->pVirtualController_->IsPress( VC_UP ) )
+	{
+		ppPointLight_[ 3 ]->SetIsEnable( true );
+	}
+	if( pArgument_->pVirtualController_->IsPress( VC_DOWN ) )
+	{
+		ppPointLight_[ 3 ]->SetIsEnable( false );
+	}
+	if( pArgument_->pVirtualController_->IsPress( VC_LEFT ) )
+	{
+		ppPointLight_[ 4 ]->SetIsEnable( true );
+	}
+	if( pArgument_->pVirtualController_->IsPress( VC_RIGHT ) )
+	{
+		ppPointLight_[ 4 ]->SetIsEnable( false );
+	}
 
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
@@ -516,7 +519,7 @@ void SceneSplash::InitializeSelf( void )
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
 	pLight_ = nullptr;
-	pPointLight_ = nullptr;
+	ppPointLight_ = nullptr;
 	pPoint_ = nullptr;
 	pObject2D_ = nullptr;
 	pObjectMesh_ = nullptr;

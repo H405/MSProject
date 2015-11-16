@@ -106,7 +106,7 @@ private:
 
 	CameraObject*		pCamera_;				// カメラ
 	LightDirection*		pLight_;				// ライト
-	LightPoint*			pPointLight_;			// ポイントライト
+	LightPoint**		ppPointLight_;			// ポイントライト
 
 	ManagerPoint*		pPoint_;				// ポイントスプライト管理クラス
 

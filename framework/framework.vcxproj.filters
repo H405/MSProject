@@ -492,14 +492,17 @@
     <ClInclude Include="code\system\fire\Fire.h">
       <Filter>ソース ファイル\system\fire</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\light\ManagerLight.h">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\player\Player.h">
+      <Filter>ソース ファイル\system\player</Filter>
+    </ClInclude>
     <ClInclude Include="code\framework\radianTable\radianTable.h">
       <Filter>ソース ファイル\framework\radianTable</Filter>
     </ClInclude>
     <ClInclude Include="code\framework\fileReader\fileReader.h">
       <Filter>ソース ファイル\framework\fileReader</Filter>
-    </ClInclude>
-    <ClInclude Include="code\system\player\Player.h">
-      <Filter>ソース ファイル\system\player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -887,6 +890,12 @@
     <ClCompile Include="code\system\fire\Fire.cpp">
       <Filter>ソース ファイル\system\fire</Filter>
     </ClCompile>
+    <ClCompile Include="code\framework\light\ManagerLight.cpp">
+      <Filter>ソース ファイル\framework\light</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\player\Player.cpp">
+      <Filter>ソース ファイル\system\player</Filter>
+    </ClCompile>
     <ClCompile Include="code\scene\SceneGameInitialize.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
@@ -895,9 +904,6 @@
     </ClCompile>
     <ClCompile Include="code\framework\fileReader\fileReader.cpp">
       <Filter>ソース ファイル\framework\fileReader</Filter>
-    </ClCompile>
-    <ClCompile Include="code\system\player\Player.cpp">
-      <Filter>ソース ファイル\system\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

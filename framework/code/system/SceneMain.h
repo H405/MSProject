@@ -79,14 +79,8 @@ public:
 	//==============================================================================
 	virtual int Copy( SceneMain* pOut ) const;
 
-	//==============================================================================
-	// Brief  : 更新フラグのゲッター
-	//==============================================================================
-	bool IsUpdate(){return updateFlag;}
-
 protected:
 	SceneArgumentMain*	pArgument_;		// シーン引数
-	bool updateFlag;					// 更新フラグ
 
 private:
 	virtual void InitializeSelf( void );

@@ -53,11 +53,9 @@ public:
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : D3DXCOLOR diffuse					: ディフューズカラー
-	// Arg    : D3DXCOLOR specular					: スペキュラカラー
-	// Arg    : const D3DXVECTOR3& vector			: 向いているベクトル
+	// Arg    : void								: なし
 	//==============================================================================
-	int Initialize( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3DXVECTOR3& vector );
+	int Initialize( void );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -69,11 +67,9 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : D3DXCOLOR diffuse					: ディフューズカラー
-	// Arg    : D3DXCOLOR specular					: スペキュラカラー
-	// Arg    : const D3DXVECTOR3& vector			: 向いているベクトル
+	// Arg    : void								: なし
 	//==============================================================================
-	int Reinitialize( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3DXVECTOR3& vector );
+	int Reinitialize( void );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -85,6 +81,7 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	void Set( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3DXVECTOR3& vector );
 	void SetVector( const D3DXVECTOR3& value );
 	void SetVector( float x, float y, float z );
 	void SetVectorX( float x );

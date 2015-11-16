@@ -29,17 +29,17 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
+class CWiiController;
 class DirectDevice;
 class DirectInput;
 class Effect;
 class EffectParameter;
 class Fade;
 class Graphic;
-class CWiiController;
 class InputKeyboard;
 class InputMouse;
 class InputPad;
-class VirtualController;
+class ManagerLight;
 class ManagerSceneMain;
 class Model;
 class Motion;
@@ -54,9 +54,10 @@ class RenderPass;
 class SceneArgumentMain;
 class Sound;
 class Texture;
+class VirtualController;
 class XAudio;
-template < class Graphic > class ManagerDraw;
 template < class Effect > class ManagerEffect;
+template < class Graphic > class ManagerDraw;
 template < class Model > class ManagerModel;
 template < class Motion > class ManagerMotion;
 template < class Sound > class ManagerSound;
@@ -152,6 +153,7 @@ private:
 	DirectDevice*				pDevice_;					// Direct3Dデバイス
 	XAudio*						pXAudio_;					// XAudio2インターフェース
 	Fade*						pFade_;						// フェード
+	ManagerLight*				pLight_;					// ライト管理クラス
 	EffectParameter*			pEffectParameter_;			// エフェクトパラメータ
 	ObjectBlur*					pObjectBlur_;				// ブラー基オブジェクト
 	ObjectLightEffect*			pObjectLightEffect_;		// ライティングオブジェクト
@@ -168,11 +170,15 @@ private:
 	VirtualController*			pVirtualController_;		// 仮想コントローラ管理クラス
 	ManagerTexture< Texture >*	pTexture_;					// テクスチャ管理クラス
 	ManagerModel< Model >*		pModel_;					// モデル管理クラス
-	ManagerMotion< Motion >*		pMotion_;				// モーション管理クラス
+	ManagerMotion< Motion >*	pMotion_;					// モーション管理クラス
 	ManagerEffect< Effect >*	pEffect_;					// エフェクト管理クラス
 	ManagerSound< Sound >*		pSound_;					// サウンド管理クラス
 	Polygon2D*					pPolygon2D_;				// 2Dポリゴン
 	Polygon3D*					pPolygon3D_;				// 3Dポリゴン
+
+#ifdef _DEVELOP
+	bool						isPausing_;					// ポーズフラグ
+#endif
 };
 
 #endif	// MY_MANAGER_MAIN_H

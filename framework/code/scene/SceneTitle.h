@@ -105,8 +105,8 @@ private:
 	SceneTitle( const SceneTitle& );
 	SceneTitle operator=( const SceneTitle& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
+	CameraObject*	pCamera_;		// カメラ
+	LightDirection*	pLight_;		// ライト
 
 
 	//	タイトルUI関係

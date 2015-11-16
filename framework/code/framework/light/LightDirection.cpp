@@ -49,22 +49,17 @@ LightDirection::~LightDirection( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : D3DXCOLOR diffuse					: ディフューズカラー
-// Arg    : D3DXCOLOR specular					: スペキュラカラー
-// Arg    : const D3DXVECTOR3& vector			: 向いているベクトル
+// Arg    : void								: なし
 //==============================================================================
-int LightDirection::Initialize( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3DXVECTOR3& vector )
+int LightDirection::Initialize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Light::Initialize( diffuse, specular );
+	result = Light::Initialize();
 	if( result != 0 )
 	{
 		return result;
 	}
-
-	// メンバ変数の設定
-	D3DXVec3Normalize( &vector_, &vector );
 
 	// 正常終了
 	return 0;
@@ -95,11 +90,9 @@ int LightDirection::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : D3DXCOLOR diffuse					: ディフューズカラー
-// Arg    : D3DXCOLOR specular					: スペキュラカラー
-// Arg    : const D3DXVECTOR3& vector			: 向いているベクトル
+// Arg    : void								: なし
 //==============================================================================
-int LightDirection::Reinitialize( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3DXVECTOR3& vector )
+int LightDirection::Reinitialize( void )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -110,7 +103,7 @@ int LightDirection::Reinitialize( D3DXCOLOR diffuse, D3DXCOLOR specular, const D
 	}
 
 	// 初期化処理
-	return Initialize( diffuse, specular, vector );
+	return Initialize();
 }
 
 //==============================================================================
@@ -130,6 +123,22 @@ int LightDirection::Copy( LightDirection* pOut ) const
 
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 設定
+// Return : void								: なし
+// Arg    : D3DXCOLOR diffuse					: ディフューズカラー
+// Arg    : D3DXCOLOR specular					: スペキュラカラー
+// Arg    : const D3DXVECTOR3& vector			: 向いているベクトル
+//==============================================================================
+void LightDirection::Set( D3DXCOLOR diffuse, D3DXCOLOR specular, const D3DXVECTOR3& vector )
+{
+	// 基本クラスの処理
+	Light::Set( diffuse, specular );
+
+	// メンバ変数の設定
+	D3DXVec3Normalize( &vector_, &vector );
 }
 
 //==============================================================================
@@ -242,5 +251,5 @@ float LightDirection::GetVectorZ( void ) const
 void LightDirection::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	vector_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+	vector_ = D3DXVECTOR3( 0.0f, -1.0f, 0.0f );
 }
