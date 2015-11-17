@@ -1,7 +1,7 @@
 //==============================================================================
 //
 // File   : GraphicBlur.h
-// Brief  : ブラー基描画処理の管理クラス
+// Brief  : ブラー描画処理の管理クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_GRAPHIC_BLUR_BASE_H
-#define MY_GRAPHIC_BLUR_BASE_H
+#ifndef MY_GRAPHIC_BLUR_H
+#define MY_GRAPHIC_BLUR_H
 
 //******************************************************************************
 // インクルード
@@ -101,4 +101,4 @@ private:
 
 };
 
-#endif	// MY_GRAPHIC_BLUR_BASE_H
+#endif	// MY_GRAPHIC_BLUR_H

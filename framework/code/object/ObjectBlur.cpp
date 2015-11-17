@@ -1,7 +1,7 @@
 //==============================================================================
 //
 // File   : ObjectBlur.cpp
-// Brief  : ブラー基描画オブジェクトクラス
+// Brief  : ブラー描画オブジェクトクラス
 // Author : Taiga Shirakawa
 // Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //

@@ -1,7 +1,7 @@
 //==============================================================================
 //
 // File   : DrawerBlur.cpp
-// Brief  : ブラー基描画クラス
+// Brief  : ブラー描画クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //

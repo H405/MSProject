@@ -306,7 +306,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pDraw_->Initialize( 1028, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
+	result = pDraw_->Initialize( 1024, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
 	if( result != 0 )
 	{
 		return result;
@@ -328,7 +328,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pUpdate_->Initialize( 1028 );
+	result = pUpdate_->Initialize( 1024 );
 	if( result != 0 )
 	{
 		return result;
@@ -474,7 +474,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pObjectLightEffect_->SetPositionY( 1.0f );
 
 	// 総合3D描画オブジェクトの生成
-	Effect*	pEffectMerge = nullptr;		// ライティングエフェクト
+	Effect*	pEffectMerge = nullptr;		// 総合3D描画エフェクト
 	pObjectMerge_ = new ObjectMerge();
 	if( pObjectMerge_ == nullptr )
 	{

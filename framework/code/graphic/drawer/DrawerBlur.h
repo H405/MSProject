@@ -1,7 +1,7 @@
 //==============================================================================
 //
 // File   : DrawerBlur.h
-// Brief  : ブラー基描画クラス
+// Brief  : ブラー描画クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_DRAWER_BLUR_BASE_H
-#define MY_DRAWER_BLUR_BASE_H
+#ifndef MY_DRAWER_BLUR_H
+#define MY_DRAWER_BLUR_H
 
 //******************************************************************************
 // インクルード
@@ -125,4 +125,4 @@ private:
 
 };
 
-#endif	// MY_DRAWER_BLUR_BASE_H
+#endif	// MY_DRAWER_BLUR_H

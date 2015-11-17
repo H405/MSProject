@@ -1,7 +1,7 @@
 //==============================================================================
 //
 // File   : GraphicBlur.cpp
-// Brief  : ブラー基描画処理の管理クラス
+// Brief  : ブラー描画処理の管理クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/11/10 tue : Taiga Shirakawa : create
 //
