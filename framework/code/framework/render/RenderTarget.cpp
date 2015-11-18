@@ -53,20 +53,41 @@ RenderTarget::~RenderTarget( void )
 // Arg    : int width							: 幅
 // Arg    : int height							: 高さ
 // Arg    : D3DFORMAT format					: テクスチャフォーマット
+// Arg    : int countMultiple					: 順番描画数
 //==============================================================================
-int RenderTarget::Initialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format )
+int RenderTarget::Initialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format, int countMultiple )
 {
 	// メンバ変数の設定
 	pDevice_ = pDevice;
+	countMultiple_ = countMultiple;
 
-	// テクスチャサーフェイスの生成
-	int		result;		// 実行結果
-	result = D3DXCreateTexture( pDevice_, width, height, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &pTexture_ );
-	if( result != 0 )
+	// 格納領域の確保
+	if( countMultiple <= 0 )
 	{
 		return 0;
 	}
-	pTexture_->GetSurfaceLevel( 0, &pSurfaceTexture_ );
+	ppTexture_ = new IDirect3DTexture9*[ countMultiple ];
+	if( ppTexture_ == nullptr )
+	{
+		return 1;
+	}
+	ppSurfaceTexture_ = new IDirect3DSurface9*[ countMultiple ];
+	if( ppSurfaceTexture_ == nullptr )
+	{
+		return 1;
+	}
+
+	// テクスチャサーフェイスの生成
+	int		result;		// 実行結果
+	for( int counterMultiple = 0; counterMultiple < countMultiple; ++counterMultiple )
+	{
+		result = D3DXCreateTexture( pDevice_, width, height, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &ppTexture_[ counterMultiple ] );
+		if( result != 0 )
+		{
+			return 0;
+		}
+		ppTexture_[ counterMultiple ]->GetSurfaceLevel( 0, &ppSurfaceTexture_[ counterMultiple ] );
+	}
 
 	// 正常終了
 	return 0;
@@ -79,19 +100,25 @@ int RenderTarget::Initialize( IDirect3DDevice9* pDevice, int width, int height, 
 //==============================================================================
 int RenderTarget::Finalize( void )
 {
-	// テクスチャサーフェイスの開放
-	if( pSurfaceTexture_ != nullptr )
+	// リソースの開放
+	for( int counterMultiple = 0; counterMultiple < countMultiple_; ++counterMultiple )
 	{
-		pSurfaceTexture_->Release();
-		pSurfaceTexture_ = nullptr;
-	}
+		// テクスチャサーフェイスの開放
+		if( ppSurfaceTexture_[ counterMultiple ] != nullptr )
+		{
+			ppSurfaceTexture_[ counterMultiple ]->Release();
+			ppSurfaceTexture_[ counterMultiple ] = nullptr;
+		}
 
-	// テクスチャの開放
-	if( pTexture_ != nullptr )
-	{
-		pTexture_->Release();
-		pTexture_ = nullptr;
+		// テクスチャの開放
+		if( ppTexture_[ counterMultiple ] != nullptr )
+		{
+			ppTexture_[ counterMultiple ]->Release();
+			ppTexture_[ counterMultiple ] = nullptr;
+		}
 	}
+	delete[] ppSurfaceTexture_;
+	delete[] ppTexture_;
 
 	// クラス内部の初期化
 	InitializeSelf();
@@ -107,8 +134,9 @@ int RenderTarget::Finalize( void )
 // Arg    : int width							: 幅
 // Arg    : int height							: 高さ
 // Arg    : D3DFORMAT format					: テクスチャフォーマット
+// Arg    : int countMultiple					: 順番描画数
 //==============================================================================
-int RenderTarget::Reinitialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format )
+int RenderTarget::Reinitialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format, int countMultiple )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -119,7 +147,7 @@ int RenderTarget::Reinitialize( IDirect3DDevice9* pDevice, int width, int height
 	}
 
 	// 初期化処理
-	return Initialize( pDevice, width, height, format );
+	return Initialize( pDevice, width, height, format, countMultiple );
 }
 
 //==============================================================================
@@ -141,29 +169,36 @@ int RenderTarget::Copy( RenderTarget* pOut ) const
 void RenderTarget::Set( int index )
 {
 	// デバイスにレンダーターゲットを設定
-	pDevice_->SetRenderTarget( index, pSurfaceTexture_ );
+	pDevice_->SetRenderTarget( index, ppSurfaceTexture_[ indexMultiple_ ] );
+
+	// 番号を進める
+	++indexMultiple_;
+	if( indexMultiple_ >= countMultiple_ )
+	{
+		indexMultiple_ = 0;
+	}
 }
 
 //==============================================================================
 // Brief  : テクスチャの取得
 // Return : IDirect3DTexture9*					: 返却する値
-// Arg    : void								: なし
+// Arg    : int index							: 順番番号
 //==============================================================================
-IDirect3DTexture9* RenderTarget::GetTexture( void ) const
+IDirect3DTexture9* RenderTarget::GetTexture( int index ) const
 {
 	// 値の返却
-	return pTexture_;
+	return ppTexture_[ index ];
 }
 
 //==============================================================================
 // Brief  : テクスチャサーフェイスの取得
 // Return : IDirect3DSurface9*					: 返却する値
-// Arg    : void								: なし
+// Arg    : int index							: 順番番号
 //==============================================================================
-IDirect3DSurface9* RenderTarget::GetSurfaceTexture( void ) const
+IDirect3DSurface9* RenderTarget::GetSurfaceTexture( int index ) const
 {
 	// 値の返却
-	return pSurfaceTexture_;
+	return ppSurfaceTexture_[ index ];
 }
 
 //==============================================================================
@@ -208,7 +243,9 @@ void RenderTarget::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pDevice_ = nullptr;
-	pTexture_ = nullptr;
-	pSurfaceTexture_ = nullptr;
+	countMultiple_ = 0;
+	indexMultiple_ = 0;
+	ppTexture_ = nullptr;
+	ppSurfaceTexture_ = nullptr;
 	isEnable_ = true;
 }

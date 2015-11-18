@@ -59,6 +59,7 @@ void RenderPassParameter::InitializeSelf( void )
 	for( int counterRenderTarget = 0; counterRenderTarget < MAXIMUM_RENDER_TARGET; ++counterRenderTarget )
 	{
 		pFormat_[ counterRenderTarget ] = D3DFMT_A8R8G8B8;
+		pCountMultiple_[ counterRenderTarget ] = 1;
 	}
 	flagClear_ = (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER);
 	clearTarget_ = D3DCOLOR_RGBA( 0, 0, 0, 0 );

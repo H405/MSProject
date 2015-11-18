@@ -94,12 +94,16 @@ int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, co
 	}
 	for( int counterItem = 0; counterItem < countRenderTarget; ++counterItem )
 	{
+		D3DFORMAT	format;				// テクスチャフォーマット
+		int			countMultiple;		// 順番描画数
 		ppRenderTarget_[ counterItem ] = new RenderTarget();
 		if( ppRenderTarget_[ counterItem ] == nullptr )
 		{
 			return 1;
 		}
-		result = ppRenderTarget_[ counterItem ]->Initialize( pDevice, width_, height_, (pParameter == nullptr ? D3DFMT_A8R8G8B8 : pParameter->pFormat_[ counterItem ]) );
+		format = (pParameter == nullptr ? D3DFMT_A8R8G8B8 : pParameter->pFormat_[ counterItem ]);
+		countMultiple = (pParameter == nullptr ? 1 : pParameter->pCountMultiple_[ counterItem ]);
+		result = ppRenderTarget_[ counterItem ]->Initialize( pDevice, width_, height_, format, countMultiple );
 		if( result != 0 )
 		{
 			return result;
@@ -113,7 +117,7 @@ int RenderPass::Initialize( IDirect3DDevice9* pDevice, int countRenderTarget, co
 		D3DSURFACE_DESC		descSurfaceTexture;		// サーフェイス情報
 		unsigned int		widthTexture;			// サーフェイスの幅
 		unsigned int		heightTexture;			// サーフェイスの高さ
-		ppRenderTarget_[ 0 ]->GetTexture()->GetSurfaceLevel( 0, &pSurface );
+		ppRenderTarget_[ 0 ]->GetTexture( 0 )->GetSurfaceLevel( 0, &pSurface );
 		pSurface->GetDesc( &descSurfaceTexture );
 		widthTexture = descSurfaceTexture.Width;
 		heightTexture = descSurfaceTexture.Height;
@@ -227,15 +231,16 @@ int RenderPass::GetCountRenderTarget( void ) const
 // Brief  : テクスチャの取得
 // Return : IDirect3DTexture9*					: 返却する値
 // Arg    : int index							: レンダーターゲットの番号
+// Arg    : int indexMultiple					: 順番描画番号
 //==============================================================================
-IDirect3DTexture9* RenderPass::GetTexture( int index ) const
+IDirect3DTexture9* RenderPass::GetTexture( int index, int indexMultiple ) const
 {
 	// エラーチェック
 	Assert( index >= 0 && index < countRenderTarget_, _T( "レンダーターゲットの番号が不正です。" ) );
 	Assert( ppRenderTarget_[ index ] != nullptr, _T( "レンダーターゲットの番号が不正です。" ) );
 
 	// 値の返却
-	return ppRenderTarget_[ index ]->GetTexture();
+	return ppRenderTarget_[ index ]->GetTexture( indexMultiple );
 }
 
 //==============================================================================

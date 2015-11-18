@@ -57,8 +57,9 @@ public:
 	// Arg    : int width							: 幅
 	// Arg    : int height							: 高さ
 	// Arg    : D3DFORMAT format					: テクスチャフォーマット
+	// Arg    : int countMultiple					: 順番描画数
 	//==============================================================================
-	int Initialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format );
+	int Initialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format, int countMultiple );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -74,8 +75,9 @@ public:
 	// Arg    : int width							: 幅
 	// Arg    : int height							: 高さ
 	// Arg    : D3DFORMAT format					: テクスチャフォーマット
+	// Arg    : int countMultiple					: 順番描画数
 	//==============================================================================
-	int Reinitialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format );
+	int Reinitialize( IDirect3DDevice9* pDevice, int width, int height, D3DFORMAT format, int countMultiple );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -95,8 +97,8 @@ public:
 	// アクセサ
 	//==============================================================================
 	IDirect3DDevice9* GetDevice( void ) const;
-	IDirect3DTexture9* GetTexture( void ) const;
-	IDirect3DSurface9* GetSurfaceTexture( void ) const;
+	IDirect3DTexture9* GetTexture( int index ) const;
+	IDirect3DSurface9* GetSurfaceTexture( int index ) const;
 	void SetIsEnable( bool value );
 	bool GetIsEnable( void ) const;
 	bool IsEnable( void ) const;
@@ -109,8 +111,10 @@ private:
 	RenderTarget operator=( const RenderTarget& );
 
 	IDirect3DDevice9*	pDevice_;				// Direct3Dデバイス
-	IDirect3DTexture9*	pTexture_;				// テクスチャ
-	IDirect3DSurface9*	pSurfaceTexture_;		// テクスチャサーフェイス
+	int					countMultiple_;			// 順番描画数
+	int					indexMultiple_;			// 順番番号
+	IDirect3DTexture9**	ppTexture_;				// テクスチャ
+	IDirect3DSurface9**	ppSurfaceTexture_;		// テクスチャサーフェイス
 	bool				isEnable_;				// 有効フラグ
 };
 
