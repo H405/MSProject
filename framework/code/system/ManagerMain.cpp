@@ -111,7 +111,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pWindow_->Initialize( instanceHandle, typeShow, 1280, 720, _T( "Framework" ), _T( "WindowClass" ) );
+	result = pWindow_->Initialize( instanceHandle, typeShow, 1280, 720, _T( "‰Ô’¬•—ŒŽ" ), _T( "WindowClass" ) );
 	if( result != 0 )
 	{
 		return result;

@@ -142,7 +142,7 @@ int SceneGame::Initialize2( void )
 		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetScaleY( heightJudge / 4.0f );
 		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPositionTextureY( 0.25f * counterJudge );
 		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetScaleTextureY( 4.0f );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPosition( 400.0f, -100.0f * counterJudge, 0.0f );
+		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPosition( 200.0f, -100.0f * counterJudge, 0.0f );
 	}
 
 	// ƒ‰ƒ“ƒLƒ“ƒO‚Ö
