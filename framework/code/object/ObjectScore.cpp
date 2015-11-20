@@ -32,7 +32,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectScore::ObjectScore( void )
+ObjectScore::ObjectScore( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -72,7 +72,13 @@ ObjectScore::~ObjectScore( void )
 //==============================================================================
 int ObjectScore::Initialize( int priority , int _figure )
 {
+	// 基本クラスの処理
 	int		result;		// 実行結果
+	result = Object::Initialize( priority );
+	if( result != 0 )
+	{
+		return result;
+	}
 
 	//	桁数設定
 	figure = _figure;
@@ -125,6 +131,16 @@ int ObjectScore::Finalize( void )
 	}
 
 	delete[] number;
+
+
+	// 基本クラスの処理
+	result = Object::Finalize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+
 
 	// クラス内の初期化処理
 	InitializeSelf();

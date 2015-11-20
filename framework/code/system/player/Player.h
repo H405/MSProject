@@ -35,7 +35,7 @@ class SceneArgumentMain;
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class Player
+class Player : public ObjectMovement
 {
 public:
 	//==============================================================================
@@ -78,6 +78,8 @@ public:
 	// アクセサ
 	//==============================================================================
 	D3DXVECTOR3 getPosition(){return pos;}
+	void setPosition(D3DXVECTOR3 _pos){pos = _pos;}
+	void AddPositionX(float _value){pos.x += _value;};
 	void setRotationArm(float _x, float _y, float _z);
 
 protected:

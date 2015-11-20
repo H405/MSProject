@@ -183,25 +183,44 @@ void Fireworks::burn(
 	float _hitPosLength)
 {
 	float buffValue = 0.0f;
+	float fireSize;
 
 	//	‰Â
 	if(_hitPosLength <= (_hitCheckOffset * 0.1f))
 	{
 		param.fireMax = FIRE_MAX;
 		buffValue = 360.0f / (float)(param.fireMax);
+		fireSize = 10.0f;
 	}
 	//	—Ç
 	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
 	{
 		param.fireMax = FIRE_MAX / 2;
 		buffValue = 360.0f / (float)(param.fireMax);
+		fireSize = 20.0f;
 	}
 	//	—D
 	else
 	{
 		param.fireMax = FIRE_MAX / 3;
 		buffValue = 360.0f / (float)(param.fireMax);
+		fireSize = 30.0f;
 	}
+
+
+
+	//	‰Ô‰Î‚Ì”wŒi—p¶¬
+	param.managerPoint->Add(
+		150,
+		D3DXVECTOR3(param.pos.x, param.pos.y, param.pos.z),
+		D3DXCOLOR( 0.9f, 0.9f, 0.9f, 0.9f ),
+		fireSize,
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
+		5.0f,
+		ManagerPoint::STATE_ADD
+		);
+
 
 	for(int count = 0;count < param.fireMax;count++)
 	{

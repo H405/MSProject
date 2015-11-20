@@ -85,7 +85,7 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 	param->pos.z += param->speed.z;
 
 	//	エフェクト生成
-	_fireworks->getManagerPoint()->Add(
+	param->managerPoint->Add(
 		effectExistTime,
 		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),

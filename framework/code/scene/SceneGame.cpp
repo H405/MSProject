@@ -160,11 +160,77 @@ void SceneGame::Update( void )
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
-
-	//	スクリーンショット撮影
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_F2))
-		pArgument_->pDraw_->screenShotON();
 }
+
+//==============================================================================
+// Brief  : calibration更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::calibrationUpdate(void)
+{
+	PrintDebug( _T( "calibrationUpdate\n" ) );
+
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+
+	if(pArgument_->pVirtualController_->IsTrigger(VC_GAME_START))
+	{
+		pArgument_->pWiiController_->rotReset();
+		pArgument_->pWiiController_->calibrationWiiboard();
+
+		calibrationWiimote->SetEnableGraphic(false);
+
+		fpUpdate = &SceneGame::normalUpdate;
+	}
+}
+
+//==============================================================================
+// Brief  : プレイヤーの移動処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::MovePlayer(SceneArgumentMain* pArgument)
+{
+	//	wiiボードを利用した、プレイヤーの移動処理
+	//---------------------------------------------------------------------------------------------------------
+	if(pArgument_->pWiiController_->getIsConnectWiiboard())
+	{
+		float totalCalibKg = pArgument_->pWiiController_->getCalibKg().Total * 0.7f;
+		float totalKgR = pArgument_->pWiiController_->getKg().BottomR + pArgument_->pWiiController_->getKg().TopR;
+		float totalKgL = pArgument_->pWiiController_->getKg().BottomL + pArgument_->pWiiController_->getKg().TopL;
+		if(totalKgL
+			>=
+			totalCalibKg)
+		{
+			player->AddPositionX((-((totalKgL - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)));
+		}
+		if(totalKgR
+			>=
+			totalCalibKg)
+		{
+			player->AddPositionX((((totalKgR - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)));
+		}
+	}
+
+	if(pArgument_->pKeyboard_->IsPress(DIK_LEFT) == true)
+	{
+		player->AddPositionX(-1.0f);
+	}
+	if(pArgument_->pKeyboard_->IsPress(DIK_RIGHT) == true)
+	{
+		player->AddPositionX(1.0f);
+	}
+	//---------------------------------------------------------------------------------------------------------
+
+
+	//	プレイヤー腕オブジェクトに回転量をセット
+	D3DXVECTOR3 buffRot = pArgument_->pWiiController_->getRot();
+	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
+}
+
 //==============================================================================
 // Brief  : 通常更新処理
 // Return : void								: なし
@@ -190,16 +256,8 @@ void SceneGame::normalUpdate(void)
 		managerPoint->Update();
 	}
 
-	//	スコアクラスの更新
-	score->Update();
-
-	//	水車の更新
-	waterWheel[0]->Update();
-	waterWheel[1]->Update();
-	waterWheel[2]->Update();
-
-	//	プレイヤー更新
-	player->Update();
+	//	プレイヤー移動処理
+	MovePlayer(pArgument_);
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
@@ -207,6 +265,7 @@ void SceneGame::normalUpdate(void)
 	//	PrintDebug( _T( "index[%d] = %d\n"), count, targetTable[count] );
 	//
 	//PrintDebug( _T( "\ntargetTableIndex = %d\n\n"), targetTableIndex );
+
 
 	//	打ち上げ可能なら
 	if(launchFlag == false)
@@ -264,6 +323,27 @@ void SceneGame::normalUpdate(void)
 		}
 	}
 
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_A))
+	{
+		int buff;
+		D3DXVECTOR3 buffPos = player->getPosition();
+
+		buff = managerFireworks->Add(
+					ManagerFireworks::STATE_RIGHT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(1.0, 1.0f, 0.0f),
+					0.0f,
+					0.0f
+					);
+
+		if(buff != -1)
+			{
+				fireworksTable[fireworksTableIndex] = buff;
+				fireworksTableIndex++;
+			}
+	}
+
 
 	PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
 	PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
@@ -273,38 +353,11 @@ void SceneGame::normalUpdate(void)
 	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
 
 
-	/*if(pArgument_->pKeyboard_->IsTrigger(DIK_A) == true)
-	{
-		if(fireworksTableIndex < FIREWORKS_MAX)
-		{
-			int buff;
-			D3DXVECTOR3 buffPos;
-			playerArm->GetPosition(&buffPos);
-
-			buff = managerFireworks->Add(
-				ManagerFireworks::STATE_RIGHT,
-				managerPoint,
-				buffPos,
-				D3DXVECTOR3(0.1f, 0.1f, 0.0f),
-				5.0f,
-				1.0f
-				);
-			if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
-		}
-	}*/
-
 	if(pArgument_->pWiiController_->getPress(WC_PLUS) && pArgument_->pWiiController_->getPress(WC_MINUS))
 		pArgument_->pWiiController_->rotReset();
 
 
-	D3DXVECTOR3 buffRot = pArgument_->pWiiController_->getRot();
-	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
-
-
+	//	ターゲット出現
 	targetAppearCount++;
 	if(targetAppearCount == 50)
 	{
@@ -320,24 +373,11 @@ void SceneGame::normalUpdate(void)
 
 		targetAppearCount = 0;
 	}
-	/*if(pArgument_->pKeyboard_->IsTrigger(DIK_R) == true)
-	{
-		int buff;
-		buff = managerTarget->Add(
-			D3DXVECTOR3(40.0f, 300.0f, targetAppearPos[cameraState].z)
-			);
-
-		if(buff != -1)
-		{
-			targetTable[targetTableIndex] = buff;
-			targetTableIndex++;
-		}
-	}*/
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
 
 	//	Aボタン押されたら
-	if(pArgument_->pWiiController_->getTrigger(WC_A) == true)
+	if(pArgument_->pVirtualController_->IsTrigger(VC_BURN) == true)
 	{
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
@@ -788,7 +828,6 @@ void SceneGame::collision_fireworks_target()
 		}
 	}
 }
-
 //==============================================================================
 // Brief  : 点と円の当たり判定処理
 // Return : bool								: 当たったか当たってないか

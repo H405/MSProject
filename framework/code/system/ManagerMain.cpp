@@ -792,6 +792,10 @@ void ManagerMain::Update( void )
 
 	// デバッグポーズ
 #ifdef _DEVELOP
+	if(pKeyboard_->IsTrigger(DIK_F2))
+	{
+		pDraw_->screenShotON();
+	}
 	if( pKeyboard_->IsTrigger( DIK_F11 ) )
 	{
 		isPausing_ = !isPausing_;
@@ -799,6 +803,10 @@ void ManagerMain::Update( void )
 	if( !pKeyboard_->IsTrigger( DIK_F12 ) && isPausing_ )
 	{
 		return;
+	}
+	if(isPausing_)
+	{
+		DebugProc::Print( _T( "ポーズ解除：F11\n１コマ進めるF12\n" ));
 	}
 #endif
 

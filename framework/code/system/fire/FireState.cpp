@@ -64,6 +64,10 @@ void FireState::Update( Fire* _fireworks )
 	//}
 }
 
+
+
+
+
 //==============================================================================
 // Brief  : 更新処理
 // Return : void								: なし
@@ -112,6 +116,17 @@ void FireStateRight::Update( Fire* _fireworks )
 		param->enable = false;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
 //==============================================================================
 // Brief  : 更新処理
 // Return : void								: なし
@@ -161,6 +176,19 @@ void FireStateLeft::Update( Fire* _fireworks )
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 //==============================================================================
 // Brief  : 更新処理
 // Return : void								: なし
@@ -199,6 +227,16 @@ void FireStateUp::Update( Fire* _fireworks )
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
 //==============================================================================
 // Brief  : 更新処理
 // Return : void								: なし
@@ -236,4 +274,4 @@ void FireStateDown::Update( Fire* _fireworks )
 		param->enable = false;
 	}
 }
-
+//	EOF

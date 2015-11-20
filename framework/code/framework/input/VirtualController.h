@@ -41,6 +41,8 @@ typedef enum
 	VC_RIGHT,
 	VC_LEFT,
 	VC_PAUSE,
+	VC_GAME_START,
+	VC_BURN,
 	VC_MAX,
 }VC_BUTTON;
 //	↑のボタンを増やしたら、それに割り当てるボタンをupdate内で作らないと無意味

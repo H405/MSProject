@@ -35,7 +35,7 @@ static const float offsetPosY = -50.0f;
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Player::Player( void )
+Player::Player( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -73,6 +73,15 @@ int Player::Initialize(
 	D3DXVECTOR3 _pos,
 	SceneArgumentMain* pArgument)
 {
+	// 基本クラスの処理
+	int		result;		// 実行結果
+	result = Object::Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+
 	pos = _pos;
 
 	//	オブジェクトの生成開始
@@ -116,6 +125,14 @@ int Player::Finalize( void )
 	delete body;
 	delete arm;
 
+	// 基本クラスの処理
+	int		result;		// 実行結果
+	result = Object::Finalize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// クラス内の初期化処理
 	InitializeSelf();
 
@@ -129,6 +146,13 @@ int Player::Finalize( void )
 //==============================================================================
 void Player::Update( void )
 {
+	arm->SetPosition(pos);
+	body->SetPosition(pos);
+	body->AddPositionX(offsetPosX);
+	body->AddPositionY(offsetPosY);
+
+	// 基本クラスの処理
+	ObjectMovement::Update();
 }
 
 //==============================================================================

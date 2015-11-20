@@ -107,6 +107,14 @@ void VirtualController::update()
 	if(wiiController->getPress(WC_HOME) || keyboard->IsPress(DIK_P))
 		press[VC_PAUSE] = true;
 
+	//	ゲームスタート（キャリブレーション）押下情報
+	if((wiiController->getPress(WC_PLUS) && wiiController->getPress(WC_MINUS)) ||
+		keyboard->IsPress(DIK_C))
+		press[VC_GAME_START] = true;
+
+	//	花火破裂
+	if(wiiController->getTrigger(WC_A) || keyboard->IsTrigger(DIK_B))
+		press[VC_BURN] = true;
 
 	//	トリガー情報・リリース情報・リピート情報セット
 	for(int count = 0;count < VC_MAX;count++)

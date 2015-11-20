@@ -34,7 +34,7 @@ static const float offsetPositionY = 20.0f;
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectWaterwheel::ObjectWaterwheel( void )
+ObjectWaterwheel::ObjectWaterwheel( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -61,6 +61,15 @@ int ObjectWaterwheel::Initialize(
 	float _rotSpeed,
 	SceneArgumentMain* pArgument)
 {
+	// 基本クラスの処理
+	int		result;		// 実行結果
+	result = Object::Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+
 	pos = _pos;
 	rotSpeed = _rotSpeed;
 
@@ -106,6 +115,14 @@ int ObjectWaterwheel::Finalize( void )
 	delete stand;
 	delete wheel;
 
+	// 基本クラスの処理
+	int		result;		// 実行結果
+	result = Object::Finalize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// クラス内の初期化処理
 	InitializeSelf();
 
@@ -120,6 +137,9 @@ int ObjectWaterwheel::Finalize( void )
 void ObjectWaterwheel::Update( void )
 {
 	wheel->AddRotationZ(rotSpeed);
+
+	// 基本クラスの処理
+	ObjectMovement::Update();
 }
 
 //==============================================================================

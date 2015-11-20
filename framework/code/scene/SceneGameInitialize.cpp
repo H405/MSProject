@@ -98,6 +98,7 @@ void SceneGame::InitializeSelf( void )
 	stringNext = nullptr;
 	reConnectWiimote = nullptr;
 	reConnectWiiboard = nullptr;
+	calibrationWiimote = nullptr;
 	finger = nullptr;
 	chooseObject = nullptr;
 	chooseObjectPrev = nullptr;
@@ -238,7 +239,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	}
 
 	//	更新関数設定
-	fpUpdate = &SceneGame::normalUpdate;
+	fpUpdate = &SceneGame::calibrationUpdate;
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -538,6 +539,19 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	stringRetry->SetEnableGraphic(false);
 
 
+	//	ゲーム開始前のキャリブレーションお願いオブジェクト
+	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringRetry.png" ) );
+
+	calibrationWiimote = new Object2D;
+	calibrationWiimote->Initialize(0);
+
+	calibrationWiimote->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+	//calibrationWiimote->SetEnableGraphic(false);
+
 
 	//	wiiリモコンが接続されていれば
 	//	指の初期化
@@ -643,6 +657,9 @@ int SceneGame::Finalize( void )
 
 	delete finger;
 	finger = nullptr;
+
+	delete calibrationWiimote;
+	calibrationWiimote = nullptr;
 
 	delete reConnectWiimote;
 	reConnectWiimote = nullptr;
