@@ -13,6 +13,7 @@
 float4x4	matrixTransform_;					// 変換行列
 float4x4	matrixWorld_;						// ワールド変換行列
 float4x4	matrixWorldView_;					// ワールドビュー変換行列
+float4x4	matrixTransformTexture_;			// テクスチャ座標変換行列
 
 float4x4	matrixWorldInverseTranspose_;		// ワールド逆転置行列
 texture		textureNormal_;						// 法線テクスチャ
@@ -101,6 +102,7 @@ struct VertexOutput
 	float3	vectorNormalWorld_	: TEXCOORD2;		// 変換後法線
 	float3	tangentWorld_		: TEXCOORD3;		// 変換後接線
 	float	depth_				: TEXCOORD4;		// 深度
+	float4	positionTexture_	: TEXCOORD5;		// テクスチャ座標
 };
 
 // ピクセルシェーダ出力
@@ -175,6 +177,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 	VertexOutput	output;		// 頂点シェーダ出力
 	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
 	output.positionWorld_ = mul( float4( positionLocal, 1.0f ), matrixWorld_ );
+	output.positionTexture_ = mul( float4( positionLocal, 1.0f ), matrixTransformTexture_ );
 
 	// 法線の変換
 	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;
@@ -215,7 +218,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 
 	// ディフューズ色を求める
 	float	proportionEnvironment = 1.0f - max( dot( normal, vectorVertexToEye ), 0.0f );
-	float3	colorDiffuse = colorDiffuse_;
+	float3	colorDiffuse = colorDiffuse_;//tex2DProj( samplerTextureEnvironmentFront, vertex.positionTexture_ );
 
 	// 環境光のスペキュラ色を計算
 	float	fresnel = refractive_ + (1.0f - refractive_) * exp( -6.0f * max( dot( normal, vectorVertexToEye ), 0.0f ) );

@@ -155,8 +155,8 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	output.depth_.r = (1.0f - maskLight) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + maskLight * forcus_;
 
 	// êFÇãÅÇﬂÇÈ
-	float	proportionRiver = colorRiver.a;// * max( (output.depth_.r - depthRiver), 0.0f ) / output.depth_.r;
-	float3	colorLightAndRiver = (1.0f - proportionRiver) * colorLight + proportionRiver * colorRiver;
+	float	proportionRiver = colorRiver.a;
+	float3	colorLightAndRiver = lerp( colorLight, colorRiver, proportionRiver );
 	output.color_ = float4( (1.0f - maskLight) * colorLightAndRiver + maskLight * colorNotLight + colorAdd, 1.0f );
 
 	// ílÇï‘Ç∑

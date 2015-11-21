@@ -247,6 +247,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 {
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
+	Effect*		pEffectReflect = nullptr;
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
@@ -262,9 +263,10 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	//	仮のフィールド
 	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
+	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	field = new ObjectModel();
 	field->Initialize(0);
-	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect);
+	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect );
 	field->SetScale(5.0f, 5.0f, 5.0f);
 	field->AddPositionY(-300.0f);
 

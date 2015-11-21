@@ -90,6 +90,7 @@
     <ClInclude Include="code\graphic\drawer\DrawerMesh.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModel.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterial.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerModelReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPostEffect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerRiver.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="code\graphic\drawer\DrawerMesh.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModel.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterial.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerModelReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPostEffect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp" />
@@ -310,6 +312,7 @@
     <None Include="code\effect\Mesh.fx" />
     <None Include="code\effect\Model.fx" />
     <None Include="code\effect\ModelMat.fx" />
+    <None Include="code\effect\ModelReflect.fx" />
     <None Include="code\effect\Point.fx" />
     <None Include="code\effect\Polygon2D.fx" />
     <None Include="code\effect\Polygon3D.fx" />

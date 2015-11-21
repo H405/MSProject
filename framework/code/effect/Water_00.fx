@@ -13,6 +13,7 @@
 float4x4	matrixTransform_;					// 変換行列
 float4x4	matrixWorld_;						// ワールド変換行列
 float4x4	matrixWorldView_;					// ワールドビュー変換行列
+float4x4	matrixTransformTexture_;			// テクスチャ座標変換行列
 
 float4x4	matrixWorldInverseTranspose_;		// ワールド逆転置行列
 texture		textureNormal_;						// 法線テクスチャ

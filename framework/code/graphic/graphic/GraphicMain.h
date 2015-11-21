@@ -93,8 +93,8 @@ public:
 	// 反射
 	enum
 	{
-		RENDER_PASS_REFLECT_FRONT_COLOR = 0,		// 色
-		RENDER_PASS_REFLECT_FRONT_MAX				// 最大値
+		RENDER_PASS_REFLECT_COLOR = 0,				// 色
+		RENDER_PASS_REFLECT_MAX						// 最大値
 	};
 
 	// 水

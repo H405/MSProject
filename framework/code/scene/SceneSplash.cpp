@@ -184,12 +184,15 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	// 2Dオブジェクトの生成
 	Effect*		pEffect2D = nullptr;		// エフェクト
 	Texture*	pTexture2D = nullptr;		// テクスチャ
+	Texture		textureTest;				// テストテクスチャ
 	pEffect2D = pArgument->pEffect_->Get( _T( "Polygon2D.fx" ) );
 	pTexture2D = pArgument_->pTexture_->Get( _T( "test/title_logo.png" ) );
+	textureTest.Initialize( pArgument->pTextureTest_, 320, 180 );
 	pObject2D_ = new Object2D();
 	pObject2D_->Initialize( 0 );
-	pObject2D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect2D, pTexture2D );
-	pObject2D_->SetPosition( 430.0f, 310.0f, 0.0f );
+	pObject2D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect2D, &textureTest );
+//	pObject2D_->SetPosition( 430.0f, 310.0f, 0.0f );
+	pObject2D_->SetPosition( 480.0f, 270.0f, 0.0f );
 
 	// メッシュの生成
 	Effect*		pEffectMesh = nullptr;		// エフェクト
@@ -210,18 +213,20 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTextureSky );
 
 	// モデルの生成
-	Effect*	pEffectModel = nullptr;		// エフェクト
-	Model*	pModel = nullptr;			// モデル
+	Effect*	pEffectModel = nullptr;				// エフェクト
+	Effect*	pEffectModelReflect = nullptr;		// エフェクト
+	Model*	pModel = nullptr;					// モデル
 	pEffectModel = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pEffectModelReflect = pArgument->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
 	pObjectModel_ = new ObjectModel[ COUNT_MODEL ];
 	pObjectModel_[ 0 ].Initialize( 0 );
-	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect );
 	pObjectModel_[ 1 ].Initialize( 0 );
-	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect );
 	pObjectModel_[ 1 ].SetPositionX( 50.0f );
 	pObjectModel_[ 2 ].Initialize( 0 );
-	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect );
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
 	pObjectModel_[ 2 ].SetPositionY( 20.0f );
 
@@ -305,8 +310,9 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, ppEffectRiver,
-		pArgument->pTextureNormalWave_, nullptr, nullptr, nullptr, nullptr );
+		pArgument->pTextureNormalWave_, pArgument->pTextureReflect_, pArgument->pTexture3D_, nullptr, nullptr );
 	pObjectRiver_->SetPositionY( 10.0f );
+	pArgument->pEffectParameter_->SetHeightReflect( 10.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );

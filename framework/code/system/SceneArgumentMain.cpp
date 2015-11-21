@@ -73,5 +73,7 @@ void SceneArgumentMain::InitializeSelf( void )
 	pTextureHeightWave0_ = nullptr;
 	pTextureHeightWave1_ = nullptr;
 	pTextureNormalWave_ = nullptr;
+	pTextureReflect_ = nullptr;
+	pTexture3D_ = nullptr;
 	pTextureTest_ = nullptr;
 }

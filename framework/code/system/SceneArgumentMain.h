@@ -99,6 +99,8 @@ public:
 	IDirect3DTexture9*			pTextureHeightWave0_;		// 波の高さテクスチャ0
 	IDirect3DTexture9*			pTextureHeightWave1_;		// 波の高さテクスチャ1
 	IDirect3DTexture9*			pTextureNormalWave_;		// 波の法線テクスチャ
+	IDirect3DTexture9*			pTextureReflect_;			// 反射テクスチャ
+	IDirect3DTexture9*			pTexture3D_;				// 3D描画テクスチャ
 	IDirect3DTexture9*			pTextureTest_;				// テストテクスチャ
 
 protected:

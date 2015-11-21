@@ -194,6 +194,16 @@ void DrawerRiver::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
 
+	// テクスチャ座標変換行列
+	D3DXMATRIX	matrixTransformTexture;			// テクスチャ座標変換行列
+	D3DXMATRIX	matrixSaclingTexture;			// テクスチャ座標変換行列拡縮
+	D3DXMATRIX	matrixTranslationTexture;		// テクスチャ座標変換行列移動
+	matrixTransformTexture = matrixTransform;
+	D3DXMatrixScaling( &matrixSaclingTexture, 0.5f, -0.5f, 1.0f );
+	D3DXMatrixTranslation( &matrixTranslationTexture, 0.5f, 0.5f, 0.0f );
+	matrixTransformTexture *= matrixSaclingTexture * matrixTranslationTexture;
+	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM_TEXTURE, matrixTransformTexture );
+
 	// ワールド逆転置行列
 	D3DXMATRIX	matrixWorldInverse;					// ワールド逆行列
 	D3DXMATRIX	matrixWorldInverseTranspose;		// ワールド逆転置行列
