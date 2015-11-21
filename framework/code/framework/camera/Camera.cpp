@@ -50,27 +50,10 @@ Camera::~Camera( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : float viewField						: 視野角
-// Arg    : int widthScreen						: スクリーン幅
-// Arg    : int heightScreen					: スクリーン高さ
-// Arg    : float clipNear						: 近くのクリップ面
-// Arg    : float clipFar						: 遠くのクリップ面
-// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+// Arg    : void								: なし
 //==============================================================================
-int Camera::Initialize( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+int Camera::Initialize( void )
 {
-	// メンバ変数の設定
-	viewField_ = viewField;
-	widthScreen_ = static_cast< float >( widthScreen );
-	heightScreen_ = static_cast< float >( heightScreen );
-	clipNear_ = clipNear;
-	clipFar_ = clipFar;
-	positionCamera_ = positionCamera;
-	positionLookAt_ = positionLookAt;
-	vectorUp_ = vectorUp;
-
 	// 描画用変換行列の生成
 	int		result;		// 実行結果
 	pRenderMatrix_ = new RenderMatrix();
@@ -83,11 +66,6 @@ int Camera::Initialize( float viewField, int widthScreen, int heightScreen, floa
 	{
 		return result;
 	}
-
-	// プロジェクションマトリクスの生成
-	D3DXMATRIX	matrixProjection;		// プロジェクションマトリクス
-	D3DXMatrixPerspectiveFovLH( &matrixProjection, viewField, widthScreen_ / heightScreen_, clipNear_, clipFar_ );
-	pRenderMatrix_->SetMatrixProjection( matrixProjection );
 
 	// 正常終了
 	return 0;
@@ -114,16 +92,9 @@ int Camera::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : float viewField						: 視野角
-// Arg    : int widthScreen						: スクリーン幅
-// Arg    : int heightScreen					: スクリーン高さ
-// Arg    : float clipNear						: 近くのクリップ面
-// Arg    : float clipFar						: 遠くのクリップ面
-// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+// Arg    : void								: なし
 //==============================================================================
-int Camera::Reinitialize( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+int Camera::Reinitialize( void )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -134,7 +105,7 @@ int Camera::Reinitialize( float viewField, int widthScreen, int heightScreen, fl
 	}
 
 	// 初期化処理
-	return Initialize( viewField, widthScreen, heightScreen, clipNear, clipFar, positionCamera, positionLookAt, vectorUp );
+	return Initialize();
 }
 
 //==============================================================================
@@ -156,9 +127,43 @@ int Camera::Copy( Camera* pOut ) const
 void Camera::Update( void )
 {
 	// ビューマトリクスの更新
-	D3DXMATRIX	matrixView;		// ビューマトリクス
-	D3DXMatrixLookAtLH( &matrixView, &positionCamera_, &positionLookAt_, &vectorUp_ );
-	pRenderMatrix_->SetMatrixView( matrixView );
+	if( pRenderMatrix_ != nullptr )
+	{
+		D3DXMATRIX	matrixView;		// ビューマトリクス
+		D3DXMatrixLookAtLH( &matrixView, &positionCamera_, &positionLookAt_, &vectorUp_ );
+		pRenderMatrix_->SetMatrixView( matrixView );
+	}
+}
+
+//==============================================================================
+// Brief  : 値の設定
+// Return : void								: なし
+// Arg    : float viewField						: 視野角
+// Arg    : int widthScreen						: スクリーン幅
+// Arg    : int heightScreen					: スクリーン高さ
+// Arg    : float clipNear						: 近くのクリップ面
+// Arg    : float clipFar						: 遠くのクリップ面
+// Arg    : const D3DXVECTOR3& positionCamera	: 視点
+// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
+// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+//==============================================================================
+void Camera::Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
+	const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+{
+	// メンバ変数の設定
+	viewField_ = viewField;
+	widthScreen_ = static_cast< float >( widthScreen );
+	heightScreen_ = static_cast< float >( heightScreen );
+	clipNear_ = clipNear;
+	clipFar_ = clipFar;
+	positionCamera_ = positionCamera;
+	positionLookAt_ = positionLookAt;
+	vectorUp_ = vectorUp;
+
+	// プロジェクションマトリクスの生成
+	D3DXMATRIX	matrixProjection;		// プロジェクションマトリクス
+	D3DXMatrixPerspectiveFovLH( &matrixProjection, viewField, widthScreen_ / heightScreen_, clipNear_, clipFar_ );
+	pRenderMatrix_->SetMatrixProjection( matrixProjection );
 }
 
 //==============================================================================

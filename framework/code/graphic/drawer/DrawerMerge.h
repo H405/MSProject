@@ -52,6 +52,8 @@ public:
 		PARAMETER_TEXTURE_MASK,				// マスクテクスチャ
 		PARAMETER_TEXTURE_ADD,				// 加算合成テクスチャ
 		PARAMETER_TEXTURE_DEPTH,			// 深度テクスチャ
+		PARAMETER_TEXTURE_RIVER,			// 川テクスチャ
+		PARAMETER_TEXTURE_DEPTH_RIVER,		// 川深度テクスチャ
 
 		PARAMETER_MAX						// 最大値
 	};
@@ -81,10 +83,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -104,10 +108,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -134,14 +140,16 @@ public:
 	IDirect3DTexture9* GetTextureMask( void ) const;
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	IDirect3DTexture9*		pTextureLight_;			// ライトありテクスチャ
-	IDirect3DTexture9*		pTextureNotLight_;		// ライトなしテクスチャ
-	IDirect3DTexture9*		pTextureMask_;			// マスクテクスチャ
-	IDirect3DTexture9*		pTextureAdd_;			// 加算合成テクスチャ
-	IDirect3DTexture9*		pTextureDepth_;			// 深度テクスチャ
-	Polygon2D*				pPolygon_;				// ポリゴン
+	const EffectParameter*	pEffectParameter_;			// エフェクトパラメータ
+	Effect*					pEffect_;					// エフェクト
+	IDirect3DTexture9*		pTextureLight_;				// ライトありテクスチャ
+	IDirect3DTexture9*		pTextureNotLight_;			// ライトなしテクスチャ
+	IDirect3DTexture9*		pTextureMask_;				// マスクテクスチャ
+	IDirect3DTexture9*		pTextureAdd_;				// 加算合成テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;				// 深度テクスチャ
+	IDirect3DTexture9*		pTextureRiver_;				// 川テクスチャ
+	IDirect3DTexture9*		pTextureDepthRiver_;		// 川深度テクスチャ
+	Polygon2D*				pPolygon_;					// ポリゴン
 
 private:
 	void InitializeSelf( void );

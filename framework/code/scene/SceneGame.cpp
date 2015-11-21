@@ -143,9 +143,6 @@ int SceneGame::Copy( SceneGame* pOut ) const
 //==============================================================================
 void SceneGame::Update( void )
 {
-	// カメラの更新
-	pCamera_->Update();
-
 	// テスト
 	PrintDebug( _T( "ゲームシーン\n" ) );
 

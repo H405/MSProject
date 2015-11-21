@@ -15,6 +15,7 @@
     <ClInclude Include="code\framework\camera\CameraObject.h" />
     <ClInclude Include="code\framework\camera\CameraState.h" />
     <ClInclude Include="code\framework\camera\CameraStateDebug.h" />
+    <ClInclude Include="code\framework\camera\ManagerCamera.h" />
     <ClInclude Include="code\framework\develop\Debug.h" />
     <ClInclude Include="code\framework\develop\DebugMeasure.h" />
     <ClInclude Include="code\framework\develop\DebugProc.h" />
@@ -91,8 +92,11 @@
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterial.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPostEffect.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerRiver.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMesh.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSky.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerWaveData.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerWaveDataInitialize.h" />
     <ClInclude Include="code\graphic\graphic\Graphic2D.h" />
     <ClInclude Include="code\graphic\graphic\Graphic3D.h" />
     <ClInclude Include="code\graphic\graphic\GraphicBillboard.h" />
@@ -105,8 +109,11 @@
     <ClInclude Include="code\graphic\graphic\GraphicModelMaterial.h" />
     <ClInclude Include="code\graphic\graphic\GraphicPoint.h" />
     <ClInclude Include="code\graphic\graphic\GraphicPostEffect.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicRiver.h" />
     <ClInclude Include="code\graphic\graphic\GraphicSkinMesh.h" />
     <ClInclude Include="code\graphic\graphic\GraphicSky.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicWaveData.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicWaveDataInitialize.h" />
     <ClInclude Include="code\object\Object2D.h" />
     <ClInclude Include="code\object\Object3D.h" />
     <ClInclude Include="code\object\ObjectBillboard.h" />
@@ -117,11 +124,14 @@
     <ClInclude Include="code\object\ObjectMesh.h" />
     <ClInclude Include="code\object\ObjectModel.h" />
     <ClInclude Include="code\object\ObjectModelMaterial.h" />
+    <ClInclude Include="code\object\ObjectRiver.h" />
     <ClInclude Include="code\object\ObjectScore.h" />
     <ClInclude Include="code\object\ObjectPostEffect.h" />
     <ClInclude Include="code\object\ObjectSkinMesh.h" />
     <ClInclude Include="code\object\ObjectSky.h" />
     <ClInclude Include="code\object\ObjectWaterwheel.h" />
+    <ClInclude Include="code\object\ObjectWaveData.h" />
+    <ClInclude Include="code\object\ObjectWaveDataInitialize.h" />
     <ClInclude Include="code\scene\SceneGame.h" />
     <ClInclude Include="code\scene\SceneRanking.h" />
     <ClInclude Include="code\scene\SceneResult.h" />
@@ -150,6 +160,7 @@
     <ClCompile Include="code\framework\camera\CameraObject.cpp" />
     <ClCompile Include="code\framework\camera\CameraState.cpp" />
     <ClCompile Include="code\framework\camera\CameraStateDebug.cpp" />
+    <ClCompile Include="code\framework\camera\ManagerCamera.cpp" />
     <ClCompile Include="code\framework\develop\Debug.cpp" />
     <ClCompile Include="code\framework\develop\DebugMeasure.cpp" />
     <ClCompile Include="code\framework\develop\DebugProc.cpp" />
@@ -224,8 +235,11 @@
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterial.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPostEffect.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMesh.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSky.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerWaveData.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerWaveDataInitialize.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic2D.cpp" />
     <ClCompile Include="code\graphic\graphic\Graphic3D.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicBillboard.cpp" />
@@ -238,8 +252,11 @@
     <ClCompile Include="code\graphic\graphic\GraphicModelMaterial.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicPoint.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicPostEffect.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicRiver.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicSkinMesh.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicSky.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicWaveData.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicWaveDataInitialize.cpp" />
     <ClCompile Include="code\object\Object2D.cpp" />
     <ClCompile Include="code\object\Object3D.cpp" />
     <ClCompile Include="code\object\ObjectBillboard.cpp" />
@@ -250,11 +267,14 @@
     <ClCompile Include="code\object\ObjectMesh.cpp" />
     <ClCompile Include="code\object\ObjectModel.cpp" />
     <ClCompile Include="code\object\ObjectModelMaterial.cpp" />
+    <ClCompile Include="code\object\ObjectRiver.cpp" />
     <ClCompile Include="code\object\ObjectScore.cpp" />
     <ClCompile Include="code\object\ObjectPostEffect.cpp" />
     <ClCompile Include="code\object\ObjectSkinMesh.cpp" />
     <ClCompile Include="code\object\ObjectSky.cpp" />
     <ClCompile Include="code\object\ObjectWaterwheel.cpp" />
+    <ClCompile Include="code\object\ObjectWaveData.cpp" />
+    <ClCompile Include="code\object\ObjectWaveDataInitialize.cpp" />
     <ClCompile Include="code\scene\SceneGame.cpp" />
     <ClCompile Include="code\scene\SceneGame2.cpp" />
     <ClCompile Include="code\scene\SceneGameInitialize.cpp" />
@@ -296,6 +316,9 @@
     <None Include="code\effect\PostEffect.fx" />
     <None Include="code\effect\SkinMesh.fx" />
     <None Include="code\effect\Sky.fx" />
+    <None Include="code\effect\Water.fx" />
+    <None Include="code\effect\WaveData.fx" />
+    <None Include="code\effect\WaveDataInitialize.fx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B2726EF-0828-4EAB-B277-780FF656195F}</ProjectGuid>

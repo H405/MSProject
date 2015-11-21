@@ -55,16 +55,9 @@ public:
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : float viewField						: 視野角
-	// Arg    : int widthScreen						: スクリーン幅
-	// Arg    : int heightScreen					: スクリーン高さ
-	// Arg    : float clipNear						: 近くのクリップ面
-	// Arg    : float clipFar						: 遠くのクリップ面
-	// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-	// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-	// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+	// Arg    : void								: なし
 	//==============================================================================
-	int Initialize( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
+	int Initialize( void );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -76,16 +69,9 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : float viewField						: 視野角
-	// Arg    : int widthScreen						: スクリーン幅
-	// Arg    : int heightScreen					: スクリーン高さ
-	// Arg    : float clipNear						: 近くのクリップ面
-	// Arg    : float clipFar						: 遠くのクリップ面
-	// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-	// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-	// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+	// Arg    : void								: なし
 	//==============================================================================
-	int Reinitialize( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
+	int Reinitialize( void );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -107,6 +93,13 @@ public:
 	// Arg    : bool value							: 設定する値
 	//==============================================================================
 	void SetDebug( bool value );
+
+	//==============================================================================
+	// Brief  : デバッグ切替
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void ToggleDebug( void );
 
 	//==============================================================================
 	// Brief  : カメラベクトルの取得
@@ -139,6 +132,8 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	void Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
+		const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
 	void SetPosition( const D3DXVECTOR3& value );
 	void SetPosition( float x, float y, float z );
 	void SetPositionX( float x );

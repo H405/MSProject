@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "SceneTitle.h"
 #include "../framework/camera/CameraObject.h"
+#include "../framework/camera/ManagerCamera.h"
 #include "../framework/develop/Debug.h"
 #include "../framework/develop/DebugProc.h"
 #include "../framework/graphic/Material.h"
@@ -170,12 +171,8 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	}
 
 	// カメラの生成
-	pCamera_ = new CameraObject();
-	if( pCamera_ == nullptr )
-	{
-		return 1;
-	}
-	result = pCamera_->Initialize(
+	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pCamera_->Set(
 		D3DX_PI / 4.0f,
 		1280,
 		720,
@@ -184,11 +181,6 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		D3DXVECTOR3( 0.0f, 120.0f, -2400.0f ),
 		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
@@ -485,11 +477,6 @@ int SceneTitle::Finalize( void )
 		pLight_ = nullptr;
 	}
 
-	// カメラの開放
-	delete pCamera_;
-	pCamera_ = nullptr;
-	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
-
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = SceneMain::Finalize();
@@ -552,9 +539,6 @@ void SceneTitle::Update( void )
 {
 	// テスト
 	PrintDebug( _T( "kawashima\n" ) );
-
-	//	カメラ更新
-	pCamera_->Update();
 
 	//	設定された更新クラスへ
 	(this->*fpUpdate)();

@@ -19,6 +19,8 @@ texture		textureNotLight_;		// ライトなしテクスチャ
 texture		textureMask_;			// マスクテクスチャ
 texture		textureAdd_;			// 加算合成テクスチャ
 texture		textureDepth_;			// 深度テクスチャ
+texture		textureRiver_;			// 川テクスチャ
+texture		textureDepthRiver_;		// 川深度テクスチャ
 
 //******************************************************************************
 // サンプリング
@@ -66,6 +68,26 @@ sampler samplerTextureAdd = sampler_state
 sampler samplerTextureDepth = sampler_state
 {
 	Texture = < textureDepth_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureRiver = sampler_state
+{
+	Texture = < textureRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepthRiver = sampler_state
+{
+	Texture = < textureDepthRiver_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -121,13 +143,23 @@ PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// ピクセル色を返す
 	PixelOutput	output;
-	float	proportion = tex2D( samplerTextureMask , vertex.textureCoord_ );
+	float	maskLight = tex2D( samplerTextureMask , vertex.textureCoord_ );
 	float3	colorLight = tex2D( samplerTextureLight , vertex.textureCoord_ ).rgb;
 	float3	colorNotLight = tex2D( samplerTextureNotLight , vertex.textureCoord_ ).rgb;
 	float3	colorAdd = tex2D( samplerTextureAdd , vertex.textureCoord_ ).rgb;
-	output.color_ = float4( (1.0f - proportion) * colorLight + proportion * colorNotLight + colorAdd, 1.0f );
+	float4	colorRiver = tex2D( samplerTextureRiver , vertex.textureCoord_ );
+
+	// 深度の取得
+	float	depthRiver = tex2D( samplerTextureDepthRiver, vertex.textureCoord_ ).r;
 	output.depth_.gba = 0.0f;
-	output.depth_.r = (1.0f - proportion) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + proportion * forcus_;
+	output.depth_.r = (1.0f - maskLight) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + maskLight * forcus_;
+
+	// 色を求める
+	float	proportionRiver = colorRiver.a;// * max( (output.depth_.r - depthRiver), 0.0f ) / output.depth_.r;
+	float3	colorLightAndRiver = (1.0f - proportionRiver) * colorLight + proportionRiver * colorRiver;
+	output.color_ = float4( (1.0f - maskLight) * colorLightAndRiver + maskLight * colorNotLight + colorAdd, 1.0f );
+
+	// 値を返す
 	return output;
 }
 

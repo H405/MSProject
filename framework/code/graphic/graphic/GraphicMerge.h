@@ -63,10 +63,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 	//==============================================================================
 	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
 		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -86,10 +88,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 	// Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 	//==============================================================================
 	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
 		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

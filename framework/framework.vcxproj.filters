@@ -504,6 +504,36 @@
     <ClInclude Include="code\framework\fileReader\fileReader.h">
       <Filter>ソース ファイル\framework\fileReader</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\camera\ManagerCamera.h">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerWaveData.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerWaveDataInitialize.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerRiver.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicWaveData.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicWaveDataInitialize.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicRiver.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectWaveDataInitialize.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectRiver.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectWaveData.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -905,6 +935,36 @@
     <ClCompile Include="code\framework\fileReader\fileReader.cpp">
       <Filter>ソース ファイル\framework\fileReader</Filter>
     </ClCompile>
+    <ClCompile Include="code\framework\camera\ManagerCamera.cpp">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerWaveDataInitialize.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerWaveData.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicWaveDataInitialize.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicRiver.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicWaveData.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectRiver.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectWaveDataInitialize.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectWaveData.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -950,6 +1010,15 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\BlurX.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\WaveData.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Water.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\WaveDataInitialize.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

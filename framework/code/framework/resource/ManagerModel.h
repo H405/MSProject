@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "d3dx9.h"
 #include "ManagerResource.h"
+#include "../vertex/Vertex.h"
 
 //******************************************************************************
 // ライブラリ
@@ -91,6 +92,22 @@ public:
 	//==============================================================================
 	int Copy( ManagerModel* pOut ) const;
 
+	//==============================================================================
+	// Brief  : リソースの読み込み
+	// Return : int									: リソースID
+	// Arg    : TCHAR* pNameFile					: ファイル名
+	// Arg    : unsigned long elementVertex			: 頂点の要素
+	//==============================================================================
+	int Load( TCHAR* pNameFile, unsigned long elementVertex = Vertex::ELEMENT_SET_SIMPLE );
+
+	//==============================================================================
+	// Brief  : リソースの取得
+	// Return : TypeItem*							: リソース
+	// Arg    : TCHAR* pNameFile					: ファイル名
+	// Arg    : unsigned long elementVertex			: 頂点の要素
+	//==============================================================================
+	TypeItem* Get( TCHAR* pNameFile, unsigned long elementVertex = Vertex::ELEMENT_SET_SIMPLE );
+
 protected:
 
 private:
@@ -98,9 +115,9 @@ private:
 	ManagerModel( const ManagerModel& );
 	ManagerModel operator=( const ManagerModel& );
 
-	int LoadResource( TCHAR* pPath, int index );
+	int LoadResource( TCHAR* pPath, int index, unsigned long elementVertex );
 	void ReleaseResource( int index );
-	int LoadModelX( TCHAR* pPath, int index );
+	int LoadModelX( TCHAR* pPath, int index, unsigned long elementVertex );
 	int LoadModelConvert( TCHAR* pPath, int index );
 
 	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス

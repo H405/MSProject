@@ -15,6 +15,7 @@
 #include "ModelConvert.h"
 #include "ModelX.h"
 #include "Texture.h"
+#include "../develop/Debug.h"
 #include "../graphic/Material.h"
 #include "../system/File.h"
 #include "../vertex/Vertex.h"
@@ -170,6 +171,98 @@ int ManagerModel< TypeItem >::Copy( ManagerModel* pOut ) const
 }
 
 //==============================================================================
+// Brief  : リソースの読み込み
+// Return : int									: リソースID
+// Arg    : TCHAR* pNameFile					: ファイル名
+// Arg    : unsigned long elementVertex			: 頂点の要素
+//==============================================================================
+template< class TypeItem >
+int ManagerModel< TypeItem >::Load( TCHAR* pNameFile, unsigned long elementVertex )
+{
+	// エラーチェック
+	Assert( pNameFile != nullptr, _T( "ファイルパスが不正です。" ) );
+
+	// ファイルパスの作成
+	TCHAR	pPath[ _MAX_PATH ] = {};		// ファイルパス
+	_tcscpy_s( pPath, _MAX_PATH, pDirectory_ );
+	_tcscat_s( pPath, _MAX_PATH, pNameFile );
+
+	// 既に作られていないか検索
+	int		index;		// 要素番号
+	index = GetId( pPath );
+	if( index != -1 )
+	{
+		return index;
+	}
+
+	// 格納場所の決定
+	for( index = 0; index < maximumItem_; ++index )
+	{
+		if( !pBufferItem_[ index ].isEnable_ )
+		{
+			break;
+		}
+	}
+	if( index >= maximumItem_ )
+	{
+		PrintDebugWnd( _T( "リソースの格納領域に空きがありません。" ) );
+		return -1;
+	}
+
+	// リソースの読み込み
+	int		result;		// 実行結果
+	result = LoadResource( pPath, index, elementVertex );
+	if( result != 0 )
+	{
+		return -1;
+	}
+
+	// 要素に値を設定
+	pBufferItem_[ index ].id_ = index;
+	_tcscpy_s( pBufferItem_[ index ].pPath_, _MAX_PATH, pPath );
+	pBufferItem_[ index ].isEnable_ = true;
+
+	// リソースIDを返す
+	return index;
+}
+
+//==============================================================================
+// Brief  : リソースの取得
+// Return : TypeItem*							: リソース
+// Arg    : TCHAR* pNameFile					: ファイル名
+// Arg    : unsigned long elementVertex			: 頂点の要素
+//==============================================================================
+template< class TypeItem >
+TypeItem* ManagerModel< TypeItem >::Get( TCHAR* pNameFile, unsigned long elementVertex )
+{
+	// エラーチェック
+	Assert( pNameFile != nullptr, _T( "ファイルパスが不正です。" ) );
+
+	// ファイルパスの作成
+	TCHAR	pPath[ _MAX_PATH ] = {};		// ファイルパス
+	_tcscpy_s( pPath, _MAX_PATH, pDirectory_ );
+	_tcscat_s( pPath, _MAX_PATH, pNameFile );
+
+	// 既に作られていないか検索
+	int		index;		// 要素番号
+	index = GetId( pPath );
+	if( index != -1 )
+	{
+		return pBufferItem_[ index ].pItem_;
+	}
+
+	// 作られていないとき読み込み
+	index = Load( pNameFile, elementVertex );
+	if( index == -1 )
+	{
+		return nullptr;
+	}
+
+	// リソースの返却
+	return pBufferItem_[ index ].pItem_;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -188,14 +281,15 @@ void ManagerModel< TypeItem >::InitializeSelf( void )
 // Return : int									: 実行結果
 // Arg    : TCHAR* pPath						: ファイルパス
 // Arg    : int index							: 格納要素番号
+// Arg    : unsigned long elementVertex			: 頂点の要素
 //==============================================================================
 template< class TypeItem >
-int ManagerModel< TypeItem >::LoadResource( TCHAR* pPath, int index )
+int ManagerModel< TypeItem >::LoadResource( TCHAR* pPath, int index, unsigned long elementVertex )
 {
 	// Xファイルモデルの読み込み
 	if( pPath[ _tcslen( pPath ) - 1 ] == _T( 'x' ) )
 	{
-		return LoadModelX( pPath, index );
+		return LoadModelX( pPath, index, elementVertex );
 	}
 
 	// 変換済みモデルの読み込み
@@ -220,22 +314,62 @@ void ManagerModel< TypeItem >::ReleaseResource( int index )
 // Return : int									: 実行結果
 // Arg    : TCHAR* pPath						: ファイルパス
 // Arg    : int index							: 格納要素番号
+// Arg    : unsigned long elementVertex			: 頂点の要素
 //==============================================================================
 template< class TypeItem >
-int ManagerModel< TypeItem >::LoadModelX( TCHAR* pPath, int index )
+int ManagerModel< TypeItem >::LoadModelX( TCHAR* pPath, int index, unsigned long elementVertex )
 {
 	// モデル生成
 	DWORD				countMaterial;				// マテリアル情報の数
+	ID3DXBuffer*		pAdjacency = nullptr;		// 隣接面情報
 	ID3DXMesh*			pMesh = nullptr;			// メッシュ情報へのアドレス
 	ID3DXBuffer*		pMaterial = nullptr;		// マテリアル情報へのアドレス
+	bool				isNormalSet = true;			// 頂点要素が通常かどうか
 	HRESULT				result;						// 実行結果
-	result = D3DXLoadMeshFromX( pPath, D3DXMESH_SYSTEMMEM, pDevice_, NULL, &pMaterial, NULL, &countMaterial, &pMesh );
+	if( elementVertex != Vertex::ELEMENT_SET_SIMPLE )
+	{
+		isNormalSet = false;
+	}
+	result = D3DXLoadMeshFromX( pPath, D3DXMESH_SYSTEMMEM, pDevice_, (isNormalSet ? nullptr : &pAdjacency), &pMaterial, nullptr, &countMaterial, &pMesh );
 	if( result != 0 )
 	{
 		TCHAR	pStringError[ 512 ] = {};		// エラー文字列
 		sprintf_s( pStringError, 512, _T( "ファイル\"%s\"が見つかりません" ), pPath );
 		MessageBox( NULL, pStringError, _T( "エラー" ), MB_OK );
 		return 1;
+	}
+
+	// モデルの変換
+	if( elementVertex != Vertex::ELEMENT_SET_SIMPLE )
+	{
+		// 頂点情報を作成
+		Vertex	vertex;		// 頂点情報
+		vertex.Initialize( pDevice_, elementVertex );
+
+		// メッシュ情報を変換
+		ID3DXMesh*	pMeshNew = nullptr;		// 新しいメッシュ
+		result = pMesh->CloneMesh( D3DXMESH_SYSTEMMEM, vertex.GetElement(), pDevice_, &pMeshNew );
+		if( result != 0 )
+		{
+			return result;
+		}
+
+		// 頂点情報の追加
+		DWORD	semanticTangent;		// タンジェントのセマンティック
+		DWORD	semanticBinormal;		// バイノーマルのセマンティック
+		semanticTangent = (vertex.IsContent( Vertex::TYPE_TANGENT ) ? D3DDECLUSAGE_TANGENT : D3DX_DEFAULT);
+		semanticBinormal = (vertex.IsContent(  Vertex::TYPE_BINORMAL ) ? D3DDECLUSAGE_BINORMAL : D3DX_DEFAULT);
+		result = D3DXComputeTangentFrameEx( pMeshNew, D3DDECLUSAGE_TEXCOORD, 0, semanticTangent, 0, semanticBinormal, 0, D3DDECLUSAGE_NORMAL, 0,
+			0, static_cast< DWORD* >( pAdjacency->GetBufferPointer() ), 0.01f, 0.25f, 0.01f, &pMeshNew, nullptr );
+		if( result != 0 )
+		{
+			return result;
+		}
+
+		// 新しいメッシュを適用
+		pMesh->Release();
+		pMesh = pMeshNew;
+		pMeshNew = nullptr;
 	}
 
 	// モデルの生成
@@ -245,7 +379,7 @@ int ManagerModel< TypeItem >::LoadModelX( TCHAR* pPath, int index )
 	{
 		return 1;
 	}
-	result = pModel->Initialize( pDevice_, Vertex::ELEMENT_SET_SIMPLE, countMaterial, countMaterial, pMesh );
+	result = pModel->Initialize( pDevice_, elementVertex, countMaterial, countMaterial, pMesh );
 	if( result != 0 )
 	{
 		return result;

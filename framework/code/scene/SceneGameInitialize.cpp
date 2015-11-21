@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "SceneGame.h"
 #include "../framework/camera/CameraObject.h"
+#include "../framework/camera/ManagerCamera.h"
 #include "../framework/develop/Debug.h"
 #include "../framework/develop/DebugProc.h"
 #include "../framework/develop/DebugMeasure.h"
@@ -179,12 +180,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	CRadianTable::Init();
 
 	// カメラの生成
-	pCamera_ = new CameraObject();
-	if( pCamera_ == nullptr )
-	{
-		return 1;
-	}
-	result = pCamera_->Initialize(
+	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pCamera_->Set(
 		D3DX_PI / 4.0f,
 		pArgument->pWindow_->GetWidth(),
 		pArgument->pWindow_->GetHeight(),
@@ -194,12 +191,6 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
-
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
@@ -702,11 +693,6 @@ int SceneGame::Finalize( void )
 		pLight_->Release();
 		pLight_ = nullptr;
 	}
-
-	// カメラの開放
-	delete pCamera_;
-	pCamera_ = nullptr;
-	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// 基本クラスの処理
 	result = SceneMain::Finalize();

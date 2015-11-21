@@ -52,20 +52,13 @@ CameraObject::~CameraObject( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : float viewField						: 視野角
-// Arg    : int widthScreen						: スクリーン幅
-// Arg    : int heightScreen					: スクリーン高さ
-// Arg    : float clipNear						: 近くのクリップ面
-// Arg    : float clipFar						: 遠くのクリップ面
-// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+// Arg    : void								: なし
 //==============================================================================
-int CameraObject::Initialize( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+int CameraObject::Initialize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Camera::Initialize( viewField, widthScreen, heightScreen, clipNear, clipFar, positionCamera, positionLookAt, vectorUp );
+	result = Camera::Initialize();
 	if( result != 0 )
 	{
 		return result;
@@ -120,16 +113,9 @@ int CameraObject::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : float viewField						: 視野角
-// Arg    : int widthScreen						: スクリーン幅
-// Arg    : int heightScreen					: スクリーン高さ
-// Arg    : float clipNear						: 近くのクリップ面
-// Arg    : float clipFar						: 遠くのクリップ面
-// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+// Arg    : void								: なし
 //==============================================================================
-int CameraObject::Reinitialize( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+int CameraObject::Reinitialize( void )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -140,7 +126,7 @@ int CameraObject::Reinitialize( float viewField, int widthScreen, int heightScre
 	}
 
 	// 初期化処理
-	return Initialize( viewField, widthScreen, heightScreen, clipNear, clipFar, positionCamera, positionLookAt, vectorUp );
+	return Initialize();
 }
 
 //==============================================================================
@@ -169,18 +155,6 @@ int CameraObject::Copy( CameraObject* pOut ) const
 //==============================================================================
 void CameraObject::Update( void )
 {
-	// デバッグモード切替
-#ifdef _DEVELOP
-	if( GetKeyState( VK_F3 ) & 0x80 )
-	{
-		SetDebug( true );
-	}
-	if( GetKeyState( VK_F4 ) & 0x80 )
-	{
-		SetDebug( false );
-	}
-#endif
-
 	// ステートの実行
 	if( pState_ != nullptr )
 	{
@@ -218,6 +192,30 @@ void CameraObject::SetDebug( bool value )
 
 	// 現在の状態を保存
 	isDebugMode_ = value;
+#endif
+}
+
+//==============================================================================
+// Brief  : デバッグ切替
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void CameraObject::ToggleDebug( void )
+{
+#ifdef _DEVELOP
+	// デバッグステートの切り替え
+	if( !isDebugMode_ )
+	{
+		pStateOriginal_ = pState_;
+		pState_ = pStateDebug_;
+	}
+	else
+	{
+		pState_ = pStateOriginal_;
+	}
+
+	// 現在の状態を保存
+	isDebugMode_ = !isDebugMode_;
 #endif
 }
 
@@ -325,6 +323,25 @@ void CameraObject::Move( const D3DXVECTOR3& vectorMove )
 
 	// 移動
 	SetPosition( positionCamera_ + vectorMoveTransform );
+}
+
+//==============================================================================
+// Brief  : 値の設定
+// Return : void								: なし
+// Arg    : float viewField						: 視野角
+// Arg    : int widthScreen						: スクリーン幅
+// Arg    : int heightScreen					: スクリーン高さ
+// Arg    : float clipNear						: 近くのクリップ面
+// Arg    : float clipFar						: 遠くのクリップ面
+// Arg    : const D3DXVECTOR3& positionCamera	: 視点
+// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
+// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+//==============================================================================
+void CameraObject::Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
+	const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+{
+	// 値の設定
+	Camera::Set( viewField, widthScreen, heightScreen, clipNear, clipFar, positionCamera, positionLookAt, vectorUp );
 }
 
 //==============================================================================
@@ -731,7 +748,18 @@ float CameraObject::GetRotationY( void )
 void CameraObject::SetState( CameraState* pValue )
 {
 	// 値の設定
+#ifdef _DEVELOP
+	if( isDebugMode_ )
+	{
+		pStateOriginal_ = pValue;
+	}
+	else
+	{
+		pState_ = pValue;
+	}
+#else
 	pState_ = pValue;
+#endif
 }
 
 //==============================================================================

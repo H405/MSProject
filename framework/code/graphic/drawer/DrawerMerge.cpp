@@ -60,10 +60,12 @@ DrawerMerge::~DrawerMerge( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 //==============================================================================
 int DrawerMerge::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-	IDirect3DTexture9* pTextureDepth )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -81,6 +83,8 @@ int DrawerMerge::Initialize( const EffectParameter* pParameter, Effect* pEffect,
 	pTextureMask_ = pTextureMask;
 	pTextureAdd_ = pTextureAdd;
 	pTextureDepth_ = pTextureDepth;
+	pTextureRiver_ = pTextureRiver;
+	pTextureDepthRiver_ = pTextureDepthRiver;
 	pPolygon_ = pPolygon;
 
 	// ハンドルの読み込み
@@ -127,10 +131,12 @@ int DrawerMerge::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
+// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 //==============================================================================
 int DrawerMerge::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-	IDirect3DTexture9* pTextureDepth )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -141,7 +147,8 @@ int DrawerMerge::Reinitialize( const EffectParameter* pParameter, Effect* pEffec
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd, pTextureDepth );
+	return Initialize( pParameter, pEffect, pPolygon, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd,
+		pTextureDepth, pTextureRiver, pTextureDepthRiver );
 }
 
 //==============================================================================
@@ -190,6 +197,8 @@ void DrawerMerge::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetTexture( PARAMETER_TEXTURE_MASK, pTextureMask_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_ADD, pTextureAdd_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_RIVER, pTextureRiver_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_RIVER, pTextureDepthRiver_ );
 
 	// 描画
 	pEffect_->Begin( 0 );
@@ -278,5 +287,7 @@ void DrawerMerge::InitializeSelf( void )
 	pTextureMask_ = nullptr;
 	pTextureAdd_ = nullptr;
 	pTextureDepth_ = nullptr;
+	pTextureRiver_ = nullptr;
+	pTextureDepthRiver_ = nullptr;
 	pPolygon_ = nullptr;
 }

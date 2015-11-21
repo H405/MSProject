@@ -39,6 +39,7 @@ class Graphic;
 class InputKeyboard;
 class InputMouse;
 class InputPad;
+class ManagerCamera;
 class ManagerLight;
 class ManagerSceneMain;
 class Model;
@@ -154,6 +155,7 @@ private:
 	XAudio*						pXAudio_;					// XAudio2インターフェース
 	Fade*						pFade_;						// フェード
 	ManagerLight*				pLight_;					// ライト管理クラス
+	ManagerCamera*				pCamera_;					// カメラ管理クラス
 	EffectParameter*			pEffectParameter_;			// エフェクトパラメータ
 	ObjectBlur*					pObjectBlur_;				// ブラー基オブジェクト
 	ObjectLightEffect*			pObjectLightEffect_;		// ライティングオブジェクト

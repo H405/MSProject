@@ -20,6 +20,7 @@
 #include "../system/SceneArgumentMain.h"
 
 #include "../framework/camera/CameraObject.h"
+#include "../framework/camera/ManagerCamera.h"
 #include "../framework/graphic/Material.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/input/VirtualController.h"
@@ -39,8 +40,11 @@
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectModel.h"
+#include "../object/ObjectRiver.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectSky.h"
+#include "../object/ObjectWaveData.h"
+#include "../object/ObjectWaveDataInitialize.h"
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
@@ -113,28 +117,15 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pCameraState_->SetSection( 1, 120, -1, 0, -1, 0 );
 
 	// カメラの生成
-	pCamera_ = new CameraObject();
-	if( pCamera_ == nullptr )
-	{
-		return 1;
-	}
-	result = pCamera_->Initialize(
-		D3DX_PI / 4.0f,
-		pArgument->pWindow_->GetWidth(),
-		pArgument->pWindow_->GetHeight(),
-		0.1f,
-		1000.0f,
-		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ),
-		D3DXVECTOR3( 0.0f, 0.0f, 20.0f ),
-		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
-		);
-
+	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pCamera_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
+		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ), D3DXVECTOR3( 0.0f, 0.0f, 20.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pCamera_->SetState( pCameraState_ );
-	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
+	pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( pCameraState_ );
+	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, &pCamera_[ GraphicMain::CAMERA_GENERAL ] );
 
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
@@ -256,6 +247,67 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_->SetPosition( -100.0f, 0.0f, 100.0f );
 
+	// 波情報描画オブジェクトの生成
+	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
+	pObjectWaveData_ = new ObjectWaveData();
+	if( pObjectWaveData_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveData_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveData = pArgument->pEffect_->Get( _T( "WaveData.fx" ) );
+	result = pObjectWaveData_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveData,
+		pArgument->pTextureHeightWave0_, pArgument->pTextureHeightWave1_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 波情報初期化オブジェクトの生成
+	Effect*		pEffectWaveDataInitialize = nullptr;		// 波情報初期化エフェクト
+	Texture*	pTextureWaveDataInitialize = nullptr;		// 波情報初期化テクスチャ
+	pObjectWaveDataInitialize_ = new ObjectWaveDataInitialize();
+	if( pObjectWaveDataInitialize_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveDataInitialize_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveDataInitialize = pArgument->pEffect_->Get( _T( "WaveDataInitialize.fx" ) );
+	pTextureWaveDataInitialize = pArgument->pTexture_->Get( _T( "common/wave_initialize.dds" ) );
+	result = pObjectWaveDataInitialize_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveDataInitialize, pTextureWaveDataInitialize );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 川の生成
+	Effect*	ppEffectRiver[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// エフェクト
+	TCHAR	pNameFileEffectRiver[ _MAX_PATH ];						// エフェクトファイル名
+	Model*	pModelRiver = nullptr;									// モデル
+	for( int counterEffect = 0; counterEffect <= GraphicMain::LIGHT_POINT_MAX; ++counterEffect )
+	{
+		_stprintf_s( pNameFileEffectRiver, _MAX_PATH, _T( "Water_%02d.fx" ), counterEffect );
+		ppEffectRiver[ counterEffect ] = pArgument->pEffect_->Get( pNameFileEffectRiver );
+	}
+	pModelRiver = pArgument->pModel_->Get( _T( "river.x" ), Vertex::ELEMENT_SET_NORMAL_MAP );
+	pObjectRiver_ = new ObjectRiver();
+	result = pObjectRiver_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, ppEffectRiver,
+		pArgument->pTextureNormalWave_, nullptr, nullptr, nullptr, nullptr );
+	pObjectRiver_->SetPositionY( 10.0f );
+
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
 
@@ -270,6 +322,18 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneSplash::Finalize( void )
 {
+	// 川の開放
+	delete pObjectRiver_;
+	pObjectRiver_ = nullptr;
+
+	// 波情報初期化オブジェクトの開放
+	delete pObjectWaveDataInitialize_;
+	pObjectWaveDataInitialize_ = nullptr;
+
+	// 波情報描画オブジェクトの開放
+	delete pObjectWaveData_;
+	pObjectWaveData_ = nullptr;
+
 	// スキンメッシュの開放
 	delete pObjectSkinMesh_;
 	pObjectSkinMesh_ = nullptr;
@@ -317,12 +381,8 @@ int SceneSplash::Finalize( void )
 		pLight_ = nullptr;
 	}
 
-	// カメラの開放
-	delete pCamera_;
-	pCamera_ = nullptr;
-	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
-
 	// カメラ処理の開放
+	pCamera_->SetState( nullptr );
 	delete pCameraState_;
 	pCameraState_ = nullptr;
 
@@ -388,9 +448,6 @@ void SceneSplash::Update( void )
 {
 	// テスト
 	PrintDebug( _T( "スプラッシュ\n" ) );
-
-	// カメラの更新
-	pCamera_->Update();
 
 	// ポイントスプライト管理クラスの更新
 	pPoint_->Update();
@@ -527,6 +584,9 @@ void SceneSplash::InitializeSelf( void )
 	pObjectModel_ = nullptr;
 	pObjectBoard_ = nullptr;
 	pObjectSkinMesh_ = nullptr;
+	pObjectWaveData_ = nullptr;
+	pObjectWaveDataInitialize_ = nullptr;
+	pObjectRiver_ = nullptr;
 	timerLight_ = 0;
 	pCameraState_ = nullptr;
 }

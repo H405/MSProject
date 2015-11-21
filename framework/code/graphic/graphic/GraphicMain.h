@@ -41,80 +41,106 @@ public:
 	// パス
 	enum
 	{
-		PASS_3D = 0,			// 3D描画
-		PASS_3D_NOT_LIGHT,		// ライティングなし3D描画
-		PASS_LIGHT_EFFECT,		// ライティング
-		PASS_3D_MERGE,			// 総合3D描画
-		PASS_BLUR_X,			// X方向ブラー
-		PASS_BLUR_Y,			// Y方向ブラー
-		PASS_2D,				// 2D描画
-		PASS_POST_EFFECT,		// ポストエフェクト
-		PASS_MAX				// 最大数
+		PASS_WAVE_DATA = 0,			// 波情報
+		PASS_3D,					// 3D描画
+		PASS_3D_NOT_LIGHT,			// ライティングなし3D描画
+		PASS_LIGHT_EFFECT,			// ライティング
+		PASS_REFLECT,				// 反射
+		PASS_WATER,					// 水
+		PASS_3D_MERGE,				// 総合3D描画
+		PASS_BLUR_X,				// X方向ブラー
+		PASS_BLUR_Y,				// Y方向ブラー
+		PASS_2D,					// 2D描画
+		PASS_POST_EFFECT,			// ポストエフェクト
+		PASS_MAX					// 最大数
+	};
+
+	// 波
+	enum
+	{
+		RENDER_PASS_WAVE_DATA_HEIGHT = 0,			// 高さ
+		RENDER_PASS_WAVE_DATA_NORMAL,				// 法線
+		RENDER_PASS_WAVE_DATA_MAX					// 最大値
 	};
 
 	// 3D描画
 	enum
 	{
-		RENDER_PASS_3D_DIFFUSE = 0,				// ディフューズ色
-		RENDER_PASS_3D_SPECULAR,				// スペキュラ色
-		RENDER_PASS_3D_NORMAL,					// 法線
-		RENDER_PASS_3D_DEPTH,					// 深度
-		RENDER_PASS_3D_MAX						// 最大値
+		RENDER_PASS_3D_DIFFUSE = 0,					// ディフューズ色
+		RENDER_PASS_3D_SPECULAR,					// スペキュラ色
+		RENDER_PASS_3D_NORMAL,						// 法線
+		RENDER_PASS_3D_DEPTH,						// 深度
+		RENDER_PASS_3D_MAX							// 最大値
 	};
 
 	// ライティングなし3D描画
 	enum
 	{
-		RENDER_PASS_3D_NOT_LIGHT_COLOR = 0,		// 色
-		RENDER_PASS_3D_NOT_LIGHT_MASK,			// マスク
-		RENDER_PASS_3D_NOT_LIGHT_ADD,			// 加算合成
-		RENDER_PASS_3D_NOT_LIGHT_MAX			// 最大値
+		RENDER_PASS_3D_NOT_LIGHT_COLOR = 0,			// 色
+		RENDER_PASS_3D_NOT_LIGHT_MASK,				// マスク
+		RENDER_PASS_3D_NOT_LIGHT_ADD,				// 加算合成
+		RENDER_PASS_3D_NOT_LIGHT_MAX				// 最大値
 	};
 
 	// ライティング
 	enum
 	{
-		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,		// 色
-		RENDER_PASS_LIGHT_EFFECT_DEPTH,			// 深度
-		RENDER_PASS_LIGHT_EFFECT_MAX			// 最大値
+		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,			// 色
+		RENDER_PASS_LIGHT_EFFECT_DEPTH,				// 深度
+		RENDER_PASS_LIGHT_EFFECT_MAX				// 最大値
+	};
+
+	// 反射
+	enum
+	{
+		RENDER_PASS_REFLECT_FRONT_COLOR = 0,		// 色
+		RENDER_PASS_REFLECT_FRONT_MAX				// 最大値
+	};
+
+	// 水
+	enum
+	{
+		RENDER_PASS_WATER_COLOR = 0,				// 色
+		RENDER_PASS_WATER_DEPTH,					// 深度
+		RENDER_PASS_WATER_MAX						// 最大値
 	};
 
 	// 総合3D描画
 	enum
 	{
-		RENDER_PASS_3D_MERGE_COLOR = 0,			// 色
-		RENDER_PASS_3D_MERGE_DEPTH,				// 深度
-		RENDER_PASS_3D_MERGE_MAX				// 最大値
+		RENDER_PASS_3D_MERGE_COLOR = 0,				// 色
+		RENDER_PASS_3D_MERGE_DEPTH,					// 深度
+		RENDER_PASS_3D_MERGE_MAX					// 最大値
 	};
 
 	// X方向ブラー
 	enum
 	{
-		RENDER_PASS_BLUR_X_COLOR = 0,			// 色
-		RENDER_PASS_BLUR_X_MAX					// 最大値
+		RENDER_PASS_BLUR_X_COLOR = 0,				// 色
+		RENDER_PASS_BLUR_X_MAX						// 最大値
 	};
 
 	// Y方向ブラー
 	enum
 	{
-		RENDER_PASS_BLUR_Y_COLOR = 0,			// 色
-		RENDER_PASS_BLUR_Y_LUMINANCE,			// 輝度
-		RENDER_PASS_BLUR_Y_MAX					// 最大値
+		RENDER_PASS_BLUR_Y_COLOR = 0,				// 色
+		RENDER_PASS_BLUR_Y_LUMINANCE,				// 輝度
+		RENDER_PASS_BLUR_Y_MAX						// 最大値
 	};
 
 	// 2D描画
 	enum
 	{
-		RENDER_PASS_2D_COLOR = 0,				// 色
-		RENDER_PASS_2D_MASK,					// マスク
-		RENDER_PASS_2D_MAX						// 最大値
+		RENDER_PASS_2D_COLOR = 0,					// 色
+		RENDER_PASS_2D_MASK,						// マスク
+		RENDER_PASS_2D_MAX							// 最大値
 	};
 
 	// 画面描画
 	enum
 	{
-		RENDER_PASS_POST_EFFECT_COLOR = 0,		// 色
-		RENDER_PASS_POST_EFFECT_MAX				// 最大値
+		RENDER_PASS_POST_EFFECT_COLOR = 0,			// 色
+		RENDER_PASS_POST_EFFECT_MAX					// 最大値
 	};
 
 	// ディレクショナルライト
@@ -127,7 +153,7 @@ public:
 	// ポイントライト
 	enum
 	{
-		LIGHT_POINT_MAX = 10		// 最大値
+		LIGHT_POINT_MAX = 10				// 最大値
 	};
 
 	// カメラ

@@ -39,8 +39,11 @@ class Object2D;
 class ObjectBillboard;
 class ObjectMesh;
 class ObjectModel;
+class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectSky;
+class ObjectWaveData;
+class ObjectWaveDataInitialize;
 
 //******************************************************************************
 // クラス定義
@@ -104,24 +107,27 @@ private:
 	SceneSplash( const SceneSplash& );
 	SceneSplash operator=( const SceneSplash& );
 
-	CameraObject*		pCamera_;				// カメラ
-	LightDirection*		pLight_;				// ライト
-	LightPoint**		ppPointLight_;			// ポイントライト
+	CameraObject*				pCamera_;						// 通常カメラ
+	LightDirection*				pLight_;						// ライト
+	LightPoint**				ppPointLight_;					// ポイントライト
 
-	ManagerPoint*		pPoint_;				// ポイントスプライト管理クラス
+	ManagerPoint*				pPoint_;						// ポイントスプライト管理クラス
 
-	static const int	COUNT_MODEL = 10;		// モデル数
+	static const int			COUNT_MODEL = 10;				// モデル数
 
-	Object2D*			pObject2D_;				// 2Dオブジェクト
-	ObjectMesh*			pObjectMesh_;			// メッシュ
-	ObjectSky*			pObjectSky_;			// スカイドーム
-	ObjectModel*		pObjectModel_;			// モデル
-	ObjectBillboard*	pObjectBoard_;			// ビルボード
-	ObjectSkinMesh*		pObjectSkinMesh_;		// スキンメッシュ
+	Object2D*					pObject2D_;						// 2Dオブジェクト
+	ObjectMesh*					pObjectMesh_;					// メッシュ
+	ObjectSky*					pObjectSky_;					// スカイドーム
+	ObjectModel*				pObjectModel_;					// モデル
+	ObjectBillboard*			pObjectBoard_;					// ビルボード
+	ObjectSkinMesh*				pObjectSkinMesh_;				// スキンメッシュ
+	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
+	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
+	ObjectRiver*				pObjectRiver_;					// 川
 
-	int					timerLight_;			// ライト用タイマー
+	int							timerLight_;					// ライト用タイマー
 
-	CameraStateSpline*	pCameraState_;			// カメラ処理
+	CameraStateSpline*			pCameraState_;					// カメラ処理
 };
 
 #endif	// MY_SCENE_SPLASH_H
