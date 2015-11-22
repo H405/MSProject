@@ -101,6 +101,7 @@ public:
 	IDirect3DTexture9*			pTextureNormalWave_;		// 波の法線テクスチャ
 	IDirect3DTexture9*			pTextureReflect_;			// 反射テクスチャ
 	IDirect3DTexture9*			pTexture3D_;				// 3D描画テクスチャ
+	IDirect3DTexture9*			pTextureDepth_;				// 深度テクスチャ
 	IDirect3DTexture9*			pTextureTest_;				// テストテクスチャ
 
 protected:

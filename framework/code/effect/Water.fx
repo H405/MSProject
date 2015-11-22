@@ -206,7 +206,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	float3	vectorVertexToEye = normalize( positionEye_ - vertex.positionWorld_ );
 
 	// 高さを取得
-	float	height = tex2D( samplerTextureNormal, vertex.textureCoord_ ).a;
+	float	height = tex2D( samplerTextureNormal, vertex.textureCoord_ ).a * 2.0f - 1.0f;
 
 	// 法線を求める
 	float3	tangent = normalize( vertex.tangentWorld_ - dot( vertex.tangentWorld_, vertex.vectorNormalWorld_ ) * vertex.vectorNormalWorld_ );
@@ -217,11 +217,14 @@ PixelOutput DrawPixel( VertexOutput vertex )
 //	normal = vertex.vectorNormalWorld_;
 
 	// ディフューズ色を求める
-	float	offsetTexture = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
+	float	proportionDepth = (tex2Dproj( samplerTextureEnvironmentAddFront, vertex.positionTexture_ ) - vertex.depth_) / 1000.0f;
+	float	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 5000.0f * proportionDepth, 0.0f, 0.0f );
+	float	offsetTextureUnder = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
 	float	proportionEnvironment = dot( normal, vectorVertexToEye );
-	float3	colorReflerct = tex2Dproj( samplerTextureEnvironmentFront, vertex.positionTexture_ + offsetTexture );
-	float3	colorUnder = tex2Dproj( samplerTextureEnvironmentBack, vertex.positionTexture_ + offsetTexture );
-	float3	colorDiffuse = colorDiffuse_ * lerp( colorReflerct, colorUnder, proportionEnvironment );
+	float3	colorReflerct = tex2Dproj( samplerTextureEnvironmentFront, vertex.positionTexture_ + offsetTextureReflect );
+	float3	colorUnder = tex2Dproj( samplerTextureEnvironmentBack, vertex.positionTexture_ + offsetTextureUnder );
+	float3	colorWater = colorDiffuse_ * lerp( colorReflerct, colorUnder, proportionEnvironment );
+	float3	colorDiffuse = lerp( tex2Dproj( samplerTextureEnvironmentBack, vertex.positionTexture_ ).rgb, colorWater, min( 200.0f * proportionDepth, 1.0f ) );
 
 	// 環境光のスペキュラ色を計算
 	float	fresnel = refractive_ + (1.0f - refractive_) * exp( -6.0f * max( dot( normal, vectorVertexToEye ), 0.0f ) );

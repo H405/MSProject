@@ -297,8 +297,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	parameterPassReflect.width_ = widthWindow / 2;
-	parameterPassReflect.height_ = heightWindow / 2;
+	parameterPassReflect.width_ = widthWindow / 4;
+	parameterPassReflect.height_ = heightWindow / 4;
 	result = pRenderPass_[ GraphicMain::PASS_REFLECT ].Initialize( pDevice, GraphicMain::RENDER_PASS_REFLECT_MAX, &parameterPassReflect );
 	if( result != 0 )
 	{
@@ -619,7 +619,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pTextureHeightWave1_ = pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_HEIGHT, 1 );
 	pArgument_->pTextureNormalWave_ = pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_NORMAL );
 	pArgument_->pTextureReflect_ = pRenderPass_[ GraphicMain::PASS_REFLECT ].GetTexture( GraphicMain::RENDER_PASS_REFLECT_COLOR );
-	pArgument_->pTexture3D_ = pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_COLOR );
+	pArgument_->pTexture3D_ = pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE );
+	pArgument_->pTextureDepth_ = pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH );
 	pArgument_->pTextureTest_ = pRenderPass_[ GraphicMain::PASS_REFLECT ].GetTexture( GraphicMain::RENDER_PASS_REFLECT_COLOR );
 
 	// シーン管理クラスの生成
@@ -631,7 +632,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 #ifdef _DEBUG
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #else
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
 #endif
 	if( result != 0 )
 	{

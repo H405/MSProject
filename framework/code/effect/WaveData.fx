@@ -103,7 +103,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	output.height_ = float4( height, velocity, 1.0f, 1.0f );
 
 	// 法線を計算
-	float2	vectorHeight = float2( 0.5f * (heightAround.b - heightAround.r) + 0.5f, 0.5f * (heightAround.a - heightAround.g) + 0.5f );
+	float2	vectorHeight = float2( heightAround.b - heightAround.r, heightAround.a - heightAround.g ) * 0.5f + 0.5f;
 	output.normal_ = float4( vectorHeight, 1.0f, 0.5f * heightCurrent.r + 0.5f );
 
 	// ピクセルシェーダ出力を返す

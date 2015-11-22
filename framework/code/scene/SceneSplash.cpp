@@ -310,7 +310,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, ppEffectRiver,
-		pArgument->pTextureNormalWave_, pArgument->pTextureReflect_, pArgument->pTexture3D_, nullptr, nullptr );
+		pArgument->pTextureNormalWave_, pArgument->pTextureReflect_, pArgument->pTexture3D_, pArgument->pTextureDepth_, nullptr );
 	pObjectRiver_->SetPositionY( 10.0f );
 	pArgument->pEffectParameter_->SetHeightReflect( 10.0f );
 
@@ -555,6 +555,24 @@ void SceneSplash::Update( void )
 	if( pArgument_->pVirtualController_->IsPress( VC_RIGHT ) )
 	{
 		ppPointLight_[ 4 ]->SetIsEnable( false );
+	}
+
+	// オブジェクトの移動
+	if( pArgument_->pKeyboard_->IsPress( DIK_A ) )
+	{
+		pObjectModel_[ 0 ].AddPositionX( -1.0f );
+	}
+	else if( pArgument_->pKeyboard_->IsPress( DIK_D ) )
+	{
+		pObjectModel_[ 0 ].AddPositionX( 1.0f );
+	}
+	if( pArgument_->pKeyboard_->IsPress( DIK_S ) )
+	{
+		pObjectModel_[ 0 ].AddPositionZ( -1.0f );
+	}
+	else if( pArgument_->pKeyboard_->IsPress( DIK_W ) )
+	{
+		pObjectModel_[ 0 ].AddPositionZ( 1.0f );
 	}
 
 	// シーン遷移
