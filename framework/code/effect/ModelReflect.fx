@@ -12,8 +12,13 @@
 //******************************************************************************
 float4x4	matrixTransform_;		// 変換行列
 float4x4	matrixWorld_;			// ワールド変換行列
-texture		texture_;				// テクスチャ
+float4x4	matrixWorldView_;		// ワールドビュー変換行列
 float		height_;				// 反射面の高さ
+texture		texture_;				// テクスチャ
+float3		colorSpecular_;			// スペキュラ色
+float		reflection_;			// 反射率
+float		power_;					// 反射の強さ
+float		refractive_;			// 屈折率
 
 //******************************************************************************
 // サンプリング
@@ -36,7 +41,18 @@ struct VertexOutput
 {
 	float4	position_			: POSITION;			// 座標
 	float2	textureCoord_		: TEXCOORD0;		// テクスチャ座標
-	float	heightWorld_		: TEXCOORD1;		// ワールド座標の高さ
+	float3	vectorNormalWorld_	: TEXCOORD1;		// 変換後法線
+	float	depth_				: TEXCOORD2;		// 深度
+	float	heightWorld_		: TEXCOORD3;		// ワールド座標の高さ
+};
+
+// ピクセルシェーダ出力
+struct PixelOutput
+{
+	float4	diffuse_			: COLOR0;			// ディフューズ色
+	float4	specular_			: COLOR1;			// スペキュラ色
+	float4	normal_				: COLOR2;			// 法線
+	float4	depth_				: COLOR3;			// 深度
 };
 
 //==============================================================================
@@ -54,6 +70,12 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
 	output.heightWorld_ = mul( float4( positionLocal, 1.0f ), matrixWorld_ ).y;
 
+	// 法線の変換
+	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;
+
+	// 深度の計算
+	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;
+
 	// 出力値の格納
 	output.textureCoord_ = textureCoord;
 
@@ -63,16 +85,24 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 
 //==============================================================================
 // Brief  : ピクセル描画
-// Return : float4							: 色
+// Return : PixelOutput						: ピクセルシェーダ出力
 // Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
-float4 DrawPixel( VertexOutput vertex ) : COLOR0
+PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// 反射面より下は描画しない
 	clip( height_ - vertex.heightWorld_ );
 
-	// 色を返す
-	return tex2D( samplerTexture, vertex.textureCoord_ );
+	// 値の設定
+	PixelOutput	output;		// ピクセルシェーダ出力
+	output.diffuse_ = float4( tex2D( samplerTexture, vertex.textureCoord_ ).rgb, reflection_ );
+	output.specular_ = float4( colorSpecular_, power_ * 0.015625f );
+	output.normal_ = float4( (vertex.vectorNormalWorld_ * 0.5f + 0.5f), refractive_ );
+	output.depth_.gba = 0.0f;
+	output.depth_ = vertex.depth_;
+
+	// ピクセルシェーダ出力を返す
+	return output;
 }
 
 //==============================================================================

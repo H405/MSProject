@@ -285,7 +285,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 
 	// ピクセル色を返す
 	PixelOutput	output;
-	output.color_ = float4( color, 1.0f );
+	output.color_ = float4( color, dataDepth );
 	output.depth_.gba = 0.0f;
 	output.depth_.r = dataDepth / clipCamera_.y;
 	return output;

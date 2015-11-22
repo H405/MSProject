@@ -47,6 +47,7 @@ class Motion;
 class Object;
 class ObjectBlur;
 class ObjectLightEffect;
+class ObjectLightReflect;
 class ObjectPostEffect;
 class ObjectMerge;
 class Polygon2D;
@@ -159,6 +160,7 @@ private:
 	EffectParameter*			pEffectParameter_;			// エフェクトパラメータ
 	ObjectBlur*					pObjectBlur_;				// ブラー基オブジェクト
 	ObjectLightEffect*			pObjectLightEffect_;		// ライティングオブジェクト
+	ObjectLightReflect*			pObjectLightReflect_;		// 反射ライティングオブジェクト
 	ObjectMerge*				pObjectMerge_;				// 総合3D描画オブジェクト
 	ObjectPostEffect*			pObjectPostEffect_;			// ポストエフェクトオブジェクト
 	ManagerDraw< Graphic >*		pDraw_;						// 描画管理クラス

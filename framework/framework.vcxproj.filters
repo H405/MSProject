@@ -537,6 +537,15 @@
     <ClInclude Include="code\graphic\drawer\DrawerModelReflect.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectLightReflect.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicLightReflect.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerLightReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -971,6 +980,15 @@
     <ClCompile Include="code\graphic\drawer\DrawerModelReflect.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
+    <ClCompile Include="code\object\ObjectLightReflect.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicLightReflect.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerLightReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1028,6 +1046,9 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\ModelReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightReflect.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

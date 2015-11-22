@@ -44,8 +44,13 @@ public:
 	{
 		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
 		PARAMETER_MATRIX_WORLD,				// ワールド変換行列
-		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
 		PARAMETER_HEIGHT,					// 反射面の高さ
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_COLOR_SPECULAR,			// スペキュラ色
+		PARAMETER_REFLECTION,				// 反射率
+		PARAMETER_POWER,					// 反射の強さ
+		PARAMETER_REFLACTIVE,				// 屈折率
 		PARAMETER_MAX						// 最大値
 	};
 

@@ -44,6 +44,7 @@ public:
 		PASS_WAVE_DATA = 0,			// 波情報
 		PASS_3D,					// 3D描画
 		PASS_REFLECT,				// 反射
+		PASS_LIGHT_REFLECT,			// 反射のライティング
 		PASS_WATER,					// 水
 		PASS_3D_NOT_LIGHT,			// ライティングなし3D描画
 		PASS_LIGHT_EFFECT,			// ライティング
@@ -76,8 +77,18 @@ public:
 	// 反射
 	enum
 	{
-		RENDER_PASS_REFLECT_COLOR = 0,				// 色
+		RENDER_PASS_REFLECT_DIFFUSE = 0,			// ディフューズ色
+		RENDER_PASS_REFLECT_SPECULAR,				// スペキュラ色
+		RENDER_PASS_REFLECT_NORMAL,					// 法線
+		RENDER_PASS_REFLECT_DEPTH,					// 深度
 		RENDER_PASS_REFLECT_MAX						// 最大値
+	};
+
+	// 反射のライティング
+	enum
+	{
+		RENDER_PASS_LIGHT_REFLECT_COLOR = 0,		// 色
+		RENDER_PASS_LIGHT_REFLECT_MAX				// 最大値
 	};
 
 	// 水

@@ -158,6 +158,7 @@ void DrawerModelReflect::Draw( const D3DXMATRIX& matrixWorld )
 	// 変換行列
 	D3DXMATRIX		matrixTransform;				// 変換行列
 	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
+	D3DXMATRIX		matrixWorldView;				// ワールドビュー変換行列
 	D3DXMATRIX		matrixView;						// ビュー変換行列
 	D3DXMATRIX		matrixReflect;					// 反射行列
 	D3DXMATRIX		matrixWorldReflect;				// 反射ワールド行列
@@ -177,8 +178,10 @@ void DrawerModelReflect::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMatrixReflect( &matrixReflect, &planeReflect );
 	D3DXMatrixMultiply( &matrixWorldReflect, &matrixWorld, &matrixReflect );
 	D3DXMatrixMultiply( &matrixTransform, &matrixWorldReflect, &matrixViewProjection );
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorldReflect, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldReflect );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
 
 	// 反射面の高さ
 	pEffect_->SetFloat( PARAMETER_HEIGHT, positionReflect.y );
@@ -196,6 +199,18 @@ void DrawerModelReflect::Draw( const D3DXMATRIX& matrixWorld )
 
 		// テクスチャ
 		pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture );
+
+		// スペキュラ色
+		pEffect_->SetFloatArray( PARAMETER_COLOR_SPECULAR, &material.specular_.r, 3 );
+
+		// 反射率
+		pEffect_->SetFloat( PARAMETER_REFLECTION, material.reflection_ );
+
+		// 反射の強さ
+		pEffect_->SetFloat( PARAMETER_POWER, material.power_ );
+
+		// 屈折率
+		pEffect_->SetFloat( PARAMETER_REFLACTIVE, material.refractive_ );
 
 		// モデルの描画
 		pEffect_->Begin( 0 );

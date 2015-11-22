@@ -155,9 +155,9 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	float	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 1000.0f * proportionDepth, 0.0f, 0.0f );
 	float	offsetTextureUnder = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
 	float	proportionEnvironment = dot( normal, vectorVertexToEye );
-	float3	colorReflerct = tex2Dproj( samplerTextureReflect, vertex.positionTexture_ + offsetTextureReflect );
+	float4	colorReflerct = tex2Dproj( samplerTextureReflect, vertex.positionTexture_ + offsetTextureReflect );
 	float3	colorUnder = tex2Dproj( samplerTexture3D, vertex.positionTexture_ + offsetTextureUnder );
-	float3	colorWater = colorDiffuse_ * lerp( colorReflerct, colorUnder, proportionEnvironment );
+	float3	colorWater = colorDiffuse_ * lerp( colorReflerct.rgb * colorReflerct.a, colorUnder, proportionEnvironment );
 	float3	colorDiffuse = lerp( tex2Dproj( samplerTexture3D, vertex.positionTexture_ ).rgb, colorWater, min( 200.0f * proportionDepth, 1.0f ) );
 
 	// ílÇÃê›íË
