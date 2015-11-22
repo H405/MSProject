@@ -17,6 +17,10 @@ texture		textureDiffuse_;					// ディフューズテクスチャ
 texture		textureSpecular_;					// スペキュラテクスチャ
 texture		textureNormal_;						// 法線テクスチャ
 texture		textureDepth_;						// 深度テクスチャ
+texture		textureDiffuseRiver_;				// 川のディフューズテクスチャ
+texture		textureSpecularRiver_;				// 川のスペキュラテクスチャ
+texture		textureNormalRiver_;				// 川の法線テクスチャ
+texture		textureDepthRiver_;					// 川の深度テクスチャ
 
 float4x4	matrixProjectionInverse_;			// プロジェクション変換逆行列
 float4x4	matrixViewInverse_;					// ビュー変換逆行列
@@ -62,6 +66,46 @@ sampler samplerTextureNormal = sampler_state
 sampler samplerTextureDepth = sampler_state
 {
 	Texture = < textureDepth_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDiffuseRiver = sampler_state
+{
+	Texture = < textureDiffuseRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureSpecularRiver = sampler_state
+{
+	Texture = < textureSpecularRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureNormalRiver = sampler_state
+{
+	Texture = < textureNormalRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepthRiver = sampler_state
+{
+	Texture = < textureDepthRiver_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -160,10 +204,12 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
 	// テクスチャから情報を取得
-	float4	dataDiffuse = tex2D( samplerTextureDiffuse , vertex.textureCoord_ );
-	float4	dataSpecular = tex2D( samplerTextureSpecular , vertex.textureCoord_ );
-	float4	dataNormal = tex2D( samplerTextureNormal , vertex.textureCoord_ );
-	float	dataDepth = tex2D( samplerTextureDepth , vertex.textureCoord_ ).r;
+	float4	dataSpecularRiver = tex2D( samplerTextureSpecularRiver, vertex.textureCoord_ );
+	float	proportionRiver = min( 4.0f * dataSpecularRiver.b, 1.0f );
+	float4	dataDiffuse = lerp( tex2D( samplerTextureDiffuse, vertex.textureCoord_ ), tex2D( samplerTextureDiffuseRiver, vertex.textureCoord_ ), proportionRiver );
+	float4	dataSpecular = lerp( tex2D( samplerTextureSpecular, vertex.textureCoord_ ), dataSpecularRiver, proportionRiver );
+	float4	dataNormal = lerp( tex2D( samplerTextureNormal, vertex.textureCoord_ ), tex2D( samplerTextureNormalRiver, vertex.textureCoord_ ), proportionRiver );
+	float	dataDepth = lerp( tex2D( samplerTextureDepth, vertex.textureCoord_ ).r, tex2D( samplerTextureDepthRiver, vertex.textureCoord_ ).r, proportionRiver );
 
 	// 情報の設定
 	float3	colorDiffuse = dataDiffuse.rgb;

@@ -60,12 +60,10 @@ GraphicMerge::~GraphicMerge( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
-// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
-// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 //==============================================================================
 int GraphicMerge::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver )
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+	IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -82,8 +80,7 @@ int GraphicMerge::Initialize( int priority, const EffectParameter* pParameter, E
 	{
 		return 1;
 	}
-	result = pDrawerMerge->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd,
-		pTextureDepth, pTextureRiver, pTextureDepthRiver );
+	result = pDrawerMerge->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd, pTextureDepth );
 	ppDraw_[ GraphicMain::PASS_3D_MERGE ] = pDrawerMerge;
 
 	// 正常終了
@@ -123,12 +120,10 @@ int GraphicMerge::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureMask		: マスクテクスチャ
 // Arg    : IDirect3DTexture9* pTextureAdd		: 加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
-// Arg    : IDirect3DTexture9* pTextureRiver	: 川テクスチャ
-// Arg    : IDirect3DTexture9* pTextureDepthRiver	: 川の深度テクスチャ
 //==============================================================================
 int GraphicMerge::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureRiver, IDirect3DTexture9* pTextureDepthRiver )
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+	IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -139,8 +134,7 @@ int GraphicMerge::Reinitialize( int priority, const EffectParameter* pParameter,
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd,
-		pTextureDepth, pTextureRiver, pTextureDepthRiver );
+	return Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd, pTextureDepth );
 }
 
 //==============================================================================

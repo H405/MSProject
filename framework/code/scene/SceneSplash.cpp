@@ -294,14 +294,9 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	}
 
 	// 川の生成
-	Effect*	ppEffectRiver[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// エフェクト
-	TCHAR	pNameFileEffectRiver[ _MAX_PATH ];						// エフェクトファイル名
-	Model*	pModelRiver = nullptr;									// モデル
-	for( int counterEffect = 0; counterEffect <= GraphicMain::LIGHT_POINT_MAX; ++counterEffect )
-	{
-		_stprintf_s( pNameFileEffectRiver, _MAX_PATH, _T( "Water_%02d.fx" ), counterEffect );
-		ppEffectRiver[ counterEffect ] = pArgument->pEffect_->Get( pNameFileEffectRiver );
-	}
+	Effect*	pEffectRiver = nullptr;		// エフェクト
+	Model*	pModelRiver = nullptr;		// モデル
+	pEffectRiver = pArgument->pEffect_->Get( "water.fx" );
 	pModelRiver = pArgument->pModel_->Get( _T( "river.x" ), Vertex::ELEMENT_SET_NORMAL_MAP );
 	pObjectRiver_ = new ObjectRiver();
 	result = pObjectRiver_->Initialize( 0 );
@@ -309,8 +304,8 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	{
 		return result;
 	}
-	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, ppEffectRiver,
-		pArgument->pTextureNormalWave_, pArgument->pTextureReflect_, pArgument->pTexture3D_, pArgument->pTextureDepth_, nullptr );
+	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver,
+		pArgument->pTextureNormalWave_, pArgument->pTextureReflect_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
 	pObjectRiver_->SetPositionY( 10.0f );
 	pArgument->pEffectParameter_->SetHeightReflect( 10.0f );
 

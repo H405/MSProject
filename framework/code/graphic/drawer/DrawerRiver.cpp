@@ -14,8 +14,6 @@
 #include "../graphic/GraphicMain.h"
 #include "../../framework/camera/Camera.h"
 #include "../../framework/graphic/Material.h"
-#include "../../framework/light/LightDirection.h"
-#include "../../framework/light/LightPoint.h"
 #include "../../framework/render/RenderMatrix.h"
 #include "../../framework/resource/Effect.h"
 #include "../../framework/resource/Model.h"
@@ -62,14 +60,12 @@ DrawerRiver::~DrawerRiver( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
 int DrawerRiver::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-	IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack )
+	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -84,10 +80,9 @@ int DrawerRiver::Initialize( Model* pModel, const EffectParameter* pParameter, E
 	pEffect_ = pEffect;
 	pModel_ = pModel;
 	pTextureNormal_ = pTextureNormal;
-	pTextureEnvironmentFront_ = pTextureEnvironmentFront;
-	pTextureEnvironmentBack_ = pTextureEnvironmentBack;
-	pTextureEnvironmentAddFront_ = pTextureEnvironmentAddFront;
-	pTextureEnvironmentAddBack_ = pTextureEnvironmentAddBack;
+	pTextureReflect_ = pTextureReflect;
+	pTexture3D_ = pTexture3D;
+	pTextureDepth_ = pTextureDepth;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -129,14 +124,12 @@ int DrawerRiver::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
 int DrawerRiver::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-	IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack )
+	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -147,8 +140,7 @@ int DrawerRiver::Reinitialize( Model* pModel, const EffectParameter* pParameter,
 	}
 
 	// 初期化処理
-	return Initialize( pModel, pParameter, pEffect, pTextureNormal,
-		pTextureEnvironmentFront, pTextureEnvironmentBack, pTextureEnvironmentAddFront, pTextureEnvironmentAddBack );
+	return Initialize( pModel, pParameter, pEffect, pTextureNormal, pTextureReflect, pTexture3D, pTextureDepth );
 }
 
 //==============================================================================
@@ -230,10 +222,9 @@ void DrawerRiver::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetTexture( PARAMETER_TEXTURE_NORMAL, pTextureNormal_ );
 
 	// 環境テクスチャ
-	pEffect_->SetTexture( PARAMETER_TEXTURE_ENVIRONMENT_FRONT, pTextureEnvironmentFront_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_ENVIRONMENT_BACK, pTextureEnvironmentBack_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_ENVIRONMENT_ADD_FRONT, pTextureEnvironmentAddFront_ );
-	pEffect_->SetTexture( PARAMETER_TEXTURE_ENVIRONMENT_ADD_BACK, pTextureEnvironmentAddBack_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_REFLECT, pTextureReflect_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_3D, pTexture3D_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
 
 	// 視点座標
 	D3DXVECTOR3	positionEye;		// 視点座標
@@ -245,70 +236,6 @@ void DrawerRiver::Draw( const D3DXMATRIX& matrixWorld )
 	pClipCamera[ 0 ] = pCamera->GetClipNear();
 	pClipCamera[ 1 ] = pCamera->GetClipFar();
 	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
-
-	// 環境光色
-	D3DXCOLOR	colorAmbient;		// 環境光色
-	pEffectParameter_->GetColorAmbient( &colorAmbient );
-	pEffect_->SetFloatArray( PARAMETER_COLOR_AMBIENT, &colorAmbient.r, 3 );
-
-	// ディレクショナルライトのベクトル
-	const LightDirection*	pLightDirection = nullptr;		// ディレクショナルライト
-	D3DXVECTOR3				vectorLight;					// ディレクショナルライトベクトル
-	pLightDirection = pEffectParameter_->GetLightDirection( GraphicMain::LIGHT_DIRECTIONAL_GENERAL );
-	if( pLightDirection != nullptr )
-	{
-		pLightDirection->GetVector( &vectorLight );
-		pEffect_->SetFloatArray( PARAMETER_VECTOR_LIGHT_DIRECTION, &vectorLight.x, 3 );
-	}
-
-	// ディレクショナルライトの色
-	D3DXCOLOR	colorLightDirection;		// ディレクショナルライトの色
-	if( pLightDirection != nullptr )
-	{
-		pLightDirection->GetDiffuse( &colorLightDirection );
-		pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_DIRECTION, &colorLightDirection.r, 3 );
-	}
-
-	// ポイントライトの設定
-	int					countPoint;				// ポイントライトの数
-	const LightPoint*	pLightPoint;			// ポイントライト
-	D3DXVECTOR3			positionPoint;			// ポイントライトの座標
-	D3DXCOLOR			colorPoint;				// ポイントライトの色
-	D3DXVECTOR3			attemuationPoint;		// ポイントライトの減衰率
-	float				pPositionPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];			// ポイントライトの座標
-	float				pColorPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];			// ポイントライトの色
-	float				pAttemuationPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];		// ポイントライトの減衰率
-	countPoint = pEffectParameter_->GetCountLightPoint();
-	for( int counterLight = 0; counterLight < countPoint; ++counterLight )
-	{
-		// ポイントライトの座標
-		pLightPoint = pEffectParameter_->GetLightPoint( counterLight );
-		pLightPoint->GetPosition( &positionPoint );
-		pPositionPoint[ 3 * counterLight + 0 ] = positionPoint.x;
-		pPositionPoint[ 3 * counterLight + 1 ] = positionPoint.y;
-		pPositionPoint[ 3 * counterLight + 2 ] = positionPoint.z;
-
-		// ポイントライトの色
-		pLightPoint->GetDiffuse( &colorPoint );
-		pColorPoint[ 3 * counterLight + 0 ] = colorPoint.r;
-		pColorPoint[ 3 * counterLight + 1 ] = colorPoint.g;
-		pColorPoint[ 3 * counterLight + 2 ] = colorPoint.b;
-
-		// ポイントライトの減衰率
-		pLightPoint->GetAttemuation( &attemuationPoint );
-		pAttemuationPoint[ 3 * counterLight + 0 ] = attemuationPoint.x;
-		pAttemuationPoint[ 3 * counterLight + 1 ] = attemuationPoint.y;
-		pAttemuationPoint[ 3 * counterLight + 2 ] = attemuationPoint.z;
-	}
-
-	// ポイントライトの座標
-	pEffect_->SetFloatArray( PARAMETER_POSITION_LIGHT_POINT, pPositionPoint, 3 * countPoint );
-
-	// ポイントライトの色
-	pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_POINT, pColorPoint, 3 * countPoint );
-
-	// ポイントライトの減衰率
-	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, pAttemuationPoint, 3 * countPoint );
 
 	// 描画
 	unsigned int		countMaterial;			// マテリアル数
@@ -377,9 +304,8 @@ void DrawerRiver::InitializeSelf( void )
 	pEffect_ = nullptr;
 	pModel_ = nullptr;
 	pTextureNormal_ = nullptr;
-	pTextureEnvironmentFront_ = nullptr;
-	pTextureEnvironmentBack_ = nullptr;
-	pTextureEnvironmentAddFront_ = nullptr;
-	pTextureEnvironmentAddBack_ = nullptr;
+	pTextureReflect_ = nullptr;
+	pTexture3D_ = nullptr;
+	pTextureDepth_ = nullptr;
 
 }

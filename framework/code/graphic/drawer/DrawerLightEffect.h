@@ -49,6 +49,10 @@ public:
 		PARAMETER_TEXTURE_SPECULAR,					// スペキュラテクスチャ
 		PARAMETER_TEXTURE_NORMAL,					// 法線テクスチャ
 		PARAMETER_TEXTURE_DEPTH,					// 深度テクスチャ
+		PARAMETER_TEXTURE_DIFFUSE_RIVER,			// 川のディフューズテクスチャ
+		PARAMETER_TEXTURE_SPECULAR_RIVER,			// 川のスペキュラテクスチャ
+		PARAMETER_TEXTURE_NORMAL_RIVER,				// 川の法線テクスチャ
+		PARAMETER_TEXTURE_DEPTH_RIVER,				// 川の深度テクスチャ
 
 		PARAMETER_MATRIX_PROJECTION_INVERSE,		// プロジェクション変換逆行列
 		PARAMETER_MATRIX_VIEW_INVERSE,				// ビュー変換逆行列
@@ -88,8 +92,14 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDiffuseRiver		: ディフューズ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
+		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -108,8 +118,14 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDiffuseRiver		: ディフューズ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
+		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -138,13 +154,17 @@ public:
 	IDirect3DTexture9* GetTextureDepth( void ) const;
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	IDirect3DTexture9*		pTextureDiffuse_;		// ディフューズ情報テクスチャ
-	IDirect3DTexture9*		pTextureSpecular_;		// スペキュラ情報テクスチャ
-	IDirect3DTexture9*		pTextureNormal_;		// 法線情報テクスチャ
-	IDirect3DTexture9*		pTextureDepth_;			// 深度情報テクスチャ
-	Polygon2D*				pPolygon_;				// ポリゴン
+	const EffectParameter*	pEffectParameter_;			// エフェクトパラメータ
+	Effect*					pEffect_;					// エフェクト
+	IDirect3DTexture9*		pTextureDiffuse_;			// ディフューズ情報テクスチャ
+	IDirect3DTexture9*		pTextureSpecular_;			// スペキュラ情報テクスチャ
+	IDirect3DTexture9*		pTextureNormal_;			// 法線情報テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;				// 深度情報テクスチャ
+	IDirect3DTexture9*		pTextureDiffuseRiver_;		// ディフューズ情報テクスチャ
+	IDirect3DTexture9*		pTextureSpecularRiver_;		// スペキュラ情報テクスチャ
+	IDirect3DTexture9*		pTextureNormalRiver_;		// 法線情報テクスチャ
+	IDirect3DTexture9*		pTextureDepthRiver_;		// 深度情報テクスチャ
+	Polygon2D*				pPolygon_;					// ポリゴン
 
 private:
 	void InitializeSelf( void );

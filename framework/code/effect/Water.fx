@@ -23,19 +23,12 @@ float		reflection_;						// 反射率
 float		power_;								// 反射の強さ
 float		refractive_;						// 屈折率
 
-texture		textureEnvironmentFront_;			// 正面環境テクスチャ
-texture		textureEnvironmentBack_;			// 背面環境テクスチャ
-texture		textureEnvironmentAddFront_;		// 正面加算環境テクスチャ
-texture		textureEnvironmentAddBack_;			// 背面加算環境テクスチャ
+texture		textureReflect_;					// 反射テクスチャ
+texture		texture3D_;							// 3D描画テクスチャ
+texture		textureDepth_;						// 深度テクスチャ
 
 float3		positionEye_;						// カメラの座標
 float2		clipCamera_;						// カメラのクリップ値
-float3		colorAmbient_;						// 環境色
-float3		vectorLightDirection_;				// ディレクショナルライトのベクトル
-float3		colorLightDirection_;				// ディレクショナルライトの色
-float3		positionLightPoint_[ 32 ];			// ポイントライトライトの座標
-float3		colorLightPoint_[ 32 ];				// ポイントライトライトの色
-float3		attenuationLightPoint_[ 32 ];		// ポイントライトの減衰率
 
 //******************************************************************************
 // サンプリング
@@ -50,9 +43,9 @@ sampler samplerTextureNormal = sampler_state
 	AddressV = WRAP;
 };
 
-sampler samplerTextureEnvironmentFront = sampler_state
+sampler samplerTextureReflect = sampler_state
 {
-	Texture = < textureEnvironmentFront_ >;
+	Texture = < textureReflect_ >;
 	MinFilter = Linear;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -60,9 +53,9 @@ sampler samplerTextureEnvironmentFront = sampler_state
 	AddressV = CLAMP;
 };
 
-sampler samplerTextureEnvironmentBack = sampler_state
+sampler samplerTexture3D = sampler_state
 {
-	Texture = < textureEnvironmentBack_ >;
+	Texture = < texture3D_ >;
 	MinFilter = Linear;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -70,19 +63,9 @@ sampler samplerTextureEnvironmentBack = sampler_state
 	AddressV = CLAMP;
 };
 
-sampler samplerTextureEnvironmentAddFront = sampler_state
+sampler samplerTextureDepth = sampler_state
 {
-	Texture = < textureEnvironmentAddFront_ >;
-	MinFilter = Linear;
-	MagFilter = Linear;
-	MipFilter = None;
-	AddressU = CLAMP;
-	AddressV = CLAMP;
-};
-
-sampler samplerTextureEnvironmentAddBack = sampler_state
-{
-	Texture = < textureEnvironmentAddBack_ >;
+	Texture = < textureDepth_ >;
 	MinFilter = Linear;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -108,60 +91,11 @@ struct VertexOutput
 // ピクセルシェーダ出力
 struct PixelOutput
 {
-	float4	color_				: COLOR0;			// 色
-	float4	depth_				: COLOR1;			// 深度
+	float4	diffuse_			: COLOR0;			// ディフューズ色
+	float4	specular_			: COLOR1;			// スペキュラ色
+	float4	normal_				: COLOR2;			// 法線
+	float4	depth_				: COLOR3;			// 深度
 };
-
-//==============================================================================
-// Brief  : ディフューズの計算
-// Return : float3							: 色
-// Arg    : float3 colorLight				: ライトの色
-// Arg    : float3 vectorLight				: ライトのベクトル
-// Arg    : float3 vectorNormal				: 法線ベクトル
-//==============================================================================
-float3 CalculateDiffuse( float3 colorLight, float3 vectorLight, float3 vectorNormal )
-{
-	// 明度の計算
-	float	lightness = dot( vectorNormal, -vectorLight ) * 0.5f + 0.5f;
-
-	// ディフューズ色を返す
-	return colorLight * lightness;
-}
-
-//==============================================================================
-// Brief  : スペキュラの計算
-// Return : float3							: 色
-// Arg    : float3 colorLight				: ライトの色
-// Arg    : float3 vectorLight				: ライトのベクトル
-// Arg    : float3 vectorNormal				: 法線ベクトル
-// Arg    : float3 vectorVertexToEye		: 頂点から視点へのベクトル
-// Arg    : float reflection;				: 反射率
-// Arg    : float power;					: 反射の強さ
-//==============================================================================
-float3 CalculateSpecular( float3 colorLight, float3 vectorLight, float3 vectorNormal, float3 vectorVertexToEye, float reflection, float power )
-{
-	// ハーフベクトルを求める
-	float3	vectorHalf = normalize( vectorVertexToEye - vectorLight );
-
-	// スペキュラ色を返す
-	return colorLight * pow( max( dot( vectorNormal, vectorHalf ), 0.0f ), power ) * reflection;
-}
-
-//==============================================================================
-// Brief  : リムの計算
-// Return : float3							: 色
-// Arg    : float3 colorLight				: ライトの色
-// Arg    : float3 vectorLight				: ライトのベクトル
-// Arg    : float3 vectorNormal				: 法線ベクトル
-// Arg    : float3 vectorVertexToEye		: 頂点から視点へのベクトル
-//==============================================================================
-float3 CalculateRim( float3 colorLight, float3 vectorLight, float3 vectorNormal, float3 vectorVertexToEye )
-{
-	// リム色を返す
-	float	rim = (1.0f - max( dot( vectorNormal, vectorVertexToEye ), 0.0f )) * max( dot( vectorLight, vectorVertexToEye ), 0.0f );
-	rim = min( 5.0f * pow( rim, 5.0f ), 1.0f );
-	return colorLight * rim;
-}
 
 //==============================================================================
 // Brief  : 頂点変換
@@ -217,65 +151,20 @@ PixelOutput DrawPixel( VertexOutput vertex )
 //	normal = vertex.vectorNormalWorld_;
 
 	// ディフューズ色を求める
-	float	proportionDepth = (tex2Dproj( samplerTextureEnvironmentAddFront, vertex.positionTexture_ ) - vertex.depth_) / 1000.0f;
-	float	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 5000.0f * proportionDepth, 0.0f, 0.0f );
+	float	proportionDepth = (tex2Dproj( samplerTextureDepth, vertex.positionTexture_ ) - vertex.depth_) / clipCamera_.y;
+	float	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 1000.0f * proportionDepth, 0.0f, 0.0f );
 	float	offsetTextureUnder = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
 	float	proportionEnvironment = dot( normal, vectorVertexToEye );
-	float3	colorReflerct = tex2Dproj( samplerTextureEnvironmentFront, vertex.positionTexture_ + offsetTextureReflect );
-	float3	colorUnder = tex2Dproj( samplerTextureEnvironmentBack, vertex.positionTexture_ + offsetTextureUnder );
+	float3	colorReflerct = tex2Dproj( samplerTextureReflect, vertex.positionTexture_ + offsetTextureReflect );
+	float3	colorUnder = tex2Dproj( samplerTexture3D, vertex.positionTexture_ + offsetTextureUnder );
 	float3	colorWater = colorDiffuse_ * lerp( colorReflerct, colorUnder, proportionEnvironment );
-	float3	colorDiffuse = lerp( tex2Dproj( samplerTextureEnvironmentBack, vertex.positionTexture_ ).rgb, colorWater, min( 200.0f * proportionDepth, 1.0f ) );
-
-	// 環境光のスペキュラ色を計算
-	float	fresnel = refractive_ + (1.0f - refractive_) * exp( -6.0f * max( dot( normal, vectorVertexToEye ), 0.0f ) );
-	float3	specularAmbient = colorAmbient_.rgb * fresnel;
-
-	// ディレクショナルライトのディフューズ色を計算
-	float3	diffuseDirection = CalculateDiffuse( colorLightDirection_, vectorLightDirection_, normal );
-
-	// ディレクショナルライトのスペキュラ色を計算
-	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, normal, vectorVertexToEye, reflection_, power_ );
-
-	// ディレクショナルライトのリム色を計算
-	float3	rimDirection = CalculateRim( colorLightDirection_, vectorLightDirection_, normal, vectorVertexToEye );
-
-	// 環境光とディレクショナルライトの色を計算
-	float3	color = colorDiffuse * (diffuseDirection + colorAmbient_) + colorSpecular_ * (specularDirection + specularAmbient) + rimDirection;
-
-	// ポイントライトの色を計算
-	float	distanceLightToVertex;
-	float	attenuation;
-	float3	vectorLightToVertex;
-	float3	diffusePoint;
-	float3	specularPoint;
-	float3	rimPoint;
-	for( int counterLight = 0; counterLight < 10; ++counterLight )
-	{
-		// ポイントライトの減衰率を計算
-		distanceLightToVertex = distance( vertex.positionWorld_, positionLightPoint_[ counterLight ] );
-		attenuation = attenuationLightPoint_[ counterLight ].x
-			+ attenuationLightPoint_[ counterLight ].y * distanceLightToVertex
-			+ attenuationLightPoint_[ counterLight ].z * distanceLightToVertex * distanceLightToVertex;
-
-		// ライトから頂点へのベクトルを求める
-		vectorLightToVertex = normalize( vertex.positionWorld_ - positionLightPoint_[ counterLight ] );
-
-		// ディレクショナルライトのディフューズ色を計算
-		diffusePoint = CalculateDiffuse( colorLightPoint_[ counterLight ], vectorLightToVertex, normal );
-
-		// ポイントライトのスペキュラ色を計算
-		specularPoint = CalculateSpecular( colorLightPoint_[ counterLight ], vectorLightToVertex, normal, vectorVertexToEye, reflection_, power_ );
-
-		// ポイントライトのリム色を計算
-		rimPoint = CalculateRim( colorLightPoint_[ counterLight ], vectorLightToVertex, normal, vectorVertexToEye );
-
-		// ポイントライトの色を計算
-		color += (colorDiffuse * diffusePoint + colorSpecular_ * specularPoint + rimPoint) / attenuation;
-	}
+	float3	colorDiffuse = lerp( tex2Dproj( samplerTexture3D, vertex.positionTexture_ ).rgb, colorWater, min( 200.0f * proportionDepth, 1.0f ) );
 
 	// 値の設定
 	PixelOutput	output;		// ピクセルシェーダ出力
-	output.color_ = float4( color, 1.0f );
+	output.diffuse_ = float4( colorDiffuse, reflection_ );
+	output.specular_ = float4( colorSpecular_, power_ * 0.015625f );
+	output.normal_ = float4( normal * 0.5f + 0.5f, refractive_ );
 	output.depth_.gba = 0.0f;
 	output.depth_.r = vertex.depth_;
 

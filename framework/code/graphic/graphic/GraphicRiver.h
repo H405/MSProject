@@ -60,16 +60,14 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : Model* pModel						: モデル
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
-	int Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect** ppEffectGeneral,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-		IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack );
+	int Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -84,16 +82,14 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : Model* pModel						: モデル
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect** ppEffectGeneral,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-		IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack );
+	int Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -101,13 +97,6 @@ public:
 	// Arg    : GraphicRiver* pOut					: コピー先アドレス
 	//==============================================================================
 	int Copy( GraphicRiver* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 描画処理
-	// Return : void								: なし
-	// Arg    : int index							: 描画番号
-	//==============================================================================
-	void Draw( int index );
 
 protected:
 

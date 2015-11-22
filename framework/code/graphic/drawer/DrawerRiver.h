@@ -55,19 +55,12 @@ public:
 		PARAMETER_POWER,								// 反射の強さ
 		PARAMETER_REFLACTIVE,							// 屈折率
 
-		PARAMETER_TEXTURE_ENVIRONMENT_FRONT,			// 正面環境テクスチャ
-		PARAMETER_TEXTURE_ENVIRONMENT_BACK,				// 背面環境テクスチャ
-		PARAMETER_TEXTURE_ENVIRONMENT_ADD_FRONT,		// 正面加算環境テクスチャ
-		PARAMETER_TEXTURE_ENVIRONMENT_ADD_BACK,			// 背面加算環境テクスチャ
+		PARAMETER_TEXTURE_REFLECT,						// 反射テクスチャ
+		PARAMETER_TEXTURE_3D,							// 3D描画テクスチャ
+		PARAMETER_TEXTURE_DEPTH,						// 深度テクスチャ
 
 		PARAMETER_POSITION_EYE,							// 視点座標
 		PARAMETER_CLIP_CAMERA,							// カメラのクリップ値
-		PARAMETER_COLOR_AMBIENT,						// 環境光色
-		PARAMETER_VECTOR_LIGHT_DIRECTION,				// ディレクショナルライトのベクトル
-		PARAMETER_COLOR_LIGHT_DIRECTION,				// ディレクショナルライトの色
-		PARAMETER_POSITION_LIGHT_POINT,					// ポイントライトの座標
-		PARAMETER_COLOR_LIGHT_POINT,					// ポイントライトの色
-		PARAMETER_ATTENUATION_LIGHT_POINT,				// ポイントライトの減衰率
 
 		PARAMETER_MAX									// 最大値
 	};
@@ -93,14 +86,12 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-		IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack );
+		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -116,14 +107,12 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-	// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-		IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack );
+		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -146,14 +135,13 @@ public:
 	Model* GetModel( void ) const;
 
 protected:
-	const EffectParameter*	pEffectParameter_;					// エフェクトパラメータ
-	Effect*					pEffect_;							// エフェクト
-	Model*					pModel_;							// モデル
-	IDirect3DTexture9*		pTextureNormal_;					// 法線テクスチャ
-	IDirect3DTexture9*		pTextureEnvironmentFront_;			// 正面方向環境マップ
-	IDirect3DTexture9*		pTextureEnvironmentBack_;			// 背面方向環境マップ
-	IDirect3DTexture9*		pTextureEnvironmentAddFront_;		// 正面加算方向環境マップ
-	IDirect3DTexture9*		pTextureEnvironmentAddBack_;		// 背面加算方向環境マップ
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	Model*					pModel_;				// モデル
+	IDirect3DTexture9*		pTextureNormal_;		// 法線テクスチャ
+	IDirect3DTexture9*		pTextureReflect_;		// 反射テクスチャ
+	IDirect3DTexture9*		pTexture3D_;			// 3D描画テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;			// 深度テクスチャ
 
 private:
 	void InitializeSelf( void );

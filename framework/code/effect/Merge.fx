@@ -19,8 +19,6 @@ texture		textureNotLight_;		// ライトなしテクスチャ
 texture		textureMask_;			// マスクテクスチャ
 texture		textureAdd_;			// 加算合成テクスチャ
 texture		textureDepth_;			// 深度テクスチャ
-texture		textureRiver_;			// 川テクスチャ
-texture		textureDepthRiver_;		// 川深度テクスチャ
 
 //******************************************************************************
 // サンプリング
@@ -68,26 +66,6 @@ sampler samplerTextureAdd = sampler_state
 sampler samplerTextureDepth = sampler_state
 {
 	Texture = < textureDepth_ >;
-	MinFilter = Point;
-	MagFilter = Linear;
-	MipFilter = None;
-	AddressU  = Clamp;
-	AddressV  = Clamp;
-};
-
-sampler samplerTextureRiver = sampler_state
-{
-	Texture = < textureRiver_ >;
-	MinFilter = Point;
-	MagFilter = Linear;
-	MipFilter = None;
-	AddressU  = Clamp;
-	AddressV  = Clamp;
-};
-
-sampler samplerTextureDepthRiver = sampler_state
-{
-	Texture = < textureDepthRiver_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -147,17 +125,13 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	float3	colorLight = tex2D( samplerTextureLight , vertex.textureCoord_ ).rgb;
 	float3	colorNotLight = tex2D( samplerTextureNotLight , vertex.textureCoord_ ).rgb;
 	float3	colorAdd = tex2D( samplerTextureAdd , vertex.textureCoord_ ).rgb;
-	float4	colorRiver = tex2D( samplerTextureRiver , vertex.textureCoord_ );
 
-	// 深度の取得
-	float	depthRiver = tex2D( samplerTextureDepthRiver, vertex.textureCoord_ ).r;
+	// 深度を設定
 	output.depth_.gba = 0.0f;
 	output.depth_.r = (1.0f - maskLight) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + maskLight * forcus_;
 
 	// 色を求める
-	float	proportionRiver = colorRiver.a;
-	float3	colorLightAndRiver = lerp( colorLight, colorRiver, proportionRiver );
-	output.color_ = float4( (1.0f - maskLight) * colorLightAndRiver + maskLight * colorNotLight + colorAdd, 1.0f );
+	output.color_ = float4( (1.0f - maskLight) * colorLight + maskLight * colorNotLight + colorAdd, 1.0f );
 
 	// 値を返す
 	return output;

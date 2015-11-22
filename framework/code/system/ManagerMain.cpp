@@ -507,7 +507,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE ),
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_SPECULAR ),
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_NORMAL ),
-		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DIFFUSE ),
+		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_SPECULAR ),
+		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_NORMAL ),
+		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;
@@ -532,9 +536,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_COLOR ),
 		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_MASK ),
 		pRenderPass_[ GraphicMain::PASS_3D_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_3D_NOT_LIGHT_ADD ),
-		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_COLOR ),
-		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_LIGHT_EFFECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_EFFECT_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;
@@ -630,9 +632,9 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif
 	if( result != 0 )
 	{

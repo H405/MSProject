@@ -43,10 +43,10 @@ public:
 	{
 		PASS_WAVE_DATA = 0,			// 波情報
 		PASS_3D,					// 3D描画
-		PASS_3D_NOT_LIGHT,			// ライティングなし3D描画
-		PASS_LIGHT_EFFECT,			// ライティング
 		PASS_REFLECT,				// 反射
 		PASS_WATER,					// 水
+		PASS_3D_NOT_LIGHT,			// ライティングなし3D描画
+		PASS_LIGHT_EFFECT,			// ライティング
 		PASS_3D_MERGE,				// 総合3D描画
 		PASS_BLUR_X,				// X方向ブラー
 		PASS_BLUR_Y,				// Y方向ブラー
@@ -73,6 +73,23 @@ public:
 		RENDER_PASS_3D_MAX							// 最大値
 	};
 
+	// 反射
+	enum
+	{
+		RENDER_PASS_REFLECT_COLOR = 0,				// 色
+		RENDER_PASS_REFLECT_MAX						// 最大値
+	};
+
+	// 水
+	enum
+	{
+		RENDER_PASS_WATER_DIFFUSE = 0,				// ディフューズ色
+		RENDER_PASS_WATER_SPECULAR,					// スペキュラ色
+		RENDER_PASS_WATER_NORMAL,					// 法線
+		RENDER_PASS_WATER_DEPTH,					// 深度
+		RENDER_PASS_WATER_MAX						// 最大値
+	};
+
 	// ライティングなし3D描画
 	enum
 	{
@@ -88,21 +105,6 @@ public:
 		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,			// 色
 		RENDER_PASS_LIGHT_EFFECT_DEPTH,				// 深度
 		RENDER_PASS_LIGHT_EFFECT_MAX				// 最大値
-	};
-
-	// 反射
-	enum
-	{
-		RENDER_PASS_REFLECT_COLOR = 0,				// 色
-		RENDER_PASS_REFLECT_MAX						// 最大値
-	};
-
-	// 水
-	enum
-	{
-		RENDER_PASS_WATER_COLOR = 0,				// 色
-		RENDER_PASS_WATER_DEPTH,					// 深度
-		RENDER_PASS_WATER_MAX						// 最大値
 	};
 
 	// 総合3D描画

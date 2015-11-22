@@ -54,16 +54,14 @@ GraphicRiver::~GraphicRiver( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-// Arg    : Effect** ppEffectGeneral			: 通常描画エフェクト
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
-int GraphicRiver::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect** ppEffectGeneral,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-	IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack )
+int GraphicRiver::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -77,21 +75,17 @@ int GraphicRiver::Initialize( int priority, Model* pModel, const EffectParameter
 	pParameter_ = pParameter;
 
 	// 描画クラスの生成
-	pDrawerRiver_ = new DrawerRiver[ GraphicMain::LIGHT_POINT_MAX + 1 ];
+	pDrawerRiver_ = new DrawerRiver();
 	if( pDrawerRiver_ == nullptr )
 	{
 		return 1;
 	}
-	for( int counterDrawer = 0; counterDrawer <= GraphicMain::LIGHT_POINT_MAX; ++counterDrawer )
+	result = pDrawerRiver_->Initialize( pModel, pParameter, pEffectGeneral, pTextureNormal, pTextureReflect, pTexture3D, pTextureDepth );
+	if( result != 0 )
 	{
-		result = pDrawerRiver_[ counterDrawer ].Initialize( pModel, pParameter, ppEffectGeneral[ counterDrawer ], pTextureNormal,
-			pTextureEnvironmentFront, pTextureEnvironmentBack, pTextureEnvironmentAddFront, pTextureEnvironmentAddBack );
-		if( result != 0 )
-		{
-			return result;
-		}
+		return result;
 	}
-	ppDraw_[ GraphicMain::PASS_WATER ] = &pDrawerRiver_[ 0 ];
+	ppDraw_[ GraphicMain::PASS_WATER ] = pDrawerRiver_;
 
 	// 正常終了
 	return 0;
@@ -130,16 +124,14 @@ int GraphicRiver::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-// Arg    : Effect** ppEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentFront	: 正面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentBack	: 背面環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddFront	: 正面加算環境マップテクスチャ
-// Arg    : IDirect3DTexture9* pTextureEnvironmentAddBack	: 背面加算環境マップテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
-int GraphicRiver::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect** ppEffectGeneral,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureEnvironmentFront, IDirect3DTexture9* pTextureEnvironmentBack,
-	IDirect3DTexture9* pTextureEnvironmentAddFront, IDirect3DTexture9* pTextureEnvironmentAddBack )
+int GraphicRiver::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -150,8 +142,7 @@ int GraphicRiver::Reinitialize( int priority, Model* pModel, const EffectParamet
 	}
 
 	// 初期化処理
-	return Initialize( priority, pModel, pParameter, ppEffectGeneral, pTextureNormal,
-		pTextureEnvironmentFront, pTextureEnvironmentBack, pTextureEnvironmentAddFront, pTextureEnvironmentAddBack );
+	return Initialize( priority, pModel, pParameter, pEffectGeneral, pTextureNormal, pTextureReflect, pTexture3D, pTextureDepth );
 }
 
 //==============================================================================
@@ -171,20 +162,6 @@ int GraphicRiver::Copy( GraphicRiver* pOut ) const
 
 	// 正常終了
 	return 0;
-}
-
-//==============================================================================
-// Brief  : 描画処理
-// Return : void								: なし
-// Arg    : int index							: 描画番号
-//==============================================================================
-void GraphicRiver::Draw( int index )
-{
-	// ライトの数に応じて描画クラスを変更
-	ppDraw_[ GraphicMain::PASS_WATER ] = &pDrawerRiver_[ pParameter_->GetCountLightPoint() ];
-
-	// 基本クラスの処理
-	Graphic::Draw( index );
 }
 
 //==============================================================================
