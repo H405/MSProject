@@ -65,9 +65,11 @@ ManagerPoint::~ManagerPoint( void )
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture )
+int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture )
 {
 	// メンバ変数の設定
 	maximumItem_ = maximumItem;
@@ -96,7 +98,7 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( INT_MIN, pParameter, pEffectGeneral, pPolygon_, pTexture );
+	result = pGraphic_->Initialize( INT_MIN, pParameter, pEffectGeneral, pEffectReflect, pPolygon_, pTexture );
 	if( result != 0 )
 	{
 		return result;
@@ -170,9 +172,11 @@ int ManagerPoint::Finalize( void )
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int ManagerPoint::Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture )
+int ManagerPoint::Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -183,7 +187,7 @@ int ManagerPoint::Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, cons
 	}
 
 	// 初期化処理
-	return Initialize( maximumItem, pDevice, pParameter, pEffectGeneral, pTexture );
+	return Initialize( maximumItem, pDevice, pParameter, pEffectGeneral, pEffectReflect, pTexture );
 }
 
 //==============================================================================

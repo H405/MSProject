@@ -1,16 +1,16 @@
 //==============================================================================
 //
-// File   : DrawerModelMaterial.cpp
-// Brief  : モデル描画クラス
+// File   : DrawerSkinMeshReflect.cpp
+// Brief  : スキンメッシュ描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "DrawerModelMaterial.h"
+#include "DrawerSkinMeshReflect.h"
 #include "../graphic/GraphicMain.h"
 #include "../../framework/camera/Camera.h"
 #include "../../framework/graphic/Material.h"
@@ -36,7 +36,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerModelMaterial::DrawerModelMaterial( void ) : Drawer()
+DrawerSkinMeshReflect::DrawerSkinMeshReflect( void ) : Drawer()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -47,7 +47,7 @@ DrawerModelMaterial::DrawerModelMaterial( void ) : Drawer()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerModelMaterial::~DrawerModelMaterial( void )
+DrawerSkinMeshReflect::~DrawerSkinMeshReflect( void )
 {
 	// 終了処理
 	Finalize();
@@ -56,11 +56,14 @@ DrawerModelMaterial::~DrawerModelMaterial( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : Model* pModel						: モデル
+// Arg    : int countBone						: ボーン数
+// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int DrawerModelMaterial::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerSkinMeshReflect::Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -74,6 +77,9 @@ int DrawerModelMaterial::Initialize( Model* pModel, const EffectParameter* pPara
 	pEffectParameter_ = pParameter;
 	pEffect_ = pEffect;
 	pModel_ = pModel;
+	countBone_ = countBone;
+	pMatrixBone_ = pMatrixBone;
+	pIndexFrame_ = pIndexFrame;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -91,7 +97,7 @@ int DrawerModelMaterial::Initialize( Model* pModel, const EffectParameter* pPara
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int DrawerModelMaterial::Finalize( void )
+int DrawerSkinMeshReflect::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -111,11 +117,14 @@ int DrawerModelMaterial::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : Model* pModel						: モデル
+// Arg    : int countBone						: ボーン数
+// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int DrawerModelMaterial::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerSkinMeshReflect::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -126,15 +135,15 @@ int DrawerModelMaterial::Reinitialize( Model* pModel, const EffectParameter* pPa
 	}
 
 	// 初期化処理
-	return Initialize( pModel, pParameter, pEffect );
+	return Initialize( pParameter, pEffect, pModel, countBone, pMatrixBone, pIndexFrame );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : DrawerModelMaterial* pOut					: コピー先アドレス
+// Arg    : DrawerSkinMeshReflect* pOut				: コピー先アドレス
 //==============================================================================
-int DrawerModelMaterial::Copy( DrawerModelMaterial* pOut ) const
+int DrawerSkinMeshReflect::Copy( DrawerSkinMeshReflect* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -153,8 +162,21 @@ int DrawerModelMaterial::Copy( DrawerModelMaterial* pOut ) const
 // Return : void								: なし
 // Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 //==============================================================================
-void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
+void DrawerSkinMeshReflect::Draw( const D3DXMATRIX& matrixWorld )
 {
+	// 反射ワールド変換行列の作成
+	D3DXMATRIX		matrixReflect;					// 反射行列
+	D3DXMATRIX		matrixWorldReflect;				// 反射ワールド行列
+	D3DXVECTOR3		positionReflect;				// 反射面座標
+	D3DXVECTOR3		normalReflect;					// 反射面法線
+	D3DXPLANE		planeReflect;					// 反射面
+	positionReflect.x = positionReflect.z = normalReflect.x = normalReflect.z = 0.0f;
+	positionReflect.y = pEffectParameter_->GetHeightReflect();
+	normalReflect.y = 1.0f;
+	D3DXPlaneFromPointNormal( &planeReflect, &positionReflect, &normalReflect );
+	D3DXMatrixReflect( &matrixReflect, &planeReflect );
+	D3DXMatrixMultiply( &matrixWorldReflect, &matrixWorld, &matrixReflect );
+
 	// 変換行列
 	D3DXMATRIX		matrixTransform;				// 変換行列
 	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
@@ -166,23 +188,31 @@ void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
 	pRenderMatrix = pCamera->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
 	pRenderMatrix->GetMatrixView( &matrixView );
-	D3DXMatrixMultiply( &matrixTransform, &matrixWorld, &matrixViewProjection );
-	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
+	D3DXMatrixMultiply( &matrixTransform, &matrixWorldReflect, &matrixViewProjection );
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorldReflect, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
-	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldReflect );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
+
+	// 反射面の高さ
+	pEffect_->SetFloat( PARAMETER_HEIGHT, positionReflect.y );
+
+	// ボーン変換行列
+	pEffect_->SetMatrixArray( PARAMETER_MATRIX_BONE, pMatrixBone_, countBone_ );
 
 	// 描画
 	unsigned int		countMaterial;			// マテリアル数
+	IDirect3DTexture9*	pTexture = nullptr;		// テクスチャ
 	Material			material;				// マテリアル
 	countMaterial = pModel_->GetCountMaterial();
 	for( unsigned int counterMaterial = 0; counterMaterial < countMaterial; ++counterMaterial )
 	{
 		// メッシュ情報の取得
+		pTexture = pModel_->GetTexture( counterMaterial );
 		pModel_->GetMaterial( counterMaterial, &material );
 
-		// ディフューズ色
-		pEffect_->SetFloatArray( PARAMETER_COLOR_DIFFUSE, &material.diffuse_.r, 3 );
+		// テクスチャ
+		pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture );
 
 		// スペキュラ色
 		pEffect_->SetFloatArray( PARAMETER_COLOR_SPECULAR, &material.specular_.r, 3 );
@@ -208,7 +238,7 @@ void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
 // Return : void								: なし
 // Arg    : Model* pValue						: 設定する値
 //==============================================================================
-void DrawerModelMaterial::SetModel( Model* pValue )
+void DrawerSkinMeshReflect::SetModel( Model* pValue )
 {
 	// 値の設定
 	pModel_ = pValue;
@@ -219,7 +249,7 @@ void DrawerModelMaterial::SetModel( Model* pValue )
 // Return : Model*								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-Model* DrawerModelMaterial::GetModel( void ) const
+Model* DrawerSkinMeshReflect::GetModel( void ) const
 {
 	// 値の返却
 	return pModel_;
@@ -230,10 +260,13 @@ Model* DrawerModelMaterial::GetModel( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void DrawerModelMaterial::InitializeSelf( void )
+void DrawerSkinMeshReflect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pEffectParameter_ = nullptr;
 	pEffect_ = nullptr;
 	pModel_ = nullptr;
+	countBone_ = 0;
+	pMatrixBone_ = nullptr;
+	pIndexFrame_ = nullptr;
 }

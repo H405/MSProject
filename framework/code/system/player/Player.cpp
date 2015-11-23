@@ -77,24 +77,27 @@ int Player::Initialize(
 
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
+	Effect*		pEffectReflect = nullptr;
 	Model*		pModel = nullptr;
 
 	//	プレイヤー固定用の台生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
 	body = new ObjectModelMaterial();
 	body->Initialize(0);
-	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
 	body->SetPosition(pos);
 	body->AddPositionX(offsetPosX);
 	body->AddPositionY(offsetPosY);
 
 	//	プレイヤー生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "arm_r.x" ) );
 	arm = new ObjectModelMaterial();
 	arm->Initialize(0);
-	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
 	arm->SetPosition(pos);
 
 

@@ -78,7 +78,7 @@ public:
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectModelMaterial* pOut					: コピー先アドレス
+	// Arg    : ObjectModelMaterial* pOut			: コピー先アドレス
 	//==============================================================================
 	int Copy( ObjectModelMaterial* pOut ) const;
 
@@ -96,8 +96,9 @@ public:
 	// Arg    : Model* pModel						: モデル
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 	//==============================================================================
-	int CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral );
+	int CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect );
 
 	//==============================================================================
 	// アクセサ

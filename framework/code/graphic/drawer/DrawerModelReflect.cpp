@@ -155,28 +155,30 @@ int DrawerModelReflect::Copy( DrawerModelReflect* pOut ) const
 //==============================================================================
 void DrawerModelReflect::Draw( const D3DXMATRIX& matrixWorld )
 {
-	// 変換行列
-	D3DXMATRIX		matrixTransform;				// 変換行列
-	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
-	D3DXMATRIX		matrixWorldView;				// ワールドビュー変換行列
-	D3DXMATRIX		matrixView;						// ビュー変換行列
+	// 反射ワールド変換行列の作成
 	D3DXMATRIX		matrixReflect;					// 反射行列
 	D3DXMATRIX		matrixWorldReflect;				// 反射ワールド行列
 	D3DXVECTOR3		positionReflect;				// 反射面座標
 	D3DXVECTOR3		normalReflect;					// 反射面法線
 	D3DXPLANE		planeReflect;					// 反射面
-	const Camera*	pCamera = nullptr;				// カメラ
-	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
-	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
-	pRenderMatrix = pCamera->GetRenderMatrix();
-	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
-	pRenderMatrix->GetMatrixView( &matrixView );
 	positionReflect.x = positionReflect.z = normalReflect.x = normalReflect.z = 0.0f;
 	positionReflect.y = pEffectParameter_->GetHeightReflect();
 	normalReflect.y = 1.0f;
 	D3DXPlaneFromPointNormal( &planeReflect, &positionReflect, &normalReflect );
 	D3DXMatrixReflect( &matrixReflect, &planeReflect );
 	D3DXMatrixMultiply( &matrixWorldReflect, &matrixWorld, &matrixReflect );
+
+	// 変換行列
+	D3DXMATRIX		matrixTransform;				// 変換行列
+	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
+	D3DXMATRIX		matrixWorldView;				// ワールドビュー変換行列
+	D3DXMATRIX		matrixView;						// ビュー変換行列
+	const Camera*	pCamera = nullptr;				// カメラ
+	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
+	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pRenderMatrix = pCamera->GetRenderMatrix();
+	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
+	pRenderMatrix->GetMatrixView( &matrixView );
 	D3DXMatrixMultiply( &matrixTransform, &matrixWorldReflect, &matrixViewProjection );
 	D3DXMatrixMultiply( &matrixWorldView, &matrixWorldReflect, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );

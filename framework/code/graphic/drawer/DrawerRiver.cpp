@@ -61,11 +61,14 @@ DrawerRiver::~DrawerRiver( void )
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 // Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
-int DrawerRiver::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
+int DrawerRiver::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, IDirect3DTexture9* pTextureNormal,
+	IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -81,6 +84,8 @@ int DrawerRiver::Initialize( Model* pModel, const EffectParameter* pParameter, E
 	pModel_ = pModel;
 	pTextureNormal_ = pTextureNormal;
 	pTextureReflect_ = pTextureReflect;
+	pTextureReflectNotLight_ = pTextureReflectNotLight;
+	pTextureReflectAdd_ = pTextureReflectAdd;
 	pTexture3D_ = pTexture3D;
 	pTextureDepth_ = pTextureDepth;
 
@@ -125,11 +130,14 @@ int DrawerRiver::Finalize( void )
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 // Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
-int DrawerRiver::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
+int DrawerRiver::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, IDirect3DTexture9* pTextureNormal,
+	IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -140,7 +148,8 @@ int DrawerRiver::Reinitialize( Model* pModel, const EffectParameter* pParameter,
 	}
 
 	// 初期化処理
-	return Initialize( pModel, pParameter, pEffect, pTextureNormal, pTextureReflect, pTexture3D, pTextureDepth );
+	return Initialize( pModel, pParameter, pEffect, pTextureNormal, pTextureReflect, pTextureReflectNotLight, pTextureReflectAdd,
+		pTexture3D, pTextureDepth );
 }
 
 //==============================================================================
@@ -223,6 +232,8 @@ void DrawerRiver::Draw( const D3DXMATRIX& matrixWorld )
 
 	// 環境テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE_REFLECT, pTextureReflect_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_REFLECT_NOT_LIGHT, pTextureReflectNotLight_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_REFLECT_ADD, pTextureReflectAdd_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_3D, pTexture3D_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
 
@@ -305,6 +316,8 @@ void DrawerRiver::InitializeSelf( void )
 	pModel_ = nullptr;
 	pTextureNormal_ = nullptr;
 	pTextureReflect_ = nullptr;
+	pTextureReflectNotLight_ = nullptr;
+	pTextureReflectAdd_ = nullptr;
 	pTexture3D_ = nullptr;
 	pTextureDepth_ = nullptr;
 

@@ -39,6 +39,7 @@ class Object2D;
 class ObjectBillboard;
 class ObjectMesh;
 class ObjectModel;
+class ObjectModelMaterial;
 class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectSky;
@@ -119,6 +120,7 @@ private:
 	ObjectMesh*					pObjectMesh_;					// メッシュ
 	ObjectSky*					pObjectSky_;					// スカイドーム
 	ObjectModel*				pObjectModel_;					// モデル
+	ObjectModelMaterial*		pObjectModelMaterial_;			// テクスチャなしモデル
 	ObjectBillboard*			pObjectBoard_;					// ビルボード
 	ObjectSkinMesh*				pObjectSkinMesh_;				// スキンメッシュ
 	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
@@ -126,6 +128,8 @@ private:
 	ObjectRiver*				pObjectRiver_;					// 川
 
 	int							timerLight_;					// ライト用タイマー
+
+	int							countLight_;					// ライト数
 
 	CameraStateSpline*			pCameraState_;					// カメラ処理
 };

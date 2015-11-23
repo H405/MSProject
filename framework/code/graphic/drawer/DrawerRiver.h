@@ -56,6 +56,8 @@ public:
 		PARAMETER_REFLACTIVE,							// 屈折率
 
 		PARAMETER_TEXTURE_REFLECT,						// 反射テクスチャ
+		PARAMETER_TEXTURE_REFLECT_NOT_LIGHT,			// 反射ライティングなしテクスチャ
+		PARAMETER_TEXTURE_REFLECT_ADD,					// 反射加算合成テクスチャ
 		PARAMETER_TEXTURE_3D,							// 3D描画テクスチャ
 		PARAMETER_TEXTURE_DEPTH,						// 深度テクスチャ
 
@@ -87,11 +89,14 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
-	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
+	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, IDirect3DTexture9* pTextureNormal,
+		IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -108,11 +113,14 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
-	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
+	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, IDirect3DTexture9* pTextureNormal,
+		IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -135,13 +143,15 @@ public:
 	Model* GetModel( void ) const;
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	Model*					pModel_;				// モデル
-	IDirect3DTexture9*		pTextureNormal_;		// 法線テクスチャ
-	IDirect3DTexture9*		pTextureReflect_;		// 反射テクスチャ
-	IDirect3DTexture9*		pTexture3D_;			// 3D描画テクスチャ
-	IDirect3DTexture9*		pTextureDepth_;			// 深度テクスチャ
+	const EffectParameter*	pEffectParameter_;				// エフェクトパラメータ
+	Effect*					pEffect_;						// エフェクト
+	Model*					pModel_;						// モデル
+	IDirect3DTexture9*		pTextureNormal_;				// 法線テクスチャ
+	IDirect3DTexture9*		pTextureReflect_;				// 反射テクスチャ
+	IDirect3DTexture9*		pTextureReflectNotLight_;		// 反射ライティングなしテクスチャ
+	IDirect3DTexture9*		pTextureReflectAdd_;			// 反射加算合成テクスチャ
+	IDirect3DTexture9*		pTexture3D_;					// 3D描画テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;					// 深度テクスチャ
 
 private:
 	void InitializeSelf( void );

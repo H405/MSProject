@@ -45,6 +45,7 @@ public:
 		PASS_3D,					// 3D描画
 		PASS_REFLECT,				// 反射
 		PASS_LIGHT_REFLECT,			// 反射のライティング
+		PASS_REFLECT_NOT_LIGHT,		// 反射ライティングなし
 		PASS_WATER,					// 水
 		PASS_3D_NOT_LIGHT,			// ライティングなし3D描画
 		PASS_LIGHT_EFFECT,			// ライティング
@@ -59,101 +60,109 @@ public:
 	// 波
 	enum
 	{
-		RENDER_PASS_WAVE_DATA_HEIGHT = 0,			// 高さ
-		RENDER_PASS_WAVE_DATA_NORMAL,				// 法線
-		RENDER_PASS_WAVE_DATA_MAX					// 最大値
+		RENDER_PASS_WAVE_DATA_HEIGHT = 0,				// 高さ
+		RENDER_PASS_WAVE_DATA_NORMAL,					// 法線
+		RENDER_PASS_WAVE_DATA_MAX						// 最大値
 	};
 
 	// 3D描画
 	enum
 	{
-		RENDER_PASS_3D_DIFFUSE = 0,					// ディフューズ色
-		RENDER_PASS_3D_SPECULAR,					// スペキュラ色
-		RENDER_PASS_3D_NORMAL,						// 法線
-		RENDER_PASS_3D_DEPTH,						// 深度
-		RENDER_PASS_3D_MAX							// 最大値
+		RENDER_PASS_3D_DIFFUSE = 0,						// ディフューズ色
+		RENDER_PASS_3D_SPECULAR,						// スペキュラ色
+		RENDER_PASS_3D_NORMAL,							// 法線
+		RENDER_PASS_3D_DEPTH,							// 深度
+		RENDER_PASS_3D_MAX								// 最大値
 	};
 
 	// 反射
 	enum
 	{
-		RENDER_PASS_REFLECT_DIFFUSE = 0,			// ディフューズ色
-		RENDER_PASS_REFLECT_SPECULAR,				// スペキュラ色
-		RENDER_PASS_REFLECT_NORMAL,					// 法線
-		RENDER_PASS_REFLECT_DEPTH,					// 深度
-		RENDER_PASS_REFLECT_MAX						// 最大値
+		RENDER_PASS_REFLECT_DIFFUSE = 0,				// ディフューズ色
+		RENDER_PASS_REFLECT_SPECULAR,					// スペキュラ色
+		RENDER_PASS_REFLECT_NORMAL,						// 法線
+		RENDER_PASS_REFLECT_DEPTH,						// 深度
+		RENDER_PASS_REFLECT_MAX							// 最大値
 	};
 
 	// 反射のライティング
 	enum
 	{
-		RENDER_PASS_LIGHT_REFLECT_COLOR = 0,		// 色
-		RENDER_PASS_LIGHT_REFLECT_MAX				// 最大値
+		RENDER_PASS_LIGHT_REFLECT_COLOR = 0,			// 色
+		RENDER_PASS_LIGHT_REFLECT_MAX					// 最大値
+	};
+
+	// 反射ライティングなし
+	enum
+	{
+		RENDER_PASS_REFLECT_NOT_LIGHT_COLOR = 0,		// 色
+		RENDER_PASS_REFLECT_NOT_LIGHT_ADD,				// 加算合成
+		RENDER_PASS_REFLECT_NOT_LIGHT_MAX				// 最大値
 	};
 
 	// 水
 	enum
 	{
-		RENDER_PASS_WATER_DIFFUSE = 0,				// ディフューズ色
-		RENDER_PASS_WATER_SPECULAR,					// スペキュラ色
-		RENDER_PASS_WATER_NORMAL,					// 法線
-		RENDER_PASS_WATER_DEPTH,					// 深度
-		RENDER_PASS_WATER_MAX						// 最大値
+		RENDER_PASS_WATER_DIFFUSE = 0,					// ディフューズ色
+		RENDER_PASS_WATER_SPECULAR,						// スペキュラ色
+		RENDER_PASS_WATER_NORMAL,						// 法線
+		RENDER_PASS_WATER_DEPTH,						// 深度
+		RENDER_PASS_WATER_MAX							// 最大値
 	};
 
 	// ライティングなし3D描画
 	enum
 	{
-		RENDER_PASS_3D_NOT_LIGHT_COLOR = 0,			// 色
-		RENDER_PASS_3D_NOT_LIGHT_MASK,				// マスク
-		RENDER_PASS_3D_NOT_LIGHT_ADD,				// 加算合成
-		RENDER_PASS_3D_NOT_LIGHT_MAX				// 最大値
+		RENDER_PASS_3D_NOT_LIGHT_COLOR = 0,				// 色
+		RENDER_PASS_3D_NOT_LIGHT_MASK,					// マスク
+		RENDER_PASS_3D_NOT_LIGHT_ADD,					// 加算合成
+		RENDER_PASS_3D_NOT_LIGHT_MAX					// 最大値
 	};
 
 	// ライティング
 	enum
 	{
-		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,			// 色
-		RENDER_PASS_LIGHT_EFFECT_DEPTH,				// 深度
-		RENDER_PASS_LIGHT_EFFECT_MAX				// 最大値
+		RENDER_PASS_LIGHT_EFFECT_COLOR = 0,				// 色
+		RENDER_PASS_LIGHT_EFFECT_DEPTH,					// 深度
+		RENDER_PASS_LIGHT_EFFECT_MAX					// 最大値
 	};
 
 	// 総合3D描画
 	enum
 	{
-		RENDER_PASS_3D_MERGE_COLOR = 0,				// 色
-		RENDER_PASS_3D_MERGE_DEPTH,					// 深度
-		RENDER_PASS_3D_MERGE_MAX					// 最大値
+		RENDER_PASS_3D_MERGE_COLOR = 0,					// 色
+		RENDER_PASS_3D_MERGE_DEPTH,						// 深度
+		RENDER_PASS_3D_MERGE_MAX						// 最大値
 	};
 
 	// X方向ブラー
 	enum
 	{
-		RENDER_PASS_BLUR_X_COLOR = 0,				// 色
-		RENDER_PASS_BLUR_X_MAX						// 最大値
+		RENDER_PASS_BLUR_X_COLOR = 0,					// 色
+		RENDER_PASS_BLUR_X_MAX							// 最大値
 	};
 
 	// Y方向ブラー
 	enum
 	{
-		RENDER_PASS_BLUR_Y_COLOR = 0,				// 色
-		RENDER_PASS_BLUR_Y_LUMINANCE,				// 輝度
-		RENDER_PASS_BLUR_Y_MAX						// 最大値
+		RENDER_PASS_BLUR_Y_COLOR = 0,					// 色
+		RENDER_PASS_BLUR_Y_LUMINANCE,					// 輝度
+		RENDER_PASS_BLUR_Y_MAX							// 最大値
 	};
 
 	// 2D描画
 	enum
 	{
-		RENDER_PASS_2D_COLOR = 0,					// 色
-		RENDER_PASS_2D_MASK,						// マスク
-		RENDER_PASS_2D_MAX							// 最大値
+		RENDER_PASS_2D_COLOR = 0,						// 色
+		RENDER_PASS_2D_MASK,							// マスク
+		RENDER_PASS_2D_MAX								// 最大値
 	};
 
 	// 画面描画
 	enum
 	{
-		RENDER_PASS_POST_EFFECT_COLOR = 0,			// 色
-		RENDER_PASS_POST_EFFECT_MAX					// 最大値
+		RENDER_PASS_POST_EFFECT_COLOR = 0,				// 色
+		RENDER_PASS_POST_EFFECT_MAX						// 最大値
 	};
 
 	// ディレクショナルライト

@@ -546,6 +546,18 @@
     <ClInclude Include="code\graphic\drawer\DrawerLightReflect.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerPointReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelMaterialReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkyReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -989,6 +1001,18 @@
     <ClCompile Include="code\graphic\drawer\DrawerLightReflect.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerPointReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelMaterialReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkyReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1024,9 +1048,6 @@
     <None Include="code\effect\Mesh.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
-    <None Include="code\effect\ModelMat.fx">
-      <Filter>ソース ファイル\effect</Filter>
-    </None>
     <None Include="code\effect\BlurBase.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
@@ -1049,6 +1070,21 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\LightReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\PointReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelMaterial.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelMaterialReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkyReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkinMeshReflect.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

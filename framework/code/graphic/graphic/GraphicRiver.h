@@ -63,11 +63,14 @@ public:
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
-	int Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
+	int Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTextureNormal,
+		IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -85,11 +88,14 @@ public:
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+	// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 	// Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
+	int Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTextureNormal,
+		IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+		IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

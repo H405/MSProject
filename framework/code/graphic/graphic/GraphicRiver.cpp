@@ -57,11 +57,14 @@ GraphicRiver::~GraphicRiver( void )
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 // Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
-int GraphicRiver::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
+int GraphicRiver::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTextureNormal,
+	IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -80,7 +83,8 @@ int GraphicRiver::Initialize( int priority, Model* pModel, const EffectParameter
 	{
 		return 1;
 	}
-	result = pDrawerRiver_->Initialize( pModel, pParameter, pEffectGeneral, pTextureNormal, pTextureReflect, pTexture3D, pTextureDepth );
+	result = pDrawerRiver_->Initialize( pModel, pParameter, pEffectGeneral, pTextureNormal, pTextureReflect, pTextureReflectNotLight, pTextureReflectAdd,
+		pTexture3D, pTextureDepth );
 	if( result != 0 )
 	{
 		return result;
@@ -127,11 +131,14 @@ int GraphicRiver::Finalize( void )
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線テクスチャ
 // Arg    : IDirect3DTexture9* pTextureReflect	: 反射テクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectNotLight	: 反射ライティングなしテクスチャ
+// Arg    : IDirect3DTexture9* pTextureReflectAdd		: 反射加算合成テクスチャ
 // Arg    : IDirect3DTexture9* pTexture3D		: 3D描画テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
-int GraphicRiver::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
+int GraphicRiver::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTextureNormal,
+	IDirect3DTexture9* pTextureReflect, IDirect3DTexture9* pTextureReflectNotLight, IDirect3DTexture9* pTextureReflectAdd,
+	IDirect3DTexture9* pTexture3D, IDirect3DTexture9* pTextureDepth )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -142,7 +149,8 @@ int GraphicRiver::Reinitialize( int priority, Model* pModel, const EffectParamet
 	}
 
 	// 初期化処理
-	return Initialize( priority, pModel, pParameter, pEffectGeneral, pTextureNormal, pTextureReflect, pTexture3D, pTextureDepth );
+	return Initialize( priority, pModel, pParameter, pEffectGeneral, pTextureNormal, pTextureReflect, pTextureReflectNotLight, pTextureReflectAdd,
+		pTexture3D, pTextureDepth );
 }
 
 //==============================================================================

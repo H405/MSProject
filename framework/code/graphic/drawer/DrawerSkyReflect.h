@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : ObjectSky.h
-// Brief  : 空オブジェクトクラス
+// File   : DrawerSkyReflect.h
+// Brief  : 空描画クラス
 // Author : Taiga Shirakawa
 // Date   : 2015/10/21 wed : Taiga Shirakawa : create
 //
@@ -10,13 +10,13 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SKY_H
-#define MY_OBJECT_SKY_H
+#ifndef MY_DRAWER_SKY_REFLECT_H
+#define MY_DRAWER_SKY_REFLECT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/ObjectMovement.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,43 +31,45 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class GraphicSky;
-class Material;
 class PolygonMeshDomeInside;
-class Texture;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectSky : public ObjectMovement
+class DrawerSkyReflect : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectSky( void );
+	DrawerSkyReflect( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectSky( void );
+	~DrawerSkyReflect( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : int countCellX						: X方向セル数
-	// Arg    : int countCellY						: Z方向セル数
-	// Arg    : float radius						: 半径
-	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
-	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -79,56 +81,44 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : int countCellX						: X方向セル数
-	// Arg    : int countCellY						: Z方向セル数
-	// Arg    : float radius						: 半径
-	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
-	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectSky* pOut						: コピー先アドレス
+	// Arg    : DrawerSkyReflect* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectSky* pOut ) const;
+	int Copy( DrawerSkyReflect* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect, Texture* pTexture );
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicSky* pValue );
-	GraphicSky* GetGraphic( void ) const;
+	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTexture( void ) const;
 
 protected:
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	IDirect3DTexture9*		pTexture_;				// テクスチャ
+	PolygonMeshDomeInside*	pPolygon_;				// ポリゴン
 
 private:
 	void InitializeSelf( void );
-	ObjectSky( const ObjectSky& );
-	ObjectSky operator=( const ObjectSky& );
+	DrawerSkyReflect( const DrawerSkyReflect& );
+	DrawerSkyReflect operator=( const DrawerSkyReflect& );
 
-	GraphicSky*				pGraphic_;			// 描画クラス
-	PolygonMeshDomeInside*	pPolygonMesh_;		// 内部メッシュドームポリゴン
 };
 
-#endif	// MY_OBJECT_SKY_H
+#endif	// MY_DRAWER_SKY_REFLECT_H

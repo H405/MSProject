@@ -24,6 +24,8 @@ float		power_;								// 反射の強さ
 float		refractive_;						// 屈折率
 
 texture		textureReflect_;					// 反射テクスチャ
+texture		textureReflectNotLight_;			// 反射ライティングなしテクスチャ
+texture		textureReflectAdd_;					// 反射加算合成テクスチャ
 texture		texture3D_;							// 3D描画テクスチャ
 texture		textureDepth_;						// 深度テクスチャ
 
@@ -46,6 +48,26 @@ sampler samplerTextureNormal = sampler_state
 sampler samplerTextureReflect = sampler_state
 {
 	Texture = < textureReflect_ >;
+	MinFilter = Linear;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU = CLAMP;
+	AddressV = CLAMP;
+};
+
+sampler samplerTextureReflectNotLight = sampler_state
+{
+	Texture = < textureReflectNotLight_ >;
+	MinFilter = Linear;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU = CLAMP;
+	AddressV = CLAMP;
+};
+
+sampler samplerTextureReflectAdd = sampler_state
+{
+	Texture = < textureReflectAdd_ >;
 	MinFilter = Linear;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -155,9 +177,11 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	float	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 1000.0f * proportionDepth, 0.0f, 0.0f );
 	float	offsetTextureUnder = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
 	float	proportionEnvironment = dot( normal, vectorVertexToEye );
-	float4	colorReflerct = tex2Dproj( samplerTextureReflect, vertex.positionTexture_ + offsetTextureReflect );
+	float4	colorReflectNotLight = tex2Dproj( samplerTextureReflectNotLight, vertex.positionTexture_ + offsetTextureReflect );
+	float4	colorReflect = lerp( tex2Dproj( samplerTextureReflect, vertex.positionTexture_ + offsetTextureReflect ), colorReflectNotLight, colorReflectNotLight.a ) + 
+		tex2Dproj( samplerTextureReflectAdd, vertex.positionTexture_ + offsetTextureReflect );
 	float3	colorUnder = tex2Dproj( samplerTexture3D, vertex.positionTexture_ + offsetTextureUnder );
-	float3	colorWater = colorDiffuse_ * lerp( colorReflerct.rgb * colorReflerct.a, colorUnder, proportionEnvironment );
+	float3	colorWater = colorDiffuse_ * lerp( colorReflect.rgb, colorUnder, proportionEnvironment );
 	float3	colorDiffuse = lerp( tex2Dproj( samplerTexture3D, vertex.positionTexture_ ).rgb, colorWater, min( 200.0f * proportionDepth, 1.0f ) );
 
 	// 値の設定

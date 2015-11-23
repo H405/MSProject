@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectSky.h
-// Brief  : 空オブジェクトクラス
+// File   : DrawerSkinMeshReflect.h
+// Brief  : スキンメッシュ描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/21 wed : Taiga Shirakawa : create
+// Date   : 2015/11/03 tue : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SKY_H
-#define MY_OBJECT_SKY_H
+#ifndef MY_DRAWER_SKIN_MESH_REFLECT_H
+#define MY_DRAWER_SKIN_MESH_REFLECT_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/ObjectMovement.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,43 +31,56 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class GraphicSky;
-class Material;
-class PolygonMeshDomeInside;
-class Texture;
+class Model;
+class Motion;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectSky : public ObjectMovement
+class DrawerSkinMeshReflect : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_MATRIX_WORLD,				// ワールド変換行列
+		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
+		PARAMETER_MATRIX_BONE,				// ボーン変換行列
+		PARAMETER_HEIGHT,					// 反射面の高さ
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_COLOR_SPECULAR,			// スペキュラ色
+		PARAMETER_REFLECTION,				// 反射率
+		PARAMETER_POWER,					// 反射の強さ
+		PARAMETER_REFLACTIVE,				// 屈折率
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectSky( void );
+	DrawerSkinMeshReflect( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectSky( void );
+	~DrawerSkinMeshReflect( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : int countCellX						: X方向セル数
-	// Arg    : int countCellY						: Z方向セル数
-	// Arg    : float radius						: 半径
-	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
-	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : Model* pModel						: モデル
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Initialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -79,56 +92,48 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
-	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
-	// Arg    : int countCellX						: X方向セル数
-	// Arg    : int countCellY						: Z方向セル数
-	// Arg    : float radius						: 半径
-	// Arg    : float lengthTextureX				: X方向テクスチャ長さ
-	// Arg    : float lengthTextureY				: Z方向テクスチャ長さ
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : Model* pModel						: モデル
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
+	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Reinitialize( int priority, IDirect3DDevice9* pDevice, int countCellX, int countCellY, float radius, float lengthTextureX, float lengthTextureY );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectSky* pOut						: コピー先アドレス
+	// Arg    : DrawerSkinMeshReflect* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectSky* pOut ) const;
+	int Copy( DrawerSkinMeshReflect* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
-	// Arg    : Texture* pTexture					: テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect, Texture* pTexture );
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicSky* pValue );
-	GraphicSky* GetGraphic( void ) const;
+	void SetModel( Model* pValue );
+	Model* GetModel( void ) const;
 
 protected:
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	Model*					pModel_;				// モデル
+	int						countBone_;				// ボーン数
+	D3DXMATRIX*				pMatrixBone_;			// ボーン変換行列参照アドレス
+	int*					pIndexFrame_;			// フレーム番号参照アドレス
 
 private:
 	void InitializeSelf( void );
-	ObjectSky( const ObjectSky& );
-	ObjectSky operator=( const ObjectSky& );
+	DrawerSkinMeshReflect( const DrawerSkinMeshReflect& );
+	DrawerSkinMeshReflect operator=( const DrawerSkinMeshReflect& );
 
-	GraphicSky*				pGraphic_;			// 描画クラス
-	PolygonMeshDomeInside*	pPolygonMesh_;		// 内部メッシュドームポリゴン
 };
 
-#endif	// MY_OBJECT_SKY_H
+#endif	// MY_DRAWER_SKIN_MESH_REFLECT_H

@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "GraphicSky.h"
 #include "../drawer/DrawerSky.h"
+#include "../drawer/DrawerSkyReflect.h"
 
 //******************************************************************************
 // ライブラリ
@@ -53,10 +54,12 @@ GraphicSky::~GraphicSky( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int GraphicSky::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture )
+int GraphicSky::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
+	PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -66,7 +69,7 @@ int GraphicSky::Initialize( int priority, const EffectParameter* pParameter, Eff
 		return result;
 	}
 
-	// 描画クラスの生成
+	// 通常描画クラスの生成
 	DrawerSky*	pDrawerSky = nullptr;		// 描画クラス
 	pDrawerSky = new DrawerSky();
 	if( pDrawerSky == nullptr )
@@ -75,6 +78,16 @@ int GraphicSky::Initialize( int priority, const EffectParameter* pParameter, Eff
 	}
 	result = pDrawerSky->Initialize( pParameter, pEffectGeneral, pPolygon, pTexture );
 	ppDraw_[ GraphicMain::PASS_3D_NOT_LIGHT ] = pDrawerSky;
+
+	// 反射描画クラスの生成
+	DrawerSkyReflect*	pDrawerSkyReflect = nullptr;		// 描画クラス
+	pDrawerSkyReflect = new DrawerSkyReflect();
+	if( pDrawerSkyReflect == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkyReflect->Initialize( pParameter, pEffectReflect, pPolygon, pTexture );
+	ppDraw_[ GraphicMain::PASS_REFLECT_NOT_LIGHT ] = pDrawerSkyReflect;
 
 	// 正常終了
 	return 0;
@@ -108,10 +121,12 @@ int GraphicSky::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : PolygonMeshDomeInside* pPolygon		: 内側メッシュドームポリゴン
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int GraphicSky::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture )
+int GraphicSky::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
+	PolygonMeshDomeInside* pPolygon, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -122,7 +137,7 @@ int GraphicSky::Reinitialize( int priority, const EffectParameter* pParameter, E
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pPolygon, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pEffectReflect, pPolygon, pTexture );
 }
 
 //==============================================================================

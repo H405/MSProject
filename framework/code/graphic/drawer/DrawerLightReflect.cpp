@@ -170,6 +170,17 @@ int DrawerLightReflect::Copy( DrawerLightReflect* pOut ) const
 //==============================================================================
 void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 {
+	// 反射変換行列の作成
+	D3DXMATRIX		matrixReflect;					// 反射行列
+	D3DXVECTOR3		positionReflect;				// 反射面座標
+	D3DXVECTOR3		normalReflect;					// 反射面法線
+	D3DXPLANE		planeReflect;					// 反射面
+	positionReflect.x = positionReflect.z = normalReflect.x = normalReflect.z = 0.0f;
+	positionReflect.y = pEffectParameter_->GetHeightReflect();
+	normalReflect.y = 1.0f;
+	D3DXPlaneFromPointNormal( &planeReflect, &positionReflect, &normalReflect );
+	D3DXMatrixReflect( &matrixReflect, &planeReflect );
+
 	// 頂点シェーダ用パラメータ
 	D3DXMATRIX	matrixWorldSet;			// 設定するワールドマトリクス
 	float		pSizeScreen[ 2 ];		// 画面のサイズ
@@ -208,6 +219,7 @@ void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 	// 視点座標
 	D3DXVECTOR3	positionEye;		// 視点座標
 	pCamera->GetPositionCamera( &positionEye );
+	D3DXVec3TransformCoord( &positionEye, &positionEye, &matrixReflect );
 	pEffect_->SetFloatArray( PARAMETER_POSITION_EYE, &positionEye.x, 3 );
 
 	// カメラのクリップ値
@@ -228,6 +240,7 @@ void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 	if( pLightDirection != nullptr )
 	{
 		pLightDirection->GetVector( &vectorLight );
+		D3DXVec3TransformNormal( &vectorLight, &vectorLight, &matrixReflect );
 		pEffect_->SetFloatArray( PARAMETER_VECTOR_LIGHT_DIRECTION, &vectorLight.x, 3 );
 	}
 
@@ -254,6 +267,7 @@ void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 		// ポイントライトの座標
 		pLightPoint = pEffectParameter_->GetLightPoint( counterLight );
 		pLightPoint->GetPosition( &positionPoint );
+		D3DXVec3TransformCoord( &positionPoint, &positionPoint, &matrixReflect );
 		pPositionPoint[ 3 * counterLight + 0 ] = positionPoint.x;
 		pPositionPoint[ 3 * counterLight + 1 ] = positionPoint.y;
 		pPositionPoint[ 3 * counterLight + 2 ] = positionPoint.z;

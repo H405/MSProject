@@ -1,16 +1,16 @@
 //==============================================================================
 //
-// File   : DrawerModelMaterial.cpp
-// Brief  : モデル描画クラス
+// File   : DrawerModelMaterialReflect.cpp
+// Brief  : 反射モデル描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/11/21 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "DrawerModelMaterial.h"
+#include "DrawerModelMaterialReflect.h"
 #include "../graphic/GraphicMain.h"
 #include "../../framework/camera/Camera.h"
 #include "../../framework/graphic/Material.h"
@@ -36,7 +36,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerModelMaterial::DrawerModelMaterial( void ) : Drawer()
+DrawerModelMaterialReflect::DrawerModelMaterialReflect( void ) : Drawer()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -47,7 +47,7 @@ DrawerModelMaterial::DrawerModelMaterial( void ) : Drawer()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-DrawerModelMaterial::~DrawerModelMaterial( void )
+DrawerModelMaterialReflect::~DrawerModelMaterialReflect( void )
 {
 	// 終了処理
 	Finalize();
@@ -60,7 +60,7 @@ DrawerModelMaterial::~DrawerModelMaterial( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 //==============================================================================
-int DrawerModelMaterial::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerModelMaterialReflect::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -91,7 +91,7 @@ int DrawerModelMaterial::Initialize( Model* pModel, const EffectParameter* pPara
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int DrawerModelMaterial::Finalize( void )
+int DrawerModelMaterialReflect::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -115,7 +115,7 @@ int DrawerModelMaterial::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
 //==============================================================================
-int DrawerModelMaterial::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerModelMaterialReflect::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -132,9 +132,9 @@ int DrawerModelMaterial::Reinitialize( Model* pModel, const EffectParameter* pPa
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : DrawerModelMaterial* pOut					: コピー先アドレス
+// Arg    : DrawerModelMaterialReflect* pOut	: コピー先アドレス
 //==============================================================================
-int DrawerModelMaterial::Copy( DrawerModelMaterial* pOut ) const
+int DrawerModelMaterialReflect::Copy( DrawerModelMaterialReflect* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -153,8 +153,21 @@ int DrawerModelMaterial::Copy( DrawerModelMaterial* pOut ) const
 // Return : void								: なし
 // Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 //==============================================================================
-void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
+void DrawerModelMaterialReflect::Draw( const D3DXMATRIX& matrixWorld )
 {
+	// 反射ワールド変換行列の作成
+	D3DXMATRIX		matrixReflect;					// 反射行列
+	D3DXMATRIX		matrixWorldReflect;				// 反射ワールド行列
+	D3DXVECTOR3		positionReflect;				// 反射面座標
+	D3DXVECTOR3		normalReflect;					// 反射面法線
+	D3DXPLANE		planeReflect;					// 反射面
+	positionReflect.x = positionReflect.z = normalReflect.x = normalReflect.z = 0.0f;
+	positionReflect.y = pEffectParameter_->GetHeightReflect();
+	normalReflect.y = 1.0f;
+	D3DXPlaneFromPointNormal( &planeReflect, &positionReflect, &normalReflect );
+	D3DXMatrixReflect( &matrixReflect, &planeReflect );
+	D3DXMatrixMultiply( &matrixWorldReflect, &matrixWorld, &matrixReflect );
+
 	// 変換行列
 	D3DXMATRIX		matrixTransform;				// 変換行列
 	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
@@ -166,11 +179,14 @@ void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
 	pRenderMatrix = pCamera->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
 	pRenderMatrix->GetMatrixView( &matrixView );
-	D3DXMatrixMultiply( &matrixTransform, &matrixWorld, &matrixViewProjection );
-	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
+	D3DXMatrixMultiply( &matrixTransform, &matrixWorldReflect, &matrixViewProjection );
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorldReflect, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
-	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorld );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldReflect );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
+
+	// 反射面の高さ
+	pEffect_->SetFloat( PARAMETER_HEIGHT, positionReflect.y );
 
 	// 描画
 	unsigned int		countMaterial;			// マテリアル数
@@ -208,7 +224,7 @@ void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
 // Return : void								: なし
 // Arg    : Model* pValue						: 設定する値
 //==============================================================================
-void DrawerModelMaterial::SetModel( Model* pValue )
+void DrawerModelMaterialReflect::SetModel( Model* pValue )
 {
 	// 値の設定
 	pModel_ = pValue;
@@ -219,7 +235,7 @@ void DrawerModelMaterial::SetModel( Model* pValue )
 // Return : Model*								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-Model* DrawerModelMaterial::GetModel( void ) const
+Model* DrawerModelMaterialReflect::GetModel( void ) const
 {
 	// 値の返却
 	return pModel_;
@@ -230,7 +246,7 @@ Model* DrawerModelMaterial::GetModel( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void DrawerModelMaterial::InitializeSelf( void )
+void DrawerModelMaterialReflect::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pEffectParameter_ = nullptr;

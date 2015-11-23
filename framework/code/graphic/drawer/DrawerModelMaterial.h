@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_DRAWER_MODEL_H
-#define MY_DRAWER_MODEL_H
+#ifndef MY_DRAWER_MODEL_MATERIAL_H
+#define MY_DRAWER_MODEL_MATERIAL_H
 
 //******************************************************************************
 // インクルード
@@ -45,7 +45,7 @@ public:
 		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
 		PARAMETER_MATRIX_WORLD,				// ワールド変換行列
 		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
-		PARAMETER_MATERIAL_COLOR,			// マテリアルカラー
+		PARAMETER_COLOR_DIFFUSE,			// ディフューズ色
 		PARAMETER_COLOR_SPECULAR,			// スペキュラ色
 		PARAMETER_REFLECTION,				// 反射率
 		PARAMETER_POWER,					// 反射の強さ
@@ -123,4 +123,4 @@ private:
 	DrawerModelMaterial operator=( const DrawerModelMaterial& );
 };
 
-#endif	// MY_DRAWER_MODEL_H
+#endif	// MY_DRAWER_MODEL_MATERIAL_H

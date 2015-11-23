@@ -1,6 +1,6 @@
 //==============================================================================
 // 
-// File   : Model.fx
+// File   : ModelMaterial.fx
 // Brief  : モデルエフェクト
 // Author : Taiga Shirakawa
 // Date   : 2015/10/19 mon : Taiga Shirakawa : create
@@ -13,7 +13,7 @@
 float4x4	matrixTransform_;		// 変換行列
 float4x4	matrixWorld_;			// ワールド変換行列
 float4x4	matrixWorldView_;		// ワールドビュー変換行列
-float3		materialColor_;			// マテリアル色
+float3		colorDiffuse_;			// ディフューズ色
 float3		colorSpecular_;			// スペキュラ色
 float		reflection_;			// 反射率
 float		power_;					// 反射の強さ
@@ -22,14 +22,6 @@ float		refractive_;			// 屈折率
 //******************************************************************************
 // サンプリング
 //******************************************************************************
-sampler samplerTexture = sampler_state
-{
-	MinFilter = Linear;
-	MagFilter = Linear;
-	MipFilter = None;
-	AddressU = Clamp;
-	AddressV = Clamp;
-};
 
 //******************************************************************************
 // 構造体定義
@@ -88,7 +80,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// 値の設定
 	PixelOutput	output;		// ピクセルシェーダ出力
-	output.diffuse_ = float4( materialColor_, reflection_ );
+	output.diffuse_ = float4( colorDiffuse_, reflection_ );
 	output.specular_ = float4( colorSpecular_, power_ * 0.015625f );
 	output.normal_ = float4( (vertex.vectorNormalWorld_ * 0.5f + 0.5f), refractive_ );
 	output.depth_.gba = 0.0f;

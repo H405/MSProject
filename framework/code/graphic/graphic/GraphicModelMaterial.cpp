@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "GraphicModelMaterial.h"
 #include "../drawer/DrawerModelMaterial.h"
+#include "../drawer/DrawerModelMaterialReflect.h"
 
 //******************************************************************************
 // ライブラリ
@@ -54,8 +55,9 @@ GraphicModelMaterial::~GraphicModelMaterial( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 //==============================================================================
-int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral )
+int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -65,7 +67,7 @@ int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectP
 		return result;
 	}
 
-	// 描画クラスの生成
+	// 通常描画クラスの生成
 	DrawerModelMaterial*	pDrawerModelMaterial = nullptr;		// 描画クラス
 	pDrawerModelMaterial = new DrawerModelMaterial();
 	if( pDrawerModelMaterial == nullptr )
@@ -74,6 +76,16 @@ int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectP
 	}
 	result = pDrawerModelMaterial->Initialize( pModel, pParameter, pEffectGeneral );
 	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerModelMaterial;
+
+	// 反射描画クラスの生成
+	DrawerModelMaterialReflect*	pDrawerModelMaterialReflect = nullptr;		// 描画クラス
+	pDrawerModelMaterialReflect = new DrawerModelMaterialReflect();
+	if( pDrawerModelMaterialReflect == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelMaterialReflect->Initialize( pModel, pParameter, pEffectReflect );
+	ppDraw_[ GraphicMain::PASS_REFLECT ] = pDrawerModelMaterialReflect;
 
 	// 正常終了
 	return 0;
@@ -108,8 +120,9 @@ int GraphicModelMaterial::Finalize( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 //==============================================================================
-int GraphicModelMaterial::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral )
+int GraphicModelMaterial::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -120,13 +133,13 @@ int GraphicModelMaterial::Reinitialize( int priority, Model* pModel, const Effec
 	}
 
 	// 初期化処理
-	return Initialize( priority, pModel, pParameter, pEffectGeneral );
+	return Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicModelMaterial* pOut					: コピー先アドレス
+// Arg    : GraphicModelMaterial* pOut			: コピー先アドレス
 //==============================================================================
 int GraphicModelMaterial::Copy( GraphicModelMaterial* pOut ) const
 {
