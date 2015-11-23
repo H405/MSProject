@@ -83,7 +83,7 @@ int DrawerBlur::Initialize( const EffectParameter* pParameter, Effect* pEffect, 
 	}
 
 	// オフセットの設定
-	pEffect->SetFloatArray( PARAMETER_OFFSET, &offset.x, 2 );
+	pEffect->SetFloatArray( PARAMETER_OFFSET_BLUR, &offset.x, 2 );
 
 	// 正常終了
 	return 0;
@@ -162,15 +162,10 @@ int DrawerBlur::Copy( DrawerBlur* pOut ) const
 void DrawerBlur::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 頂点シェーダ用パラメータ
-	D3DXMATRIX	matrixWorldSet;			// 設定するワールドマトリクス
-	float		pSizeScreen[ 2 ];		// 画面のサイズ
-	matrixWorldSet = matrixWorld;
-	matrixWorldSet._41 -= 0.5f;
-	matrixWorldSet._42 -= 0.5f;
-	pSizeScreen[ 0 ] = 0.5f * pEffectParameter_->GetWidthScreen();
-	pSizeScreen[ 1 ] = 0.5f * pEffectParameter_->GetHeightScreen();
-	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
-	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN_HALF, pSizeScreen, 2 );
+	float	pOffset[ 2 ];		// オフセット
+	pOffset[ 0 ] = 1.0f / pEffectParameter_->GetWidthScreen();
+	pOffset[ 1 ] = 1.0f / pEffectParameter_->GetHeightScreen();
+	pEffect_->SetFloatArray( PARAMETER_OFFSET, pOffset, 2 );
 
 	// テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );

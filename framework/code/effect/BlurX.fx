@@ -10,10 +10,9 @@
 //******************************************************************************
 // 変数宣言
 //******************************************************************************
-float4x4	matrixWorld_;		// ワールドマトリクス
-float2		sizeScreenHalf_;	// 画面サイズの半分
-texture		texture_;			// テクスチャ
 float2		offset_;			// オフセット
+texture		texture_;			// テクスチャ
+float2		offsetBlur_;		// ブラーのオフセット
 
 //******************************************************************************
 // サンプリング
@@ -57,18 +56,16 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	VertexOutput	output;		// 出力
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
-	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.xy /= sizeScreenHalf_;
 
 	// テクスチャ座標を格納
-	output.textureCoord0_ = textureCoord + float2( -2.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord1_ = textureCoord + float2( -4.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord2_ = textureCoord + float2( -6.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord3_ = textureCoord + float2( -8.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord4_ = textureCoord + float2( -10.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord5_ = textureCoord + float2( -12.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord6_ = textureCoord + float2( -14.0f / sizeScreenHalf_.x, 0.0f );
-	output.textureCoord7_ = textureCoord + float2( -16.0f / sizeScreenHalf_.x, 0.0f );
+	output.textureCoord0_ = textureCoord + offset_ + float2( -4.0f * offset_.x, 0.0f );
+	output.textureCoord1_ = textureCoord + offset_ + float2( -8.0f * offset_.x, 0.0f );
+	output.textureCoord2_ = textureCoord + offset_ + float2( -12.0f * offset_.x, 0.0f );
+	output.textureCoord3_ = textureCoord + offset_ + float2( -16.0f * offset_.x, 0.0f );
+	output.textureCoord4_ = textureCoord + offset_ + float2( -20.0f * offset_.x, 0.0f );
+	output.textureCoord5_ = textureCoord + offset_ + float2( -24.0f * offset_.x, 0.0f );
+	output.textureCoord6_ = textureCoord + offset_ + float2( -28.0f * offset_.x, 0.0f );
+	output.textureCoord7_ = textureCoord + offset_ + float2( -32.0f * offset_.x, 0.0f );
 
 	// 頂点出力を返す
 	return output;
@@ -82,14 +79,14 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
 	// 値の出力
-	float4		color = float4( 0.13948364567f * (tex2D( samplerTexture, vertex.textureCoord0_ ).rgb + tex2D( samplerTexture, vertex.textureCoord7_ + offset_).rgb), 1.0f );
-	color.rgb += 0.12309388525f * (tex2D( samplerTexture, vertex.textureCoord1_ ).rgb + tex2D( samplerTexture, vertex.textureCoord6_ + offset_).rgb);
-	color.rgb += 0.09586561422f * (tex2D( samplerTexture, vertex.textureCoord2_ ).rgb + tex2D( samplerTexture, vertex.textureCoord5_ + offset_).rgb);
-	color.rgb += 0.06588740886f * (tex2D( samplerTexture, vertex.textureCoord3_ ).rgb + tex2D( samplerTexture, vertex.textureCoord4_ + offset_).rgb);
-	color.rgb += 0.03996273355f * (tex2D( samplerTexture, vertex.textureCoord4_ ).rgb + tex2D( samplerTexture, vertex.textureCoord3_ + offset_).rgb);
-	color.rgb += 0.02139050984f * (tex2D( samplerTexture, vertex.textureCoord5_ ).rgb + tex2D( samplerTexture, vertex.textureCoord2_ + offset_).rgb);
-	color.rgb += 0.01010416138f * (tex2D( samplerTexture, vertex.textureCoord6_ ).rgb + tex2D( samplerTexture, vertex.textureCoord1_ + offset_).rgb);
-	color.rgb += 0.00421204112f * (tex2D( samplerTexture, vertex.textureCoord7_ ).rgb + tex2D( samplerTexture, vertex.textureCoord0_ + offset_).rgb);
+	float4		color = float4( 0.13948364567f * (tex2D( samplerTexture, vertex.textureCoord0_ ).rgb + tex2D( samplerTexture, vertex.textureCoord7_ + offsetBlur_).rgb), 1.0f );
+	color.rgb += 0.12309388525f * (tex2D( samplerTexture, vertex.textureCoord1_ ).rgb + tex2D( samplerTexture, vertex.textureCoord6_ + offsetBlur_).rgb);
+	color.rgb += 0.09586561422f * (tex2D( samplerTexture, vertex.textureCoord2_ ).rgb + tex2D( samplerTexture, vertex.textureCoord5_ + offsetBlur_).rgb);
+	color.rgb += 0.06588740886f * (tex2D( samplerTexture, vertex.textureCoord3_ ).rgb + tex2D( samplerTexture, vertex.textureCoord4_ + offsetBlur_).rgb);
+	color.rgb += 0.03996273355f * (tex2D( samplerTexture, vertex.textureCoord4_ ).rgb + tex2D( samplerTexture, vertex.textureCoord3_ + offsetBlur_).rgb);
+	color.rgb += 0.02139050984f * (tex2D( samplerTexture, vertex.textureCoord5_ ).rgb + tex2D( samplerTexture, vertex.textureCoord2_ + offsetBlur_).rgb);
+	color.rgb += 0.01010416138f * (tex2D( samplerTexture, vertex.textureCoord6_ ).rgb + tex2D( samplerTexture, vertex.textureCoord1_ + offsetBlur_).rgb);
+	color.rgb += 0.00421204112f * (tex2D( samplerTexture, vertex.textureCoord7_ ).rgb + tex2D( samplerTexture, vertex.textureCoord0_ + offsetBlur_).rgb);
 	return color;
 }
 

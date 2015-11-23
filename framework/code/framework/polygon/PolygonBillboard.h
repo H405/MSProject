@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : DrawerBillboard.h
-// Brief  : ビルボードポリゴン描画クラス
+// File   : PolygonBillboard.h
+// Brief  : ビルボードポリゴン
 // Author : Taiga Shirakawa
-// Date   : 2015/10/23 fri : Taiga Shirakawa : create
+// Date   : 2015/11/23 mon : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_DRAWER_BILLBOARD_H
-#define MY_DRAWER_BILLBOARD_H
+#ifndef MY_POLYGON_BILLBOARD_H
+#define MY_POLYGON_BILLBOARD_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../../framework/graphic/drawer.h"
+#include "d3dx9.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,54 +29,34 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
-class EffectParameter;
-class PolygonBillboard;
+class Vertex;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class DrawerBillboard : public Drawer
+class PolygonBillboard
 {
 public:
-	// パラメータ
-	enum
-	{
-		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
-		PARAMETER_TEXTURE,					// テクスチャ
-		PARAMETER_COLOR,					// 色
-		PARAMETER_POSITION_TEXTURE,			// テクスチャ座標
-		PARAMETER_SCALE_TEXTURE,			// テクスチャ拡縮
-		PARAMETER_MAX						// 最大値
-	};
-
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	DrawerBillboard( void );
+	PolygonBillboard( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~DrawerBillboard( void );
+	~PolygonBillboard( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffect						: 描画エフェクト
-	// Arg    : PolygonBillboard* pPolygon			: ビルボードポリゴン
-	// Arg    : D3DXCOLOR* pColor					: 色
-	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
-	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonBillboard* pPolygon,
-		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
+	int Initialize( IDirect3DDevice9* pDevice );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -88,51 +68,37 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffect						: 描画エフェクト
-	// Arg    : PolygonBillboard* pPolygon			: ビルボードポリゴン
-	// Arg    : D3DXCOLOR* pColor					: 色
-	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
-	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
-	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonBillboard* pPolygon,
-		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
+	int Reinitialize( IDirect3DDevice9* pDevice );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : DrawerBillboard* pOut				: コピー先アドレス
+	// Arg    : PolygonBillboard* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( DrawerBillboard* pOut ) const;
+	int Copy( PolygonBillboard* pOut ) const;
 
 	//==============================================================================
 	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
+	// Arg    : void								: なし
 	//==============================================================================
-	void Draw( const D3DXMATRIX& matrixWorld );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	void SetTexture( IDirect3DTexture9* pValue );
-	IDirect3DTexture9* GetTexture( void ) const;
+	void Draw( void );
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	IDirect3DTexture9*		pTexture_;				// テクスチャ
-	PolygonBillboard*		pPolygon_;				// ポリゴン
-	D3DXCOLOR*				pColor_;				// 色
-	D3DXVECTOR2*			pPositionTexture_;		// テクスチャ座標
-	D3DXVECTOR2*			pScaleTexture_;			// テクスチャ拡縮
 
 private:
 	void InitializeSelf( void );
-	DrawerBillboard( const DrawerBillboard& );
-	DrawerBillboard operator=( const DrawerBillboard& );
+	PolygonBillboard( const PolygonBillboard& );
+	PolygonBillboard operator=( const PolygonBillboard& );
 
+	static const int	COUNT_VERTEX = 4;			// 頂点数
+	static const int	COUNT_VERTEX_LINE = 2;		// 一列の頂点数
+
+	IDirect3DDevice9*		pDevice_;			// Direct3Dデバイス
+	IDirect3DVertexBuffer9*	pVertexBuffer_;		// 頂点バッファ
+	Vertex*					pVertex_;			// 頂点情報
 };
 
-#endif	// MY_DRAWER_BILLBOARD_H
+#endif	// MY_POLYGON_BILLBOARD_H

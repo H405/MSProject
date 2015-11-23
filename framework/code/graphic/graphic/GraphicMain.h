@@ -31,6 +31,7 @@
 //******************************************************************************
 class Polygon2D;
 class Polygon3D;
+class PolygonBillboard;
 
 //******************************************************************************
 // クラス定義
@@ -240,10 +241,18 @@ public:
 	// Arg    : Polygon3D* pValue					: 設定する値
 	//==============================================================================
 	static void SetPolygon3D( Polygon3D* pValue );
+	
+	//==============================================================================
+	// Brief  : ビルボードポリゴンクラスの設定
+	// Return : void								: なし
+	// Arg    : PolygonBillboard* pValue			: 設定する値
+	//==============================================================================
+	static void SetPolygonBillboard( PolygonBillboard* pValue );
 
 protected:
-	static Polygon2D*	pPolygon2D_;		// 2Dポリゴン
-	static Polygon3D*	pPolygon3D_;		// 3Dポリゴン
+	static Polygon2D*			pPolygon2D_;			// 2Dポリゴン
+	static Polygon3D*			pPolygon3D_;			// 3Dポリゴン
+	static PolygonBillboard*	pPolygonBillboard_;		// ビルボードポリゴン
 
 private:
 	void InitializeSelf( void );

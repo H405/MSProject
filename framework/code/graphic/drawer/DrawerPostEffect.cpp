@@ -186,14 +186,10 @@ int DrawerPostEffect::Copy( DrawerPostEffect* pOut ) const
 void DrawerPostEffect::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 頂点シェーダ用パラメータの設定
-	D3DXMATRIX	matrixWorldSet;				// 設定するワールドマトリクス
-	float		pSizeScreenHalf[ 2 ];		// 画面サイズの半分
-	matrixWorldSet = matrixWorld;
-	matrixWorldSet._41 -= 0.5f;
-	matrixWorldSet._42 -= 0.5f;
-	pSizeScreenHalf[ 0 ] = pEffectParameter_->GetWidthScreen() * 0.5f;
-	pSizeScreenHalf[ 1 ] = pEffectParameter_->GetHeightScreen() * 0.5f;
-	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
+	float	pOffset[ 2 ];		// オフセット
+	pOffset[ 0 ] = 0.5f / pEffectParameter_->GetWidthScreen();
+	pOffset[ 1 ] = 0.5f / pEffectParameter_->GetHeightScreen();
+	pEffect_->SetFloatArray( PARAMETER_OFFSET_TEXEL, pOffset, 2 );
 
 	// フェード用パラメータの設定
 	D3DCOLOR	colorFade;		// フェード色
@@ -205,7 +201,6 @@ void DrawerPostEffect::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetFloat( PARAMETER_FORCUS, pEffectParameter_->GetForcus() );
 
 	// テクスチャの設定
-	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN_HALF, pSizeScreenHalf, 2 );
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_3D, pTexture3D_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_LUMINANCE, pTextureLuminance_ );

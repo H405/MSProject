@@ -171,15 +171,10 @@ int DrawerMerge::Copy( DrawerMerge* pOut ) const
 void DrawerMerge::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 頂点シェーダ用パラメータ
-	D3DXMATRIX	matrixWorldSet;			// 設定するワールドマトリクス
-	float		pSizeScreen[ 2 ];		// 画面のサイズ
-	matrixWorldSet = matrixWorld;
-	matrixWorldSet._41 -= 0.5f;
-	matrixWorldSet._42 -= 0.5f;
-	pSizeScreen[ 0 ] = 0.5f * pEffectParameter_->GetWidthScreen();
-	pSizeScreen[ 1 ] = 0.5f * pEffectParameter_->GetHeightScreen();
-	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
-	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN_HALF, pSizeScreen, 2 );
+	float	pOffset[ 2 ];		// オフセット
+	pOffset[ 0 ] = 0.5f / pEffectParameter_->GetWidthScreen();
+	pOffset[ 1 ] = 0.5f / pEffectParameter_->GetHeightScreen();
+	pEffect_->SetFloatArray( PARAMETER_OFFSET_TEXEL, pOffset, 2 );
 
 	// 焦点距離の設定
 	pEffect_->SetFloat( PARAMETER_FORCUS, pEffectParameter_->GetForcus() );

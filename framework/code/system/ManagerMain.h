@@ -52,6 +52,7 @@ class ObjectPostEffect;
 class ObjectMerge;
 class Polygon2D;
 class Polygon3D;
+class PolygonBillboard;
 class RenderPass;
 class SceneArgumentMain;
 class Sound;
@@ -179,6 +180,7 @@ private:
 	ManagerSound< Sound >*		pSound_;					// サウンド管理クラス
 	Polygon2D*					pPolygon2D_;				// 2Dポリゴン
 	Polygon3D*					pPolygon3D_;				// 3Dポリゴン
+	PolygonBillboard*			pPolygonBillboard_;			// ビルボードポリゴン
 
 #ifdef _DEVELOP
 	bool						isPausing_;					// ポーズフラグ

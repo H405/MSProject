@@ -1,16 +1,16 @@
 //==============================================================================
 //
-// File   : Polygon2D.cpp
-// Brief  : 2Dポリゴン
+// File   : PolygonBillboard.cpp
+// Brief  : ビルボードポリゴン
 // Author : Taiga Shirakawa
-// Date   : 2015/10/14 wed : Taiga Shirakawa : create
+// Date   : 2015/11/23 mon : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "Polygon2D.h"
+#include "PolygonBillboard.h"
 #include "../vertex/Vertex.h"
 #include "../vertex/VertexBuffer.h"
 
@@ -31,7 +31,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Polygon2D::Polygon2D( void )
+PolygonBillboard::PolygonBillboard( void )
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -42,7 +42,7 @@ Polygon2D::Polygon2D( void )
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Polygon2D::~Polygon2D( void )
+PolygonBillboard::~PolygonBillboard( void )
 {
 	// 終了処理
 	Finalize();
@@ -53,7 +53,7 @@ Polygon2D::~Polygon2D( void )
 // Return : int									: 実行結果
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 //==============================================================================
-int Polygon2D::Initialize( IDirect3DDevice9* pDevice )
+int PolygonBillboard::Initialize( IDirect3DDevice9* pDevice )
 {
 	// メンバ変数の設定
 	pDevice_ = pDevice;
@@ -76,7 +76,7 @@ int Polygon2D::Initialize( IDirect3DDevice9* pDevice )
 	buffer.Initialize( COUNT_VERTEX, pVertex_ );
 	for( int counterVertex = 0; counterVertex < COUNT_VERTEX; ++counterVertex )
 	{
-		buffer.SetPosition( counterVertex, 2.0f * (counterVertex % COUNT_VERTEX_LINE) - 1.0f, -2.0f * (counterVertex / COUNT_VERTEX_LINE) + 1.0f, 0.0f );
+		buffer.SetPosition( counterVertex, 1.0f * (counterVertex % COUNT_VERTEX_LINE) - 0.5f, -1.0f * (counterVertex / COUNT_VERTEX_LINE) + 0.5f, 0.0f );
 		buffer.SetNormal( counterVertex, 0.0f, 0.0f, -1.0f );
 		buffer.SetTextureCoord0( counterVertex, 1.0f * (counterVertex % COUNT_VERTEX_LINE), 1.0f * (counterVertex / COUNT_VERTEX_LINE) );
 		buffer.SetColorDiffuse( counterVertex, 1.0f, 1.0f, 1.0f, 1.0f );
@@ -106,7 +106,7 @@ int Polygon2D::Initialize( IDirect3DDevice9* pDevice )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int Polygon2D::Finalize( void )
+int PolygonBillboard::Finalize( void )
 {
 	// 頂点バッファの開放
 	if( pVertexBuffer_ != nullptr )
@@ -131,7 +131,7 @@ int Polygon2D::Finalize( void )
 // Return : int									: 実行結果
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 //==============================================================================
-int Polygon2D::Reinitialize( IDirect3DDevice9* pDevice )
+int PolygonBillboard::Reinitialize( IDirect3DDevice9* pDevice )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -148,9 +148,9 @@ int Polygon2D::Reinitialize( IDirect3DDevice9* pDevice )
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : Polygon2D* pOut						: コピー先アドレス
+// Arg    : PolygonBillboard* pOut						: コピー先アドレス
 //==============================================================================
-int Polygon2D::Copy( Polygon2D* pOut ) const
+int PolygonBillboard::Copy( PolygonBillboard* pOut ) const
 {
 	// 正常終了
 	return 0;
@@ -161,7 +161,7 @@ int Polygon2D::Copy( Polygon2D* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Polygon2D::Draw( void )
+void PolygonBillboard::Draw( void )
 {
 	// 描画
 	pDevice_->SetStreamSource( 0, pVertexBuffer_, 0, pVertex_->GetSize() );
@@ -174,7 +174,7 @@ void Polygon2D::Draw( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Polygon2D::InitializeSelf( void )
+void PolygonBillboard::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pDevice_ = nullptr;

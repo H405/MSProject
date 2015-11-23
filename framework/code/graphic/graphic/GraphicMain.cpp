@@ -23,8 +23,9 @@
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-Polygon2D*	GraphicMain::pPolygon2D_ = nullptr;		// 2Dポリゴンクラス
-Polygon3D*	GraphicMain::pPolygon3D_ = nullptr;		// 3Dポリゴンクラス
+Polygon2D*			GraphicMain::pPolygon2D_ = nullptr;				// 2Dポリゴンクラス
+Polygon3D*			GraphicMain::pPolygon3D_ = nullptr;				// 3Dポリゴンクラス
+PolygonBillboard*	GraphicMain::pPolygonBillboard_ = nullptr;		// ビルボードポリゴンクラス
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -159,6 +160,17 @@ void GraphicMain::SetPolygon3D( Polygon3D* pValue )
 {
 	// 値の設定
 	pPolygon3D_ = pValue;
+}
+
+//==============================================================================
+// Brief  : ビルボードポリゴンクラスの設定
+// Return : void								: なし
+// Arg    : PolygonBillboard* pValue			: 設定する値
+//==============================================================================
+void GraphicMain::SetPolygonBillboard( PolygonBillboard* pValue )
+{
+	// 値の設定
+	pPolygonBillboard_ = pValue;
 }
 
 //==============================================================================

@@ -57,7 +57,6 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	VertexOutput	output;		// èoóÕ
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
-	output.position_.xy *= 2.0f;
 
 	// ílÇÃê›íË
 	output.textureCoord_ = textureCoord;

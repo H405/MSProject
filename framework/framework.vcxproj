@@ -43,6 +43,7 @@
     <ClInclude Include="code\framework\point\PointState.h" />
     <ClInclude Include="code\framework\polygon\Polygon2D.h" />
     <ClInclude Include="code\framework\polygon\Polygon3D.h" />
+    <ClInclude Include="code\framework\polygon\PolygonBillboard.h" />
     <ClInclude Include="code\framework\polygon\PolygonMesh.h" />
     <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h" />
     <ClInclude Include="code\framework\polygon\PolygonPoint.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="code\framework\point\PointState.cpp" />
     <ClCompile Include="code\framework\polygon\Polygon2D.cpp" />
     <ClCompile Include="code\framework\polygon\Polygon3D.cpp" />
+    <ClCompile Include="code\framework\polygon\PolygonBillboard.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonMesh.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonMeshDomeInside.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonPoint.cpp" />
@@ -318,11 +320,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Billboard.fx" />
-    <None Include="code\effect\BlurBase.fx" />
     <None Include="code\effect\BlurX.fx" />
     <None Include="code\effect\BlurY.fx" />
+    <None Include="code\effect\CalculateLight.fx" />
     <None Include="code\effect\LightEffect.fx" />
+    <None Include="code\effect\LightEffect_00.fx" />
     <None Include="code\effect\LightReflect.fx" />
+    <None Include="code\effect\LightReflect_00.fx" />
     <None Include="code\effect\Merge.fx" />
     <None Include="code\effect\Mesh.fx" />
     <None Include="code\effect\Model.fx" />

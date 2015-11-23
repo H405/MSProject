@@ -10,8 +10,8 @@
 //******************************************************************************
 // 変数宣言
 //******************************************************************************
-float4x4	matrixWorld_;			// ワールド変換行列
-float2		sizeScreenHalf_;		// 画面サイズの半分
+float2		offsetTexel_;			// テクセルオフセット
+
 float		forcus_;				// 焦点距離
 
 texture		textureLight_;			// ライトありテクスチャ
@@ -102,11 +102,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	VertexOutput	output;		// 出力
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
-	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.xy /= sizeScreenHalf_;
 
 	// 値を格納
-	output.textureCoord_ = textureCoord;
+	output.textureCoord_ = textureCoord + offsetTexel_;
 
 	// 頂点出力を返す
 	return output;

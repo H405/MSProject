@@ -558,6 +558,9 @@
     <ClInclude Include="code\graphic\drawer\DrawerSkinMeshReflect.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\polygon\PolygonBillboard.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1013,6 +1016,9 @@
     <ClCompile Include="code\graphic\drawer\DrawerSkinMeshReflect.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
+    <ClCompile Include="code\framework\polygon\PolygonBillboard.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1046,9 +1052,6 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\Mesh.fx">
-      <Filter>ソース ファイル\effect</Filter>
-    </None>
-    <None Include="code\effect\BlurBase.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\BlurY.fx">
@@ -1085,6 +1088,15 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\SkinMeshReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\CalculateLight.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightEffect_00.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightReflect_00.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

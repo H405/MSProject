@@ -11,9 +11,8 @@
 // 変数宣言
 //******************************************************************************
 float4x4	matrixWorld_;			// ワールドマトリクス
+float2		sizeScreen_;			// 画面のサイズ
 texture		texture_;				// テクスチャ
-float		widthScreenHalf_;		// 画面幅の半分
-float		heightScreenHalf_;		// 画面高さの半分
 float4		color_;					// 色
 float2		positionTexture_;		// テクスチャ座標
 float2		scaleTexture_;			// テクスチャ拡縮
@@ -61,11 +60,10 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
 	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.x /= widthScreenHalf_;
-	output.position_.y /= heightScreenHalf_;
+	output.position_.xy /= sizeScreen_;
 
 	// テクスチャ座標の変換
-	output.textureCoord_ = textureCoord / scaleTexture_ + positionTexture_;
+	output.textureCoord_ = (textureCoord + 0.5f / sizeScreen_) / scaleTexture_ + positionTexture_;
 
 	// 頂点出力を返す
 	return output;

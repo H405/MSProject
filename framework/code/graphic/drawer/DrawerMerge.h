@@ -42,8 +42,7 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,			// ワールド変換行列
-		PARAMETER_SIZE_SCREEN_HALF,			// 画面サイズの半分
+		PARAMETER_OFFSET_TEXEL = 0,			// テクセルオフセット
 
 		PARAMETER_FORCUS,					// 焦点距離
 

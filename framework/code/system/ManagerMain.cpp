@@ -32,6 +32,7 @@
 #include "../framework/object/Object.h"
 #include "../framework/polygon/Polygon2D.h"
 #include "../framework/polygon/Polygon3D.h"
+#include "../framework/polygon/PolygonBillboard.h"
 #include "../framework/render/DirectDevice.h"
 #include "../framework/render/RenderPass.h"
 #include "../framework/render/RenderPassParameter.h"
@@ -505,6 +506,19 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	GraphicMain::SetPolygon3D( pPolygon3D_ );
 
+	// ビルボードポリゴンの生成
+	pPolygonBillboard_ = new PolygonBillboard();
+	if( pPolygonBillboard_ == nullptr )
+	{
+		return 1;
+	}
+	result = pPolygonBillboard_->Initialize( pDevice );
+	if( result != 0 )
+	{
+		return result;
+	}
+	GraphicMain::SetPolygonBillboard( pPolygonBillboard_ );
+
 	// 反射ライティングオブジェクトの生成
 	Effect*	ppEffectLightReflect[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// ライティングエフェクト
 	TCHAR	pNameFileEffectLight[ _MAX_PATH ];								// ライティングエフェクトファイル名
@@ -532,7 +546,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pObjectLightReflect_->SetPositionY( 1.0f );
 
 	// ライティングオブジェクトの生成
 	Effect*	ppEffectLightEffect[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// ライティングエフェクト
@@ -564,7 +577,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pObjectLightEffect_->SetPositionY( 1.0f );
 
 	// 総合3D描画オブジェクトの生成
 	Effect*	pEffectMerge = nullptr;		// 総合3D描画エフェクト
@@ -589,7 +601,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pObjectMerge_->SetPositionY( 1.0f );
 
 	// ブラーオブジェクトの生成
 	Effect*	pBlurX = nullptr;		// X方向ブラーエフェクト
@@ -613,7 +624,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pObjectBlur_->SetPositionY( 1.0f );
 
 	// ポストエフェクトオブジェクトの生成
 	Effect*	pEffectPostEffect = nullptr;		// ポストエフェクト
@@ -639,7 +649,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	pObjectPostEffect_->SetPositionY( 1.0f );
 
 	// シーン引数クラスの生成
 	pArgument_ = new SceneArgumentMain();
@@ -673,7 +682,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pTextureReflectAdd_ = pRenderPass_[ GraphicMain::PASS_REFLECT_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_REFLECT_NOT_LIGHT_ADD );
 	pArgument_->pTexture3D_ = pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE );
 	pArgument_->pTextureDepth_ = pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH );
-	pArgument_->pTextureTest_ = pRenderPass_[ GraphicMain::PASS_REFLECT_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_REFLECT_NOT_LIGHT_COLOR );
+	pArgument_->pTextureTest_ = pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DIFFUSE );
 
 	// シーン管理クラスの生成
 	pScene_ = new ManagerSceneMain();
@@ -729,6 +738,10 @@ int ManagerMain::Finalize( void )
 	// 反射ライティングオブジェクトの開放
 	delete pObjectLightReflect_;
 	pObjectLightReflect_ = nullptr;
+
+	// ビルボードポリゴンの開放
+	delete pPolygonBillboard_;
+	pPolygonBillboard_ = nullptr;
 
 	// 3Dポリゴンの開放
 	delete pPolygon3D_;
@@ -1018,6 +1031,7 @@ void ManagerMain::InitializeSelf( void )
 	pEffect_ = nullptr;
 	pPolygon2D_ = nullptr;
 	pPolygon3D_ = nullptr;
+	pPolygonBillboard_ = nullptr;
 
 #ifdef _DEVELOP
 	isPausing_ = false;

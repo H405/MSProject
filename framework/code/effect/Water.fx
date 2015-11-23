@@ -174,8 +174,8 @@ PixelOutput DrawPixel( VertexOutput vertex )
 
 	// ディフューズ色を求める
 	float	proportionDepth = (tex2Dproj( samplerTextureDepth, vertex.positionTexture_ ) - vertex.depth_) / clipCamera_.y;
-	float	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 1000.0f * proportionDepth, 0.0f, 0.0f );
-	float	offsetTextureUnder = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
+	float4	offsetTextureReflect = float4( (normal - vectorVertexToEye).xy * refractive_ * 1000.0f * proportionDepth, 0.0f, 0.0f );
+	float4	offsetTextureUnder = float4( (normal - vectorVertexToEye).xy * refractive_ * 50.0f, 0.0f, 0.0f );
 	float	proportionEnvironment = dot( normal, vectorVertexToEye );
 	float4	colorReflectNotLight = tex2Dproj( samplerTextureReflectNotLight, vertex.positionTexture_ + offsetTextureReflect );
 	float4	colorReflect = lerp( tex2Dproj( samplerTextureReflect, vertex.positionTexture_ + offsetTextureReflect ), colorReflectNotLight, colorReflectNotLight.a ) + 

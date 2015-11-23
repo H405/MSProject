@@ -42,8 +42,7 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,					// ワールド変換行列
-		PARAMETER_SIZE_SCREEN,						// 画面サイズ
+		PARAMETER_OFFET_TEXEL = 0,					// テクセルオフセット
 
 		PARAMETER_TEXTURE_DIFFUSE,					// ディフューズテクスチャ
 		PARAMETER_TEXTURE_SPECULAR,					// スペキュラテクスチャ

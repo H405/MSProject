@@ -165,15 +165,21 @@ int Drawer2D::Copy( Drawer2D* pOut ) const
 //==============================================================================
 void Drawer2D::Draw( const D3DXMATRIX& matrixWorld )
 {
-	// パラメータの設定
+	// ワールド変換行列の設定
 	D3DXMATRIX	matrixWorldSet;		// 設定するワールドマトリクス
 	matrixWorldSet = matrixWorld;
-	matrixWorldSet._41 -= 0.5f;
-	matrixWorldSet._42 -= 0.5f;
+	matrixWorldSet._41 *= 2.0f;
+	matrixWorldSet._42 *= 2.0f;
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
+
+	// 画面サイズの設定
+	float	pSizeScreen[ 2 ];		// 画面サイズ
+	pSizeScreen[ 0 ] = pEffectParameter_->GetWidthScreen();
+	pSizeScreen[ 1 ] = pEffectParameter_->GetHeightScreen();
+	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN, pSizeScreen, 2 );
+
+	// テクスチャの設定
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
-	pEffect_->SetFloat( PARAMETER_WIDTH_SCREEN_HALF, pEffectParameter_->GetWidthScreen() * 0.5f );
-	pEffect_->SetFloat( PARAMETER_HEIGHT_SCREEN_HALF, pEffectParameter_->GetHeightScreen() * 0.5f );
 	pEffect_->SetColor( PARAMETER_COLOR, *pColor_ );
 	pEffect_->SetFloatArray( PARAMETER_POSITION_TEXTURE, &pPositionTexture_->x, 2 );
 	pEffect_->SetFloatArray( PARAMETER_SCALE_TEXTURE, &pScaleTexture_->x, 2 );

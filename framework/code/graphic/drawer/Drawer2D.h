@@ -42,14 +42,13 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,			// ワールドマトリクス
-		PARAMETER_TEXTURE,					// テクスチャ
-		PARAMETER_WIDTH_SCREEN_HALF,		// 画面幅の半分
-		PARAMETER_HEIGHT_SCREEN_HALF,		// 画面高さの半分
-		PARAMETER_COLOR,					// 色
-		PARAMETER_POSITION_TEXTURE,			// テクスチャ座標
-		PARAMETER_SCALE_TEXTURE,			// テクスチャ拡縮
-		PARAMETER_MAX						// 最大値
+		PARAMETER_MATRIX_WORLD = 0,		// ワールドマトリクス
+		PARAMETER_SIZE_SCREEN,			// 画面のサイズ
+		PARAMETER_TEXTURE,				// テクスチャ
+		PARAMETER_COLOR,				// 色
+		PARAMETER_POSITION_TEXTURE,		// テクスチャ座標
+		PARAMETER_SCALE_TEXTURE,		// テクスチャ拡縮
+		PARAMETER_MAX					// 最大値
 	};
 
 	//==============================================================================
