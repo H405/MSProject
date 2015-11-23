@@ -41,6 +41,7 @@ typedef struct
 {
 	//	位置情報
 	D3DXVECTOR3 pos;
+	D3DXVECTOR3 setPos;
 
 	//	行列変換用回転ベクトル
 	D3DXVECTOR3 matRot;
@@ -71,6 +72,9 @@ typedef struct
 	int fireMax;
 
 	D3DXMATRIX matrix;
+
+	//	カメラの逆行列
+	D3DXMATRIX invViewMatrix;
 
 }FIREWORKS_PARAM;
 
@@ -164,6 +168,7 @@ public:
 	void deleteCountPP(){param.deleteCount++;}
 
 	FIREWORKS_PARAM* getParam(){return &param;}
+	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){param.invViewMatrix = _invViewMatrix;};
 
 protected:
 
@@ -173,9 +178,6 @@ protected:
 
 	//	花火用パラメータ
 	FIREWORKS_PARAM param;
-
-	//	カメラの逆行列
-	D3DXMATRIX invViewMatrix;
 
 	//==============================================================================
 	// Brief  : 更新処理

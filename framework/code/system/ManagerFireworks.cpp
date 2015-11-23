@@ -133,7 +133,7 @@ void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 		{
 			continue;
 		}
-
+		fireworks[count].setInvViewMatrix(invViewMatrix);
 		fireworks[count].Update();
 	}
 }

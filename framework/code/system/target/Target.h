@@ -137,6 +137,7 @@ public:
 	D3DXVECTOR3 getPosition(){return pos;}
 	float getScale();
 	bool IsEnable(){return enable;}
+	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
 
 protected:
 

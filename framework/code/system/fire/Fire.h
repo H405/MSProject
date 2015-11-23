@@ -39,6 +39,10 @@ typedef struct
 {
 	//	位置情報
 	D3DXVECTOR3 pos;
+	D3DXVECTOR3 setPos;
+
+	//	行列変換用回転ベクトル
+	D3DXVECTOR3 matRot;
 
 	//	移動の回転方向
 	float rot;
@@ -57,6 +61,11 @@ typedef struct
 
 	//	自然消滅までのカウンタ
 	int deleteCount;
+
+	D3DXMATRIX matrix;
+
+	//	カメラの逆行列
+	D3DXMATRIX invViewMatrix;
 
 }FIRE_PARAM;
 
@@ -161,6 +170,7 @@ public:
 	void deleteCountPP(){param.deleteCount++;}
 
 	FIRE_PARAM* getParam(){return &param;}
+	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){param.invViewMatrix = _invViewMatrix;};
 
 protected:
 

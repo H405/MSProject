@@ -55,12 +55,15 @@ void Fireworks::InitializeSelf( void )
 	// メンバ変数の初期化
 	param.managerPoint = nullptr;
 	param.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.setPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.rot = 0.0f;
 	param.rotSpeed = 0.0f;
 	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.enable = false;
 	param.deleteCount = 0;
 	indexState = 0;
+	D3DXMatrixIdentity(&param.matrix);
+	D3DXMatrixIdentity(&param.invViewMatrix);
 }
 //==============================================================================
 // Brief  : デストラクタ
@@ -169,6 +172,7 @@ void Fireworks::BurnUpdate( void )
 			continue;
 		}
 
+		param.fire[count].setInvViewMatrix(param.invViewMatrix);
 		param.fire[count].Update();
 	}
 
@@ -185,6 +189,13 @@ void Fireworks::burn(
 	float _hitCheckOffset,
 	float _hitPosLength)
 {
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &param.pos, &param.invViewMatrix);
+	param.setPos.x = setPos.x;
+	param.setPos.y = setPos.y;
+	param.setPos.z = setPos.z;
+
 	float buffValue = 0.0f;
 	float fireSize;
 
@@ -215,7 +226,7 @@ void Fireworks::burn(
 	//	花火の背景用生成
 	param.managerPoint->Add(
 		150,
-		D3DXVECTOR3(param.pos.x, param.pos.y, param.pos.z),
+		D3DXVECTOR3(param.setPos.x, param.setPos.y, param.setPos.z),
 		D3DXCOLOR( 0.9f, 0.9f, 0.9f, 0.9f ),
 		fireSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),

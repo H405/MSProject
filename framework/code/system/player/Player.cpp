@@ -52,6 +52,7 @@ void Player::InitializeSelf( void )
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	body = nullptr;
 	arm = nullptr;
+	D3DXMatrixIdentity(&invViewMatrix);
 }
 
 //==============================================================================
@@ -152,7 +153,6 @@ void Player::Update( void )
 {
 	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
 	D3DXVECTOR4 setPos;
-	D3DXVECTOR4 setRot;
 
 	D3DXVec3Transform(&setPos, &pos, &invViewMatrix);
 

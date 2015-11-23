@@ -63,6 +63,7 @@ void Target::InitializeSelf( void )
 	enable = false;
 	counter = 0;
 	fpUpdate = nullptr;
+	D3DXMatrixIdentity(&invViewMatrix);
 }
 //==============================================================================
 // Brief  : デストラクタ

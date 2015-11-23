@@ -328,9 +328,20 @@ void SceneGame::normalUpdate(void)
 	if(wiiLostCheck() == false)
 		return;
 
+
+	//	カメラの逆行列を取得する
+	D3DXMATRIX cameraInvMat;
+	pCamera_->GetRenderMatrix()->GetMatrixView(&cameraInvMat);
+	D3DXMatrixInverse(&cameraInvMat, nullptr, &cameraInvMat);
+
+	//	カメラの逆行列をプレイヤーにセット
+	player->setInvViewMatrix(cameraInvMat);
+
+
 	{
 		//	花火管理クラスの更新
 		MeasureTime("managerFireworksUpdate");
+		managerFireworks->setInvViewMatrix(cameraInvMat);
 		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
 	}
 	//	ターゲットクラスの更新
@@ -392,32 +403,6 @@ void SceneGame::normalUpdate(void)
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
 	}
-
-
-
-
-	//	カメラの逆行列を取得する
-	D3DXMATRIX cameraInvMat;
-	(pCamera_->GetRenderMatrix())->GetMatrixView(&cameraInvMat);
-	D3DXMatrixInverse(&cameraInvMat, nullptr, &cameraInvMat);
-	player->setInvViewMatrix(cameraInvMat);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	//	ポーズキーが押されたら

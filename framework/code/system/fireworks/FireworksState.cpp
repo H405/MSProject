@@ -83,15 +83,16 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 		param->matRot.x,
 		param->matRot.z);
 
+
+	//	³‚ÌŒü‚«‚Æ‚µ‚½‚Æ‚«‚ÌˆÚ“®•ûŒüC³ˆ—
+	param->rot += param->rotSpeed;
+
 	//	‰ñ“]—Ê‰ÁŽZ
-	/*param->rot += param->rotSpeed;
-	if(param->rot < 0)
+	/*if(param->rot < 0)
 		param->rot = 0.0f;
 	else if(param->rot > 90)
 		param->rot = 90.0f;*/
 
-	//	³‚ÌŒü‚«‚Æ‚µ‚½‚Æ‚«‚ÌˆÚ“®•ûŒüC³ˆ—
-	param->rot += param->rotSpeed;
 	param->rotSpeed *= 0.99f;
 
 	//	ˆÊ’uî•ñ‰ÁŽZ(90“x‚ª^‚Á’¼‚®ã‚ª‚é‚Æ‚·‚é)
@@ -99,13 +100,29 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 	param->pos.y += CRadianTable::mySinf((double)param->rot) * param->speed.y + 1.0f;
 	param->pos.z += param->speed.z;
 
+
+	//	s—ñ‚ÅˆÊ’u‚ð‚RŽŸŒ³“I‚É‰ñ“]
 	D3DXVECTOR4 buffPos;
-	D3DXVec3Transform(&buffPos, &param->pos, &param->matrix);
+	D3DXVECTOR3 buffPos3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM);
+	D3DXVec3Transform(&buffPos, &buffPos3, &param->matrix);
+	buffPos3.x = buffPos.x;
+	buffPos3.y = buffPos.y;
+	buffPos3.z = buffPos.z;
+
+
+	//	ƒJƒƒ‰‚Ì‹ts—ñ‚ð‚©‚¯‚ÄAí‚Éˆê’è‚ÌêŠ‚Éo‚é‚æ‚¤‚É‚·‚éˆ—
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &buffPos3, &param->invViewMatrix);
+	param->setPos.x = setPos.x;
+	param->setPos.y = setPos.y;
+	param->setPos.z = setPos.z;
+
+
 
 	//	ƒGƒtƒFƒNƒg¶¬
 	param->managerPoint->Add(
 		effectExistTime,
-		D3DXVECTOR3(buffPos.x + FIRE_APPEAR_RANDAM, buffPos.y + FIRE_APPEAR_RANDAM, buffPos.z + FIRE_APPEAR_RANDAM),
+		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		effectSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),

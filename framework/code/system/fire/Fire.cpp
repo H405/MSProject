@@ -50,12 +50,16 @@ void Fire::InitializeSelf( void )
 	// メンバ変数の初期化
 	param.managerPoint = nullptr;
 	param.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.setPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.matRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.rot = 0.0f;
 	param.rotSpeed = 0.0f;
 	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.enable = false;
 	param.deleteCount = 0;
 	indexState = 0;
+	D3DXMatrixIdentity(&param.matrix);
+	D3DXMatrixIdentity(&param.invViewMatrix);
 }
 //==============================================================================
 // Brief  : デストラクタ

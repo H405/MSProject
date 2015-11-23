@@ -78,6 +78,19 @@ void FireStateRight::Update( Fire* _fireworks )
 	//	パラメータへアクセス
 	FIRE_PARAM* param = _fireworks->getParam();
 
+
+	//	花火移動用行列初期化
+	D3DXMatrixIdentity(&param->matrix);
+
+	//	回転
+	D3DXMatrixRotationYawPitchRoll(
+		&param->matrix,
+		param->matRot.y,
+		param->matRot.x,
+		param->matRot.z);
+
+
+
 	//	回転量加算.
 	param->rot += param->rotSpeed;
 
@@ -97,10 +110,30 @@ void FireStateRight::Update( Fire* _fireworks )
 	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y);
 	//param->pos.z += param->speed.z;
 
+
+
+	//	行列で位置を３次元的に回転
+	D3DXVECTOR4 buffPos;
+	D3DXVECTOR3 buffPos3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM);
+	D3DXVec3Transform(&buffPos, &buffPos3, &param->matrix);
+	buffPos3.x = buffPos.x;
+	buffPos3.y = buffPos.y;
+	buffPos3.z = buffPos.z;
+
+
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &buffPos3, &param->invViewMatrix);
+	param->setPos.x = setPos.x;
+	param->setPos.y = setPos.y;
+	param->setPos.z = setPos.z;
+
+
+
 	//	エフェクト生成
 	_fireworks->getManagerPoint()->Add(
 		effectExistTime + (int)RANDAM(effectExistTimeRandom),
-		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
+		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
@@ -137,6 +170,18 @@ void FireStateLeft::Update( Fire* _fireworks )
 	//	パラメータへアクセス
 	FIRE_PARAM* param = _fireworks->getParam();
 
+
+	//	花火移動用行列初期化
+	D3DXMatrixIdentity(&param->matrix);
+
+	//	回転
+	D3DXMatrixRotationYawPitchRoll(
+		&param->matrix,
+		param->matRot.y,
+		param->matRot.x,
+		param->matRot.z);
+
+
 	//	回転量加算
 	param->rot -= param->rotSpeed;
 
@@ -156,10 +201,30 @@ void FireStateLeft::Update( Fire* _fireworks )
 	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y);
 	//param->pos.z += param->speed.z;
 
+
+
+	//	行列で位置を３次元的に回転
+	D3DXVECTOR4 buffPos;
+	D3DXVECTOR3 buffPos3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM);
+	D3DXVec3Transform(&buffPos, &buffPos3, &param->matrix);
+	buffPos3.x = buffPos.x;
+	buffPos3.y = buffPos.y;
+	buffPos3.z = buffPos.z;
+
+
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &buffPos3, &param->invViewMatrix);
+	param->setPos.x = setPos.x;
+	param->setPos.y = setPos.y;
+	param->setPos.z = setPos.z;
+
+
+
 	//	エフェクト生成
 	_fireworks->getManagerPoint()->Add(
 		effectExistTime + (int)RANDAM(effectExistTimeRandom),
-		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
+		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
 		D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ),
 		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
@@ -207,10 +272,30 @@ void FireStateUp::Update( Fire* _fireworks )
 	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y);
 	param->pos.z += param->speed.z;
 
+
+
+	//	行列で位置を３次元的に回転
+	D3DXVECTOR4 buffPos;
+	D3DXVECTOR3 buffPos3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM);
+	D3DXVec3Transform(&buffPos, &buffPos3, &param->matrix);
+	buffPos3.x = buffPos.x;
+	buffPos3.y = buffPos.y;
+	buffPos3.z = buffPos.z;
+
+
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &buffPos3, &param->invViewMatrix);
+	param->setPos.x = setPos.x;
+	param->setPos.y = setPos.y;
+	param->setPos.z = setPos.z;
+
+
+
 	//	エフェクト生成
 	_fireworks->getManagerPoint()->Add(
 		effectExistTime + (int)RANDAM(effectExistTimeRandom),
-		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
+		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
 		D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ),
 		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
@@ -255,10 +340,34 @@ void FireStateDown::Update( Fire* _fireworks )
 	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y);
 	param->pos.z += param->speed.z;
 
+
+
+
+
+	//	行列で位置を３次元的に回転
+	D3DXVECTOR4 buffPos;
+	D3DXVECTOR3 buffPos3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM);
+	D3DXVec3Transform(&buffPos, &buffPos3, &param->matrix);
+	buffPos3.x = buffPos.x;
+	buffPos3.y = buffPos.y;
+	buffPos3.z = buffPos.z;
+
+
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &buffPos3, &param->invViewMatrix);
+	param->setPos.x = setPos.x;
+	param->setPos.y = setPos.y;
+	param->setPos.z = setPos.z;
+
+
+
+
+
 	//	エフェクト生成
 	_fireworks->getManagerPoint()->Add(
 		effectExistTime + (int)RANDAM(effectExistTimeRandom),
-		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
+		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
 		D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ),
 		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
