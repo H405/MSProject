@@ -124,11 +124,15 @@ public:
 	// アクセサ
 	//==============================================================================
 	Fireworks* getFireworks(int _index){return &fireworks[_index];}
+	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
 
 protected:
 
 	//	花火の配列
 	Fireworks* fireworks;
+
+	//	カメラの逆行列
+	D3DXMATRIX invViewMatrix;
 
 	//	花火の自然消滅認識用フラグ
 	bool enableOld[FIREWORKS_MAX];

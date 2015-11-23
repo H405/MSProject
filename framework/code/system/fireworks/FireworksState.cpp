@@ -72,24 +72,42 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 	//	パラメータへアクセス
 	FIREWORKS_PARAM* param = _fireworks->getParam();
 
+
+	//	花火移動用行列初期化
+	D3DXMatrixIdentity(&param->matrix);
+
+	//	回転
+	D3DXMatrixRotationYawPitchRoll(
+		&param->matrix,
+		param->matRot.y,
+		param->matRot.x,
+		param->matRot.z);
+
 	//	回転量加算
-	param->rot += param->rotSpeed;
+	/*param->rot += param->rotSpeed;
 	if(param->rot < 0)
 		param->rot = 0.0f;
 	else if(param->rot > 90)
-		param->rot = 90.0f;
+		param->rot = 90.0f;*/
 
-	//	位置情報加算.
-	param->pos.x += (CRadianTable::mySinf((double)param->rot) * -param->speed.x);
-	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y) + 1.0f;
+	//	正の向きとしたときの移動方向修正処理
+	param->rot += param->rotSpeed;
+	param->rotSpeed *= 0.99f;
+
+	//	位置情報加算(90度が真っ直ぐ上がるとする)
+	param->pos.x += CRadianTable::myCosf((double)param->rot) * param->speed.x;
+	param->pos.y += CRadianTable::mySinf((double)param->rot) * param->speed.y + 1.0f;
 	param->pos.z += param->speed.z;
+
+	D3DXVECTOR4 buffPos;
+	D3DXVec3Transform(&buffPos, &param->pos, &param->matrix);
 
 	//	エフェクト生成
 	param->managerPoint->Add(
 		effectExistTime,
-		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
+		D3DXVECTOR3(buffPos.x + FIRE_APPEAR_RANDAM, buffPos.y + FIRE_APPEAR_RANDAM, buffPos.z + FIRE_APPEAR_RANDAM),
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
-		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
+		effectSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 		effectDifferenceSize,

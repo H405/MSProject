@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "SceneGame.h"
 #include "../framework/camera/CameraObject.h"
+#include "../framework/render/RenderMatrix.h"
 #include "../framework/develop/Debug.h"
 #include "../framework/develop/DebugProc.h"
 #include "../framework/develop/DebugMeasure.h"
@@ -189,10 +190,8 @@ void SceneGame::calibrationUpdate(void)
 
 //==============================================================================
 // Brief  : プレイヤーの移動処理
-// Return : void								: なし
-// Arg    : void								: なし
 //==============================================================================
-void SceneGame::MovePlayer(SceneArgumentMain* pArgument)
+void SceneGame::MovePlayer()
 {
 	//	wiiボードを利用した、プレイヤーの移動処理
 	//---------------------------------------------------------------------------------------------------------
@@ -230,44 +229,11 @@ void SceneGame::MovePlayer(SceneArgumentMain* pArgument)
 	D3DXVECTOR3 buffRot = pArgument_->pWiiController_->getRot();
 	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
 }
-
 //==============================================================================
-// Brief  : 通常更新処理
-// Return : void								: なし
-// Arg    : void								: なし
+// Brief  : 花火打ち上げ処理
 //==============================================================================
-void SceneGame::normalUpdate(void)
+void SceneGame::LaunchFireworks()
 {
-	PrintDebug( _T( "normalUpdate\n" ) );
-
-	//	接続切れ確認
-	if(wiiLostCheck() == false)
-		return;
-
-	{
-		//	花火管理クラスの更新
-		MeasureTime("managerFireworksUpdate");
-		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
-	}
-	managerTarget->Update(targetTable, &targetTableIndex);
-	{
-		// ポイントスプライト管理クラスの更新
-		MeasureTime("managerPoint");
-		managerPoint->Update();
-	}
-
-	//	プレイヤー移動処理
-	MovePlayer(pArgument_);
-
-	//	テスト用ここから
-	//---------------------------------------------------------------------------------------------------------
-	//for(int count = 0;count < TARGET_MAX;count++)
-	//	PrintDebug( _T( "index[%d] = %d\n"), count, targetTable[count] );
-	//
-	//PrintDebug( _T( "\ntargetTableIndex = %d\n\n"), targetTableIndex );
-
-
-	//	打ち上げ可能なら
 	if(launchFlag == false)
 	{
 		//	Bボタンを離した時の
@@ -282,6 +248,9 @@ void SceneGame::normalUpdate(void)
 
 			if(buffWiiAccel.x >= 0.0f)
 			{
+				//	rotは90度で真っ直ぐ飛ぶ
+				//	rotSpeedがマイナス値なら右側に曲がる
+				//	rotSpeedが　プラス値なら左側に曲がる
 				buff = managerFireworks->Add(
 					ManagerFireworks::STATE_RIGHT,
 					managerPoint,
@@ -323,6 +292,7 @@ void SceneGame::normalUpdate(void)
 		}
 	}
 
+#ifdef _DEBUG
 	if(pArgument_->pKeyboard_->IsTrigger(DIK_A))
 	{
 		int buff;
@@ -332,30 +302,63 @@ void SceneGame::normalUpdate(void)
 					ManagerFireworks::STATE_RIGHT,
 					managerPoint,
 					buffPos,
-					D3DXVECTOR3(1.0, 1.0f, 0.0f),
-					0.0f,
-					0.0f
+					D3DXVECTOR3(3.0, 1.0f, 0.0f),
+					90.0f,
+					-0.5f
 					);
 
 		if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
+		{
+			fireworksTable[fireworksTableIndex] = buff;
+			fireworksTableIndex++;
+		}
+	}
+#endif
+}
+//==============================================================================
+// Brief  : 通常更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::normalUpdate(void)
+{
+	PrintDebug( _T( "normalUpdate\n" ) );
+
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+	{
+		//	花火管理クラスの更新
+		MeasureTime("managerFireworksUpdate");
+		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
+	}
+	//	ターゲットクラスの更新
+	managerTarget->Update(targetTable, &targetTableIndex);
+	{
+		// ポイントスプライト管理クラスの更新
+		MeasureTime("managerPoint");
+		managerPoint->Update();
 	}
 
+	//	プレイヤー移動処理
+	MovePlayer();
 
+	//	花火打ち上げ処理
+	LaunchFireworks();
+
+
+
+
+
+	//	テスト用ここから
+	//---------------------------------------------------------------------------------------------------------
 	PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
 	PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
 	PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
 	PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
 	PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
 	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
-
-
-	if(pArgument_->pWiiController_->getPress(WC_PLUS) && pArgument_->pWiiController_->getPress(WC_MINUS))
-		pArgument_->pWiiController_->rotReset();
-
 
 	//	ターゲット出現
 	targetAppearCount++;
@@ -376,12 +379,46 @@ void SceneGame::normalUpdate(void)
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
 
+
+
+
+	//	wiiリモコンの回転初期化
+	if(pArgument_->pWiiController_->getPress(WC_PLUS) && pArgument_->pWiiController_->getPress(WC_MINUS))
+		pArgument_->pWiiController_->rotReset();
+
 	//	Aボタン押されたら
 	if(pArgument_->pVirtualController_->IsTrigger(VC_BURN) == true)
 	{
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
 	}
+
+
+
+
+	//	カメラの逆行列を取得する
+	D3DXMATRIX cameraInvMat;
+	(pCamera_->GetRenderMatrix())->GetMatrixView(&cameraInvMat);
+	D3DXMatrixInverse(&cameraInvMat, nullptr, &cameraInvMat);
+	player->setInvViewMatrix(cameraInvMat);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//	ポーズキーが押されたら
 	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))
@@ -656,8 +693,6 @@ void SceneGame::pauseUpdate(void)
 }
 //==============================================================================
 // Brief  : ポーズ更新処理(フェード用)
-// Return : void								: なし
-// Arg    : void								: なし
 //==============================================================================
 void SceneGame::pauseFadeUpdate(void)
 {
@@ -678,8 +713,6 @@ void SceneGame::pauseFadeUpdate(void)
 }
 //==============================================================================
 // Brief  : 再接続要求時用の更新処理
-// Return : void								: なし
-// Arg    : void								: なし
 //==============================================================================
 void SceneGame::reConnectWiimoteUpdate(void)
 {
@@ -712,8 +745,6 @@ void SceneGame::reConnectWiimoteUpdate(void)
 }
 //==============================================================================
 // Brief  : 再接続要求時用の更新処理
-// Return : void								: なし
-// Arg    : void								: なし
 //==============================================================================
 void SceneGame::reConnectWiiboardUpdate(void)
 {
@@ -785,12 +816,10 @@ bool SceneGame::wiiLostCheck(void)
 }
 //==============================================================================
 // Brief  : 花火とターゲットの当たり判定処理
-// Return : void								: なし
-// Arg    : void								: なし
 //==============================================================================
 void SceneGame::collision_fireworks_target()
 {
-	float hitPosLength = 0.0f;
+	/*float hitPosLength = 0.0f;
 
 	//	存在する花火の数分ループ
 	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
@@ -826,6 +855,18 @@ void SceneGame::collision_fireworks_target()
 				break;
 			}
 		}
+	}
+	*/
+
+	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	{
+		//	花火の情報取得
+		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
+		if(buffFireworks->IsBurnFlag())
+			continue;
+
+		//	破裂
+		buffFireworks->burn(0.0f, 0.0f);
 	}
 }
 //==============================================================================

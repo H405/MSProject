@@ -386,10 +386,11 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		);
 
 
-	//	プレイヤーオブジェクト
+	//	プレイヤーオブジェクト(Posはカメラとの相対座標)
 	player = new Player;
 	player->Initialize(
-		D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
+		//D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
+		D3DXVECTOR3(0.0f, -100.0f, 400.0f),
 		pArgument);
 
 

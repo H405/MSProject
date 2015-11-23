@@ -147,6 +147,9 @@ protected:
 	//	位置情報
 	D3DXVECTOR3 pos;
 
+	//	カメラの逆行列
+	D3DXMATRIX invViewMatrix;
+
 	//	使用可能フラグ
 	bool enable;
 

@@ -81,11 +81,15 @@ public:
 	void setPosition(D3DXVECTOR3 _pos){pos = _pos;}
 	void AddPositionX(float _value){pos.x += _value;};
 	void setRotationArm(float _x, float _y, float _z);
+	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
 
 protected:
 
 	//	ˆÊ’uî•ñ
 	D3DXVECTOR3 pos;
+
+	//	ƒJƒƒ‰‚Ì‹ts—ñ
+	D3DXMATRIX invViewMatrix;
 
 	ObjectModelMaterial* body;
 	ObjectModelMaterial* arm;

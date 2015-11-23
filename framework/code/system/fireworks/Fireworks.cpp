@@ -30,6 +30,8 @@
 //	ステートテーブル
 FireworksState** Fireworks::ppState_ = nullptr;
 
+static const float bigFireFirstSpeed = 1.0f;
+
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
@@ -95,6 +97,7 @@ int Fireworks::Set(
 	//	変数の保存と初期化
 	param.managerPoint = _managerPoint;
 	param.pos = _pos;
+	param.matRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.speed = _speed;
 	param.rot = _rot;
 	param.rotSpeed = _rotSpeed;
@@ -232,7 +235,7 @@ void Fireworks::burn(
 				Fire::STATE_UP,
 				param.managerPoint,
 				param.pos,
-				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
 				value,
 				0.1f);
 		}
@@ -242,7 +245,7 @@ void Fireworks::burn(
 				Fire::STATE_DOWN,
 				param.managerPoint,
 				param.pos,
-				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
 				value,
 				1.0f);
 		}
@@ -252,7 +255,7 @@ void Fireworks::burn(
 				Fire::STATE_LEFT,
 				param.managerPoint,
 				param.pos,
-				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
 				value,
 				0.2f);
 		}
@@ -262,7 +265,7 @@ void Fireworks::burn(
 				Fire::STATE_RIGHT,
 				param.managerPoint,
 				param.pos,
-				D3DXVECTOR3(1.0f, 1.0f, param.speed.z),
+				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
 				value,
 				0.2f);
 		}

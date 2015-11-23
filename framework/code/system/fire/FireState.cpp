@@ -41,14 +41,14 @@ static const int fireNum[] =
 };
 
 //	生成する火花エフェクトの大きさ
-static const float effectSize = 15.0f;
+static const float effectSize = 30.0f;
 
 //	生成する火花エフェクトの消えるまでの時間
-static const int effectExistTime = 300;
+static const int effectExistTime = 10;
 static const int effectExistTimeRandom = (int)(effectExistTime * 0.9f);
 
 //	生成する火花エフェクトの大きさの差異
-static const float effectDifferenceSize = -0.2f;
+static const float effectDifferenceSize = -0.1f;
 
 //==============================================================================
 // Brief  : 更新処理
@@ -90,7 +90,7 @@ void FireStateRight::Update( Fire* _fireworks )
 	}
 
 	//	速度計算
-	param->speed *= 0.99f;
+	param->speed *= 0.999f;
 
 	//	位置情報加算
 	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
@@ -149,7 +149,7 @@ void FireStateLeft::Update( Fire* _fireworks )
 	}
 
 	//	速度計算
-	param->speed *= 0.99f;
+	param->speed *= 0.999f;
 
 	//	位置情報加算
 	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
@@ -200,7 +200,7 @@ void FireStateUp::Update( Fire* _fireworks )
 	FIRE_PARAM* param = _fireworks->getParam();
 
 	//	速度計算
-	param->speed *= 0.99f;
+	param->speed *= 0.999f;
 
 	//	位置情報加算
 	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
@@ -248,7 +248,7 @@ void FireStateDown::Update( Fire* _fireworks )
 	FIRE_PARAM* param = _fireworks->getParam();
 
 	//	速度計算
-	param->speed *= 0.99f;
+	param->speed *= 0.999f;
 
 	//	位置情報加算
 	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);

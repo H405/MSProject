@@ -27,8 +27,8 @@
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-static const float offsetPosX = -30.0f;
-static const float offsetPosY = -50.0f;
+static const float offsetPosX = -10.0f;
+static const float offsetPosY = -20.0f;
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -97,6 +97,7 @@ int Player::Initialize(
 	body->SetPosition(pos);
 	body->AddPositionX(offsetPosX);
 	body->AddPositionY(offsetPosY);
+	//body->SetPosition(0.0f, 50.0f, 300.0f);
 
 	//	プレイヤー生成
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
@@ -105,10 +106,13 @@ int Player::Initialize(
 	arm->Initialize(0);
 	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
 	arm->SetPosition(pos);
+	//arm->SetPosition(0.0f, 50.0f, 300.0f);
 
+	body->SetScale(1.0f, 1.0f, 1.0f);
+	arm->SetScale(1.0f, 1.0f, 1.0f);
 
-	body->SetScale(2.0f, 2.0f, 2.0f);
-	arm->SetScale(2.0f, 2.0f, 2.0f);
+	//	親オブジェクト登録
+	arm->SetParent(body);
 
 
 	// 正常終了
@@ -146,10 +150,23 @@ int Player::Finalize( void )
 //==============================================================================
 void Player::Update( void )
 {
-	arm->SetPosition(pos);
-	body->SetPosition(pos);
-	body->AddPositionX(offsetPosX);
-	body->AddPositionY(offsetPosY);
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVECTOR4 setRot;
+
+	D3DXVec3Transform(&setPos, &pos, &invViewMatrix);
+
+	//	腕にセット
+	arm->SetPosition(setPos.x, setPos.y, setPos.z);
+
+	//	オフセット値を加味してもう一度
+	D3DXVECTOR3 buffPos = pos;
+	buffPos.x += offsetPosX;
+	buffPos.y += offsetPosY;
+	D3DXVec3Transform(&setPos, &buffPos, &invViewMatrix);
+
+	//	身体にセット
+	body->SetPosition(setPos.x, setPos.y, setPos.z);
 
 	// 基本クラスの処理
 	ObjectMovement::Update();

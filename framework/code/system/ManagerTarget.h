@@ -118,11 +118,15 @@ public:
 	// アクセサ
 	//==============================================================================
 	Target* getTarget(int _index){return &target[_index];}
+	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
 
 protected:
 
 	//	ターゲットの配列
 	Target* target;
+
+	//	カメラの逆行列
+	D3DXMATRIX invViewMatrix;
 
 	//	ターゲットの自然消滅認識用フラグ
 	bool enableOld[TARGET_MAX];
