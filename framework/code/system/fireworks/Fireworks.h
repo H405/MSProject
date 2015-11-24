@@ -25,7 +25,8 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define FIRE_MAX (12)
+#define FIRE_MAX (24)
+typedef int TIME;
 
 //******************************************************************************
 // クラス前方宣言
@@ -65,9 +66,13 @@ typedef struct
 	bool burnFlag;
 
 	//	自然消滅までのカウンタ
-	int deleteCount;
+	TIME disappear;
+
+	//	生成用カウンタ
+	TIME appear;
 
 	Fire* fire;
+	Fire* smallFire;
 
 	int fireMax;
 
@@ -136,6 +141,15 @@ public:
 		float _hitPosLength);
 
 	//==============================================================================
+	// Brief  : 花火の爆発処理(予備・前Ver)
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void burn2(
+		float _hitCheckOffset,
+		float _hitPosLength);
+
+	//==============================================================================
 	// Brief  : ステートの設定
 	// Return : void								: なし
 	// Arg    : FireworksState** ppState				: ステートテーブル
@@ -164,8 +178,8 @@ public:
 
 	ManagerPoint* getManagerPoint(){return param.managerPoint;};
 
-	int getDeleteCount(){return param.deleteCount;}
-	void deleteCountPP(){param.deleteCount++;}
+	int getDeleteCount(){return param.disappear;}
+	void disappearPP(){param.disappear++;}
 
 	FIREWORKS_PARAM* getParam(){return &param;}
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){param.invViewMatrix = _invViewMatrix;};

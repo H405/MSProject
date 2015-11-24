@@ -50,8 +50,10 @@ void Fire::InitializeSelf( void )
 	// メンバ変数の初期化
 	param.managerPoint = nullptr;
 	param.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.offsetPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.setPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.matRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	param.rot = 0.0f;
 	param.rotSpeed = 0.0f;
 	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -80,10 +82,8 @@ void Fire::InitializeState()
 	// ステートテーブルの作成
 	//	FireStateArrangeにクラス追加したら、これのヘッダーにステート（enum）増やして
 	//	ここにテーブルを追加すること！
-	ppState_[ STATE_RIGHT ] = new FireStateRight();
-	ppState_[ STATE_LEFT ] = new FireStateLeft();
-	ppState_[ STATE_UP ] = new FireStateUp();
-	ppState_[ STATE_DOWN ] = new FireStateDown();
+	ppState_[ STATE_BIG ] = new FireStateBig();
+	ppState_[ STATE_SMALL ] = new FireStateSmall();
 }
 //==============================================================================
 // Brief  : ステートの設定
@@ -103,15 +103,15 @@ int Fire::Set(
 	ManagerPoint* _managerPoint,
 	D3DXVECTOR3 _pos,
 	D3DXVECTOR3 _speed,
-	float _rot,
-	float _rotSpeed )
+	D3DXCOLOR _color)
 {
 	//	変数の保存と初期化
 	param.managerPoint = _managerPoint;
 	param.pos = _pos;
 	param.speed = _speed;
-	param.rot = _rot;
-	param.rotSpeed = _rotSpeed;
+	//param.rot = _rot;
+	//param.rotSpeed = _rotSpeed;
+	param.color = _color;
 
 	param.enable = true;
 	param.deleteCount = 0;

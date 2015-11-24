@@ -15,6 +15,7 @@
 #include "../../system/ManagerPoint.h"
 #include "../../system/ManagerFireworks.h"
 #include "../fire/Fire.h"
+#include "../../framework/radianTable/radianTable.h"
 
 //******************************************************************************
 // ライブラリ
@@ -30,7 +31,9 @@
 //	ステートテーブル
 FireworksState** Fireworks::ppState_ = nullptr;
 
-static const float bigFireFirstSpeed = 1.0f;
+static const int bigFireFirstSpeed = 10;
+static const int fireBGExistTime = 50;
+static const float fireBGAddSize = 5.0f;
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -44,6 +47,7 @@ Fireworks::Fireworks( void )
 
 	//	火花生成
 	param.fire = new Fire[FIRE_MAX];
+	param.smallFire = new Fire[FIRE_MAX];
 }
 //==============================================================================
 // Brief  : クラス内の初期化処理
@@ -60,7 +64,8 @@ void Fireworks::InitializeSelf( void )
 	param.rotSpeed = 0.0f;
 	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.enable = false;
-	param.deleteCount = 0;
+	param.disappear = 0;
+	param.appear = 0;
 	indexState = 0;
 	D3DXMatrixIdentity(&param.matrix);
 	D3DXMatrixIdentity(&param.invViewMatrix);
@@ -107,7 +112,7 @@ int Fireworks::Set(
 
 	param.enable = true;
 	param.burnFlag = false;
-	param.deleteCount = 0;
+	param.disappear = 0;
 	param.fireMax = 0;
 
 	indexState = _indexState;
@@ -126,6 +131,7 @@ int Fireworks::Set(
 //==============================================================================
 int Fireworks::Finalize( void )
 {
+	delete[] param.smallFire;
 	delete[] param.fire;
 
 	// クラス内の初期化処理
@@ -173,7 +179,9 @@ void Fireworks::BurnUpdate( void )
 		}
 
 		param.fire[count].setInvViewMatrix(param.invViewMatrix);
+		param.smallFire[count].setInvViewMatrix(param.invViewMatrix);
 		param.fire[count].Update();
+		param.smallFire[count].Update();
 	}
 
 	if(buffCount == param.fireMax)
@@ -189,6 +197,106 @@ void Fireworks::burn(
 	float _hitCheckOffset,
 	float _hitPosLength)
 {
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+	D3DXVec3Transform(&setPos, &param.pos, &param.invViewMatrix);
+	param.setPos.x = setPos.x;
+	param.setPos.y = setPos.y;
+	param.setPos.z = setPos.z;
+
+	//	花火の数に応じた、１つの火花の角度間隔
+	float buffValue = 0.0f;
+
+	//	火花の最大数
+	float fireSize;
+
+	//	可
+	if(_hitPosLength <= (_hitCheckOffset * 0.1f))
+	{
+		param.fireMax = FIRE_MAX;
+		buffValue = 360.0f / (float)(param.fireMax);
+		fireSize = 15.0f;
+	}
+	//	良
+	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
+	{
+		param.fireMax = FIRE_MAX / 2;
+		buffValue = 360.0f / (float)(param.fireMax);
+		fireSize = 30.0f;
+	}
+	//	優
+	else
+	{
+		param.fireMax = FIRE_MAX / 3;
+		buffValue = 360.0f / (float)(param.fireMax);
+		fireSize = 45.0f;
+	}
+
+
+
+	//	花火の背景用生成
+	param.managerPoint->Add(
+		fireBGExistTime,
+		param.setPos,
+		D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f),
+		fireSize,
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
+		fireBGAddSize,
+		ManagerPoint::STATE_ADD
+		);
+
+	//	火花の数だけループ
+	for(int count = 0;count < param.fireMax;count++)
+	{
+		//	スピードをsin cosで計算
+		float speedX = CRadianTable::mySinf((buffValue * count) + ((rand() % (int)buffValue) + (rand() % (int)buffValue)) * 0.5f);
+		float speedY = CRadianTable::myCosf((buffValue * count) + ((rand() % (int)buffValue) + (rand() % (int)buffValue)) * 0.5f);
+
+		//	ローカル頂点座標を計算
+		D3DXVECTOR3 buffSetPos = D3DXVECTOR3(param.pos.x + speedX, param.pos.y + speedY, param.pos.z);
+
+		//	大きい火花生成
+		param.fire[count].Set(
+			Fire::STATE_BIG,
+			param.managerPoint,
+			buffSetPos,
+			D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.1f),
+						(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
+						0.0f),
+			D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+
+
+		//	小さい火花生成
+		param.smallFire[count].Set(
+			Fire::STATE_SMALL,
+			param.managerPoint,
+			buffSetPos,
+			D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.13f),
+						(speedY * (float)(rand() % bigFireFirstSpeed) * 0.13f),
+						0.0f),
+			D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+	}
+
+
+
+	//	更新関数設定
+	fpUpdate = &Fireworks::BurnUpdate;
+
+	//	破裂フラグON
+	param.burnFlag = true;
+}
+
+//==============================================================================
+// Brief  : 花火の爆発処理(予備・前Ver)
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void Fireworks::burn2(
+	float _hitCheckOffset,
+	float _hitPosLength)
+{
+	/*
 	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
 	D3DXVECTOR4 setPos;
 	D3DXVec3Transform(&setPos, &param.pos, &param.invViewMatrix);
@@ -263,7 +371,7 @@ void Fireworks::burn(
 		else if(value > 180.0f && value < 360.0f)
 		{
 			param.fire[count].Set(
-				Fire::STATE_LEFT,
+				Fire::STATE_SMALL,
 				param.managerPoint,
 				param.pos,
 				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
@@ -273,7 +381,7 @@ void Fireworks::burn(
 		else
 		{
 			param.fire[count].Set(
-				Fire::STATE_RIGHT,
+				Fire::STATE_BIG,
 				param.managerPoint,
 				param.pos,
 				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
@@ -287,5 +395,5 @@ void Fireworks::burn(
 
 	//	破裂フラグON
 	param.burnFlag = true;
+	*/
 }
-

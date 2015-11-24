@@ -40,10 +40,16 @@ static const int fireNum[] =
 };
 
 //	生成する花火エフェクトの大きさ
-static const float effectSize = 30.0f;
+static const float effectSize = 10.0f;
+
+//	生成する大きな花火エフェクトの大きさ
+static const float effectBigSize = 30.0f;
 
 //	生成する花火エフェクトの消えるまでの時間
-static const int effectExistTime = 50;
+static const TIME effectDisappear = 30;
+
+//	生成する花火エフェクトが生成される間隔
+static const TIME effectAppear = 3;
 
 //	生成する花火エフェクトの大きさの差異
 static const float effectDifferenceSize = -0.2f;
@@ -121,7 +127,7 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 
 	//	エフェクト生成
 	param->managerPoint->Add(
-		effectExistTime,
+		effectDisappear,
 		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		effectSize,
@@ -131,12 +137,31 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 		ManagerPoint::STATE_ADD
 		);
 
-	//	カウンタ更新
-	param->deleteCount++;
-	if(param->deleteCount >= DELETECOUNT_MAX)
+	//	消滅カウンタ更新
+	param->disappear++;
+	if(param->disappear >= DELETECOUNT_MAX)
 	{
 		param->enable = false;
 	}
+
+	//	生成カウンタ更新
+	param->appear++;
+	if(param->appear <= effectAppear)
+	{
+		//	エフェクト生成
+		param->managerPoint->Add(
+			1,
+			D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
+			D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+			effectBigSize,
+			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
+			effectDifferenceSize,
+			ManagerPoint::STATE_ADD
+			);
+	}
+	else
+		param->appear = 0;
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -162,10 +187,10 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 
 	//	エフェクト生成
 	_fireworks->getManagerPoint()->Add(
-		effectExistTime,
+		effectDisappear,
 		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
 		D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ),
-		effectSize - ((effectSize / DELETECOUNT_MAX) * param->deleteCount),
+		effectSize - ((effectSize / DELETECOUNT_MAX) * param->disappear),
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 		effectDifferenceSize,
@@ -173,9 +198,28 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 		);
 
 	//	カウンタ更新
-	param->deleteCount++;
-	if(param->deleteCount >= DELETECOUNT_MAX)
+	param->disappear++;
+	if(param->disappear >= DELETECOUNT_MAX)
 	{
 		param->enable = false;
 	}
+
+	//	生成カウンタ更新
+	param->appear++;
+	if(param->appear <= effectAppear)
+	{
+		//	エフェクト生成
+		param->managerPoint->Add(
+			1,
+			D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
+			D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+			effectBigSize,
+			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
+			effectDifferenceSize,
+			ManagerPoint::STATE_ADD
+			);
+	}
+	else
+		param->appear = 0;
 }

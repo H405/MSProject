@@ -39,7 +39,10 @@ typedef struct
 {
 	//	位置情報
 	D3DXVECTOR3 pos;
+	D3DXVECTOR3 offsetPos;
 	D3DXVECTOR3 setPos;
+
+	D3DXCOLOR color;
 
 	//	行列変換用回転ベクトル
 	D3DXVECTOR3 matRot;
@@ -79,10 +82,8 @@ friend class FireState;
 public:
 	enum
 	{
-		STATE_RIGHT = 0,
-		STATE_LEFT,
-		STATE_UP,
-		STATE_DOWN,
+		STATE_BIG = 0,
+		STATE_SMALL,
 		STATE_MAX
 	}STATE;
 
@@ -109,8 +110,7 @@ public:
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _speed,
-		float _rot,
-		float _rotSpeed);
+		D3DXCOLOR _color);
 
 	//==============================================================================
 	// Brief  : 終了処理
