@@ -88,13 +88,10 @@ static const float addFlashingAlpha = 0.02f;
 //	打ち上げ間隔
 static const int launchCountMax = 20;
 
-static const D3DXVECTOR3 targetAppearPos[CAMERA_STATE_MAX] =
-{
-	D3DXVECTOR3(0.0f, 0.0f, -2000.0f),
-	D3DXVECTOR3(0.0f, 0.0f, -2000.0f),
-	D3DXVECTOR3(0.0f, 0.0f, -2000.0f),
-	D3DXVECTOR3(0.0f, 0.0f, -2000.0f),
-};
+//	花火同士の当たり判定時に、どの程度近づいたら当たりとするか
+static const float fire_fire_collisionSize = 5.0f;
+
+static const float targetAppearPosZ = 400.0f;
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -292,8 +289,8 @@ void SceneGame::LaunchFireworks()
 		}
 	}
 
-#ifdef _DEBUG
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_A))
+//#ifdef _DEBUG
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_RIGHT))
 	{
 		int buff;
 		D3DXVECTOR3 buffPos = player->getPosition();
@@ -313,7 +310,72 @@ void SceneGame::LaunchFireworks()
 			fireworksTableIndex++;
 		}
 	}
-#endif
+
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_LEFT))
+	{
+		int buff;
+		D3DXVECTOR3 buffPos = player->getPosition();
+
+		buff = managerFireworks->Add(
+					ManagerFireworks::STATE_LEFT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(3.0, 1.0f, 0.0f),
+					90.0f,
+					0.5f
+					);
+
+		if(buff != -1)
+		{
+			fireworksTable[fireworksTableIndex] = buff;
+			fireworksTableIndex++;
+		}
+	}
+
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_UP))
+	{
+		int buff;
+		D3DXVECTOR3 buffPos = player->getPosition();
+		buffPos.x += 250.0f;
+		buffPos.y += 30.0f;
+
+		buff = managerFireworks->Add(
+					ManagerFireworks::STATE_LEFT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(3.0, 1.0f, 0.0f),
+					90.0f,
+					2.0f
+					);
+
+		if(buff != -1)
+		{
+			fireworksTable[fireworksTableIndex] = buff;
+			fireworksTableIndex++;
+		}
+
+
+
+		buffPos = player->getPosition();
+		buffPos.x -= 250.0f;
+		buffPos.y += 30.0f;
+
+		buff = managerFireworks->Add(
+					ManagerFireworks::STATE_RIGHT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(3.0, 1.0f, 0.0f),
+					90.0f,
+					-2.0f
+					);
+
+		if(buff != -1)
+		{
+			fireworksTable[fireworksTableIndex] = buff;
+			fireworksTableIndex++;
+		}
+	}
+//#endif
 }
 //==============================================================================
 // Brief  : 通常更新処理
@@ -345,6 +407,7 @@ void SceneGame::normalUpdate(void)
 		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
 	}
 	//	ターゲットクラスの更新
+	managerTarget->setInvViewMatrix(cameraInvMat);
 	managerTarget->Update(targetTable, &targetTableIndex);
 	{
 		// ポイントスプライト管理クラスの更新
@@ -377,7 +440,7 @@ void SceneGame::normalUpdate(void)
 	{
 		int buff;
 		buff = managerTarget->Add(
-			D3DXVECTOR3(RANDOM(500), (float)(rand() % 100) + 250.0f, targetAppearPos[cameraState].z)
+			D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ)
 			);
 		if(buff != -1)
 		{
@@ -403,6 +466,8 @@ void SceneGame::normalUpdate(void)
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
 	}
+	//	花火と花火の当たり判定
+	collision_fireworks_fireworks();
 
 
 	//	ポーズキーが押されたら
@@ -804,7 +869,7 @@ bool SceneGame::wiiLostCheck(void)
 //==============================================================================
 void SceneGame::collision_fireworks_target()
 {
-	/*float hitPosLength = 0.0f;
+	float hitPosLength = 0.0f;
 
 	//	存在する花火の数分ループ
 	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
@@ -841,9 +906,8 @@ void SceneGame::collision_fireworks_target()
 			}
 		}
 	}
-	*/
 
-	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
 	{
 		//	花火の情報取得
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
@@ -852,6 +916,49 @@ void SceneGame::collision_fireworks_target()
 
 		//	破裂
 		buffFireworks->burn(0.0f, 0.0f);
+	}*/
+}
+//==============================================================================
+// Brief  : 花火と花火の当たり判定処理
+//==============================================================================
+void SceneGame::collision_fireworks_fireworks()
+{
+	float hitPosLength = 0.0f;
+
+	//	存在する花火の数分ループ
+	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	{
+		//	花火の情報取得
+		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
+		if(buffFireworks->IsBurnFlag())
+			continue;
+
+		//	花火の位置情報取得
+		D3DXVECTOR3 buffFireworksPos = buffFireworks->getPosition();
+
+		//	存在する花火の数＋１～最大数分ループ
+		for(int fireworksCount2 = fireworksCount + 1;fireworksCount2 < fireworksTableIndex;fireworksCount2++)
+		{
+			Fireworks* buffFireworks2 = managerFireworks->getFireworks(fireworksTable[fireworksCount2]);
+			if(buffFireworks2->IsBurnFlag())
+				continue;
+
+			//	花火の位置情報取得
+			D3DXVECTOR3 buffFireworksPos2 = buffFireworks2->getPosition();
+			
+			float hitPosLength;
+
+			//	当たり判定
+			if(hitCheckPointCircle(buffFireworksPos, buffFireworksPos2, fire_fire_collisionSize, &hitPosLength) == true)
+			{
+				//	破裂
+				buffFireworks->burn2();
+				buffFireworks2->burn2();
+
+				//	次の花火との当たり判定へ移行
+				break;
+			}
+		}
 	}
 }
 //==============================================================================

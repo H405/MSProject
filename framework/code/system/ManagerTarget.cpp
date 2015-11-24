@@ -135,7 +135,7 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 		{
 			continue;
 		}
-
+		target[counterPoint].setInvViewMatrix(invViewMatrix);
 		target[counterPoint].Update();
 	}
 }

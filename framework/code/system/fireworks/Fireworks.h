@@ -25,7 +25,8 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define FIRE_MAX (24)
+#define FIRE_MAX (24)	//	１つの花火から生成される火花の数
+#define SMALL_FIREWORKS_MAX (5)
 typedef int TIME;
 
 //******************************************************************************
@@ -43,6 +44,7 @@ typedef struct
 	//	位置情報
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 setPos;
+	D3DXVECTOR3 posOld[SMALL_FIREWORKS_MAX];
 
 	//	行列変換用回転ベクトル
 	D3DXVECTOR3 matRot;
@@ -71,10 +73,18 @@ typedef struct
 	//	生成用カウンタ
 	TIME appear;
 
+	//	位置情報をセットする時間
+	TIME setPosOld;
+
 	Fire* fire;
 	Fire* smallFire;
 
+	//	弾ける火花の総数
 	int fireMax;
+
+	//	分裂した花火の総数
+	int smallFireMax;
+	int setSmallFireIndex;
 
 	D3DXMATRIX matrix;
 
@@ -145,9 +155,7 @@ public:
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void burn2(
-		float _hitCheckOffset,
-		float _hitPosLength);
+	void burn2();
 
 	//==============================================================================
 	// Brief  : ステートの設定
@@ -162,6 +170,7 @@ public:
 	D3DXVECTOR3 getSpeed(){return param.speed;}
 
 	D3DXVECTOR3 getPosition(){return param.pos;}
+	D3DXVECTOR3 getSetPosition(){return param.setPos;}
 	void addPosition(float _x, float _y, float _z){param.pos.x += _x;param.pos.y += _y;param.pos.z += _z;}
 	void addPositionX(float _x){param.pos.x += _x;}
 	void addPositionY(float _y){param.pos.y += _y;}
@@ -206,6 +215,13 @@ protected:
 	// Arg    : void								: なし
 	//==============================================================================
 	void BurnUpdate( void );
+
+	//==============================================================================
+	// Brief  : 更新処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void Burn2Update( void );
 
 	//	更新関数格納用ポインタ
 	void (Fireworks::*fpUpdate)(void);

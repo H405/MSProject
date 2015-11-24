@@ -35,6 +35,8 @@ static const int bigFireFirstSpeed = 10;
 static const int fireBGExistTime = 50;
 static const float fireBGAddSize = 5.0f;
 
+static int createFireNum = 0;
+
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
@@ -46,8 +48,8 @@ Fireworks::Fireworks( void )
 	InitializeSelf();
 
 	//	火花生成
-	param.fire = new Fire[FIRE_MAX];
-	param.smallFire = new Fire[FIRE_MAX];
+	param.fire = new Fire[FIRE_MAX * SMALL_FIREWORKS_MAX];
+	param.smallFire = new Fire[FIRE_MAX * SMALL_FIREWORKS_MAX];
 }
 //==============================================================================
 // Brief  : クラス内の初期化処理
@@ -58,14 +60,22 @@ void Fireworks::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	param.managerPoint = nullptr;
-	param.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.pos = D3DXVECTOR3(createFireNum * 10.0f, 0.0f, 0.0f);
 	param.setPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	for(int count = 0;count < SMALL_FIREWORKS_MAX;count++)
+		param.posOld[count] = D3DXVECTOR3(0.0f, -100.0f, 0.0f);
+
 	param.rot = 0.0f;
 	param.rotSpeed = 0.0f;
 	param.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	param.enable = false;
 	param.disappear = 0;
 	param.appear = 0;
+	param.smallFireMax = 0;
+	param.setSmallFireIndex = 0;
+	param.setPosOld = 0;
+
 	indexState = 0;
 	D3DXMatrixIdentity(&param.matrix);
 	D3DXMatrixIdentity(&param.invViewMatrix);
@@ -114,6 +124,9 @@ int Fireworks::Set(
 	param.burnFlag = false;
 	param.disappear = 0;
 	param.fireMax = 0;
+	param.smallFireMax = 0;
+	param.setSmallFireIndex = 0;
+	param.setPosOld = 0;
 
 	indexState = _indexState;
 
@@ -185,6 +198,32 @@ void Fireworks::BurnUpdate( void )
 	}
 
 	if(buffCount == param.fireMax)
+		param.enable = false;
+}
+//==============================================================================
+// Brief  : 更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void Fireworks::Burn2Update( void )
+{
+	int buffCount = 0;
+
+	for(int count = 0;count < param.fireMax * param.setSmallFireIndex;count++)
+	{
+		if(!param.fire[count].IsEnable())
+		{
+			buffCount++;
+			continue;
+		}
+
+		param.fire[count].setInvViewMatrix(param.invViewMatrix);
+		param.smallFire[count].setInvViewMatrix(param.invViewMatrix);
+		param.fire[count].Update();
+		param.smallFire[count].Update();
+	}
+
+	if(buffCount == param.fireMax * SMALL_FIREWORKS_MAX)
 		param.enable = false;
 }
 
@@ -292,108 +331,81 @@ void Fireworks::burn(
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fireworks::burn2(
-	float _hitCheckOffset,
-	float _hitPosLength)
+void Fireworks::burn2()
 {
-	/*
-	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
-	D3DXVECTOR4 setPos;
-	D3DXVec3Transform(&setPos, &param.pos, &param.invViewMatrix);
-	param.setPos.x = setPos.x;
-	param.setPos.y = setPos.y;
-	param.setPos.z = setPos.z;
-
-	float buffValue = 0.0f;
-	float fireSize;
-
-	//	可
-	if(_hitPosLength <= (_hitCheckOffset * 0.1f))
+	for(int smallFireCount = 0;smallFireCount < param.setSmallFireIndex;smallFireCount++)
 	{
+		//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+		D3DXVECTOR4 setPos;
+		D3DXVECTOR3 buffPos = param.posOld[smallFireCount];
+		D3DXVec3Transform(&setPos, &buffPos, &param.invViewMatrix);
+		param.setPos.x = setPos.x;
+		param.setPos.y = setPos.y;
+		param.setPos.z = setPos.z;
+
+		//	花火の数に応じた、１つの火花の角度間隔
+		float buffValue = 0.0f;
+
+		//	火花の最大数
+		float fireSize;
+
+
+		//	強制的に優に設定
 		param.fireMax = FIRE_MAX;
 		buffValue = 360.0f / (float)(param.fireMax);
-		fireSize = 10.0f;
-	}
-	//	良
-	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
-	{
-		param.fireMax = FIRE_MAX / 2;
-		buffValue = 360.0f / (float)(param.fireMax);
-		fireSize = 20.0f;
-	}
-	//	優
-	else
-	{
-		param.fireMax = FIRE_MAX / 3;
-		buffValue = 360.0f / (float)(param.fireMax);
-		fireSize = 30.0f;
-	}
+		fireSize = 15.0f;
 
 
+		//	花火の背景用生成
+		param.managerPoint->Add(
+			fireBGExistTime,
+			param.setPos,
+			D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f),
+			fireSize,
+			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
+			fireBGAddSize,
+			ManagerPoint::STATE_ADD
+			);
 
-	//	花火の背景用生成
-	param.managerPoint->Add(
-		150,
-		D3DXVECTOR3(param.setPos.x, param.setPos.y, param.setPos.z),
-		D3DXCOLOR( 0.9f, 0.9f, 0.9f, 0.9f ),
-		fireSize,
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
-		5.0f,
-		ManagerPoint::STATE_ADD
-		);
 
-
-	for(int count = 0;count < param.fireMax;count++)
-	{
-		float value = (float)(count * buffValue) + (buffValue * 0.1f);
-
-		if(value == 0.0f)
+		//	火花の数だけループ
+		for(int count = 0;count < param.fireMax;count++)
 		{
-			param.fire[count].Set(
-				Fire::STATE_UP,
-				param.managerPoint,
-				param.pos,
-				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
-				value,
-				0.1f);
-		}
-		else if(value == 180.0f)
-		{
-			param.fire[count].Set(
-				Fire::STATE_DOWN,
-				param.managerPoint,
-				param.pos,
-				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
-				value,
-				1.0f);
-		}
-		else if(value > 180.0f && value < 360.0f)
-		{
-			param.fire[count].Set(
-				Fire::STATE_SMALL,
-				param.managerPoint,
-				param.pos,
-				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
-				value,
-				0.2f);
-		}
-		else
-		{
-			param.fire[count].Set(
+			//	スピードをsin cosで計算
+			float speedX = CRadianTable::mySinf((buffValue * count) + ((rand() % (int)buffValue) + (rand() % (int)buffValue)) * 0.5f);
+			float speedY = CRadianTable::myCosf((buffValue * count) + ((rand() % (int)buffValue) + (rand() % (int)buffValue)) * 0.5f);
+
+			//	ローカル頂点座標を計算
+			D3DXVECTOR3 buffSetPos = D3DXVECTOR3(buffPos.x + speedX, buffPos.y + speedY, buffPos.z);
+
+			//	大きい火花生成
+			param.fire[count + (FIRE_MAX * smallFireCount)].Set(
 				Fire::STATE_BIG,
 				param.managerPoint,
-				param.pos,
-				D3DXVECTOR3(bigFireFirstSpeed, bigFireFirstSpeed, param.speed.z),
-				value,
-				0.2f);
+				buffSetPos,
+				D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.1f),
+							(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
+							0.0f),
+				D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+
+
+			//	小さい火花生成
+			param.smallFire[count + (FIRE_MAX * smallFireCount)].Set(
+				Fire::STATE_SMALL,
+				param.managerPoint,
+				buffSetPos,
+				D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.13f),
+							(speedY * (float)(rand() % bigFireFirstSpeed) * 0.13f),
+							0.0f),
+				D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
 		}
 	}
 
+
 	//	更新関数設定
-	fpUpdate = &Fireworks::BurnUpdate;
+	fpUpdate = &Fireworks::Burn2Update;
 
 	//	破裂フラグON
 	param.burnFlag = true;
-	*/
 }

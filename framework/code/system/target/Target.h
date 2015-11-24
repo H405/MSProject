@@ -145,6 +145,10 @@ protected:
 	ObjectBillboard* targetArrow;
 	ObjectBillboard* targetCircle;
 
+	D3DXVECTOR3 targetCrossLocalPos;
+	D3DXVECTOR3 targetArrowLocalPos;
+	D3DXVECTOR3 targetCircleLocalPos;
+
 	//	à íuèÓïÒ
 	D3DXVECTOR3 pos;
 

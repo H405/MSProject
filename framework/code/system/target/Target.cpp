@@ -59,6 +59,9 @@ void Target::InitializeSelf( void )
 	targetCross = nullptr;
 	targetArrow = nullptr;
 	targetCircle = nullptr;
+	targetCrossLocalPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	targetArrowLocalPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	targetCircleLocalPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	enable = false;
 	counter = 0;
@@ -137,13 +140,17 @@ int Target::Set(D3DXVECTOR3 _pos)
 {
 	//	位置セット
 	pos = _pos;
+	targetCrossLocalPos = pos;
+	targetArrowLocalPos = pos;
+	targetCircleLocalPos = D3DXVECTOR3(pos.x + targetCrossDifferentPosition, pos.y + targetCrossDifferentPosition, pos.z);
+
 
 	switch(0)
 	{
 	case 0:
-		targetCircle->SetPosition(pos.x, pos.y, pos.z);
-		targetArrow->SetPosition(pos.x, pos.y, pos.z);
-		targetCross->SetPosition(pos.x + targetCrossDifferentPosition, pos.y + targetCrossDifferentPosition, pos.z);
+		targetCircle->SetPosition(0.0f, 0.0f, 0.0f);
+		targetArrow->SetPosition(0.0f, 0.0f, 0.0f);
+		targetCross->SetPosition(0.0f, 0.0f, 0.0f);
 		break;
 	}
 
@@ -201,6 +208,18 @@ void Target::Update( void )
 {
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
+
+	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
+	D3DXVECTOR4 setPos;
+
+	D3DXVec3Transform(&setPos, &targetCrossLocalPos, &invViewMatrix);
+	targetCross->SetPosition(setPos.x, setPos.y, setPos.z);
+
+	D3DXVec3Transform(&setPos, &targetArrowLocalPos, &invViewMatrix);
+	targetArrow->SetPosition(setPos.x, setPos.y, setPos.z);
+
+	D3DXVec3Transform(&setPos, &targetCircleLocalPos, &invViewMatrix);
+	targetCircle->SetPosition(setPos.x, setPos.y, setPos.z);
 }
 //==============================================================================
 // Brief  : cross出現時の更新処理
@@ -210,10 +229,14 @@ void Target::Update( void )
 void Target::updateAppearCross( void )
 {
 	//	位置変更
-	targetCross->AddPosition(
-		-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
-		-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
-		0.0f);
+	//targetCross->AddPosition(
+	//	-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
+	//	-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
+	//	0.0f);
+	targetCircleLocalPos +=
+		D3DXVECTOR3(-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
+						-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
+						0.0f);
 
 	//	だんだんと出現
 	if(counter < APPEAR_COUNT_CROSS / 2)
@@ -239,26 +262,6 @@ void Target::updateAppearCross( void )
 //==============================================================================
 void Target::updateAppearArrow( void )
 {
-	/*
-	targetArrow->AddRotationZ(D3DX_PI / (float)APPEAR_COUNT_ARROW);
-
-	//	だんだんと出現
-	if(counter < APPEAR_COUNT_ARROW / 2)
-		targetArrow->AddColorA(1.0f/ (float)(APPEAR_COUNT_ARROW / 2));
-
-	//	カウンタで動き制御
-	counter++;
-	if(counter >= APPEAR_COUNT_ARROW)
-	{
-		counter = 0;
-
-		//	可視化
-		targetCircle->SetEnableGraphic(true);
-
-		//	更新関数セット
-		fpUpdate = &Target::updateAppearCircle;
-	}
-	*/
 	if(counter < APPEAR_COUNT_ARROW2 / 2)
 	{
 		targetArrow->AddColorA(1.0f/ (float)(APPEAR_COUNT_ARROW2 / 2));
@@ -296,8 +299,6 @@ void Target::updateAppearArrow( void )
 //==============================================================================
 void Target::updateAppearCircle( void )
 {
-	//targetCircle->AddRotationZ(D3DX_PI / (float)APPEAR_COUNT_CIRCLE);
-
 	if(counter < APPEAR_COUNT_CIRCLE / 2)
 	{
 		//	だんだんと出現
@@ -325,10 +326,6 @@ void Target::updateAppearCircle( void )
 //==============================================================================
 void Target::updateDisAppear( void )
 {
-	//targetCross->AddRotationX(-1.0f / (float)DISAPPEAR_COUNT_MAX);
-	//targetArrow->AddRotationY(-1.0f / (float)DISAPPEAR_COUNT_MAX);
-	//targetCircle->AddRotationZ(-1.0f / (float)DISAPPEAR_COUNT_MAX);
-
 	//	だんだんと消す
 	targetCross->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
 	targetArrow->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
