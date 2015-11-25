@@ -367,7 +367,17 @@ private:
 		TIME_RANKING_BEGIN				= 0,																		// 開始
 		TIME_RANKING_BEGIN_LOGO			= 0,																		// ロゴ開始時間
 		COUNT_RANKING_BEGIN_LOGO		= 20,																		// ロゴ開始フレーム数
-		TIME_RANKING_END				= TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO						// 終了
+		TIME_RANKING_BEGIN_RANK_5		= TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO + 10,					// ランク5開始時間
+		COUNT_RANKING_BEGIN_RANK_5		= 20,																		// ランク5開始フレーム数
+		TIME_RANKING_BEGIN_RANK_4		= TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO + 20,					// ランク4開始時間
+		COUNT_RANKING_BEGIN_RANK_4		= 20,																		// ランク4開始フレーム数
+		TIME_RANKING_BEGIN_RANK_3		= TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO + 30,					// ランク3開始時間
+		COUNT_RANKING_BEGIN_RANK_3		= 20,																		// ランク3開始フレーム数
+		TIME_RANKING_BEGIN_RANK_2		= TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO + 40,					// ランク2開始時間
+		COUNT_RANKING_BEGIN_RANK_2		= 20,																		// ランク2開始フレーム数
+		TIME_RANKING_BEGIN_RANK_1		= TIME_RANKING_BEGIN_RANK_2 + COUNT_RANKING_BEGIN_RANK_2 + 20,				// ランク1開始時間
+		COUNT_RANKING_BEGIN_RANK_1		= 30,																		// ランク1開始フレーム数
+		TIME_RANKING_END				= TIME_RANKING_BEGIN_RANK_1 + COUNT_RANKING_BEGIN_RANK_1					// 終了
 	};
 
 	static const int	MAXIMUM_RANK = 5;		// ランキング最大数
