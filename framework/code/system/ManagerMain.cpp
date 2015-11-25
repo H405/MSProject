@@ -51,6 +51,7 @@
 #include "../object/ObjectLightReflect.h"
 #include "../object/ObjectMerge.h"
 #include "../object/ObjectPostEffect.h"
+#include "../object/ObjectShadow.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -260,6 +261,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	// パスクラスの生成
 	RenderPassParameter	parameterPassWaveData;			// 波情報描画パスのパラメータ
 	RenderPassParameter	parameterPass3D;				// 3D描画パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadow;		// 影用深度パスのパラメータ
+	RenderPassParameter	parameterPassShadow;			// 影パスのパラメータ
 	RenderPassParameter	parameterPassReflect;			// 反射パスのパラメータ
 	RenderPassParameter	parameterPassReflectLight;		// 反射ライティングパスのパラメータ
 	RenderPassParameter	parameterPassReflectAdd;		// 反射加算合成パスのパラメータ
@@ -284,6 +287,18 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	parameterPass3D.pFormat_[ GraphicMain::RENDER_PASS_3D_DEPTH ] = D3DFMT_R32F;
 	result = pRenderPass_[ GraphicMain::PASS_3D ].Initialize( pDevice, GraphicMain::RENDER_PASS_3D_MAX, &parameterPass3D );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadow.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_MAX, &parameterPassDepthShadow );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassShadow.pFormat_[ GraphicMain::RENDER_PASS_SHADOW_COLOR ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_SHADOW_MAX, &parameterPassShadow );
 	if( result != 0 )
 	{
 		return result;
@@ -519,6 +534,27 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	GraphicMain::SetPolygonBillboard( pPolygonBillboard_ );
 
+	// 影オブジェクトの生成
+	Effect*	pEffectShadow = nullptr;		// 影エフェクト
+	pObjectShadow_ = new ObjectShadow();
+	if( pObjectShadow_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectShadow_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectShadow = pEffect_->Get( _T( "Shadow.fx" ) );
+	result = pObjectShadow_->CreateGraphic( 0, pEffectParameter_, pEffectShadow,
+		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_DEPTH ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// 反射ライティングオブジェクトの生成
 	Effect*	ppEffectLightReflect[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// ライティングエフェクト
 	TCHAR	pNameFileEffectLight[ _MAX_PATH ];								// ライティングエフェクトファイル名
@@ -572,7 +608,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DIFFUSE ),
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_SPECULAR ),
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_NORMAL ),
-		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_SHADOW_COLOR ) );
 	if( result != 0 )
 	{
 		return result;
@@ -682,7 +719,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pTextureReflectAdd_ = pRenderPass_[ GraphicMain::PASS_REFLECT_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_REFLECT_NOT_LIGHT_ADD );
 	pArgument_->pTexture3D_ = pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DIFFUSE );
 	pArgument_->pTextureDepth_ = pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH );
-	pArgument_->pTextureTest_ = pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DIFFUSE );
+	pArgument_->pTextureTest_ = pRenderPass_[ GraphicMain::PASS_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_SHADOW_COLOR );
 
 	// シーン管理クラスの生成
 	pScene_ = new ManagerSceneMain();
@@ -691,7 +728,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_SPLASH, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif
@@ -719,11 +756,15 @@ int ManagerMain::Finalize( void )
 	delete pArgument_;
 	pArgument_ = nullptr;
 
+	// 影オブジェクトの開放
+	delete pObjectShadow_;
+	pObjectShadow_ = nullptr;
+
 	// ポストエフェクトオブジェクトの開放
 	delete pObjectPostEffect_;
 	pObjectPostEffect_ = nullptr;
 
-	// ブラー基オブジェクトの開放
+	// ブラーオブジェクトの開放
 	delete pObjectBlur_;
 	pObjectBlur_ = nullptr;
 
@@ -1016,6 +1057,7 @@ void ManagerMain::InitializeSelf( void )
 	pObjectLightReflect_ = nullptr;
 	pObjectMerge_ = nullptr;
 	pObjectPostEffect_ = nullptr;
+	pObjectShadow_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;
 	pRenderPass_ = nullptr;

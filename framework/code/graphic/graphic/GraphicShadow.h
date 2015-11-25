@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneSplash.h
-// Brief  : スプラッシュシーンクラス
+// File   : GraphicShadow.h
+// Brief  : ライト描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/13 tue : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_SPLASH_H
-#define MY_SCENE_SPLASH_H
+#ifndef MY_GRAPHIC_SHADOW_H
+#define MY_GRAPHIC_SHADOW_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,27 +29,14 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class CameraStateSpline;
-class LightDirection;
-class LightPoint;
-class ManagerPoint;
-class Material;
-class Object2D;
-class ObjectBillboard;
-class ObjectMesh;
-class ObjectModel;
-class ObjectModelMaterial;
-class ObjectRiver;
-class ObjectSkinMesh;
-class ObjectSky;
-class ObjectWaveData;
-class ObjectWaveDataInitialize;
+class DrawerShadow;
+class Effect;
+class EffectParameter;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneSplash : public SceneMain
+class GraphicShadow : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -57,21 +44,26 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneSplash( void );
+	GraphicShadow( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneSplash( void );
+	~GraphicShadow( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -83,56 +75,31 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneSplash* pOut					: コピー先アドレス
+	// Arg    : GraphicShadow* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneSplash* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
+	int Copy( GraphicShadow* pOut ) const;
 
 protected:
 
 private:
 	void InitializeSelf( void );
-	SceneSplash( const SceneSplash& );
-	SceneSplash operator=( const SceneSplash& );
+	GraphicShadow( const GraphicShadow& );
+	GraphicShadow operator=( const GraphicShadow& );
 
-	CameraObject*				pCamera_;						// 通常カメラ
-	CameraObject*				pCameraShadow_;					// 影用カメラ
-	LightDirection*				pLight_;						// ライト
-	LightPoint**				ppPointLight_;					// ポイントライト
-
-	ManagerPoint*				pPoint_;						// ポイントスプライト管理クラス
-
-	static const int			COUNT_MODEL = 10;				// モデル数
-
-	Object2D*					pObject2D_;						// 2Dオブジェクト
-	ObjectMesh*					pObjectMesh_;					// メッシュ
-	ObjectSky*					pObjectSky_;					// スカイドーム
-	ObjectModel*				pObjectModel_;					// モデル
-	ObjectModelMaterial*		pObjectModelMaterial_;			// テクスチャなしモデル
-	ObjectBillboard*			pObjectBoard_;					// ビルボード
-	ObjectSkinMesh*				pObjectSkinMesh_;				// スキンメッシュ
-	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
-	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
-	ObjectRiver*				pObjectRiver_;					// 川
-
-	int							timerLight_;					// ライト用タイマー
-
-	int							countLight_;					// ライト数
-
-	CameraStateSpline*			pCameraState_;					// カメラ処理
+	const EffectParameter*	pParameter_;		// エフェクトパラメータ
+	DrawerShadow*		pDrawerLight_;		// ライト描画クラス
 };
 
-#endif	// MY_SCENE_SPLASH_H
+#endif	// MY_GRAPHIC_SHADOW_H

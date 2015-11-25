@@ -561,6 +561,18 @@
     <ClInclude Include="code\framework\polygon\PolygonBillboard.h">
       <Filter>ソース ファイル\framework\polygon</Filter>
     </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectShadow.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicShadow.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1019,6 +1031,18 @@
     <ClCompile Include="code\framework\polygon\PolygonBillboard.cpp">
       <Filter>ソース ファイル\framework\polygon</Filter>
     </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectShadow.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicShadow.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1097,6 +1121,12 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\LightReflect_00.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelShadow.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Shadow.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

@@ -338,10 +338,10 @@ void CameraObject::Move( const D3DXVECTOR3& vectorMove )
 // Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
 //==============================================================================
 void CameraObject::Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
-	const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+	const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp, bool isPerspective )
 {
 	// 値の設定
-	Camera::Set( viewField, widthScreen, heightScreen, clipNear, clipFar, positionCamera, positionLookAt, vectorUp );
+	Camera::Set( viewField, widthScreen, heightScreen, clipNear, clipFar, positionCamera, positionLookAt, vectorUp, isPerspective );
 }
 
 //==============================================================================

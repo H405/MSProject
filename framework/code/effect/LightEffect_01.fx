@@ -20,6 +20,7 @@ texture		textureDiffuseRiver_;				// 川のディフューズテクスチャ
 texture		textureSpecularRiver_;				// 川のスペキュラテクスチャ
 texture		textureNormalRiver_;				// 川の法線テクスチャ
 texture		textureDepthRiver_;					// 川の深度テクスチャ
+texture		textureShadow_;						// 影テクスチャ
 
 float4x4	matrixProjectionInverse_;			// プロジェクション変換逆行列
 float4x4	matrixViewInverse_;					// ビュー変換逆行列
@@ -115,6 +116,16 @@ sampler samplerTextureDepthRiver = sampler_state
 	AddressV  = Clamp;
 };
 
+sampler samplerTextureShadow = sampler_state
+{
+	Texture = < textureShadow_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
 //******************************************************************************
 // 構造体定義
 //******************************************************************************
@@ -188,12 +199,15 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	// 視線ベクトルを求める
 	float3	vectorVertexToEye = normalize( positionEye_ - positionWorld );
 
+	// 影
+	float	shadow = lerp( tex2D( samplerTextureShadow, vertex.textureCoord_ ).r, 1.0f, proportionRiver );
+
 	// 環境光のスペキュラ色を計算
 	float	fresnel = dataNormal.a + (1.0f - dataNormal.a) * exp( -6.0f * max( dot( vectorNormal, vectorVertexToEye ), 0.0f ) );
 	float3	specularAmbient = colorAmbient_.rgb * fresnel;
 
 	// ディレクショナルライトのディフューズ色を計算
-	float3	diffuseDirection = CalculateDiffuse( colorLightDirection_, vectorLightDirection_, vectorNormal );
+	float3	diffuseDirection = colorLightDirection_ * min( dot( vectorNormal, -vectorLightDirection_ ) * 0.5f + 0.5f, shadow );
 
 	// ディレクショナルライトのスペキュラ色を計算
 	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye, dataDiffuse.a, power );
@@ -223,7 +237,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	vectorLightToVertex = normalize( positionWorld - positionLightPoint_[ 0 ] );
 
 	// ディレクショナルライトのディフューズ色を計算
-	diffusePoint = CalculateDiffuse( colorLightPoint_[ 0 ], vectorLightToVertex, vectorNormal );
+	diffusePoint = colorLightPoint_[ 0 ] * min( dot( vectorNormal, -vectorLightToVertex ) * 0.5f + 0.5f, shadow );
 
 	// ポイントライトのスペキュラ色を計算
 	specularPoint = CalculateSpecular( colorLightPoint_[ 0 ], vectorLightToVertex, vectorNormal, vectorVertexToEye, dataDiffuse.a, power );

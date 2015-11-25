@@ -193,6 +193,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
 	Effect*		pEffectReflect = nullptr;
+	Effect*		pEffectShadow = nullptr;
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
@@ -211,9 +212,10 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
+	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	field = new ObjectModel();
 	field->Initialize(0);
-	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect );
+	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
 	field->SetScale(5.0f, 5.0f, 5.0f);
 	field->AddPositionY(-300.0f);
 

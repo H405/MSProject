@@ -94,10 +94,12 @@
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterial.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterialReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelReflect.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerModelShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPointReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPostEffect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerRiver.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMesh.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMeshReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSky.h" />
@@ -118,6 +120,7 @@
     <ClInclude Include="code\graphic\graphic\GraphicPoint.h" />
     <ClInclude Include="code\graphic\graphic\GraphicPostEffect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicRiver.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicShadow.h" />
     <ClInclude Include="code\graphic\graphic\GraphicSkinMesh.h" />
     <ClInclude Include="code\graphic\graphic\GraphicSky.h" />
     <ClInclude Include="code\graphic\graphic\GraphicWaveData.h" />
@@ -136,6 +139,7 @@
     <ClInclude Include="code\object\ObjectRiver.h" />
     <ClInclude Include="code\object\ObjectScore.h" />
     <ClInclude Include="code\object\ObjectPostEffect.h" />
+    <ClInclude Include="code\object\ObjectShadow.h" />
     <ClInclude Include="code\object\ObjectSkinMesh.h" />
     <ClInclude Include="code\object\ObjectSky.h" />
     <ClInclude Include="code\object\ObjectWaterwheel.h" />
@@ -246,10 +250,12 @@
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterial.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterialReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelReflect.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerModelShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPointReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPostEffect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMesh.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMeshReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSky.cpp" />
@@ -270,6 +276,7 @@
     <ClCompile Include="code\graphic\graphic\GraphicPoint.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicPostEffect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicRiver.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicShadow.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicSkinMesh.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicSky.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicWaveData.cpp" />
@@ -288,6 +295,7 @@
     <ClCompile Include="code\object\ObjectRiver.cpp" />
     <ClCompile Include="code\object\ObjectScore.cpp" />
     <ClCompile Include="code\object\ObjectPostEffect.cpp" />
+    <ClCompile Include="code\object\ObjectShadow.cpp" />
     <ClCompile Include="code\object\ObjectSkinMesh.cpp" />
     <ClCompile Include="code\object\ObjectSky.cpp" />
     <ClCompile Include="code\object\ObjectWaterwheel.cpp" />
@@ -333,11 +341,13 @@
     <None Include="code\effect\ModelMaterial.fx" />
     <None Include="code\effect\ModelMaterialReflect.fx" />
     <None Include="code\effect\ModelReflect.fx" />
+    <None Include="code\effect\ModelShadow.fx" />
     <None Include="code\effect\Point.fx" />
     <None Include="code\effect\PointReflect.fx" />
     <None Include="code\effect\Polygon2D.fx" />
     <None Include="code\effect\Polygon3D.fx" />
     <None Include="code\effect\PostEffect.fx" />
+    <None Include="code\effect\Shadow.fx" />
     <None Include="code\effect\SkinMesh.fx" />
     <None Include="code\effect\SkinMeshReflect.fx" />
     <None Include="code\effect\Sky.fx" />

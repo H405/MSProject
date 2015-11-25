@@ -1,18 +1,19 @@
 //==============================================================================
 //
-// File   : ObjectModel.cpp
-// Brief  : モデルオブジェクトクラス
+// File   : ObjectShadow.cpp
+// Brief  : ライト描画オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ObjectModel.h"
-#include "../framework/resource/Model.h"
-#include "../graphic/graphic/GraphicModel.h"
+#include "ObjectShadow.h"
+#include "../framework/resource/Effect.h"
+#include "../graphic/graphic/GraphicShadow.h"
+#include "../system/EffectParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,7 +32,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectModel::ObjectModel( void ) : ObjectMovement()
+ObjectShadow::ObjectShadow( void ) : Object()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -42,7 +43,7 @@ ObjectModel::ObjectModel( void ) : ObjectMovement()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectModel::~ObjectModel( void )
+ObjectShadow::~ObjectShadow( void )
 {
 	// 終了処理
 	Finalize();
@@ -53,7 +54,7 @@ ObjectModel::~ObjectModel( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
 //==============================================================================
-int ObjectModel::Initialize( int priority )
+int ObjectShadow::Initialize( int priority )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -72,7 +73,7 @@ int ObjectModel::Initialize( int priority )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int ObjectModel::Finalize( void )
+int ObjectShadow::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -94,7 +95,7 @@ int ObjectModel::Finalize( void )
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
 //==============================================================================
-int ObjectModel::Reinitialize( int priority )
+int ObjectShadow::Reinitialize( int priority )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -111,9 +112,9 @@ int ObjectModel::Reinitialize( int priority )
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ObjectModel* pOut					: コピー先アドレス
+// Arg    : ObjectShadow* pOut					: コピー先アドレス
 //==============================================================================
-int ObjectModel::Copy( ObjectModel* pOut ) const
+int ObjectShadow::Copy( ObjectShadow* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -132,38 +133,44 @@ int ObjectModel::Copy( ObjectModel* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectModel::Update( void )
+void ObjectShadow::Update( void )
 {
 	// 基本クラスの処理
-	ObjectMovement::Update();
+	Object::Update();
 }
 
 //==============================================================================
 // Brief  : 描画クラスの生成
 // Return : int									: 実行結果
 // Arg    : int priority						: 描画優先度
-// Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
-// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
 //==============================================================================
-int ObjectModel::CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter,
-	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow )
+int ObjectShadow::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight )
 {
 	// グラフィックの生成
-	int		result;		// 実行結果
-	pGraphic_ = new GraphicModel();
+	int		result;				// 実行結果
+	pGraphic_ = new GraphicShadow();
 	if( pGraphic_ == nullptr )
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureDepth, pTextureLight );
 	if( result != 0 )
 	{
 		return result;
 	}
 	Object::pGraphic_ = pGraphic_;
+
+	// 拡縮の設定
+	if( pParameter != nullptr )
+	{
+		scale_.x = pParameter->GetWidthScreen();
+		scale_.y = pParameter->GetHeightScreen();
+	}
 
 	// 正常終了
 	return 0;
@@ -172,9 +179,9 @@ int ObjectModel::CreateGraphic( int priority, Model* pModel, const EffectParamet
 //==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : GraphicModel* pValue				: 設定する値
+// Arg    : GraphicShadow* pValue			: 設定する値
 //==============================================================================
-void ObjectModel::SetGraphic( GraphicModel* pValue )
+void ObjectShadow::SetGraphic( GraphicShadow* pValue )
 {
 	// 値の設定
 	pGraphic_ = pValue;
@@ -183,10 +190,10 @@ void ObjectModel::SetGraphic( GraphicModel* pValue )
 
 //==============================================================================
 // Brief  : 描画クラスの取得
-// Return : GraphicModel*						: 返却する値
+// Return : GraphicShadow*					: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-GraphicModel* ObjectModel::GetGraphic( void ) const
+GraphicShadow* ObjectShadow::GetGraphic( void ) const
 {
 	// 値の返却
 	return pGraphic_;
@@ -197,7 +204,7 @@ GraphicModel* ObjectModel::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectModel::InitializeSelf( void )
+void ObjectShadow::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;

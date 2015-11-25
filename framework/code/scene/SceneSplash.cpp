@@ -117,7 +117,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pCameraState_->SetSection( 0, 60, 0, 1, 0, 1 );
 	pCameraState_->SetSection( 1, 120, -1, 0, -1, 0 );
 
-	// カメラの生成
+	// カメラの設定
 	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
 	pCamera_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
 		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ), D3DXVECTOR3( 0.0f, 0.0f, 20.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
@@ -128,7 +128,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( pCameraState_ );
 	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, &pCamera_[ GraphicMain::CAMERA_GENERAL ] );
 
-	// ライトの生成
+	// ライトの設定
 	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
 	{
@@ -136,7 +136,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	}
 	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, 1.0f ) );
 
-	// ポイントライトの生成
+	// ポイントライトの設定
 	ppPointLight_ = new LightPoint*[ GraphicMain::LIGHT_POINT_MAX ];
 	if( ppPointLight_ == nullptr )
 	{
@@ -163,6 +163,14 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 		ppPointLight_[ i ]->SetIsEnable( false );
 	}
 	countLight_ = 3;
+
+	// 影用カメラの設定
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -500.0f;
+	pCameraShadow_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCameraShadow_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
 
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
@@ -221,18 +229,20 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	// モデルの生成
 	Effect*	pEffectModel = nullptr;				// エフェクト
 	Effect*	pEffectModelReflect = nullptr;		// エフェクト
+	Effect*	pEffectModelShadow = nullptr;		// エフェクト
 	Model*	pModel = nullptr;					// モデル
 	pEffectModel = pArgument->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectModelReflect = pArgument->pEffect_->Get( _T( "ModelReflect.fx" ) );
+	pEffectModelShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
 	pObjectModel_ = new ObjectModel[ COUNT_MODEL ];
 	pObjectModel_[ 0 ].Initialize( 0 );
-	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect );
+	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
 	pObjectModel_[ 1 ].Initialize( 0 );
-	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect );
+	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
 	pObjectModel_[ 1 ].SetPositionX( 50.0f );
 	pObjectModel_[ 2 ].Initialize( 0 );
-	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect );
+	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
 	pObjectModel_[ 2 ].SetPositionY( 20.0f );
 
@@ -628,6 +638,7 @@ void SceneSplash::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
+	pCameraShadow_ = nullptr;
 	pLight_ = nullptr;
 	ppPointLight_ = nullptr;
 	pPoint_ = nullptr;

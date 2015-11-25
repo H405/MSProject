@@ -90,7 +90,7 @@ public:
 	// アクセサ
 	//==============================================================================
 	virtual void Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
-		const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
+		const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp, bool isPerspective = true );
 	void SetViewField( float value );
 	float GetViewField( void ) const;
 	void SetWidthScreen( float value );

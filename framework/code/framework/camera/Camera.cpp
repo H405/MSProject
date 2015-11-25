@@ -148,7 +148,7 @@ void Camera::Update( void )
 // Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
 //==============================================================================
 void Camera::Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
-	const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp )
+	const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp, bool isPerspective )
 {
 	// メンバ変数の設定
 	viewField_ = viewField;
@@ -162,7 +162,14 @@ void Camera::Set( float viewField, int widthScreen, int heightScreen, float clip
 
 	// プロジェクションマトリクスの生成
 	D3DXMATRIX	matrixProjection;		// プロジェクションマトリクス
-	D3DXMatrixPerspectiveFovLH( &matrixProjection, viewField, widthScreen_ / heightScreen_, clipNear_, clipFar_ );
+	if( isPerspective )
+	{
+		D3DXMatrixPerspectiveFovLH( &matrixProjection, viewField, widthScreen_ / heightScreen_, clipNear_, clipFar_ );
+	}
+	else
+	{
+		D3DXMatrixOrthoLH( &matrixProjection, widthScreen_, heightScreen_, clipNear_, clipFar_ );
+	}
 	pRenderMatrix_->SetMatrixProjection( matrixProjection );
 }
 

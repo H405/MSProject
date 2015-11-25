@@ -48,8 +48,9 @@ class Object;
 class ObjectBlur;
 class ObjectLightEffect;
 class ObjectLightReflect;
-class ObjectPostEffect;
 class ObjectMerge;
+class ObjectPostEffect;
+class ObjectShadow;
 class Polygon2D;
 class Polygon3D;
 class PolygonBillboard;
@@ -159,11 +160,12 @@ private:
 	ManagerLight*				pLight_;					// ライト管理クラス
 	ManagerCamera*				pCamera_;					// カメラ管理クラス
 	EffectParameter*			pEffectParameter_;			// エフェクトパラメータ
-	ObjectBlur*					pObjectBlur_;				// ブラー基オブジェクト
+	ObjectBlur*					pObjectBlur_;				// ブラーオブジェクト
 	ObjectLightEffect*			pObjectLightEffect_;		// ライティングオブジェクト
 	ObjectLightReflect*			pObjectLightReflect_;		// 反射ライティングオブジェクト
 	ObjectMerge*				pObjectMerge_;				// 総合3D描画オブジェクト
 	ObjectPostEffect*			pObjectPostEffect_;			// ポストエフェクトオブジェクト
+	ObjectShadow*				pObjectShadow_;				// 影オブジェクト
 	ManagerDraw< Graphic >*		pDraw_;						// 描画管理クラス
 	ManagerUpdate< Object >*	pUpdate_;					// 更新管理クラス
 	RenderPass*					pRenderPass_;				// パス情報

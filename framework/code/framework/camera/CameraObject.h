@@ -133,7 +133,7 @@ public:
 	// アクセサ
 	//==============================================================================
 	void Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
-		const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
+		const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp, bool isPerspective = true );
 	void SetPosition( const D3DXVECTOR3& value );
 	void SetPosition( float x, float y, float z );
 	void SetPositionX( float x );

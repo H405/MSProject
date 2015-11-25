@@ -61,8 +61,10 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+	// Arg    : Effect* pEffectShadow				: 影描画エフェクト
 	//==============================================================================
-	int Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect );
+	int Initialize( int priority, Model* pModel, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -79,8 +81,10 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+	// Arg    : Effect* pEffectShadow				: 影描画エフェクト
 	//==============================================================================
-	int Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect );
+	int Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

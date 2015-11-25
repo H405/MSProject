@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : SceneSplash.h
-// Brief  : スプラッシュシーンクラス
+// File   : ObjectShadow.h
+// Brief  : ライト描画オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/13 tue : Taiga Shirakawa : create
+// Date   : 2015/10/31 sat : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_SCENE_SPLASH_H
-#define MY_SCENE_SPLASH_H
+#ifndef MY_OBJECT_SHADOW_H
+#define MY_OBJECT_SHADOW_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../system/SceneMain.h"
+#include "../framework/object/object.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,27 +29,14 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class CameraObject;
-class CameraStateSpline;
-class LightDirection;
-class LightPoint;
-class ManagerPoint;
-class Material;
-class Object2D;
-class ObjectBillboard;
-class ObjectMesh;
-class ObjectModel;
-class ObjectModelMaterial;
-class ObjectRiver;
-class ObjectSkinMesh;
-class ObjectSky;
-class ObjectWaveData;
-class ObjectWaveDataInitialize;
+class Effect;
+class EffectParameter;
+class GraphicShadow;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class SceneSplash : public SceneMain
+class ObjectShadow : public Object
 {
 public:
 	//==============================================================================
@@ -57,21 +44,21 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	SceneSplash( void );
+	ObjectShadow( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~SceneSplash( void );
+	~ObjectShadow( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 更新優先度
 	//==============================================================================
-	int Initialize( SceneArgumentMain* pArgument );
+	int Initialize( int priority );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -83,16 +70,16 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : SceneArgumentMain* pArgument		: シーン引数
+	// Arg    : int priority						: 更新優先度
 	//==============================================================================
-	int Reinitialize( SceneArgumentMain* pArgument );
+	int Reinitialize( int priority );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : SceneSplash* pOut					: コピー先アドレス
+	// Arg    : ObjectShadow* pOut					: コピー先アドレス
 	//==============================================================================
-	int Copy( SceneSplash* pOut ) const;
+	int Copy( ObjectShadow* pOut ) const;
 
 	//==============================================================================
 	// Brief  : 更新処理
@@ -101,38 +88,32 @@ public:
 	//==============================================================================
 	void Update( void );
 
+	//==============================================================================
+	// Brief  : 描画クラスの生成
+	// Return : int									: 実行結果
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+	//==============================================================================
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight );
+
+	//==============================================================================
+	// アクセサ
+	//==============================================================================
+	void SetGraphic( GraphicShadow* pValue );
+	GraphicShadow* GetGraphic( void ) const;
+
 protected:
+	GraphicShadow*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	SceneSplash( const SceneSplash& );
-	SceneSplash operator=( const SceneSplash& );
+	ObjectShadow( const ObjectShadow& );
+	ObjectShadow operator=( const ObjectShadow& );
 
-	CameraObject*				pCamera_;						// 通常カメラ
-	CameraObject*				pCameraShadow_;					// 影用カメラ
-	LightDirection*				pLight_;						// ライト
-	LightPoint**				ppPointLight_;					// ポイントライト
-
-	ManagerPoint*				pPoint_;						// ポイントスプライト管理クラス
-
-	static const int			COUNT_MODEL = 10;				// モデル数
-
-	Object2D*					pObject2D_;						// 2Dオブジェクト
-	ObjectMesh*					pObjectMesh_;					// メッシュ
-	ObjectSky*					pObjectSky_;					// スカイドーム
-	ObjectModel*				pObjectModel_;					// モデル
-	ObjectModelMaterial*		pObjectModelMaterial_;			// テクスチャなしモデル
-	ObjectBillboard*			pObjectBoard_;					// ビルボード
-	ObjectSkinMesh*				pObjectSkinMesh_;				// スキンメッシュ
-	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
-	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
-	ObjectRiver*				pObjectRiver_;					// 川
-
-	int							timerLight_;					// ライト用タイマー
-
-	int							countLight_;					// ライト数
-
-	CameraStateSpline*			pCameraState_;					// カメラ処理
 };
 
-#endif	// MY_SCENE_SPLASH_H
+#endif	// MY_OBJECT_SHADOW_H

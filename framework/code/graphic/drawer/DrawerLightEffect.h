@@ -52,6 +52,7 @@ public:
 		PARAMETER_TEXTURE_SPECULAR_RIVER,			// 川のスペキュラテクスチャ
 		PARAMETER_TEXTURE_NORMAL_RIVER,				// 川の法線テクスチャ
 		PARAMETER_TEXTURE_DEPTH_RIVER,				// 川の深度テクスチャ
+		PARAMETER_TEXTURE_SHADOW,					// 影テクスチャ
 
 		PARAMETER_MATRIX_PROJECTION_INVERSE,		// プロジェクション変換逆行列
 		PARAMETER_MATRIX_VIEW_INVERSE,				// ビュー変換逆行列
@@ -95,10 +96,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
-		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver );
+		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+		IDirect3DTexture9* pTextureShadow );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -121,10 +124,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
 		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
-		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver );
+		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+		IDirect3DTexture9* pTextureShadow );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -163,6 +168,7 @@ protected:
 	IDirect3DTexture9*		pTextureSpecularRiver_;		// スペキュラ情報テクスチャ
 	IDirect3DTexture9*		pTextureNormalRiver_;		// 法線情報テクスチャ
 	IDirect3DTexture9*		pTextureDepthRiver_;		// 深度情報テクスチャ
+	IDirect3DTexture9*		pTextureShadow_;			// 影テクスチャ
 	Polygon2D*				pPolygon_;					// ポリゴン
 
 private:

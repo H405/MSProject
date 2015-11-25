@@ -67,10 +67,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 	//==============================================================================
 	int Initialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
 		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
-		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver );
+		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+		IDirect3DTexture9* pTextureShadow );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -93,10 +95,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 	//==============================================================================
 	int Reinitialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
 		IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
-		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver );
+		IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+		IDirect3DTexture9* pTextureShadow );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

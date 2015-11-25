@@ -44,6 +44,8 @@ public:
 	{
 		PASS_WAVE_DATA = 0,			// 波情報
 		PASS_3D,					// 3D描画
+		PASS_DEPTH_SHADOW,			// 影用深度
+		PASS_SHADOW,				// 影
 		PASS_REFLECT,				// 反射
 		PASS_LIGHT_REFLECT,			// 反射のライティング
 		PASS_REFLECT_NOT_LIGHT,		// 反射ライティングなし
@@ -74,6 +76,20 @@ public:
 		RENDER_PASS_3D_NORMAL,							// 法線
 		RENDER_PASS_3D_DEPTH,							// 深度
 		RENDER_PASS_3D_MAX								// 最大値
+	};
+
+	// 影用深度
+	enum
+	{
+		RENDER_PASS_DEPTH_SHADOW_DEPTH = 0,				// 深度
+		RENDER_PASS_DEPTH_SHADOW_MAX					// 最大値
+	};
+
+	// 影
+	enum
+	{
+		RENDER_PASS_SHADOW_COLOR = 0,					// 色
+		RENDER_PASS_SHADOW_MAX							// 最大値
 	};
 
 	// 反射
@@ -182,8 +198,9 @@ public:
 	// カメラ
 	enum
 	{
-		CAMERA_GENERAL = 0,		// 通常カメラ
-		CAMERA_MAX				// 最大値
+		CAMERA_GENERAL = 0,					// 通常カメラ
+		CAMERA_SHADOW,						// 影用カメラ
+		CAMERA_MAX							// 最大値
 	};
 
 	//==============================================================================
