@@ -33,6 +33,9 @@
 class Fireworks;
 class ManagerPoint;
 class FireworksState;
+class ManagerLight;
+class LightPoint;
+class LightDirection;
 
 //******************************************************************************
 // ƒNƒ‰ƒX’è‹`
@@ -125,6 +128,7 @@ public:
 	//==============================================================================
 	Fireworks* getFireworks(int _index){return &fireworks[_index];}
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
+	void setManagerLight(ManagerLight* _managerLight);
 
 protected:
 

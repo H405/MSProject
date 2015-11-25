@@ -16,6 +16,10 @@
 #include "../../system/ManagerFireworks.h"
 #include "../fire/Fire.h"
 #include "../../framework/radianTable/radianTable.h"
+#include "../../framework/light/ManagerLight.h"
+#include "../../framework/light/LightPoint.h"
+#include "../../framework/develop/DebugProc.h"
+#include "../../framework/develop/DebugMeasure.h"
 
 //******************************************************************************
 // ライブラリ
@@ -76,6 +80,8 @@ void Fireworks::InitializeSelf( void )
 	param.setSmallFireIndex = 0;
 	param.setPosOld = 0;
 
+	lightPoint = nullptr;
+
 	indexState = 0;
 	D3DXMatrixIdentity(&param.matrix);
 	D3DXMatrixIdentity(&param.invViewMatrix);
@@ -130,6 +136,15 @@ int Fireworks::Set(
 
 	indexState = _indexState;
 
+	if(lightPoint == nullptr)
+	{
+		lightPoint = managerLight->GetLightPoint();
+		lightPoint->SetDiffuse(1.0f, 0.0f, 1.0f);
+		lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
+		lightPoint->SetAttemuation(0.00f, 0.0006f, 0.00006f);
+	}
+	lightPoint->SetIsEnable(true);
+
 	//	更新関数設定
 	fpUpdate = &Fireworks::NormalUpdate;
 
@@ -144,6 +159,11 @@ int Fireworks::Set(
 //==============================================================================
 int Fireworks::Finalize( void )
 {
+	if(lightPoint != nullptr)
+		lightPoint->Release();
+
+	lightPoint = nullptr;
+
 	delete[] param.smallFire;
 	delete[] param.fire;
 
@@ -160,8 +180,12 @@ int Fireworks::Finalize( void )
 //==============================================================================
 void Fireworks::Update( void )
 {
+	MeasureTime("fireworksUpdate");
+
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
+
+	lightPoint->SetPosition(param.setPos.x, param.setPos.y, param.setPos.z);
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -197,8 +221,13 @@ void Fireworks::BurnUpdate( void )
 		param.smallFire[count].Update();
 	}
 
+	PrintDebug( _T( "\ncountFire:Burn1 = %d\n"), param.fireMax - buffCount );
+
 	if(buffCount == param.fireMax)
+	{
 		param.enable = false;
+		lightPoint->SetIsEnable(false);
+	}
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -223,8 +252,13 @@ void Fireworks::Burn2Update( void )
 		param.smallFire[count].Update();
 	}
 
+	PrintDebug( _T( "\ncountFire:Burn2 = %d\n"), param.fireMax * SMALL_FIREWORKS_MAX - buffCount );
+
 	if(buffCount == param.fireMax * SMALL_FIREWORKS_MAX)
+	{
 		param.enable = false;
+		lightPoint->SetIsEnable(false);
+	}
 }
 
 //==============================================================================
@@ -408,4 +442,9 @@ void Fireworks::burn2()
 
 	//	破裂フラグON
 	param.burnFlag = true;
+}
+
+void Fireworks::setManagerLight(ManagerLight* _managerLight)
+{
+	managerLight = _managerLight;
 }

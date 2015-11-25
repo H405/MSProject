@@ -27,6 +27,7 @@
 #include "../framework/resource/ManagerModel.h"
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/resource/ManagerMotion.h"
+#include "../framework/resource/Model.h"
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
 #include "../framework/system/Window.h"
@@ -193,6 +194,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
 
+
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
@@ -265,6 +267,9 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 	//	仮のフィールド
 	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
+	Material buffMat;
+	buffMat.specular_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pModel->SetMaterial(0, buffMat);
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
@@ -357,7 +362,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 10000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 25600, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;
@@ -369,6 +374,9 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	//	花火管理オブジェクト生成
 	managerFireworks = new ManagerFireworks;
 	managerFireworks->Initialize(managerPoint);
+
+	// ライトの生成
+	managerFireworks->setManagerLight(pArgument->pLight_);
 
 	//	ターゲット管理オブジェクト生成
 	Effect*		pEffectTarget = pArgument->pEffect_->Get( _T( "Billboard.fx" ) );

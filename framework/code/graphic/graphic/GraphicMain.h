@@ -192,7 +192,7 @@ public:
 	// ポイントライト
 	enum
 	{
-		LIGHT_POINT_MAX = 10				// 最大値
+		LIGHT_POINT_MAX = 16				// 最大値
 	};
 
 	// カメラ

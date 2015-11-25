@@ -35,6 +35,9 @@ typedef int TIME;
 class ManagerPoint;
 class FireworksState;
 class Fire;
+class ManagerLight;
+class LightPoint;
+class LightDirection;
 
 //******************************************************************************
 // 構造体定義
@@ -193,6 +196,8 @@ public:
 	FIREWORKS_PARAM* getParam(){return &param;}
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){param.invViewMatrix = _invViewMatrix;};
 
+	void setManagerLight(ManagerLight* _managerLight);
+
 protected:
 
 	// ステート
@@ -201,6 +206,9 @@ protected:
 
 	//	花火用パラメータ
 	FIREWORKS_PARAM param;
+
+	ManagerLight* managerLight;
+	LightPoint* lightPoint;
 
 	//==============================================================================
 	// Brief  : 更新処理

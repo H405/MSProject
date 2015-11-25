@@ -82,11 +82,16 @@ public:
 	void AddPositionX(float _value){pos.x += _value;};
 	void setRotationArm(float _x, float _y, float _z);
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
+	void setSpeed(float _value){speed = _value;}
+	void addSpeed(float _value){speed += _value;}
 
 protected:
 
 	//	位置情報
 	D3DXVECTOR3 pos;
+
+	//	移動スピード
+	float speed;
 
 	//	カメラの逆行列
 	D3DXMATRIX invViewMatrix;

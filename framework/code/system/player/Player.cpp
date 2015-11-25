@@ -50,6 +50,7 @@ void Player::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	speed = 0.0f;
 	body = nullptr;
 	arm = nullptr;
 	D3DXMatrixIdentity(&invViewMatrix);
@@ -154,6 +155,14 @@ int Player::Finalize( void )
 //==============================================================================
 void Player::Update( void )
 {
+	pos.x += speed;
+	speed *= 0.9f;
+
+	if(pos.x <= -250.0f)
+		pos.x = -250.0f;
+	else if(pos.x >= 250.0f)
+		pos.x = 250.0f;
+
 	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
 	D3DXVECTOR4 setPos;
 

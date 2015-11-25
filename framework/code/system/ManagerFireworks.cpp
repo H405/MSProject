@@ -11,7 +11,8 @@
 // インクルード
 //******************************************************************************
 #include "ManagerFireworks.h"
-#include "../framework/develop/Debug.h"
+#include "../framework/develop/DebugProc.h"
+#include "../framework/develop/DebugMeasure.h"
 #include "fireworks/FireworksState.h"
 
 //******************************************************************************
@@ -115,6 +116,8 @@ int ManagerFireworks::Finalize( void )
 //==============================================================================
 void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 {
+	int countFireworks = 0;
+
 	for( int count = 0; count < FIREWORKS_MAX; ++count )
 	{
 		//	消えた瞬間を判定して、テーブルを再構築
@@ -133,9 +136,14 @@ void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 		{
 			continue;
 		}
+
 		fireworks[count].setInvViewMatrix(invViewMatrix);
 		fireworks[count].Update();
+
+		countFireworks++;
 	}
+
+	PrintDebug( _T( "\ncountFireworks = %d\n"), countFireworks );
 }
 //==============================================================================
 // Brief  : テーブルのソート処理
@@ -239,4 +247,12 @@ int ManagerFireworks::GetIndex()
 //==============================================================================
 void ManagerFireworks::Burn()
 {
+}
+
+void ManagerFireworks::setManagerLight(ManagerLight* _managerLight)
+{
+	for( int count = 0; count < FIREWORKS_MAX; ++count )
+	{
+		fireworks[count].setManagerLight(_managerLight);
+	}
 }

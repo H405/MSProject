@@ -237,6 +237,8 @@ void ManagerPoint::Update( void )
 		++countPoint;
 	}
 
+	PrintDebug( _T( "\ncountPoint = %d\n"), countPoint );
+
 	// ƒ|ƒŠƒSƒ“‚Öî•ñ‚ð“]‘—
 	pPolygon_->SetVertexBuffer( countPoint, pVertexBuffer_->GetBuffer() );
 }

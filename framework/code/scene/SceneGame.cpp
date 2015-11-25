@@ -146,7 +146,7 @@ void SceneGame::Update( void )
 
 	// 更新関数の変更
 #ifdef _DEVELOP
-	if( pArgument_->pKeyboard_->IsTrigger( DIK_F9 ) )
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_F6 ) )
 	{
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::UpdateResult;
@@ -187,8 +187,9 @@ void SceneGame::calibrationUpdate(void)
 //==============================================================================
 void SceneGame::MovePlayer()
 {
-	//	wiiボードを利用した、プレイヤーの移動処理
+	//	wiiボードを利用した、プレイヤーの移動処理1
 	//---------------------------------------------------------------------------------------------------------
+#ifdef _WIIBOARD
 	if(pArgument_->pWiiController_->getIsConnectWiiboard())
 	{
 		float totalCalibKg = pArgument_->pWiiController_->getCalibKg().Total * 0.7f;
@@ -198,15 +199,16 @@ void SceneGame::MovePlayer()
 			>=
 			totalCalibKg)
 		{
-			player->AddPositionX((-((totalKgL - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)));
+			player->addSpeed((-((totalKgL - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
 		}
 		if(totalKgR
 			>=
 			totalCalibKg)
 		{
-			player->AddPositionX((((totalKgR - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)));
+			player->addSpeed((((totalKgR - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
 		}
 	}
+#endif
 
 	if(pArgument_->pKeyboard_->IsPress(DIK_LEFT) == true)
 	{
@@ -216,6 +218,9 @@ void SceneGame::MovePlayer()
 	{
 		player->AddPositionX(1.0f);
 	}
+
+	D3DXVECTOR3 buff = player->getPosition();
+	PrintDebug( _T( "\nplayerPos.x = %f\n"), buff.x );
 	//---------------------------------------------------------------------------------------------------------
 
 
@@ -399,7 +404,7 @@ void SceneGame::normalUpdate(void)
 
 	{
 		//	花火管理クラスの更新
-		MeasureTime("managerFireworksUpdate");
+		//MeasureTime("managerFireworksUpdate");
 		managerFireworks->setInvViewMatrix(cameraInvMat);
 		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
 	}
@@ -424,12 +429,12 @@ void SceneGame::normalUpdate(void)
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
-	PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
-	PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
-	PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
-	PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
-	PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
-	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
+	//PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
+	//PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
+	//PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
+	//PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
+	//PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
+	//PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
 
 	//	ターゲット出現
 	targetAppearCount++;

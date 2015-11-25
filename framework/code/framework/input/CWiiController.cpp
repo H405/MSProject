@@ -720,13 +720,13 @@ void CWiiController::CommonUpdate()
 				joystick.y = -joyStickMax;
 		}
 
-		PrintDebug( _T( "accel.x = %f\n" ), accel.x);
-		PrintDebug( _T( "accel.y = %f\n" ), accel.y);
-		PrintDebug( _T( "accel.z = %f\n" ), accel.z);
-
-		PrintDebug( _T( "rot.x = %f\n" ), rot.x);
-		PrintDebug( _T( "rot.y = %f\n" ), rot.y);
-		PrintDebug( _T( "rot.z = %f\n" ), rot.z);
+		//PrintDebug( _T( "accel.x = %f\n" ), accel.x);
+		//PrintDebug( _T( "accel.y = %f\n" ), accel.y);
+		//PrintDebug( _T( "accel.z = %f\n" ), accel.z);
+		//
+		//PrintDebug( _T( "rot.x = %f\n" ), rot.x);
+		//PrintDebug( _T( "rot.y = %f\n" ), rot.y);
+		//PrintDebug( _T( "rot.z = %f\n" ), rot.z);
 	}
 
 	//	バランスwiiボード(以下、wiiボード)が接続されていれば
@@ -759,17 +759,17 @@ void CWiiController::CommonUpdate()
 		//	値の格納
 		kg = wiiBoard->BalanceBoard.Kg;
 
-		PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
-		PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
-		PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
-		PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
-		PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
-
-		PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
-		PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
-		PrintDebug( _T( "Kg.TopL = %f\n" ),		kg.TopL);
-		PrintDebug( _T( "Kg.TopR = %f\n" ),		kg.TopR);
-		PrintDebug( _T( "Kg.Total = %f\n" ),	kg.Total);
+		//PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
+		//PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
+		//PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
+		//PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
+		//PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
+		//
+		//PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
+		//PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
+		//PrintDebug( _T( "Kg.TopL = %f\n" ),		kg.TopL);
+		//PrintDebug( _T( "Kg.TopR = %f\n" ),		kg.TopR);
+		//PrintDebug( _T( "Kg.Total = %f\n" ),	kg.Total);
 	}
 }
 //=============================================================================
