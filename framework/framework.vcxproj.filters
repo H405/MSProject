@@ -504,6 +504,75 @@
     <ClInclude Include="code\framework\fileReader\fileReader.h">
       <Filter>ソース ファイル\framework\fileReader</Filter>
     </ClInclude>
+    <ClInclude Include="code\framework\camera\ManagerCamera.h">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerWaveData.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerWaveDataInitialize.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerRiver.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicWaveData.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicWaveDataInitialize.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicRiver.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectWaveDataInitialize.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectRiver.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectWaveData.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectLightReflect.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicLightReflect.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerLightReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerPointReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelMaterialReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkyReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshReflect.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\polygon\PolygonBillboard.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectShadow.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicShadow.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -905,6 +974,75 @@
     <ClCompile Include="code\framework\fileReader\fileReader.cpp">
       <Filter>ソース ファイル\framework\fileReader</Filter>
     </ClCompile>
+    <ClCompile Include="code\framework\camera\ManagerCamera.cpp">
+      <Filter>ソース ファイル\framework\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerWaveDataInitialize.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerWaveData.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicWaveDataInitialize.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicRiver.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicWaveData.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectRiver.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectWaveDataInitialize.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectWaveData.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectLightReflect.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicLightReflect.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerLightReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerPointReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelMaterialReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkyReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshReflect.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\polygon\PolygonBillboard.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectShadow.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicShadow.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -940,16 +1078,55 @@
     <None Include="code\effect\Mesh.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
-    <None Include="code\effect\ModelMat.fx">
-      <Filter>ソース ファイル\effect</Filter>
-    </None>
-    <None Include="code\effect\BlurBase.fx">
-      <Filter>ソース ファイル\effect</Filter>
-    </None>
     <None Include="code\effect\BlurY.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\BlurX.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\WaveData.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Water.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\WaveDataInitialize.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\PointReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelMaterial.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelMaterialReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkyReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkinMeshReflect.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\CalculateLight.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightEffect_00.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\LightReflect_00.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelShadow.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Shadow.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

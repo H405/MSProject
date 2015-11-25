@@ -174,17 +174,15 @@ void DrawerModelMaterial::Draw( const D3DXMATRIX& matrixWorld )
 
 	// 描画
 	unsigned int		countMaterial;			// マテリアル数
-	IDirect3DTexture9*	pTexture = nullptr;		// テクスチャ
 	Material			material;				// マテリアル
 	countMaterial = pModel_->GetCountMaterial();
 	for( unsigned int counterMaterial = 0; counterMaterial < countMaterial; ++counterMaterial )
 	{
 		// メッシュ情報の取得
-		pTexture = pModel_->GetTexture( counterMaterial );
 		pModel_->GetMaterial( counterMaterial, &material );
 
-		// マテリアルカラー
-		pEffect_->SetFloatArray( PARAMETER_MATERIAL_COLOR, &material.diffuse_.r, 3 );
+		// ディフューズ色
+		pEffect_->SetFloatArray( PARAMETER_COLOR_DIFFUSE, &material.diffuse_.r, 3 );
 
 		// スペキュラ色
 		pEffect_->SetFloatArray( PARAMETER_COLOR_SPECULAR, &material.specular_.r, 3 );

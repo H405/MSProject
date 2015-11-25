@@ -76,7 +76,7 @@ int Polygon2D::Initialize( IDirect3DDevice9* pDevice )
 	buffer.Initialize( COUNT_VERTEX, pVertex_ );
 	for( int counterVertex = 0; counterVertex < COUNT_VERTEX; ++counterVertex )
 	{
-		buffer.SetPosition( counterVertex, 1.0f * (counterVertex % COUNT_VERTEX_LINE) - 0.5f, -1.0f * (counterVertex / COUNT_VERTEX_LINE) + 0.5f, 0.0f );
+		buffer.SetPosition( counterVertex, 2.0f * (counterVertex % COUNT_VERTEX_LINE) - 1.0f, -2.0f * (counterVertex / COUNT_VERTEX_LINE) + 1.0f, 0.0f );
 		buffer.SetNormal( counterVertex, 0.0f, 0.0f, -1.0f );
 		buffer.SetTextureCoord0( counterVertex, 1.0f * (counterVertex % COUNT_VERTEX_LINE), 1.0f * (counterVertex / COUNT_VERTEX_LINE) );
 		buffer.SetColorDiffuse( counterVertex, 1.0f, 1.0f, 1.0f, 1.0f );

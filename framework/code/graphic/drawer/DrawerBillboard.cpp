@@ -12,7 +12,7 @@
 //******************************************************************************
 #include "DrawerBillboard.h"
 #include "../../framework/camera/Camera.h"
-#include "../../framework/polygon/Polygon2D.h"
+#include "../../framework/polygon/PolygonBillboard.h"
 #include "../../framework/render/RenderMatrix.h"
 #include "../../framework/resource/Effect.h"
 #include "../../graphic/graphic/GraphicMain.h"
@@ -57,13 +57,13 @@ DrawerBillboard::~DrawerBillboard( void )
 // Return : int									: 実行結果
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
-// Arg    : Polygon2D* pPolygon					: ビルボードポリゴン
+// Arg    : PolygonBillboard* pPolygon			: ビルボードポリゴン
 // Arg    : D3DXCOLOR* pColor					: 色
 // Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
 // Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int DrawerBillboard::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+int DrawerBillboard::Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonBillboard* pPolygon,
 	D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
@@ -121,13 +121,13 @@ int DrawerBillboard::Finalize( void )
 // Return : int									: 実行結果
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
-// Arg    : Polygon2D* pPolygon					: ビルボードポリゴン
+// Arg    : PolygonBillboard* pPolygon			: ビルボードポリゴン
 // Arg    : D3DXCOLOR* pColor					: 色
 // Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
 // Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int DrawerBillboard::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+int DrawerBillboard::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonBillboard* pPolygon,
 	D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture )
 {
 	// 終了処理

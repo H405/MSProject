@@ -56,6 +56,7 @@ void SceneArgumentMain::InitializeSelf( void )
 	pDevice_ = nullptr;
 	pFade_ = nullptr;
 	pLight_ = nullptr;
+	pCamera_ = nullptr;
 	pEffectParameter_ = nullptr;
 	pWiiController_ = nullptr;
 	pKeyboard_ = nullptr;
@@ -69,4 +70,13 @@ void SceneArgumentMain::InitializeSelf( void )
 	pSound_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;
+	pTextureHeightWave0_ = nullptr;
+	pTextureHeightWave1_ = nullptr;
+	pTextureNormalWave_ = nullptr;
+	pTextureReflect_ = nullptr;
+	pTextureReflectNotLight_ = nullptr;
+	pTextureReflectAdd_ = nullptr;
+	pTexture3D_ = nullptr;
+	pTextureDepth_ = nullptr;
+	pTextureTest_ = nullptr;
 }

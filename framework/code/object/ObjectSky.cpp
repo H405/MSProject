@@ -170,9 +170,10 @@ void ObjectSky::Update( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-int ObjectSky::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture )
+int ObjectSky::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect, Texture* pTexture )
 {
 	// グラフィックの生成
 	int					result;				// 実行結果
@@ -187,7 +188,7 @@ int ObjectSky::CreateGraphic( int priority, const EffectParameter* pParameter, E
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pPolygonMesh_, pTextureSet );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pEffectReflect, pPolygonMesh_, pTextureSet );
 	if( result != 0 )
 	{
 		return result;

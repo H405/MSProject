@@ -31,7 +31,7 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class Polygon2D;
+class PolygonBillboard;
 
 //******************************************************************************
 // クラス定義
@@ -69,13 +69,13 @@ public:
 	// Return : int									: 実行結果
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
-	// Arg    : Polygon2D* pPolygon					: ビルボードポリゴン
+	// Arg    : PolygonBillboard* pPolygon			: ビルボードポリゴン
 	// Arg    : D3DXCOLOR* pColor					: 色
 	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
 	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonBillboard* pPolygon,
 		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
@@ -90,13 +90,13 @@ public:
 	// Return : int									: 実行結果
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
-	// Arg    : Polygon2D* pPolygon					: ビルボードポリゴン
+	// Arg    : PolygonBillboard* pPolygon			: ビルボードポリゴン
 	// Arg    : D3DXCOLOR* pColor					: 色
 	// Arg    : D3DXVECTOR2* pPositionTexture		: テクスチャ座標
 	// Arg    : D3DXVECTOR2* pScaleTexture			: テクスチャ拡縮
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonBillboard* pPolygon,
 		D3DXCOLOR* pColor, D3DXVECTOR2* pPositionTexture, D3DXVECTOR2* pScaleTexture, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
@@ -123,7 +123,7 @@ protected:
 	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
 	Effect*					pEffect_;				// エフェクト
 	IDirect3DTexture9*		pTexture_;				// テクスチャ
-	Polygon2D*				pPolygon_;				// ポリゴン
+	PolygonBillboard*		pPolygon_;				// ポリゴン
 	D3DXCOLOR*				pColor_;				// 色
 	D3DXVECTOR2*			pPositionTexture_;		// テクスチャ座標
 	D3DXVECTOR2*			pScaleTexture_;			// テクスチャ拡縮

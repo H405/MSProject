@@ -10,8 +10,8 @@
 //******************************************************************************
 // 変数宣言
 //******************************************************************************
-float4x4	matrixWorld_;			// ワールド変換行列
-float2		sizeScreenHalf_;		// 画面サイズの半分
+float2		offsetTexel_;			// テクセルオフセット
+
 float		forcus_;				// 焦点距離
 
 texture		textureLight_;			// ライトありテクスチャ
@@ -102,11 +102,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	VertexOutput	output;		// 出力
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
-	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.xy /= sizeScreenHalf_;
 
 	// 値を格納
-	output.textureCoord_ = textureCoord;
+	output.textureCoord_ = textureCoord + offsetTexel_;
 
 	// 頂点出力を返す
 	return output;
@@ -121,13 +119,19 @@ PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// ピクセル色を返す
 	PixelOutput	output;
-	float	proportion = tex2D( samplerTextureMask , vertex.textureCoord_ );
+	float	maskLight = tex2D( samplerTextureMask , vertex.textureCoord_ );
 	float3	colorLight = tex2D( samplerTextureLight , vertex.textureCoord_ ).rgb;
 	float3	colorNotLight = tex2D( samplerTextureNotLight , vertex.textureCoord_ ).rgb;
 	float3	colorAdd = tex2D( samplerTextureAdd , vertex.textureCoord_ ).rgb;
-	output.color_ = float4( (1.0f - proportion) * colorLight + proportion * colorNotLight + colorAdd, 1.0f );
+
+	// 深度を設定
 	output.depth_.gba = 0.0f;
-	output.depth_.r = (1.0f - proportion) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + proportion * forcus_;
+	output.depth_.r = (1.0f - maskLight) * tex2D( samplerTextureDepth , vertex.textureCoord_ ).r + maskLight * forcus_;
+
+	// 色を求める
+	output.color_ = float4( (1.0f - maskLight) * colorLight + maskLight * colorNotLight + colorAdd, 1.0f );
+
+	// 値を返す
 	return output;
 }
 

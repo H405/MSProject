@@ -74,9 +74,11 @@ public:
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture );
+	int Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -92,9 +94,11 @@ public:
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter, Effect* pEffectGeneral, IDirect3DTexture9* pTexture );
+	int Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

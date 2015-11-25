@@ -339,26 +339,35 @@ private:
 	// リザルト演出時間
 	enum
 	{
-		TIME_RESULT_BEGIN				= 0,																// 開始
-		TIME_RESULT_BEGIN_BACK			= 0,																// 背景開始時間
-		COUNT_RESULT_BEGIN_BACK			= 10,																// 背景開始フレーム数
-		TIME_RESULT_BEGIN_LOGO			= TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK,					// ロゴ開始時間
-		COUNT_RESULT_BEGIN_LOGO			= 20,																// ロゴ開始フレーム数
-		TIME_RESULT_BEGIN_SYNCRONIZE	= TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO,					// シンクロ率開始時間
-		COUNT_RESULT_BEGIN_SYNCRONIZE	= 20,																// シンクロ率開始フレーム数
-		TIME_RESULT_BEGIN_GAUGE			= TIME_RESULT_BEGIN_SYNCRONIZE + COUNT_RESULT_BEGIN_SYNCRONIZE,		// シンクロゲージ開始時間
-		COUNT_RESULT_BEGIN_GAUGE		= 120,																// シンクロゲージ開始フレーム数
-		TIME_RESULT_BEGIN_JUDGE_0		= TIME_RESULT_BEGIN_GAUGE + COUNT_RESULT_BEGIN_GAUGE,				// 判定0開始時間
-		COUNT_RESULT_BEGIN_JUDGE_0		= 15,																// 判定0開始フレーム数
-		TIME_RESULT_BEGIN_JUDGE_1		= TIME_RESULT_BEGIN_JUDGE_0 + 5,									// 判定1開始時間
-		COUNT_RESULT_BEGIN_JUDGE_1		= 15,																// 判定1開始フレーム数
-		TIME_RESULT_BEGIN_JUDGE_2		= TIME_RESULT_BEGIN_JUDGE_0 + 10,									// 判定2開始時間
-		COUNT_RESULT_BEGIN_JUDGE_2		= 15,																// 判定2開始フレーム数
-		TIME_RESULT_BEGIN_TO_RANKING	= TIME_RESULT_BEGIN_JUDGE_2 + COUNT_RESULT_BEGIN_JUDGE_2,			// ランキングへ開始開始時間
-		COUNT_RESULT_BEGIN_TO_RANKING	= 20,																// ランキングへ開始開始フレーム数
-		TIME_RESULT_BEGIN_TO_TITLE		= TIME_RESULT_BEGIN_JUDGE_2 + COUNT_RESULT_BEGIN_JUDGE_2,			// タイトルへ開始開始時間
-		COUNT_RESULT_BEGIN_TO_TITLE		= 20,																// タイトルへ開始開始フレーム数
-		TIME_RESULT_END					= TIME_RESULT_BEGIN_TO_TITLE + COUNT_RESULT_BEGIN_TO_TITLE			// 終了
+		TIME_RESULT_BEGIN				= 0,																		// 開始
+		TIME_RESULT_BEGIN_BACK			= 0,																		// 背景開始時間
+		COUNT_RESULT_BEGIN_BACK			= 10,																		// 背景開始フレーム数
+		TIME_RESULT_BEGIN_LOGO			= TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK,							// ロゴ開始時間
+		COUNT_RESULT_BEGIN_LOGO			= 20,																		// ロゴ開始フレーム数
+		TIME_RESULT_BEGIN_SYNCRONIZE	= TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO,							// シンクロ率開始時間
+		COUNT_RESULT_BEGIN_SYNCRONIZE	= 20,																		// シンクロ率開始フレーム数
+		TIME_RESULT_BEGIN_JUDGE_0		= TIME_RESULT_BEGIN_SYNCRONIZE + COUNT_RESULT_BEGIN_SYNCRONIZE + 10,		// 判定0開始時間
+		COUNT_RESULT_BEGIN_JUDGE_0		= 15,																		// 判定0開始フレーム数
+		TIME_RESULT_BEGIN_JUDGE_1		= TIME_RESULT_BEGIN_JUDGE_0 + 5,											// 判定1開始時間
+		COUNT_RESULT_BEGIN_JUDGE_1		= 15,																		// 判定1開始フレーム数
+		TIME_RESULT_BEGIN_JUDGE_2		= TIME_RESULT_BEGIN_JUDGE_0 + 10,											// 判定2開始時間
+		COUNT_RESULT_BEGIN_JUDGE_2		= 15,																		// 判定2開始フレーム数
+		TIME_RESULT_BEGIN_GAUGE			= TIME_RESULT_BEGIN_JUDGE_2 + COUNT_RESULT_BEGIN_JUDGE_2,					// シンクロゲージ開始時間
+		COUNT_RESULT_BEGIN_GAUGE		= 120,																		// シンクロゲージ開始フレーム数
+		TIME_RESULT_BEGIN_TO_RANKING	= TIME_RESULT_BEGIN_GAUGE + COUNT_RESULT_BEGIN_GAUGE + 30,					// ランキングへ開始開始時間
+		COUNT_RESULT_BEGIN_TO_RANKING	= 20,																		// ランキングへ開始開始フレーム数
+		TIME_RESULT_BEGIN_TO_TITLE		= TIME_RESULT_BEGIN_GAUGE + COUNT_RESULT_BEGIN_GAUGE + 30,					// タイトルへ開始開始時間
+		COUNT_RESULT_BEGIN_TO_TITLE		= 20,																		// タイトルへ開始開始フレーム数
+		TIME_RESULT_END					= TIME_RESULT_BEGIN_TO_TITLE + COUNT_RESULT_BEGIN_TO_TITLE					// 終了
+	};
+
+	// ランキング演出時間
+	enum
+	{
+		TIME_RANKING_BEGIN				= 0,																		// 開始
+		TIME_RANKING_BEGIN_LOGO			= 0,																		// ロゴ開始時間
+		COUNT_RANKING_BEGIN_LOGO		= 20,																		// ロゴ開始フレーム数
+		TIME_RANKING_END				= TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO						// 終了
 	};
 
 	static const int	MAXIMUM_RANK = 5;		// ランキング最大数

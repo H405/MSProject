@@ -38,6 +38,7 @@ class Graphic;
 class InputKeyboard;
 class InputMouse;
 class InputPad;
+class ManagerCamera;
 class ManagerLight;
 class Model;
 class Motion;
@@ -75,24 +76,35 @@ public:
 	//==============================================================================
 	~SceneArgumentMain( void );
 
-	Window*						pWindow_;				// ウィンドウ
-	IDirect3DDevice9*			pDevice_;				// Direct3Dデバイス
-	Fade*						pFade_;					// フェード管理クラス
-	ManagerLight*				pLight_;				// ライト管理クラス
-	EffectParameter*			pEffectParameter_;		// エフェクトパラメータ
-	CWiiController*				pWiiController_;		// wiiリモコン入力クラス
-	InputKeyboard*				pKeyboard_;				// キーボード入力クラス
-	InputMouse*					pMouse_;				// マウス入力クラス
-	InputPad*					pPad_;					// ゲームパッド入力クラス
-	VirtualController*			pVirtualController_;	// 仮想コントローラ管理クラス
-	ManagerTexture< Texture >*	pTexture_;				// テクスチャ管理クラス
-	ManagerModel< Model >*		pModel_;				// モデル管理クラス
-	ManagerMotion< Motion >*	pMotion_;				// モーション管理クラス
-	ManagerEffect< Effect >*	pEffect_;				// エフェクト管理クラス
-	ManagerSound< Sound >*		pSound_;				// サウンド管理クラス
+	Window*						pWindow_;						// ウィンドウ
+	IDirect3DDevice9*			pDevice_;						// Direct3Dデバイス
+	Fade*						pFade_;							// フェード管理クラス
+	ManagerLight*				pLight_;						// ライト管理クラス
+	ManagerCamera*				pCamera_;						// カメラ管理クラス
+	EffectParameter*			pEffectParameter_;				// エフェクトパラメータ
+	CWiiController*				pWiiController_;				// wiiリモコン入力クラス
+	InputKeyboard*				pKeyboard_;						// キーボード入力クラス
+	InputMouse*					pMouse_;						// マウス入力クラス
+	InputPad*					pPad_;							// ゲームパッド入力クラス
+	VirtualController*			pVirtualController_;			// 仮想コントローラ管理クラス
+	ManagerTexture< Texture >*	pTexture_;						// テクスチャ管理クラス
+	ManagerModel< Model >*		pModel_;						// モデル管理クラス
+	ManagerMotion< Motion >*	pMotion_;						// モーション管理クラス
+	ManagerEffect< Effect >*	pEffect_;						// エフェクト管理クラス
+	ManagerSound< Sound >*		pSound_;						// サウンド管理クラス
 
-	ManagerDraw< Graphic >*		pDraw_;					// 描画管理クラス
-	ManagerUpdate< Object >*	pUpdate_;				// 更新管理クラス
+	ManagerDraw< Graphic >*		pDraw_;							// 描画管理クラス
+	ManagerUpdate< Object >*	pUpdate_;						// 更新管理クラス
+
+	IDirect3DTexture9*			pTextureHeightWave0_;			// 波の高さテクスチャ0
+	IDirect3DTexture9*			pTextureHeightWave1_;			// 波の高さテクスチャ1
+	IDirect3DTexture9*			pTextureNormalWave_;			// 波の法線テクスチャ
+	IDirect3DTexture9*			pTextureReflect_;				// 反射テクスチャ
+	IDirect3DTexture9*			pTextureReflectNotLight_;		// 反射ライティングなしテクスチャ
+	IDirect3DTexture9*			pTextureReflectAdd_;			// 反射加算合成テクスチャ
+	IDirect3DTexture9*			pTexture3D_;					// 3D描画テクスチャ
+	IDirect3DTexture9*			pTextureDepth_;					// 深度テクスチャ
+	IDirect3DTexture9*			pTextureTest_;					// テストテクスチャ
 
 protected:
 

@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "GraphicPoint.h"
 #include "../drawer/DrawerPoint.h"
+#include "../drawer/DrawerPointReflect.h"
 
 //******************************************************************************
 // ライブラリ
@@ -53,10 +54,12 @@ GraphicPoint::~GraphicPoint( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : PolygonPoint* pPolygon				: ポイントスプライトポリゴン
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int GraphicPoint::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonPoint* pPolygon, IDirect3DTexture9* pTexture )
+int GraphicPoint::Initialize( int priority, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, PolygonPoint* pPolygon, IDirect3DTexture9* pTexture )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -66,7 +69,7 @@ int GraphicPoint::Initialize( int priority, const EffectParameter* pParameter, E
 		return result;
 	}
 
-	// 描画クラスの生成
+	// 通常描画クラスの生成
 	DrawerPoint*	pDrawerPoint = nullptr;		// 描画クラス
 	pDrawerPoint = new DrawerPoint();
 	if( pDrawerPoint == nullptr )
@@ -75,6 +78,16 @@ int GraphicPoint::Initialize( int priority, const EffectParameter* pParameter, E
 	}
 	result = pDrawerPoint->Initialize( pParameter, pEffectGeneral, pPolygon, pTexture );
 	ppDraw_[ GraphicMain::PASS_3D_NOT_LIGHT ] = pDrawerPoint;
+
+	// 反射描画クラスの生成
+	DrawerPointReflect*	pDrawerPointReflect = nullptr;		// 描画クラス
+	pDrawerPointReflect = new DrawerPointReflect();
+	if( pDrawerPointReflect == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerPointReflect->Initialize( pParameter, pEffectReflect, pPolygon, pTexture );
+	ppDraw_[ GraphicMain::PASS_REFLECT_NOT_LIGHT ] = pDrawerPointReflect;
 
 	// 正常終了
 	return 0;
@@ -108,10 +121,12 @@ int GraphicPoint::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : PolygonPoint* pPolygon				: ポイントスプライトポリゴン
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int GraphicPoint::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, PolygonPoint* pPolygon, IDirect3DTexture9* pTexture )
+int GraphicPoint::Reinitialize( int priority, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, PolygonPoint* pPolygon, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -122,7 +137,7 @@ int GraphicPoint::Reinitialize( int priority, const EffectParameter* pParameter,
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pPolygon, pTexture );
+	return Initialize( priority, pParameter, pEffectGeneral, pEffectReflect, pPolygon, pTexture );
 }
 
 //==============================================================================

@@ -109,9 +109,10 @@ public:
 	// Arg    : int priority						: 描画優先度
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 	// Arg    : Texture* pTexture					: テクスチャ
 	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture );
+	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect, Texture* pTexture );
 
 	//==============================================================================
 	// アクセサ

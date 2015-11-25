@@ -42,8 +42,7 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,			// ワールド変換行列
-		PARAMETER_SIZE_SCREEN_HALF,			// 画面サイズの半分
+		PARAMETER_OFFSET_TEXEL = 0,			// テクセルオフセット
 
 		PARAMETER_FORCUS,					// 焦点距離
 
@@ -83,8 +82,8 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -106,8 +105,8 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -134,14 +133,14 @@ public:
 	IDirect3DTexture9* GetTextureMask( void ) const;
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	IDirect3DTexture9*		pTextureLight_;			// ライトありテクスチャ
-	IDirect3DTexture9*		pTextureNotLight_;		// ライトなしテクスチャ
-	IDirect3DTexture9*		pTextureMask_;			// マスクテクスチャ
-	IDirect3DTexture9*		pTextureAdd_;			// 加算合成テクスチャ
-	IDirect3DTexture9*		pTextureDepth_;			// 深度テクスチャ
-	Polygon2D*				pPolygon_;				// ポリゴン
+	const EffectParameter*	pEffectParameter_;			// エフェクトパラメータ
+	Effect*					pEffect_;					// エフェクト
+	IDirect3DTexture9*		pTextureLight_;				// ライトありテクスチャ
+	IDirect3DTexture9*		pTextureNotLight_;			// ライトなしテクスチャ
+	IDirect3DTexture9*		pTextureMask_;				// マスクテクスチャ
+	IDirect3DTexture9*		pTextureAdd_;				// 加算合成テクスチャ
+	IDirect3DTexture9*		pTextureDepth_;				// 深度テクスチャ
+	Polygon2D*				pPolygon_;					// ポリゴン
 
 private:
 	void InitializeSelf( void );

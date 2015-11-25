@@ -65,8 +65,8 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -88,8 +88,8 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 	//==============================================================================
 	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-		IDirect3DTexture9* pTextureDepth );
+		IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+		IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth );
 
 	//==============================================================================
 	// Brief  : クラスのコピー

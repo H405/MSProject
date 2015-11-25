@@ -20,6 +20,7 @@
 #include "../system/SceneArgumentMain.h"
 
 #include "../framework/camera/CameraObject.h"
+#include "../framework/camera/ManagerCamera.h"
 #include "../framework/graphic/Material.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/input/VirtualController.h"
@@ -39,8 +40,12 @@
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectMesh.h"
 #include "../object/ObjectModel.h"
+#include "../object/ObjectModelMaterial.h"
+#include "../object/ObjectRiver.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectSky.h"
+#include "../object/ObjectWaveData.h"
+#include "../object/ObjectWaveDataInitialize.h"
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerPoint.h"
@@ -112,31 +117,18 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pCameraState_->SetSection( 0, 60, 0, 1, 0, 1 );
 	pCameraState_->SetSection( 1, 120, -1, 0, -1, 0 );
 
-	// カメラの生成
-	pCamera_ = new CameraObject();
-	if( pCamera_ == nullptr )
-	{
-		return 1;
-	}
-	result = pCamera_->Initialize(
-		D3DX_PI / 4.0f,
-		pArgument->pWindow_->GetWidth(),
-		pArgument->pWindow_->GetHeight(),
-		0.1f,
-		1000.0f,
-		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ),
-		D3DXVECTOR3( 0.0f, 0.0f, 20.0f ),
-		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
-		);
-
+	// カメラの設定
+	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pCamera_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
+		D3DXVECTOR3( 10.0f, 30.0f, -150.0f ), D3DXVECTOR3( 0.0f, 0.0f, 20.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pCamera_->SetState( pCameraState_ );
-	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
+	pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( pCameraState_ );
+	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, &pCamera_[ GraphicMain::CAMERA_GENERAL ] );
 
-	// ライトの生成
+	// ライトの設定
 	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
 	{
@@ -144,7 +136,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	}
 	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, 1.0f ) );
 
-	// ポイントライトの生成
+	// ポイントライトの設定
 	ppPointLight_ = new LightPoint*[ GraphicMain::LIGHT_POINT_MAX ];
 	if( ppPointLight_ == nullptr )
 	{
@@ -163,28 +155,39 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	ppPointLight_[ 2 ]->Set( D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		D3DXVECTOR3( 0.0f, 10.0f, -100.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.002f ) );
 
-	for( int i = 3; i < 10; ++i )
+	for( int i = 3; i < GraphicMain::LIGHT_POINT_MAX; ++i )
 	{
 		ppPointLight_[ i ] = pArgument->pLight_->GetLightPoint();
 		ppPointLight_[ i ]->Set( D3DXCOLOR( 1.0f, 1.0f, 0.5f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 			D3DXVECTOR3( 1.0f * (rand() % 100) - 50.0f - 100.0f, 10.0f, 1.0f * (rand() % 100) - 50.0f + 100.0f ),  D3DXVECTOR3( 0.0f, 0.01f, 0.002f ) );
 		ppPointLight_[ i ]->SetIsEnable( false );
 	}
+	countLight_ = 3;
+
+	// 影用カメラの設定
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -500.0f;
+	pCameraShadow_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCameraShadow_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
 
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
 	// ポイントスプライト管理クラスの生成
-	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
-	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
+	Effect*		pEffectPoint = nullptr;				// ポイントエフェクト
+	Effect*		pEffectPointReflect = nullptr;		// ポイントエフェクト
+	Texture*	pTexturePoint = nullptr;			// ポイントテクスチャ
 	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
+	pEffectPointReflect = pArgument->pEffect_->Get( _T( "PointReflect.fx" ) );
 	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
 	pPoint_ = new ManagerPoint();
 	if( pPoint_ == nullptr )
 	{
 		return 1;
 	}
-	result = pPoint_->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
+	result = pPoint_->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		return result;
@@ -193,12 +196,15 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	// 2Dオブジェクトの生成
 	Effect*		pEffect2D = nullptr;		// エフェクト
 	Texture*	pTexture2D = nullptr;		// テクスチャ
+	Texture		textureTest;				// テストテクスチャ
 	pEffect2D = pArgument->pEffect_->Get( _T( "Polygon2D.fx" ) );
 	pTexture2D = pArgument_->pTexture_->Get( _T( "test/title_logo.png" ) );
+	textureTest.Initialize( pArgument->pTextureTest_, 320, 180 );
 	pObject2D_ = new Object2D();
 	pObject2D_->Initialize( 0 );
-	pObject2D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect2D, pTexture2D );
-	pObject2D_->SetPosition( 430.0f, 310.0f, 0.0f );
+	pObject2D_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffect2D, &textureTest );
+//	pObject2D_->SetPosition( 430.0f, 310.0f, 0.0f );
+	pObject2D_->SetPosition( 480.0f, 270.0f, 0.0f );
 
 	// メッシュの生成
 	Effect*		pEffectMesh = nullptr;		// エフェクト
@@ -210,29 +216,47 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectMesh_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectMesh, pTextureMesh );
 
 	// スカイドームの生成
-	Effect*		pEffectSky = nullptr;		// エフェクト
-	Texture*	pTextureSky = nullptr;		// テクスチャ
+	Effect*		pEffectSky = nullptr;				// エフェクト
+	Effect*		pEffectSkyReflect = nullptr;		// エフェクト
+	Texture*	pTextureSky = nullptr;				// テクスチャ
 	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
 	pTextureSky = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 500.0f, 1.0f, 1.0f );
-	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTextureSky );
+	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pEffectSkyReflect, pTextureSky );
 
 	// モデルの生成
-	Effect*	pEffectModel = nullptr;		// エフェクト
-	Model*	pModel = nullptr;			// モデル
+	Effect*	pEffectModel = nullptr;				// エフェクト
+	Effect*	pEffectModelReflect = nullptr;		// エフェクト
+	Effect*	pEffectModelShadow = nullptr;		// エフェクト
+	Model*	pModel = nullptr;					// モデル
 	pEffectModel = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pEffectModelReflect = pArgument->pEffect_->Get( _T( "ModelReflect.fx" ) );
+	pEffectModelShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
 	pObjectModel_ = new ObjectModel[ COUNT_MODEL ];
 	pObjectModel_[ 0 ].Initialize( 0 );
-	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
 	pObjectModel_[ 1 ].Initialize( 0 );
-	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
 	pObjectModel_[ 1 ].SetPositionX( 50.0f );
 	pObjectModel_[ 2 ].Initialize( 0 );
-	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel );
+	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
 	pObjectModel_[ 2 ].SetPositionY( 20.0f );
+
+	// テクスチャなしモデルの生成
+	Effect*	pEffectModelMaterial = nullptr;				// エフェクト
+	Effect*	pEffectModelMaterialReflect = nullptr;		// エフェクト
+	Model*	pModelModelMaterial = nullptr;				// モデル
+	pEffectModelMaterial = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
+	pEffectModelMaterialReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pModelModelMaterial = pArgument_->pModel_->Get( _T( "head.x" ) );
+	pObjectModelMaterial_ = new ObjectModelMaterial();
+	pObjectModelMaterial_->Initialize( 0 );
+	pObjectModelMaterial_->CreateGraphic( 0, pModelModelMaterial, pArgument->pEffectParameter_, pEffectModelMaterial, pEffectModelMaterialReflect );
+	pObjectModelMaterial_->SetPosition( -10.0f, 30.0f, 40.0f );
 
 	// ビルボードの生成
 	Effect*		pEffectBillboard = nullptr;			// エフェクト
@@ -246,15 +270,74 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectBoard_->SetPosition( -50.0f, 90.0f, 0.0f );
 
 	// スキンメッシュの生成
-	Effect*	pEffectSkinMesh = nullptr;		// エフェクト
-	Model*	pModelSkinMesh = nullptr;		// モデル
+	Effect*	pEffectSkinMesh = nullptr;				// エフェクト
+	Effect*	pEffectSkinMeshReflect = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;				// モデル
 	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pEffectSkinMeshReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
 	pObjectSkinMesh_ = new ObjectSkinMesh();
 	pObjectSkinMesh_->Initialize( 0, 1 );
-	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
 	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_->SetPosition( -100.0f, 0.0f, 100.0f );
+
+	// 波情報描画オブジェクトの生成
+	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
+	pObjectWaveData_ = new ObjectWaveData();
+	if( pObjectWaveData_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveData_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveData = pArgument->pEffect_->Get( _T( "WaveData.fx" ) );
+	result = pObjectWaveData_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveData,
+		pArgument->pTextureHeightWave0_, pArgument->pTextureHeightWave1_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 波情報初期化オブジェクトの生成
+	Effect*		pEffectWaveDataInitialize = nullptr;		// 波情報初期化エフェクト
+	Texture*	pTextureWaveDataInitialize = nullptr;		// 波情報初期化テクスチャ
+	pObjectWaveDataInitialize_ = new ObjectWaveDataInitialize();
+	if( pObjectWaveDataInitialize_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveDataInitialize_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveDataInitialize = pArgument->pEffect_->Get( _T( "WaveDataInitialize.fx" ) );
+	pTextureWaveDataInitialize = pArgument->pTexture_->Get( _T( "common/wave_initialize.dds" ) );
+	result = pObjectWaveDataInitialize_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveDataInitialize, pTextureWaveDataInitialize );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 川の生成
+	Effect*	pEffectRiver = nullptr;		// エフェクト
+	Model*	pModelRiver = nullptr;		// モデル
+	pEffectRiver = pArgument->pEffect_->Get( "water.fx" );
+	pModelRiver = pArgument->pModel_->Get( _T( "river.x" ), Vertex::ELEMENT_SET_NORMAL_MAP );
+	pObjectRiver_ = new ObjectRiver();
+	result = pObjectRiver_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver, pArgument->pTextureNormalWave_,
+		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
+	pObjectRiver_->SetPositionY( 10.0f );
+	pArgument->pEffectParameter_->SetHeightReflect( 10.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -270,6 +353,18 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneSplash::Finalize( void )
 {
+	// 川の開放
+	delete pObjectRiver_;
+	pObjectRiver_ = nullptr;
+
+	// 波情報初期化オブジェクトの開放
+	delete pObjectWaveDataInitialize_;
+	pObjectWaveDataInitialize_ = nullptr;
+
+	// 波情報描画オブジェクトの開放
+	delete pObjectWaveData_;
+	pObjectWaveData_ = nullptr;
+
 	// スキンメッシュの開放
 	delete pObjectSkinMesh_;
 	pObjectSkinMesh_ = nullptr;
@@ -277,6 +372,10 @@ int SceneSplash::Finalize( void )
 	// ビルボードの開放
 	delete pObjectBoard_;
 	pObjectBoard_ = nullptr;
+
+	// テクスチャなしモデルの開放
+	delete pObjectModelMaterial_;
+	pObjectModelMaterial_ = nullptr;
 
 	// モデルの開放
 	delete[] pObjectModel_;
@@ -317,12 +416,8 @@ int SceneSplash::Finalize( void )
 		pLight_ = nullptr;
 	}
 
-	// カメラの開放
-	delete pCamera_;
-	pCamera_ = nullptr;
-	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
-
 	// カメラ処理の開放
+	pCamera_->SetState( nullptr );
 	delete pCameraState_;
 	pCameraState_ = nullptr;
 
@@ -388,9 +483,6 @@ void SceneSplash::Update( void )
 {
 	// テスト
 	PrintDebug( _T( "スプラッシュ\n" ) );
-
-	// カメラの更新
-	pCamera_->Update();
 
 	// ポイントスプライト管理クラスの更新
 	pPoint_->Update();
@@ -466,6 +558,14 @@ void SceneSplash::Update( void )
 	{
 		positionPointG.z += 1.0f;
 	}
+	if( pArgument_->pKeyboard_->IsPress( DIK_COMMA ) )
+	{
+		positionPointG.y -= 1.0f;
+	}
+	else if( pArgument_->pKeyboard_->IsPress( DIK_PERIOD ) )
+	{
+		positionPointG.y += 1.0f;
+	}
 	ppPointLight_[ 2 ]->SetPosition( positionPointG );
 
 	// エフェクトの発生
@@ -477,21 +577,41 @@ void SceneSplash::Update( void )
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
 
 	// 点光源を有効にする
-	if( pArgument_->pVirtualController_->IsPress( VC_UP ) )
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_LBRACKET ) )
 	{
-		ppPointLight_[ 3 ]->SetIsEnable( true );
+		ppPointLight_[ countLight_ ]->SetIsEnable( true );
+		++countLight_;
+		if( countLight_ >= GraphicMain::LIGHT_POINT_MAX )
+		{
+			countLight_ = GraphicMain::LIGHT_POINT_MAX - 1;
+		}
 	}
-	if( pArgument_->pVirtualController_->IsPress( VC_DOWN ) )
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_RBRACKET ) )
 	{
-		ppPointLight_[ 3 ]->SetIsEnable( false );
+		ppPointLight_[ countLight_ ]->SetIsEnable( false );
+		--countLight_;
+		if( countLight_ < 0 )
+		{
+			countLight_ = 0;
+		}
 	}
-	if( pArgument_->pVirtualController_->IsPress( VC_LEFT ) )
+
+	// オブジェクトの移動
+	if( pArgument_->pKeyboard_->IsPress( DIK_A ) )
 	{
-		ppPointLight_[ 4 ]->SetIsEnable( true );
+		pObjectModel_[ 0 ].AddPositionX( -1.0f );
 	}
-	if( pArgument_->pVirtualController_->IsPress( VC_RIGHT ) )
+	else if( pArgument_->pKeyboard_->IsPress( DIK_D ) )
 	{
-		ppPointLight_[ 4 ]->SetIsEnable( false );
+		pObjectModel_[ 0 ].AddPositionX( 1.0f );
+	}
+	if( pArgument_->pKeyboard_->IsPress( DIK_S ) )
+	{
+		pObjectModel_[ 0 ].AddPositionZ( -1.0f );
+	}
+	else if( pArgument_->pKeyboard_->IsPress( DIK_W ) )
+	{
+		pObjectModel_[ 0 ].AddPositionZ( 1.0f );
 	}
 
 	// シーン遷移
@@ -518,6 +638,7 @@ void SceneSplash::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
+	pCameraShadow_ = nullptr;
 	pLight_ = nullptr;
 	ppPointLight_ = nullptr;
 	pPoint_ = nullptr;
@@ -525,8 +646,13 @@ void SceneSplash::InitializeSelf( void )
 	pObjectMesh_ = nullptr;
 	pObjectSky_ = nullptr;
 	pObjectModel_ = nullptr;
+	pObjectModelMaterial_ = nullptr;
 	pObjectBoard_ = nullptr;
 	pObjectSkinMesh_ = nullptr;
+	pObjectWaveData_ = nullptr;
+	pObjectWaveDataInitialize_ = nullptr;
+	pObjectRiver_ = nullptr;
 	timerLight_ = 0;
+	countLight_ = 0;
 	pCameraState_ = nullptr;
 }

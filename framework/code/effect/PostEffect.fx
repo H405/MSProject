@@ -10,8 +10,7 @@
 //******************************************************************************
 // 変数宣言
 //******************************************************************************
-float4x4	matrixWorld_;			// ワールドマトリクス
-float2		sizeScreenHalf_;		// 画面サイズの半分
+float2		offsetTexel_;			// テクセルオフセット
 float4		colorFade_;				// フェードの色
 float		proportionFade_;		// フェード割合
 float		forcus_;				// 焦点距離
@@ -120,11 +119,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	VertexOutput	output;		// 出力
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
-	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.xy /= sizeScreenHalf_;
 
 	// 値を格納
-	output.textureCoord_ = textureCoord;
+	output.textureCoord_ = textureCoord + offsetTexel_;
 	output.diffuse_ = diffuse;
 
 	// 頂点出力を返す

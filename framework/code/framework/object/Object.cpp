@@ -132,36 +132,13 @@ void Object::Update( void )
 	// ワールドマトリクスの更新
 	if( needsUpdate_ || pParent_ != nullptr )
 	{
-		// 回転行列の作成
-		D3DXMATRIX	matrixRotation;		// 回転行列
-		D3DXMatrixIdentity( &matrixRotation );
-		if( typeRotation_ == ROTATION_VECTOR )
-		{
-			D3DXMATRIX	matrixRotationVector;
-			D3DXMatrixRotationYawPitchRoll( &matrixRotationVector, rotation_.y, rotation_.x, rotation_.z );
-			matrixRotation *= matrixRotationVector;
-		}
-		if( typeRotation_ == ROTATION_MATRIX )
-		{
-			matrixRotation *= matrixRotation_;
-		}
-
-		// ローカル変換行列の更新
-		D3DXMatrixIdentity( &matrixWorld_ );
-		matrixWorld_._11 = scale_.x;
-		matrixWorld_._22 = scale_.y;
-		matrixWorld_._33 = scale_.z;
-		matrixWorld_ *= matrixRotation;
-		matrixWorld_._41 = position_.x;
-		matrixWorld_._42 = position_.y;
-		matrixWorld_._43 = position_.z;
+		// ワールド変換行列の更新
+		UpdateMatrixWorld();
 
 		// 親の行列と合成
 		if( pParent_ != nullptr )
 		{
-			D3DXMATRIX	matrixRotationParent;		// 親の回転行列
-			pParent_->GetMatrixRotation( &matrixRotationParent );
-			matrixWorld_ *= matrixRotationParent;
+			GetMatrixWolrdParent( &matrixWorld_ );
 		}
 
 		// 描画情報の更新
@@ -170,6 +147,38 @@ void Object::Update( void )
 			pGraphic_->SetMatrixWorld( matrixWorld_ );
 		}
 	}
+}
+
+//==============================================================================
+// Brief  : ワールド変換行列の更新
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void Object::UpdateMatrixWorld( void )
+{
+	// 回転行列の作成
+	D3DXMATRIX	matrixRotation;		// 回転行列
+	D3DXMatrixIdentity( &matrixRotation );
+	if( typeRotation_ == ROTATION_VECTOR )
+	{
+		D3DXMATRIX	matrixRotationVector;
+		D3DXMatrixRotationYawPitchRoll( &matrixRotationVector, rotation_.y, rotation_.x, rotation_.z );
+		matrixRotation *= matrixRotationVector;
+	}
+	if( typeRotation_ == ROTATION_MATRIX )
+	{
+		matrixRotation *= matrixRotation_;
+	}
+
+	// ローカル変換行列の更新
+	D3DXMatrixIdentity( &matrixWorld_ );
+	matrixWorld_._11 = scale_.x;
+	matrixWorld_._22 = scale_.y;
+	matrixWorld_._33 = scale_.z;
+	matrixWorld_ *= matrixRotation;
+	matrixWorld_._41 = position_.x;
+	matrixWorld_._42 = position_.y;
+	matrixWorld_._43 = position_.z;
 }
 
 //==============================================================================
@@ -215,6 +224,32 @@ void Object::SetManagerUpdate( ManagerUpdate< Object >* pValue )
 void Object::SetEnableGraphic( bool value )
 {
 	pGraphic_->SetIsEnable(value);
+}
+
+//==============================================================================
+// Brief  : 親のワールド変換行列の取得
+// Return : void								: なし
+// Arg    : D3DXMATRIX* pOut					: 値の格納アドレス
+//==============================================================================
+void Object::GetMatrixWolrdParent( D3DXMATRIX* pOut )
+{
+	// ワールド変換行列の更新
+	UpdateMatrixWorld();
+
+	// 親のワールド変換行列と合成
+	if( pParent_ != nullptr )
+	{
+		D3DXMATRIX	matrixWorldParent;		// 親のワールド変換行列
+		pParent_->UpdateMatrixWorld();
+		pParent_->GetMatrixWolrdParent( &matrixWorldParent );
+		matrixWorld_ *= matrixWorldParent;
+	}
+
+	// ワールド変換行列を返す
+	if( pOut != nullptr )
+	{
+		*pOut = matrixWorld_;
+	}
 }
 
 //==============================================================================

@@ -42,10 +42,9 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,		// ワールド変換行列
-		PARAMETER_SIZE_SCREEN_HALF,		// 画面サイズの半分
+		PARAMETER_OFFSET = 0,			// オフセット
 		PARAMETER_TEXTURE,				// ブラーを掛けるテクスチャ
-		PARAMETER_OFFSET,				// オフセット
+		PARAMETER_OFFSET_BLUR,			// ブラーのオフセット
 		PARAMETER_MAX					// 最大値
 	};
 

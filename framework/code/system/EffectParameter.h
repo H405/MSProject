@@ -119,6 +119,8 @@ public:
 	float GetHeightScreen( void ) const;
 	void SetForcus( float value );
 	float GetForcus( void ) const;
+	void SetHeightReflect( float value );
+	float GetHeightReflect( void ) const;
 
 protected:
 
@@ -140,6 +142,7 @@ private:
 	float					widthScreen_;				// ‰æ–Ê•
 	float					heightScreen_;				// ‰æ–Ê‚‚³
 	float					forcus_;					// Å“_‹——£
+	float					heightReflect_;				// ”½Ë–Ê‚Ì‚‚³
 };
 
 #endif	// MY_EFFECT_PARAMETER_H

@@ -50,7 +50,7 @@ int APIENTRY _tWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpC
 #ifdef _DEBUG
 	// メモリリーク検出
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc( 1133 );
+//	_CrtSetBreakAlloc( 157 );
 #endif
 
 	// 未使用宣言

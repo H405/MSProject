@@ -517,6 +517,28 @@ float EffectParameter::GetForcus( void ) const
 }
 
 //==============================================================================
+// Brief  : 反射面の高さの設定
+// Return : void								: なし
+// Arg    : float value							: 設定する値
+//==============================================================================
+void EffectParameter::SetHeightReflect( float value )
+{
+	// 値の設定
+	heightReflect_ = value;
+}
+
+//==============================================================================
+// Brief  : 反射面の高さの取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetHeightReflect( void ) const
+{
+	// 値の返却
+	return heightReflect_;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -537,4 +559,5 @@ void EffectParameter::InitializeSelf( void )
 	widthScreen_ = 0.0f;
 	heightScreen_ = 0.0f;
 	forcus_ = 0.0f;
+	heightReflect_ = 0.0f;
 }

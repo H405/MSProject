@@ -42,8 +42,7 @@ public:
 	// パラメータ
 	enum
 	{
-		PARAMETER_MATRIX_WORLD = 0,			// ワールドマトリクス
-		PARAMETER_SIZE_SCREEN_HALF,			// 画面サイズの半分
+		PARAMETER_OFFSET_TEXEL,				// テクセルオフセット
 		PARAMETER_COLOR_FADE,				// フェードの色
 		PARAMETER_PROPORTION_FADE,			// フェードの割合
 		PARAMETER_FORCUS,					// 焦点距離

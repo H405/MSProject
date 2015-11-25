@@ -151,8 +151,8 @@ void ObjectMerge::Update( void )
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度テクスチャ
 //==============================================================================
 int ObjectMerge::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask, IDirect3DTexture9* pTextureAdd,
-	IDirect3DTexture9* pTextureDepth )
+	IDirect3DTexture9* pTextureLight, IDirect3DTexture9* pTextureNotLight, IDirect3DTexture9* pTextureMask,
+	IDirect3DTexture9* pTextureAdd, IDirect3DTexture9* pTextureDepth )
 {
 	// グラフィックの生成
 	int		result;				// 実行結果
@@ -161,7 +161,8 @@ int ObjectMerge::CreateGraphic( int priority, const EffectParameter* pParameter,
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd, pTextureDepth );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureLight, pTextureNotLight, pTextureMask, pTextureAdd,
+		pTextureDepth );
 	if( result != 0 )
 	{
 		return result;

@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "GraphicSkinMesh.h"
 #include "../drawer/DrawerSkinMesh.h"
+#include "../drawer/DrawerSkinMeshReflect.h"
 
 //******************************************************************************
 // ライブラリ
@@ -53,12 +54,13 @@ GraphicSkinMesh::~GraphicSkinMesh( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : Model* pModel						: モデル
 // Arg    : int countBone						: ボーン数
 // Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
 // Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
 	Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
 {
 	// 基本クラスの処理
@@ -69,7 +71,7 @@ int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter
 		return result;
 	}
 
-	// 描画クラスの生成
+	// 通常描画クラスの生成
 	DrawerSkinMesh*	pDrawerSkinMesh = nullptr;		// 描画クラス
 	pDrawerSkinMesh = new DrawerSkinMesh();
 	if( pDrawerSkinMesh == nullptr )
@@ -78,6 +80,16 @@ int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter
 	}
 	result = pDrawerSkinMesh->Initialize( pParameter, pEffectGeneral, pModel, countBone, pMatrixBone, pIndexFrame );
 	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerSkinMesh;
+
+	// 反射描画クラスの生成
+	DrawerSkinMeshReflect*	pDrawerSkinMeshReflect = nullptr;		// 描画クラス
+	pDrawerSkinMeshReflect = new DrawerSkinMeshReflect();
+	if( pDrawerSkinMeshReflect == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkinMeshReflect->Initialize( pParameter, pEffectReflect, pModel, countBone, pMatrixBone, pIndexFrame );
+	ppDraw_[ GraphicMain::PASS_REFLECT ] = pDrawerSkinMeshReflect;
 
 	// 正常終了
 	return 0;
@@ -111,12 +123,13 @@ int GraphicSkinMesh::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : Model* pModel						: モデル
 // Arg    : int countBone						: ボーン数
 // Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
 // Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int GraphicSkinMesh::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+int GraphicSkinMesh::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
 	Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
 {
 	// 終了処理
@@ -128,7 +141,7 @@ int GraphicSkinMesh::Reinitialize( int priority, const EffectParameter* pParamet
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pModel, countBone, pMatrixBone, pIndexFrame );
+	return Initialize( priority, pParameter, pEffectGeneral, pEffectReflect, pModel, countBone, pMatrixBone, pIndexFrame );
 }
 
 //==============================================================================

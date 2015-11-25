@@ -66,8 +66,16 @@ DrawerLightEffect::~DrawerLightEffect( void )
 // Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDiffuseRiver		: ディフューズ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 //==============================================================================
-int DrawerLightEffect::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
+int DrawerLightEffect::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+	IDirect3DTexture9* pTextureShadow )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -84,6 +92,11 @@ int DrawerLightEffect::Initialize( const EffectParameter* pParameter, Effect* pE
 	pTextureSpecular_ = pTextureSpecular;
 	pTextureNormal_ = pTextureNormal;
 	pTextureDepth_ = pTextureDepth;
+	pTextureDiffuseRiver_ = pTextureDiffuseRiver;
+	pTextureSpecularRiver_ = pTextureSpecularRiver;
+	pTextureNormalRiver_ = pTextureNormalRiver;
+	pTextureDepthRiver_ = pTextureDepthRiver;
+	pTextureShadow_ = pTextureShadow;
 	pPolygon_ = pPolygon;
 
 	// ハンドルの読み込み
@@ -129,8 +142,16 @@ int DrawerLightEffect::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDiffuseRiver		: ディフューズ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 //==============================================================================
-int DrawerLightEffect::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon, IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
+int DrawerLightEffect::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
+	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+	IDirect3DTexture9* pTextureShadow )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -141,7 +162,8 @@ int DrawerLightEffect::Reinitialize( const EffectParameter* pParameter, Effect* 
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
+	return Initialize( pParameter, pEffect, pPolygon, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth,
+		pTextureDiffuseRiver, pTextureSpecularRiver, pTextureNormalRiver, pTextureDepthRiver, pTextureShadow );
 }
 
 //==============================================================================
@@ -171,21 +193,21 @@ int DrawerLightEffect::Copy( DrawerLightEffect* pOut ) const
 void DrawerLightEffect::Draw( const D3DXMATRIX& matrixWorld )
 {
 	// 頂点シェーダ用パラメータ
-	D3DXMATRIX	matrixWorldSet;			// 設定するワールドマトリクス
-	float		pSizeScreen[ 2 ];		// 画面のサイズ
-	matrixWorldSet = matrixWorld;
-	matrixWorldSet._41 -= 0.5f;
-	matrixWorldSet._42 -= 0.5f;
-	pSizeScreen[ 0 ] = pEffectParameter_->GetWidthScreen();
-	pSizeScreen[ 1 ] = pEffectParameter_->GetHeightScreen();
-	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD, matrixWorldSet );
-	pEffect_->SetFloatArray( PARAMETER_SIZE_SCREEN, pSizeScreen, 2 );
+	float	pOffset[ 2 ];		// オフセット
+	pOffset[ 0 ] = 0.5f / pEffectParameter_->GetWidthScreen();
+	pOffset[ 1 ] = 0.5f / pEffectParameter_->GetHeightScreen();
+	pEffect_->SetFloatArray( PARAMETER_OFFET_TEXEL, pOffset, 2 );
 
 	// 3D情報テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DIFFUSE, pTextureDiffuse_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_SPECULAR, pTextureSpecular_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_NORMAL, pTextureNormal_ );
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DIFFUSE_RIVER, pTextureDiffuseRiver_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_SPECULAR_RIVER, pTextureSpecularRiver_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_NORMAL_RIVER, pTextureNormalRiver_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_RIVER, pTextureDepthRiver_ );
+	pEffect_->SetTexture( PARAMETER_TEXTURE_SHADOW, pTextureShadow_ );
 
 	// プロジェクション変換逆行列
 	const Camera*	pCamera = nullptr;				// カメラ
@@ -388,5 +410,10 @@ void DrawerLightEffect::InitializeSelf( void )
 	pTextureSpecular_ = nullptr;
 	pTextureNormal_ = nullptr;
 	pTextureDepth_ = nullptr;
+	pTextureDiffuseRiver_ = nullptr;
+	pTextureSpecularRiver_ = nullptr;
+	pTextureNormalRiver_ = nullptr;
+	pTextureDepthRiver_ = nullptr;
+	pTextureShadow_ = nullptr;
 	pPolygon_ = nullptr;
 }

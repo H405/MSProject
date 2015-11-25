@@ -12,6 +12,8 @@
 //******************************************************************************
 #include "GraphicModel.h"
 #include "../drawer/DrawerModel.h"
+#include "../drawer/DrawerModelReflect.h"
+#include "../drawer/DrawerModelShadow.h"
 
 //******************************************************************************
 // ライブラリ
@@ -54,8 +56,11 @@ GraphicModel::~GraphicModel( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
 //==============================================================================
-int GraphicModel::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral )
+int GraphicModel::Initialize( int priority, Model* pModel, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -65,7 +70,7 @@ int GraphicModel::Initialize( int priority, Model* pModel, const EffectParameter
 		return result;
 	}
 
-	// 描画クラスの生成
+	// 通常描画クラスの生成
 	DrawerModel*	pDrawerModel = nullptr;		// 描画クラス
 	pDrawerModel = new DrawerModel();
 	if( pDrawerModel == nullptr )
@@ -74,6 +79,26 @@ int GraphicModel::Initialize( int priority, Model* pModel, const EffectParameter
 	}
 	result = pDrawerModel->Initialize( pModel, pParameter, pEffectGeneral );
 	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerModel;
+
+	// 反射描画クラスの生成
+	DrawerModelReflect*	pDrawerModelReflect = nullptr;		// 描画クラス
+	pDrawerModelReflect = new DrawerModelReflect();
+	if( pDrawerModelReflect == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelReflect->Initialize( pModel, pParameter, pEffectReflect );
+	ppDraw_[ GraphicMain::PASS_REFLECT ] = pDrawerModelReflect;
+
+	// 影描画クラスの生成
+	DrawerModelShadow*	pDrawerModelShadow = nullptr;		// 描画クラス
+	pDrawerModelShadow = new DrawerModelShadow();
+	if( pDrawerModelShadow == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelShadow->Initialize( pModel, pParameter, pEffectShadow );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW ] = pDrawerModelShadow;
 
 	// 正常終了
 	return 0;
@@ -108,8 +133,11 @@ int GraphicModel::Finalize( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
 //==============================================================================
-int GraphicModel::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral )
+int GraphicModel::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -120,7 +148,7 @@ int GraphicModel::Reinitialize( int priority, Model* pModel, const EffectParamet
 	}
 
 	// 初期化処理
-	return Initialize( priority, pModel, pParameter, pEffectGeneral );
+	return Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow );
 }
 
 //==============================================================================

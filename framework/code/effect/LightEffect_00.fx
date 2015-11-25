@@ -10,13 +10,17 @@
 //******************************************************************************
 // 変数宣言
 //******************************************************************************
-float4x4	matrixWorld_;						// ワールド変換行列
-float2		sizeScreen_;						// 画面サイズ
+float2		offsetTexel_;						// テクセルオフセット
 
 texture		textureDiffuse_;					// ディフューズテクスチャ
 texture		textureSpecular_;					// スペキュラテクスチャ
 texture		textureNormal_;						// 法線テクスチャ
 texture		textureDepth_;						// 深度テクスチャ
+texture		textureDiffuseRiver_;				// 川のディフューズテクスチャ
+texture		textureSpecularRiver_;				// 川のスペキュラテクスチャ
+texture		textureNormalRiver_;				// 川の法線テクスチャ
+texture		textureDepthRiver_;					// 川の深度テクスチャ
+texture		textureShadow_;						// 影テクスチャ
 
 float4x4	matrixProjectionInverse_;			// プロジェクション変換逆行列
 float4x4	matrixViewInverse_;					// ビュー変換逆行列
@@ -69,6 +73,56 @@ sampler samplerTextureDepth = sampler_state
 	AddressV  = Clamp;
 };
 
+sampler samplerTextureDiffuseRiver = sampler_state
+{
+	Texture = < textureDiffuseRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureSpecularRiver = sampler_state
+{
+	Texture = < textureSpecularRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureNormalRiver = sampler_state
+{
+	Texture = < textureNormalRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepthRiver = sampler_state
+{
+	Texture = < textureDepthRiver_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureShadow = sampler_state
+{
+	Texture = < textureShadow_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
 //******************************************************************************
 // 構造体定義
 //******************************************************************************
@@ -79,56 +133,17 @@ struct VertexOutput
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
 
-//==============================================================================
-// Brief  : ディフューズの計算
-// Return : float3							: 色
-// Arg    : float3 colorLight				: ライトの色
-// Arg    : float3 vectorLight				: ライトのベクトル
-// Arg    : float3 vectorNormal				: 法線ベクトル
-//==============================================================================
-float3 CalculateDiffuse( float3 colorLight, float3 vectorLight, float3 vectorNormal )
+// ピクセルシェーダ出力
+struct PixelOutput
 {
-	// 明度の計算
-	float	lightness = dot( vectorNormal, -vectorLight ) * 0.5f + 0.5f;
+	float4	color_			: COLOR0;			// 色
+	float4	depth_			: COLOR1;			// 深度
+};
 
-	// ディフューズ色を返す
-	return colorLight * lightness;
-}
-
-//==============================================================================
-// Brief  : スペキュラの計算
-// Return : float3							: 色
-// Arg    : float3 colorLight				: ライトの色
-// Arg    : float3 vectorLight				: ライトのベクトル
-// Arg    : float3 vectorNormal				: 法線ベクトル
-// Arg    : float3 vectorVertexToEye		: 頂点から視点へのベクトル
-// Arg    : float reflection;				: 反射率
-// Arg    : float power;					: 反射の強さ
-//==============================================================================
-float3 CalculateSpecular( float3 colorLight, float3 vectorLight, float3 vectorNormal, float3 vectorVertexToEye, float reflection, float power )
-{
-	// ハーフベクトルを求める
-	float3	vectorHalf = normalize( vectorVertexToEye - vectorLight );
-
-	// スペキュラ色を返す
-	return colorLight * pow( max( dot( vectorNormal, vectorHalf ), 0.0f ), power ) * reflection;
-}
-
-//==============================================================================
-// Brief  : リムの計算
-// Return : float3							: 色
-// Arg    : float3 colorLight				: ライトの色
-// Arg    : float3 vectorLight				: ライトのベクトル
-// Arg    : float3 vectorNormal				: 法線ベクトル
-// Arg    : float3 vectorVertexToEye		: 頂点から視点へのベクトル
-//==============================================================================
-float3 CalculateRim( float3 colorLight, float3 vectorLight, float3 vectorNormal, float3 vectorVertexToEye )
-{
-	// リム色を返す
-	float	rim = (1.0f - max( dot( vectorNormal, vectorVertexToEye ), 0.0f )) * max( dot( vectorLight, vectorVertexToEye ), 0.0f );
-	rim = min( 5.0f * pow( rim, 5.0f ), 1.0f );
-	return colorLight * rim;
-}
+//******************************************************************************
+// インクルード
+//******************************************************************************
+#include "CalculateLight.fx"
 
 //==============================================================================
 // Brief  : 頂点変換
@@ -142,11 +157,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	VertexOutput	output;		// 出力
 	output.position_.xyz = positionLocal;
 	output.position_.w = 1.0f;
-	output.position_ = mul( output.position_, matrixWorld_ );
-	output.position_.xy /= 0.5f * sizeScreen_;
 
 	// 値を格納
-	output.textureCoord_ = textureCoord;
+	output.textureCoord_ = textureCoord + offsetTexel_;
 
 	// 頂点出力を返す
 	return output;
@@ -154,16 +167,18 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 
 //==============================================================================
 // Brief  : ピクセル描画
-// Return : float4 : COLOR0					: 色
+// Return : PixelOutput						: ピクセルシェーダ出力
 // Arg    : VertexOutput					: 頂点シェーダ出力
 //==============================================================================
-float4 DrawPixel( VertexOutput vertex ) : COLOR0
+PixelOutput DrawPixel( VertexOutput vertex )
 {
 	// テクスチャから情報を取得
-	float4	dataDiffuse = tex2D( samplerTextureDiffuse , vertex.textureCoord_ );
-	float4	dataSpecular = tex2D( samplerTextureSpecular , vertex.textureCoord_ );
-	float4	dataNormal = tex2D( samplerTextureNormal , vertex.textureCoord_ );
-	float	dataDepth = tex2D( samplerTextureDepth , vertex.textureCoord_ ).r;
+	float4	dataSpecularRiver = tex2D( samplerTextureSpecularRiver, vertex.textureCoord_ );
+	float	proportionRiver = min( 4.0f * dataSpecularRiver.b, 1.0f );
+	float4	dataDiffuse = lerp( tex2D( samplerTextureDiffuse, vertex.textureCoord_ ), tex2D( samplerTextureDiffuseRiver, vertex.textureCoord_ ), proportionRiver );
+	float4	dataSpecular = lerp( tex2D( samplerTextureSpecular, vertex.textureCoord_ ), dataSpecularRiver, proportionRiver );
+	float4	dataNormal = lerp( tex2D( samplerTextureNormal, vertex.textureCoord_ ), tex2D( samplerTextureNormalRiver, vertex.textureCoord_ ), proportionRiver );
+	float	dataDepth = lerp( tex2D( samplerTextureDepth, vertex.textureCoord_ ).r, tex2D( samplerTextureDepthRiver, vertex.textureCoord_ ).r, proportionRiver );
 
 	// 情報の設定
 	float3	colorDiffuse = dataDiffuse.rgb;
@@ -181,12 +196,15 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	// 視線ベクトルを求める
 	float3	vectorVertexToEye = normalize( positionEye_ - positionWorld );
 
+	// 影
+	float	shadow = lerp( tex2D( samplerTextureShadow, vertex.textureCoord_ ).r, 1.0f, proportionRiver );
+
 	// 環境光のスペキュラ色を計算
 	float	fresnel = dataNormal.a + (1.0f - dataNormal.a) * exp( -6.0f * max( dot( vectorNormal, vectorVertexToEye ), 0.0f ) );
 	float3	specularAmbient = colorAmbient_.rgb * fresnel;
 
 	// ディレクショナルライトのディフューズ色を計算
-	float3	diffuseDirection = CalculateDiffuse( colorLightDirection_, vectorLightDirection_, vectorNormal );
+	float3	diffuseDirection = colorLightDirection_ * min( dot( vectorNormal, -vectorLightDirection_ ) * 0.5f + 0.5f, shadow );
 
 	// ディレクショナルライトのスペキュラ色を計算
 	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye, dataDiffuse.a, power );
@@ -198,7 +216,11 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float3	color = colorDiffuse * (diffuseDirection + colorAmbient_) + colorSpecular * (specularDirection + specularAmbient) + rimDirection;
 
 	// ピクセル色を返す
-	return float4( color, 1.0f );
+	PixelOutput	output;
+	output.color_ = float4( color, dataDepth );
+	output.depth_.gba = 0.0f;
+	output.depth_.r = dataDepth / clipCamera_.y;
+	return output;
 }
 
 //==============================================================================

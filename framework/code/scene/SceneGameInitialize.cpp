@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "SceneGame.h"
 #include "../framework/camera/CameraObject.h"
+#include "../framework/camera/ManagerCamera.h"
 #include "../framework/develop/Debug.h"
 #include "../framework/develop/DebugProc.h"
 #include "../framework/develop/DebugMeasure.h"
@@ -180,12 +181,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	CRadianTable::Init();
 
 	// カメラの生成
-	pCamera_ = new CameraObject();
-	if( pCamera_ == nullptr )
-	{
-		return 1;
-	}
-	result = pCamera_->Initialize(
+	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
+	pCamera_->Set(
 		D3DX_PI / 4.0f,
 		pArgument->pWindow_->GetWidth(),
 		pArgument->pWindow_->GetHeight(),
@@ -195,12 +192,6 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
-
-	if( result != 0 )
-	{
-		return result;
-	}
-	pArgument->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
@@ -257,24 +248,29 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 {
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
+	Effect*		pEffectReflect = nullptr;
+	Effect*		pEffectShadow = nullptr;
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
 
 	// スカイドームの生成
 	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	Effect*	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
 	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.jpg" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 5000.0f, 1.0f, 1.0f );
-	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pTexture );
+	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pEffectSkyReflect, pTexture );
 
 
 	//	仮のフィールド
 	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
+	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
+	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	field = new ObjectModel();
 	field->Initialize(0);
-	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect);
+	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
 	field->SetScale(5.0f, 5.0f, 5.0f);
 	field->AddPositionY(-300.0f);
 
@@ -302,32 +298,34 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 
 	//	家生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "house_002.x" ) );
 	house[0] = new ObjectModelMaterial();
 	house[0]->Initialize(0);
-	house[0]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	house[0]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
 	house[0]->SetPosition(3200.0f, 100.0f, -700.0f);
 	house[0]->SetScale(30.0f, 30.0f, 30.0f);
 	
 	house[1] = new ObjectModelMaterial();
 	house[1]->Initialize(0);
-	house[1]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	house[1]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
 	house[1]->SetPosition(3200.0f, 100.0f, -1300.0f);
 	house[1]->SetScale(30.0f, 30.0f, 30.0f);
 	
 	house[2] = new ObjectModelMaterial();
 	house[2]->Initialize(0);
-	house[2]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	house[2]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
 	house[2]->SetPosition(3200.0f, 100.0f, -1900.0f);
 	house[2]->SetScale(30.0f, 30.0f, 30.0f);
 
 	//	橋生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMat.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "bridge.x" ) );
 	bridge = new ObjectModelMaterial();
 	bridge->Initialize(0);
-	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect);
+	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
 	bridge->SetPosition(0.0f, 1000.0f, 2300.0f);
 	bridge->SetScale(350.0f, 350.0f, 350.0f);
 	bridge->SetRotationY(DEG_TO_RAD(90));
@@ -348,16 +346,18 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 
 
 	//	ポイントスプライト管理オブジェクト生成
-	Effect*		pEffectPoint = nullptr;			// ポイントエフェクト
-	Texture*	pTexturePoint = nullptr;		// ポイントテクスチャ
+	Effect*		pEffectPoint = nullptr;				// ポイントエフェクト
+	Effect*		pEffectPointReflect = nullptr;		// ポイントエフェクト
+	Texture*	pTexturePoint = nullptr;			// ポイントテクスチャ
 	pEffectPoint = pArgument->pEffect_->Get( _T( "Point.fx" ) );
+	pEffectPointReflect = pArgument->pEffect_->Get( _T( "PointReflect.fx" ) );
 	pTexturePoint = pArgument->pTexture_->Get( _T( "common/effect000.jpg" ) );
 	managerPoint = new ManagerPoint();
 	if( managerPoint == nullptr )
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 10000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 10000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;
@@ -395,25 +395,27 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 
 
 	// スキンメッシュの生成
-	Effect*	pEffectSkinMesh = nullptr;		// エフェクト
-	Model*	pModelSkinMesh = nullptr;		// モデル
+	Effect*	pEffectSkinMesh = nullptr;				// エフェクト
+	Effect*	pEffectSkinMeshReflect = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;				// モデル
 	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pEffectSkinMeshReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
 	pObjectSkinMesh_[0] = new ObjectSkinMesh();
 	pObjectSkinMesh_[0]->Initialize( 0, 1 );
-	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
 	pObjectSkinMesh_[0]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[0]->SetPosition( 300.0f, 100.0f, 0.0f );
 
 	pObjectSkinMesh_[1] = new ObjectSkinMesh();
 	pObjectSkinMesh_[1]->Initialize( 0, 1 );
-	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
 	pObjectSkinMesh_[1]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[1]->SetPosition( 0.0f, 100.0f, 0.0f );
 
 	pObjectSkinMesh_[2] = new ObjectSkinMesh();
 	pObjectSkinMesh_[2]->Initialize( 0, 1 );
-	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh );
+	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
 	pObjectSkinMesh_[2]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[2]->SetPosition( -300.0f, 100.0f, 0.0f );
 }
@@ -720,11 +722,6 @@ int SceneGame::Finalize( void )
 		pLight_->Release();
 		pLight_ = nullptr;
 	}
-
-	// カメラの開放
-	delete pCamera_;
-	pCamera_ = nullptr;
-	pArgument_->pEffectParameter_->SetCamera( GraphicMain::CAMERA_GENERAL, pCamera_ );
 
 	// 基本クラスの処理
 	result = SceneMain::Finalize();

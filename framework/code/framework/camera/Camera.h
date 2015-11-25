@@ -54,17 +54,9 @@ public:
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : float viewField						: 視野角
-	// Arg    : int widthScreen						: スクリーン幅
-	// Arg    : int heightScreen					: スクリーン高さ
-	// Arg    : float clipNear						: 近くのクリップ面
-	// Arg    : float clipFar						: 遠くのクリップ面
-	// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-	// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-	// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+	// Arg    : void								: なし
 	//==============================================================================
-	virtual int Initialize( float viewField, int widthScreen, int heightScreen,
-		float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
+	virtual int Initialize( void );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -76,17 +68,9 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : float viewField						: 視野角
-	// Arg    : int widthScreen						: スクリーン幅
-	// Arg    : int heightScreen					: スクリーン高さ
-	// Arg    : float clipNear						: 近くのクリップ面
-	// Arg    : float clipFar						: 遠くのクリップ面
-	// Arg    : const D3DXVECTOR3& positionCamera	: 視点
-	// Arg    : const D3DXVECTOR3& positionLookAt	: 注視点
-	// Arg    : const D3DXVECTOR3& vectorUp			: 上方向ベクトル
+	// Arg    : void								: なし
 	//==============================================================================
-	virtual int Reinitialize( float viewField, int widthScreen, int heightScreen,
-		float clipNear, float clipFar, const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp );
+	virtual int Reinitialize( void );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -105,6 +89,8 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	virtual void Set( float viewField, int widthScreen, int heightScreen, float clipNear, float clipFar,
+		const D3DXVECTOR3& positionCamera, const D3DXVECTOR3& positionLookAt, const D3DXVECTOR3& vectorUp, bool isPerspective = true );
 	void SetViewField( float value );
 	float GetViewField( void ) const;
 	void SetWidthScreen( float value );

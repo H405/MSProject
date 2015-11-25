@@ -58,9 +58,16 @@ GraphicLightEffect::~GraphicLightEffect( void )
 // Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDiffuseRiver		: ディフューズ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 //==============================================================================
 int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
-	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
+	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+	IDirect3DTexture9* pTextureShadow )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -81,7 +88,9 @@ int GraphicLightEffect::Initialize( int priority, const EffectParameter* pParame
 	}
 	for( int counterDrawer = 0; counterDrawer <= GraphicMain::LIGHT_POINT_MAX; ++counterDrawer )
 	{
-		result = pDrawerLight_[ counterDrawer ].Initialize( pParameter, ppEffectGeneral[ counterDrawer ], pPolygon2D_, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
+		result = pDrawerLight_[ counterDrawer ].Initialize( pParameter, ppEffectGeneral[ counterDrawer ], pPolygon2D_,
+			pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth, pTextureDiffuseRiver, pTextureSpecularRiver, pTextureNormalRiver, pTextureDepthRiver,
+			pTextureShadow );
 		if( result != 0 )
 		{
 			return result;
@@ -130,9 +139,16 @@ int GraphicLightEffect::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureSpecular	: スペキュラ情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureNormal	: 法線情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDiffuseRiver		: ディフューズ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureSpecularRiver	: スペキュラ情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureNormalRiver		: 法線情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureDepthRiver		: 深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureShadow	: 影テクスチャ
 //==============================================================================
 int GraphicLightEffect::Reinitialize( int priority, const EffectParameter* pParameter, Effect** ppEffectGeneral,
-	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth )
+	IDirect3DTexture9* pTextureDiffuse, IDirect3DTexture9* pTextureSpecular, IDirect3DTexture9* pTextureNormal, IDirect3DTexture9* pTextureDepth,
+	IDirect3DTexture9* pTextureDiffuseRiver, IDirect3DTexture9* pTextureSpecularRiver, IDirect3DTexture9* pTextureNormalRiver, IDirect3DTexture9* pTextureDepthRiver,
+	IDirect3DTexture9* pTextureShadow )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -143,7 +159,8 @@ int GraphicLightEffect::Reinitialize( int priority, const EffectParameter* pPara
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, ppEffectGeneral, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth );
+	return Initialize( priority, pParameter, ppEffectGeneral, pTextureDiffuse, pTextureSpecular, pTextureNormal, pTextureDepth,
+		pTextureDiffuseRiver, pTextureSpecularRiver, pTextureNormalRiver, pTextureDepthRiver, pTextureShadow );
 }
 
 //==============================================================================
