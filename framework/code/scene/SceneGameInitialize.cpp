@@ -264,15 +264,15 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 
 	//	仮のフィールド
-	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
+	pModel = pArgument_->pModel_->Get( _T( "stagever.1.01.x" ) );
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	field = new ObjectModel();
 	field->Initialize(0);
 	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
-	field->SetScale(5.0f, 5.0f, 5.0f);
-	field->AddPositionY(-300.0f);
+	field->SetScale(2.0f, 2.0f, 2.0f);
+//	field->AddPositionY(-300.0f);
 
 	//	水車オブジェクトの生成
 	waterWheel[0] = new ObjectWaterwheel;

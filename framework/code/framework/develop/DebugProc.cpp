@@ -161,10 +161,10 @@ void DebugProc::Print( const TCHAR *pFormat, ... )
 	}
 
 	// •\¦•¶š—ñì¬
-	TCHAR	pStringAdd[ 256 ] = {};		// ’Ç‰Á‚·‚é•¶š—ñ
-	va_list	args;						// ˆø”
+	TCHAR	pStringAdd[ 1024 ] = {};		// ’Ç‰Á‚·‚é•¶š—ñ
+	va_list	args;							// ˆø”
 	va_start( args, pFormat );
-	_vsntprintf_s( pStringAdd, 256, _TRUNCATE, pFormat, args );
+	_vsntprintf_s( pStringAdd, 1024, _TRUNCATE, pFormat, args );
 	va_end( args );
 
 	// •\¦•¶š—ñ‹L˜^

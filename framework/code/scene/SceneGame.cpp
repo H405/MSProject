@@ -146,7 +146,7 @@ void SceneGame::Update( void )
 
 	// XVŠÖ”‚Ì•ÏX
 #ifdef _DEVELOP
-	if( pArgument_->pKeyboard_->IsTrigger( DIK_F9 ) )
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_F6 ) )
 	{
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::UpdateResult;

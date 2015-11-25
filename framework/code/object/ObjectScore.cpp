@@ -252,6 +252,21 @@ int ObjectScore::CreateGraphic( int priority, const EffectParameter* pParameter,
 }
 
 //==============================================================================
+// Brief  : 描画クラスの有効設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void ObjectScore::SetEnableGraphic( bool value )
+{
+	// 値の設定
+	for( int count = 0; count < figure; count++ )
+	{
+		// 値の設定
+		number[ count ]->SetEnableGraphic( value );
+	}
+}
+
+//==============================================================================
 // Brief  : 描画クラスの設定
 // Return : void								: なし
 // Arg    : Graphic2D* pValue						: 設定する値

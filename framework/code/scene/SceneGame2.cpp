@@ -241,7 +241,7 @@ int SceneGame::Initialize2( void )
 			return result;
 		}
 		pObjectScoreRanking_[ counterRank ].SetSizeX( static_cast< float >( pTextureNumber->width_ ) / 8.0f );
-		pObjectScoreRanking_[ counterRank ].SetPos( -250.0f, 170.0f - 120.0f * counterRank, 0.0f );
+		pObjectScoreRanking_[ counterRank ].SetEnableGraphic( false );
 	}
 
 	// リザルトオブジェクトの非表示
@@ -655,6 +655,7 @@ void SceneGame::UpdateRanking( void )
 		for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
 		{
 			pObjectScoreRanking_[ counterRank ].SetScore( pRankingScore_[ counterRank ] );
+			pObjectScoreRanking_[ counterRank ].SetScoreFuture( pRankingScore_[ counterRank ] );
 		}
 	}
 
@@ -665,27 +666,132 @@ void SceneGame::UpdateRanking( void )
 	}
 
 	// ロゴの表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ == TIME_RANKING_BEGIN_LOGO )
 	{
 		pObjectRanking_[ IMAGE_RANKING_LOGO ].SetEnableGraphic( true );
 	}
-
-	// ランクの表示
-	if( timerSceneGame_ == 0 )
+	if( timerSceneGame_ >= TIME_RANKING_BEGIN_LOGO && timerSceneGame_ < TIME_RANKING_BEGIN_LOGO + COUNT_RANKING_BEGIN_LOGO )
 	{
-		for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
-		{
-			pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetEnableGraphic( true );
-		}
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		float	width;			// 幅
+		float	height;			// 高さ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_LOGO) ) / COUNT_RANKING_BEGIN_LOGO;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		width = pObjectRanking_[ IMAGE_RANKING_LOGO ].GetWidth() * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_LOGO ].GetHeight() * scale;
+		pObjectRanking_[ IMAGE_RANKING_LOGO ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectRanking_[ IMAGE_RANKING_LOGO ].SetScale( width, height, 1.0f );
 	}
 
-	// スコアの表示
-	if( timerSceneGame_ == 0 )
+	// ランク5の表示
+	if( timerSceneGame_ == TIME_RANKING_BEGIN_RANK_5 )
 	{
-		for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
-		{
-			pObjectScoreRanking_[ counterRank ].SetPos( -250.0f, 170.0f - 120.0f * counterRank, 0.0f );
-		}
+		pObjectRanking_[ IMAGE_RANKING_RANK_5 ].SetEnableGraphic( true );
+		pObjectScoreRanking_[ 4 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RANKING_BEGIN_RANK_5 && timerSceneGame_ < TIME_RANKING_BEGIN_RANK_5 + COUNT_RANKING_BEGIN_RANK_5 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		float	width;			// 幅
+		float	height;			// 高さ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_5) ) / COUNT_RANKING_BEGIN_RANK_5;
+		scale = Utility::Easing( 2.5f, 1.0f, proportion );
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_5 ].GetWidth() * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_5 ].GetHeight() / 8.0f * scale;
+		pObjectRanking_[ IMAGE_RANKING_RANK_5 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectRanking_[ IMAGE_RANKING_RANK_5 ].SetScale( width, height, 1.0f );
+		pObjectScoreRanking_[ 4 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectScoreRanking_[ 4 ].SetPos( -250.0f, 170.0f - 120.0f * 4, 0.0f );
+	}
+
+	// ランク4の表示
+	if( timerSceneGame_ == TIME_RANKING_BEGIN_RANK_4 )
+	{
+		pObjectRanking_[ IMAGE_RANKING_RANK_4 ].SetEnableGraphic( true );
+		pObjectScoreRanking_[ 3 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RANKING_BEGIN_RANK_4 && timerSceneGame_ < TIME_RANKING_BEGIN_RANK_4 + COUNT_RANKING_BEGIN_RANK_4 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		float	width;			// 幅
+		float	height;			// 高さ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_4) ) / COUNT_RANKING_BEGIN_RANK_4;
+		scale = Utility::Easing( 2.5f, 1.0f, proportion );
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_4 ].GetWidth() * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_4 ].GetHeight() / 8.0f * scale;
+		pObjectRanking_[ IMAGE_RANKING_RANK_4 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectRanking_[ IMAGE_RANKING_RANK_4 ].SetScale( width, height, 1.0f );
+		pObjectScoreRanking_[ 3 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectScoreRanking_[ 3 ].SetPos( -250.0f, 170.0f - 120.0f * 3, 0.0f );
+	}
+
+	// ランク3の表示
+	if( timerSceneGame_ == TIME_RANKING_BEGIN_RANK_3 )
+	{
+		pObjectRanking_[ IMAGE_RANKING_RANK_3 ].SetEnableGraphic( true );
+		pObjectScoreRanking_[ 2 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RANKING_BEGIN_RANK_3 && timerSceneGame_ < TIME_RANKING_BEGIN_RANK_3 + COUNT_RANKING_BEGIN_RANK_3 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		float	width;			// 幅
+		float	height;			// 高さ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_3) ) / COUNT_RANKING_BEGIN_RANK_3;
+		scale = Utility::Easing( 2.5f, 1.0f, proportion );
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_3 ].GetWidth() * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_3 ].GetHeight() / 8.0f * scale;
+		pObjectRanking_[ IMAGE_RANKING_RANK_3 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectRanking_[ IMAGE_RANKING_RANK_3 ].SetScale( width, height, 1.0f );
+		pObjectScoreRanking_[ 2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectScoreRanking_[ 2 ].SetPos( -250.0f, 170.0f - 120.0f * 2, 0.0f );
+	}
+
+	// ランク2の表示
+	if( timerSceneGame_ == TIME_RANKING_BEGIN_RANK_2 )
+	{
+		pObjectRanking_[ IMAGE_RANKING_RANK_2 ].SetEnableGraphic( true );
+		pObjectScoreRanking_[ 1 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RANKING_BEGIN_RANK_2 && timerSceneGame_ < TIME_RANKING_BEGIN_RANK_2 + COUNT_RANKING_BEGIN_RANK_2 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		float	width;			// 幅
+		float	height;			// 高さ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_2) ) / COUNT_RANKING_BEGIN_RANK_2;
+		scale = Utility::Easing( 2.5f, 1.0f, proportion );
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_2 ].GetWidth() * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_2 ].GetHeight() / 8.0f * scale;
+		pObjectRanking_[ IMAGE_RANKING_RANK_2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectRanking_[ IMAGE_RANKING_RANK_2 ].SetScale( width, height, 1.0f );
+		pObjectScoreRanking_[ 1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectScoreRanking_[ 1 ].SetPos( -250.0f, 170.0f - 120.0f * 1, 0.0f );
+	}
+
+	// ランク1の表示
+	if( timerSceneGame_ == TIME_RANKING_BEGIN_RANK_1 )
+	{
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 ].SetEnableGraphic( true );
+		pObjectScoreRanking_[ 0 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RANKING_BEGIN_RANK_1 && timerSceneGame_ < TIME_RANKING_BEGIN_RANK_1 + COUNT_RANKING_BEGIN_RANK_1 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		float	width;			// 幅
+		float	height;			// 高さ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_1) ) / COUNT_RANKING_BEGIN_RANK_1;
+		scale = Utility::Easing( 4.0f, 1.0f, proportion );
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_1 ].GetWidth() * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_1 ].GetHeight() / 8.0f * scale;
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 ].SetScale( width, height, 1.0f );
+		pObjectScoreRanking_[ 0 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectScoreRanking_[ 0 ].SetPos( -250.0f, 170.0f - 120.0f * 0, 0.0f );
 	}
 
 	// タイマーの経過

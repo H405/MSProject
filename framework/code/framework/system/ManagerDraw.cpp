@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "ManagerDraw.h"
 #include "../develop/Debug.h"
+#include "../develop/DebugMeasure.h"
 #include "../develop/DebugProc.h"
 #include "../graphic/Graphic.h"
 #include "../render/RenderPass.h"

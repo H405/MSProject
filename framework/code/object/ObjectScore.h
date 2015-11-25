@@ -95,6 +95,13 @@ public:
 	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture = nullptr );
 
 	//==============================================================================
+	// Brief  : 描画クラスの有効設定
+	// Return : void								: なし
+	// Arg    : bool value							: 設定する値
+	//==============================================================================
+	void SetEnableGraphic( bool value );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	void SetGraphic( Graphic2D* pValue );
