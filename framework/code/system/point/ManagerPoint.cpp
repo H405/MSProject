@@ -11,18 +11,16 @@
 // インクルード
 //******************************************************************************
 #include "ManagerPoint.h"
-#include "../graphic/graphic/GraphicPoint.h"
-#include "../framework/develop/Debug.h"
-#include "../framework/point/Point.h"
-#include "../framework/point/PointState.h"
-#include "../framework/polygon/PolygonPoint.h"
-#include "../framework/resource/ManagerEffect.h"
-#include "../framework/resource/ManagerTexture.h"
-#include "../framework/vertex/Vertex.h"
-#include "../framework/vertex/VertexBuffer.h"
-
-#include "../framework/develop/DebugProc.h"
-#include "../framework/develop/DebugMeasure.h"
+#include "PointMain.h"
+#include "../../graphic/graphic/GraphicPoint.h"
+#include "../../framework/develop/Debug.h"
+#include "../../framework/develop/DebugProc.h"
+#include "../../framework/develop/DebugMeasure.h"
+#include "../../framework/polygon/PolygonPoint.h"
+#include "../../framework/resource/ManagerEffect.h"
+#include "../../framework/resource/ManagerTexture.h"
+#include "../../framework/vertex/Vertex.h"
+#include "../../framework/vertex/VertexBuffer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -73,7 +71,7 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 {
 	// メンバ変数の設定
 	maximumItem_ = maximumItem;
-	pPoint_ = new Point[ maximumItem ];
+	pPoint_ = new PointMain[ maximumItem ];
 	for( int counterItem = 0; counterItem < maximumItem; ++counterItem )
 	{
 		pPoint_[ counterItem ].Initialize();
@@ -116,14 +114,6 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 		return result;
 	}
 
-	// ステートテーブルの作成
-	//	PointStateArrangeにクラス追加したら、これのヘッダーにステート（enum）増やして
-	//	ここにテーブルを追加すること！
-	ppState_[ STATE_NONE ]		= new PointStateNone();
-	ppState_[ STATE_ADD ]		= new PointStateAdd();
-	ppState_[ STATE_MULTIPLY ]	= new PointStateMultiply();
-	Point::SetState( ppState_ );
-
 	// 正常終了
 	return 0;
 }
@@ -135,13 +125,6 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 //==============================================================================
 int ManagerPoint::Finalize( void )
 {
-	// ステートテーブルの開放
-	for( int counterState = 0; counterState < STATE_MAX; ++counterState )
-	{
-		delete ppState_[ counterState ];
-		ppState_[ counterState ] = nullptr;
-	}
-
 	// 頂点バッファの開放
 	delete pVertexBuffer_;
 	pVertexBuffer_ = nullptr;

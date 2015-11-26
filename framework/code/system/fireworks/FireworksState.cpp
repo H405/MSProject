@@ -12,7 +12,8 @@
 //******************************************************************************
 #include "FireworksState.h"
 #include "Fireworks.h"
-#include "../../system/ManagerPoint.h"
+#include "../../system/point/ManagerPoint.h"
+#include "../../system/point/PointMain.h"
 #include "../../framework/radianTable/radianTable.h"
 
 //******************************************************************************
@@ -170,7 +171,7 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 		effectDifferenceSize,
-		ManagerPoint::STATE_ADD
+		PointMain::STATE_ADD
 		);
 
 	//	消滅カウンタ更新
@@ -193,7 +194,7 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 			effectDifferenceSize,
-			ManagerPoint::STATE_ADD
+			PointMain::STATE_ADD
 			);
 	}
 	else
@@ -230,7 +231,7 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 		effectDifferenceSize,
-		ManagerPoint::STATE_ADD
+		PointMain::STATE_ADD
 		);
 
 	//	カウンタ更新
@@ -253,7 +254,7 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 			effectDifferenceSize,
-			ManagerPoint::STATE_ADD
+			PointMain::STATE_ADD
 			);
 	}
 	else
@@ -353,7 +354,7 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 		effectDifferenceSize,
-		ManagerPoint::STATE_ADD
+		PointMain::STATE_ADD
 		);
 
 	//	消滅カウンタ更新
@@ -376,7 +377,7 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
 			effectDifferenceSize,
-			ManagerPoint::STATE_ADD
+			PointMain::STATE_ADD
 			);
 	}
 	else

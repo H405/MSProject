@@ -32,8 +32,7 @@
 class Effect;
 class EffectParameter;
 class GraphicPoint;
-class Point;
-class PointState;
+class PointMain;
 class PolygonPoint;
 class Texture;
 class VertexBuffer;
@@ -44,15 +43,6 @@ class VertexBuffer;
 class ManagerPoint
 {
 public:
-	// ステート
-	enum
-	{
-		STATE_NONE = 0,		// なし
-		STATE_ADD,			// 加算
-		STATE_MULTIPLY,		// 乗算
-		STATE_MAX			// 最大値
-	};
-
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
@@ -138,7 +128,7 @@ public:
 	//==============================================================================
 	void Add( int timeExist, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size,
 		const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize,
-		int indexState = STATE_ADD );
+		int indexState = 1 );
 
 protected:
 
@@ -149,10 +139,9 @@ private:
 	void InitializeSelf( void );
 	int GetIndex( void );
 
-	PointState*		ppState_[ STATE_MAX ];		// ステートテーブル
 	int				maximumItem_;				// 最大要素数
 	int				indexCurrent_;				// 現在の要素番号
-	Point*			pPoint_;					// ポイント情報
+	PointMain*		pPoint_;					// ポイント情報
 	PolygonPoint*	pPolygon_;					// ポリゴン
 	GraphicPoint*	pGraphic_;					// 描画クラス
 	VertexBuffer*	pVertexBuffer_;				// 頂点バッファ

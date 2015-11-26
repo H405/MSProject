@@ -159,10 +159,11 @@
     <ClInclude Include="code\system\Main.h" />
     <ClInclude Include="code\system\ManagerFireworks.h" />
     <ClInclude Include="code\system\ManagerMain.h" />
-    <ClInclude Include="code\system\ManagerPoint.h" />
     <ClInclude Include="code\system\ManagerSceneMain.h" />
     <ClInclude Include="code\system\ManagerTarget.h" />
     <ClInclude Include="code\system\player\Player.h" />
+    <ClInclude Include="code\system\point\ManagerPoint.h" />
+    <ClInclude Include="code\system\point\PointMain.h" />
     <ClInclude Include="code\system\SceneArgumentMain.h" />
     <ClInclude Include="code\system\SceneMain.h" />
     <ClInclude Include="code\system\target\Target.h" />
@@ -317,10 +318,11 @@
     <ClCompile Include="code\system\Main.cpp" />
     <ClCompile Include="code\system\ManagerFireworks.cpp" />
     <ClCompile Include="code\system\ManagerMain.cpp" />
-    <ClCompile Include="code\system\ManagerPoint.cpp" />
     <ClCompile Include="code\system\ManagerSceneMain.cpp" />
     <ClCompile Include="code\system\ManagerTarget.cpp" />
     <ClCompile Include="code\system\player\Player.cpp" />
+    <ClCompile Include="code\system\point\ManagerPoint.cpp" />
+    <ClCompile Include="code\system\point\PointMain.cpp" />
     <ClCompile Include="code\system\SceneArgumentMain.cpp" />
     <ClCompile Include="code\system\SceneMain.cpp" />
     <ClCompile Include="code\system\target\Target.cpp" />

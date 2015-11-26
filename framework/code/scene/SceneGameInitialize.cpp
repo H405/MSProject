@@ -32,7 +32,7 @@
 #include "../framework/system/Fade.h"
 #include "../framework/system/Window.h"
 #include "../system/EffectParameter.h"
-#include "../system/ManagerPoint.h"
+#include "../system/point/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
 #include "../system/ManagerTarget.h"
 #include "../system/ManagerSceneMain.h"

@@ -103,6 +103,9 @@
     <Filter Include="ソース ファイル\system\player">
       <UniqueIdentifier>{eb9ff396-24a4-4ed3-ac3f-63e08909095b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\point">
+      <UniqueIdentifier>{14cb9c72-a1d5-4e23-b6ca-7f70e1236c5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -357,9 +360,6 @@
     <ClInclude Include="code\framework\point\PointState.h">
       <Filter>ソース ファイル\framework\point</Filter>
     </ClInclude>
-    <ClInclude Include="code\system\ManagerPoint.h">
-      <Filter>ソース ファイル\system</Filter>
-    </ClInclude>
     <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h">
       <Filter>ソース ファイル\framework\polygon</Filter>
     </ClInclude>
@@ -572,6 +572,12 @@
     </ClInclude>
     <ClInclude Include="code\graphic\drawer\DrawerShadow.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\point\ManagerPoint.h">
+      <Filter>ソース ファイル\system\point</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\point\PointMain.h">
+      <Filter>ソース ファイル\system\point</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -824,9 +830,6 @@
     <ClCompile Include="code\framework\point\Point.cpp">
       <Filter>ソース ファイル\framework\point</Filter>
     </ClCompile>
-    <ClCompile Include="code\system\ManagerPoint.cpp">
-      <Filter>ソース ファイル\system</Filter>
-    </ClCompile>
     <ClCompile Include="code\object\ObjectBillboard.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
@@ -1042,6 +1045,12 @@
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\point\ManagerPoint.cpp">
+      <Filter>ソース ファイル\system\point</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\point\PointMain.cpp">
+      <Filter>ソース ファイル\system\point</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

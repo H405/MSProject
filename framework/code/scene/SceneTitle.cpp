@@ -43,7 +43,7 @@
 #include "../object/ObjectSky.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../framework/polygon/PolygonMesh.h"
-#include "../system/ManagerPoint.h"
+#include "../system/point/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
 #include "../system/fire/Fire.h"
 

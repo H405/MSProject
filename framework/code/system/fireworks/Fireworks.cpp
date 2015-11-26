@@ -12,7 +12,8 @@
 //******************************************************************************
 #include "Fireworks.h"
 #include "FireworksState.h"
-#include "../../system/ManagerPoint.h"
+#include "../../system/point/ManagerPoint.h"
+#include "../../system/point/PointMain.h"
 #include "../../system/ManagerFireworks.h"
 #include "../fire/Fire.h"
 #include "../../framework/radianTable/radianTable.h"
@@ -316,7 +317,7 @@ void Fireworks::burn(
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
 		fireBGAddSize,
-		ManagerPoint::STATE_ADD
+		PointMain::STATE_ADD
 		);
 
 	//	âŒâ‘ÇÃêîÇæÇØÉãÅ[Év
@@ -399,7 +400,7 @@ void Fireworks::burn2()
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
 			fireBGAddSize,
-			ManagerPoint::STATE_ADD
+			PointMain::STATE_ADD
 			);
 
 
