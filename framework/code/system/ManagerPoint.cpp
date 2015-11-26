@@ -211,7 +211,6 @@ void ManagerPoint::Update( void )
 	// 頂点バッファの作成
 	int		countPoint;		// ポイントの数
 	countPoint = 0;
-
 	for( int counterPoint = 0; counterPoint < maximumItem_; ++counterPoint )
 	{
 		// 使用されていないとき次へ
@@ -226,12 +225,15 @@ void ManagerPoint::Update( void )
 		// 頂点バッファへ登録
 		D3DXVECTOR3	position;		// 座標
 		D3DXCOLOR	color;			// 色
-		countPoint, pPoint_[ counterPoint ].GetPosition( &position );
-		countPoint, pPoint_[ counterPoint ].GetColor( &color );
-
+		pPoint_[ counterPoint ].GetPosition( &position );
+		pPoint_[ counterPoint ].GetColor( &color );
+#if 0
 		pVertexBuffer_->SetPosition( countPoint, position );
 		pVertexBuffer_->SetColorDiffuse( countPoint, color );
 		pVertexBuffer_->SetPointSize( countPoint, pPoint_[ counterPoint ].GetSize() );
+#else
+		pVertexBuffer_->SetValueForPoint( countPoint, position, color, pPoint_[ counterPoint ].GetSize() );
+#endif
 
 		// ポイントの数を加算
 		++countPoint;

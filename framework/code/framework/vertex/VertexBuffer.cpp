@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "VertexBuffer.h"
 #include "Vertex.h"
+#include "VertexBuffer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -1118,6 +1118,24 @@ void VertexBuffer::SetSampler( int index, float value )
 {
 	// バッファに設定
 	SetToBuffer( index, Vertex::TYPE_SAMPLER, &value, sizeof( float ) );
+}
+
+//==============================================================================
+// Brief  : ポイントスプライト専用設定
+// Return : void								: なし
+// Arg    : int index							: 番号
+// Arg    : const D3DXVECTOR3& position			: 座標
+// Arg    : const D3DCOLORVALUE& color			: 色
+// Arg    : float size							: サイズ
+//==============================================================================
+void VertexBuffer::SetValueForPoint( int index, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size )
+{
+	// バッファに設定
+	*(float*)(&pBuffer_[ 20 * index +  0 ]) = position.x;
+	*(float*)(&pBuffer_[ 20 * index +  4 ]) = position.y;
+	*(float*)(&pBuffer_[ 20 * index +  8 ]) = position.z;
+	*(float*)(&pBuffer_[ 20 * index + 12 ]) = size;
+	*(D3DCOLOR*)(&pBuffer_[ 20 * index + 16 ]) = color;
 }
 
 //==============================================================================
