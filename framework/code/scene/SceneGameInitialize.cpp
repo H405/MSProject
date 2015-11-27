@@ -38,6 +38,8 @@
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 #include "../system/fire/Fire.h"
+#include "../object/ObjectWaveData.h"
+#include "../object/ObjectWaveDataInitialize.h"
 
 // テスト
 #include "../graphic/graphic/Graphic2D.h"
@@ -89,6 +91,9 @@ void SceneGame::InitializeSelf( void )
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
 	pLight_ = nullptr;
+
+	pObjectWaveData_ = nullptr;
+	pObjectWaveDataInitialize_ = nullptr;
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
@@ -204,6 +209,47 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return 1;
 	}
 	pLight_->Set( D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( 0.0f, -0.7f, 0.7f ) );
+
+	// 波情報描画オブジェクトの生成
+	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
+	pObjectWaveData_ = new ObjectWaveData();
+	if( pObjectWaveData_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveData_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveData = pArgument->pEffect_->Get( _T( "WaveData.fx" ) );
+	result = pObjectWaveData_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveData,
+		pArgument->pTextureHeightWave0_, pArgument->pTextureHeightWave1_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 波情報初期化オブジェクトの生成
+	Effect*		pEffectWaveDataInitialize = nullptr;		// 波情報初期化エフェクト
+	Texture*	pTextureWaveDataInitialize = nullptr;		// 波情報初期化テクスチャ
+	pObjectWaveDataInitialize_ = new ObjectWaveDataInitialize();
+	if( pObjectWaveDataInitialize_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveDataInitialize_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveDataInitialize = pArgument->pEffect_->Get( _T( "WaveDataInitialize.fx" ) );
+	pTextureWaveDataInitialize = pArgument->pTexture_->Get( _T( "common/wave_initialize.dds" ) );
+	result = pObjectWaveDataInitialize_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveDataInitialize, pTextureWaveDataInitialize );
+	if( result != 0 )
+	{
+		return result;
+	}
 
 
 
@@ -744,6 +790,14 @@ int SceneGame::Finalize( void )
 
 	delete bridge;
 	bridge = nullptr;
+
+	// 波情報描画オブジェクトの開放
+	delete pObjectWaveData_;
+	pObjectWaveData_ = nullptr;
+
+	// 波情報初期化オブジェクトの開放
+	delete pObjectWaveDataInitialize_;
+	pObjectWaveDataInitialize_ = nullptr;
 
 	// ライトの開放
 	if( pLight_ != nullptr )
