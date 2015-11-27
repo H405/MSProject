@@ -10,6 +10,7 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
+#include <process.h>
 #include "ManagerPoint.h"
 #include "PointMain.h"
 #include "../../graphic/graphic/GraphicPoint.h"
@@ -60,21 +61,38 @@ ManagerPoint::~ManagerPoint( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : int maximumItem						: 最大要素数
+// Arg    : int countThread						: スレッド数
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+int ManagerPoint::Initialize( int maximumItem, int countThread, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
 	Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture )
 {
 	// メンバ変数の設定
-	maximumItem_ = maximumItem;
-	pPoint_ = new PointMain[ maximumItem ];
-	for( int counterItem = 0; counterItem < maximumItem; ++counterItem )
+	countThread_ = countThread;
+	countItemBuffer_ = (maximumItem + countThread - 1) / countThread;
+	maximumItem_ = countThread_ * countItemBuffer_;
+
+	// ポイント情報格納バッファの確保
+	ppPoint_ = new PointMain*[ countThread ];
+	if( ppPoint_ == nullptr )
 	{
-		pPoint_[ counterItem ].Initialize();
+		return 1;
+	}
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		ppPoint_[ counterThread ] = new PointMain[ maximumItem ];
+		if( ppPoint_[ counterThread ] == nullptr )
+		{
+			return 1;
+		}
+		for( int counterItem = 0; counterItem < maximumItem; ++counterItem )
+		{
+			ppPoint_[ counterThread ][ counterItem ].Initialize();
+		}
 	}
 
 	// ポリゴンの生成
@@ -103,15 +121,84 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 	}
 
 	// 頂点バッファの作成
-	pVertexBuffer_ = new VertexBuffer();
+	pVertexBuffer_ = new VertexBuffer[ countThread ];
 	if( pVertexBuffer_ == nullptr )
 	{
 		return 1;
 	}
-	result = pVertexBuffer_->Initialize( maximumItem, pPolygon_->GetVertex() );
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		result = pVertexBuffer_[ counterThread ].Initialize( countItemBuffer_, pPolygon_->GetVertex() );
+		if( result != 0 )
+		{
+			return result;
+		}
+	}
+
+	// 総合頂点バッファの作成
+	pVertexBufferMerge_ = new VertexBuffer();
+	if( pVertexBufferMerge_ == nullptr )
+	{
+		return 1;
+	}
+	result = pVertexBufferMerge_->Initialize( maximumItem_, pPolygon_->GetVertex() );
 	if( result != 0 )
 	{
 		return result;
+	}
+
+	// 設定ポイント数格納領域の確保
+	pCountPoint_ = new int[ countThread ];
+	if( pCountPoint_ == nullptr )
+	{
+		return 1;
+	}
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		pCountPoint_[ counterThread ] = 0;
+	}
+
+	// クリティカルセクションの初期化
+	InitializeCriticalSectionEx( &criticalSectionFinish_, 0, 0 );
+
+	// 読み込みスレッドの生成
+	pHandleThread_ = new HANDLE[ countThread ];
+	if( pHandleThread_ == nullptr )
+	{
+		return 1;
+	}
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		// スレッド番号の設定
+		EnterCriticalSection( &criticalSectionFinish_ );
+		countThreadFinish_ = counterThread;
+		LeaveCriticalSection( &criticalSectionFinish_ );
+
+		// スレッドの作成
+		pHandleThread_[ counterThread ] = reinterpret_cast< HANDLE >( _beginthreadex( nullptr, 0, UpdateBuffer, this, 0, nullptr ) );
+
+		// スレッド作成待機
+		for( ; ; )
+		{
+			// 待機
+			Sleep( 1 );
+
+			// 作成されたか確認
+			int		indexCurrent;		// 現在のスレッド番号
+			EnterCriticalSection( &criticalSectionFinish_ );
+			indexCurrent = countThreadFinish_;
+			LeaveCriticalSection( &criticalSectionFinish_ );
+			if( indexCurrent == -1 )
+			{
+				break;
+			}
+		}
+
+		int		indexDebug;		// 現在のスレッド番号
+		EnterCriticalSection( &criticalSectionFinish_ );
+		indexDebug = countThreadFinish_;
+		LeaveCriticalSection( &criticalSectionFinish_ );
+		PrintDebugWnd( _T( "Create %2d\n" ), indexDebug );
 	}
 
 	// 正常終了
@@ -125,8 +212,31 @@ int ManagerPoint::Initialize( int maximumItem, IDirect3DDevice9* pDevice, const 
 //==============================================================================
 int ManagerPoint::Finalize( void )
 {
+	// スレッドの開放
+	needsDelete_ = true;
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		ResumeThread( pHandleThread_[ counterThread ] );
+		WaitForSingleObject( pHandleThread_[ counterThread ], INFINITE );
+		CloseHandle( pHandleThread_[ counterThread ] );
+		pHandleThread_[ counterThread ] = NULL;
+	}
+	delete[] pHandleThread_;
+	pHandleThread_ = nullptr;
+
+	// クリティカルセクションの開放
+	DeleteCriticalSection( &criticalSectionFinish_ );
+
+	// 設定ポイント数格納領域の開放
+	delete[] pCountPoint_;
+	pCountPoint_ = nullptr;
+
+	// 総合頂点バッファの開放
+	delete pVertexBufferMerge_;
+	pVertexBufferMerge_ = nullptr;
+
 	// 頂点バッファの開放
-	delete pVertexBuffer_;
+	delete[] pVertexBuffer_;
 	pVertexBuffer_ = nullptr;
 
 	// 描画クラスの開放
@@ -138,8 +248,16 @@ int ManagerPoint::Finalize( void )
 	pPolygon_ = nullptr;
 
 	// 格納領域の開放
-	delete[] pPoint_;
-	pPoint_ = nullptr;
+	if( ppPoint_ != nullptr )
+	{
+		for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+		{
+			delete[] ppPoint_[ counterThread ];
+			ppPoint_[ counterThread ] = nullptr;
+		}
+	}
+	delete[] ppPoint_;
+	ppPoint_ = nullptr;
 
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -152,13 +270,14 @@ int ManagerPoint::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : int maximumItem						: 最大要素数
+// Arg    : int countThread						: スレッド数
 // Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int ManagerPoint::Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+int ManagerPoint::Reinitialize( int maximumItem, int countThread, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
 	Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture )
 {
 	// 終了処理
@@ -170,7 +289,7 @@ int ManagerPoint::Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, cons
 	}
 
 	// 初期化処理
-	return Initialize( maximumItem, pDevice, pParameter, pEffectGeneral, pEffectReflect, pTexture );
+	return Initialize( maximumItem, countThread, pDevice, pParameter, pEffectGeneral, pEffectReflect, pTexture );
 }
 
 //==============================================================================
@@ -191,41 +310,55 @@ int ManagerPoint::Copy( ManagerPoint* pOut ) const
 //==============================================================================
 void ManagerPoint::Update( void )
 {
-	// 頂点バッファの作成
-	int		countPoint;		// ポイントの数
-	countPoint = 0;
-	for( int counterPoint = 0; counterPoint < maximumItem_; ++counterPoint )
+	// 終了スレッド数のクリア
+	EnterCriticalSection( &criticalSectionFinish_ );
+	countThreadFinish_ = 0;
+	LeaveCriticalSection( &criticalSectionFinish_ );
+
+	// 設定ポイント数のクリア
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
 	{
-		// 使用されていないとき次へ
-		if( !pPoint_[ counterPoint ].IsEnable() )
-		{
-			continue;
-		}
-
-		// ポイントの更新
-		pPoint_[ counterPoint ].Update();
-
-		// 頂点バッファへ登録
-		D3DXVECTOR3	position;		// 座標
-		D3DXCOLOR	color;			// 色
-		pPoint_[ counterPoint ].GetPosition( &position );
-		pPoint_[ counterPoint ].GetColor( &color );
-#if 0
-		pVertexBuffer_->SetPosition( countPoint, position );
-		pVertexBuffer_->SetColorDiffuse( countPoint, color );
-		pVertexBuffer_->SetPointSize( countPoint, pPoint_[ counterPoint ].GetSize() );
-#else
-		pVertexBuffer_->SetValueForPoint( countPoint, position, color, pPoint_[ counterPoint ].GetSize() );
-#endif
-
-		// ポイントの数を加算
-		++countPoint;
+		pCountPoint_[ counterThread ] = 0;
 	}
 
-	PrintDebug( _T( "\ncountPoint = %d\n"), countPoint );
+	// バッファの更新
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		ResumeThread( pHandleThread_[ counterThread ] );
+	}
+
+	// 更新待機
+	for( ; ; )
+	{
+		// 待機
+		Sleep( 1 );
+
+		// 更新されたか確認
+		int		countThreadUpdated;		// 更新されたスレッド数
+		EnterCriticalSection( &criticalSectionFinish_ );
+		countThreadUpdated = countThreadFinish_;
+		LeaveCriticalSection( &criticalSectionFinish_ );
+		if( countThreadUpdated >= countThread_ )
+		{
+			break;
+		}
+	}
+
+	// バッファの統合
+	int		countPoint;		// 設定ポイント数
+	countPoint = 0;
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+		pVertexBufferMerge_->Merge( countPoint, pVertexBuffer_[ counterThread ], pCountPoint_[ counterThread ] );
+		countPoint += pCountPoint_[ counterThread ];
+//		PrintDebug( _T( "Thread Point %2d\n" ), pCountPoint_[ counterThread ] );
+	}
 
 	// ポリゴンへ情報を転送
-	pPolygon_->SetVertexBuffer( countPoint, pVertexBuffer_->GetBuffer() );
+	for( int counterThread = 0; counterThread < countThread_; ++counterThread )
+	{
+	}
+	pPolygon_->SetVertexBuffer( countPoint, pVertexBufferMerge_->GetBuffer() );
 }
 
 //==============================================================================
@@ -239,16 +372,17 @@ void ManagerPoint::Update( void )
 void ManagerPoint::Add( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size )
 {
 	// 空き番号の取得
-	int		index;		// 空き番号
-	index = GetIndex();
-	if( index < 0 )
+	int		indexBuffer;		// 空きバッファ番号
+	int		indexItem;			// 空き要素番号
+	GetVacantIndex( &indexBuffer, &indexItem );
+	if( indexBuffer < 0 || indexItem < 0 )
 	{
 		PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
 		return;
 	}
 
 	// ポイントの設定
-	pPoint_[ index ].Set( indexState, position, color, size );
+	ppPoint_[ indexBuffer ][ indexItem ].Set( indexState, position, color, size );
 }
 
 //==============================================================================
@@ -267,16 +401,17 @@ void ManagerPoint::Add( int timeExist, const D3DXVECTOR3& position, const D3DXCO
 	const D3DXVECTOR3& differencePosition, const D3DXCOLOR& differenceColor, float differenceSize, int indexState )
 {
 	// 空き番号の取得
-	int		index;		// 空き番号
-	index = GetIndex();
-	if( index < 0 )
+	int		indexBuffer;		// 空きバッファ番号
+	int		indexItem;			// 空き要素番号
+	GetVacantIndex( &indexBuffer, &indexItem );
+	if( indexBuffer < 0 || indexItem < 0 )
 	{
 		PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
 		return;
 	}
 
 	// ポイントの設定
-	pPoint_[ index ].Set( timeExist, position, color, size, differencePosition, differenceColor, differenceSize, indexState );
+	ppPoint_[ indexBuffer ][ indexItem ].Set( timeExist, position, color, size, differencePosition, differenceColor, differenceSize, indexState );
 }
 
 //==============================================================================
@@ -288,34 +423,124 @@ void ManagerPoint::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	maximumItem_ = 0;
-	indexCurrent_ = 0;
-	pPoint_ = nullptr;
+	countThread_ = 0;
+	countItemBuffer_ = 0;
+	indexBuffer_ = 0;
+	indexItem_ = 0;
+	ppPoint_ = nullptr;
 	pPolygon_ = nullptr;
 	pGraphic_ = nullptr;
 	pVertexBuffer_ = nullptr;
+	pVertexBufferMerge_ = nullptr;
+	pHandleThread_ = nullptr;
+	ZeroMemory( &criticalSectionFinish_, sizeof( CRITICAL_SECTION ) );
+	countThreadFinish_ = 0;
+	pCountPoint_ = nullptr;
+	needsDelete_ = false;
 }
 
 //==============================================================================
 // Brief  : 空き番号の取得
-// Return : int									: 空き番号
-// Arg    : void								: なし
+// Return : void								: なし
+// Arg    : int* pOutIndexThread				: スレッド番号格納先
+// Arg    : int* pOutIndexItem					: 要素番号格納先
 //==============================================================================
-int ManagerPoint::GetIndex( void )
+void ManagerPoint::GetVacantIndex( int* pOutIndexThread, int* pOutIndexItem )
 {
 	// 空き番号を探す
-	for( int counterPoint = 0; counterPoint < maximumItem_; ++counterPoint )
+	for( int counterItem = 0; counterItem < maximumItem_; ++counterItem )
 	{
-		++indexCurrent_;
-		if( indexCurrent_ >= maximumItem_ )
+		++indexBuffer_;
+		if( indexBuffer_ >= countThread_ )
 		{
-			indexCurrent_ = 0;
+			indexBuffer_ = 0;
+			++indexItem_;
+			if( indexItem_ >= countItemBuffer_ )
+			{
+				indexItem_ = 0;
+			}
 		}
-		if( !pPoint_[ indexCurrent_ ].IsEnable() )
+		if( !ppPoint_[ indexBuffer_ ][ indexItem_ ].IsEnable() )
 		{
-			return indexCurrent_;
+			*pOutIndexThread = indexBuffer_;
+			*pOutIndexItem = indexItem_;
+			return;
 		}
 	}
 
 	// 空いていなかった
-	return -1;
+	*pOutIndexThread = -1;
+	*pOutIndexItem = -1;
+}
+
+//==============================================================================
+// Brief  : バッファの更新
+// Return : unsigned int						: 実行結果
+// Arg    : LPVOID pParameter					: パラメータ
+//==============================================================================
+unsigned int _stdcall ManagerPoint::UpdateBuffer( LPVOID pParameter )
+{
+	// クラスのアドレスを取得
+	ManagerPoint*	pManagerPoint = reinterpret_cast< ManagerPoint* >( pParameter );
+
+	// 自身の番号を記録
+	int		index;		// 自身の番号
+	EnterCriticalSection( &pManagerPoint->criticalSectionFinish_ );
+	index = pManagerPoint->countThreadFinish_;
+	pManagerPoint->countThreadFinish_ = -1;
+	LeaveCriticalSection( &pManagerPoint->criticalSectionFinish_ );
+	SuspendThread( pManagerPoint->pHandleThread_[ index ] );
+	PrintDebugWnd( _T( "Save Index %2d\n" ), index );
+
+	// 更新ループ
+	bool	needsUpdate;		// 更新フラグ
+	needsUpdate = !pManagerPoint->needsDelete_;
+	while( needsUpdate )
+	{
+		// 頂点バッファの作成
+		int		countPoint;		// ポイントの数
+		countPoint = 0;
+		for( int counterPoint = 0; counterPoint < pManagerPoint->countItemBuffer_; ++counterPoint )
+		{
+			// 使用されていないとき次へ
+			if( !pManagerPoint->ppPoint_[ index ][ counterPoint ].IsEnable() )
+			{
+				continue;
+			}
+
+			// ポイントの更新
+			pManagerPoint->ppPoint_[ index ][ counterPoint ].Update();
+
+			// 頂点バッファへ登録
+			D3DXVECTOR3	position;		// 座標
+			D3DXCOLOR	color;			// 色
+			pManagerPoint->ppPoint_[ index ][ counterPoint ].GetPosition( &position );
+			pManagerPoint->ppPoint_[ index ][ counterPoint ].GetColor( &color );
+			pManagerPoint->pVertexBuffer_[ index ].SetValueForPoint( countPoint, position, color, pManagerPoint->ppPoint_[ index ][ counterPoint ].GetSize() );
+
+			// ポイントの数を加算
+			++countPoint;
+		}
+
+		// 設定ポイント数を格納
+		pManagerPoint->pCountPoint_[ index ] = countPoint;
+
+		// 終了カウントの加算
+		EnterCriticalSection( &pManagerPoint->criticalSectionFinish_ );
+		++pManagerPoint->countThreadFinish_;
+		LeaveCriticalSection( &pManagerPoint->criticalSectionFinish_ );
+
+		// 一時停止
+		SuspendThread( pManagerPoint->pHandleThread_[ index ] );
+
+		// 終了判定
+		if( pManagerPoint->needsDelete_ )
+		{
+			needsUpdate = false;
+		}
+	}
+
+	// スレッドの終了
+	_endthreadex( 0 );
+	return 0;
 }

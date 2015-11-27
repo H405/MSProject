@@ -188,7 +188,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	result = pPoint_->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = pPoint_->Initialize( 4096, 8, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		return result;

@@ -61,13 +61,14 @@ public:
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	// Arg    : int maximumItem						: 最大要素数
+	// Arg    : int countThread						: スレッド数
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Initialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+	int Initialize( int maximumItem, int countThread, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
 		Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
@@ -81,13 +82,14 @@ public:
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
 	// Arg    : int maximumItem						: 最大要素数
+	// Arg    : int countThread						: スレッド数
 	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 	//==============================================================================
-	int Reinitialize( int maximumItem, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
+	int Reinitialize( int maximumItem, int countThread, IDirect3DDevice9* pDevice, const EffectParameter* pParameter,
 		Effect* pEffectGeneral, Effect* pEffectReflect, IDirect3DTexture9* pTexture );
 
 	//==============================================================================
@@ -137,14 +139,25 @@ private:
 	ManagerPoint operator=( const ManagerPoint& );
 
 	void InitializeSelf( void );
-	int GetIndex( void );
+	void GetVacantIndex( int* pOutIndexThread, int* pOutIndexItem );
+	static unsigned int _stdcall UpdateBuffer( LPVOID pParameter );
 
-	int				maximumItem_;				// 最大要素数
-	int				indexCurrent_;				// 現在の要素番号
-	PointMain*		pPoint_;					// ポイント情報
-	PolygonPoint*	pPolygon_;					// ポリゴン
-	GraphicPoint*	pGraphic_;					// 描画クラス
-	VertexBuffer*	pVertexBuffer_;				// 頂点バッファ
+	int					maximumItem_;				// 最大要素数
+	int					countThread_;				// スレッド数
+	int					countItemBuffer_;			// バッファの要素数
+	int					indexBuffer_;				// 現在のバッファ番号
+	int					indexItem_;					// 現在の要素番号
+	PointMain**			ppPoint_;					// ポイント情報
+	PolygonPoint*		pPolygon_;					// ポリゴン
+	GraphicPoint*		pGraphic_;					// 描画クラス
+	VertexBuffer*		pVertexBuffer_;				// 頂点バッファ
+	VertexBuffer*		pVertexBufferMerge_;		// 総合頂点バッファ
+
+	HANDLE*				pHandleThread_;				// スレッドのハンドル
+	CRITICAL_SECTION	criticalSectionFinish_;		// 終了カウントのクリティカルセクション
+	int					countThreadFinish_;			// 終了スレッド数
+	int*				pCountPoint_;				// 設定ポイント数
+	bool				needsDelete_;				// 破棄フラグ
 };
 
 #endif	// MY_MANAGER_POINT_H

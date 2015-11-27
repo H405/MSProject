@@ -251,7 +251,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 10000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 10000, 16, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;

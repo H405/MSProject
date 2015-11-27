@@ -123,6 +123,23 @@ int VertexBuffer::Copy( VertexBuffer* pOut ) const
 }
 
 //==============================================================================
+// Brief  : 頂点バッファの統合
+// Return : void								: なし
+// Arg    : int index							: 番号
+// Arg    : const VertexBuffer& buffer			: 頂点バッファ
+// Arg    : int count							: 個数
+//==============================================================================
+void VertexBuffer::Merge( int index, const VertexBuffer& buffer, int count )
+{
+	// 設定するための情報を取得
+	int		sizeItem;		// 構造体のサイズ
+	sizeItem = pVertex_->GetSize();
+
+	// 頂点バッファの統合
+	memcpy_s( &pBuffer_[ sizeItem * index ], size_, buffer.pBuffer_, sizeItem * count );
+}
+
+//==============================================================================
 // Brief  : バッファの取得
 // Return : void*								: 返却する値
 // Arg    : void								: なし
