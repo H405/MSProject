@@ -579,6 +579,15 @@
     <ClInclude Include="code\system\point\PointMain.h">
       <Filter>ソース ファイル\system\point</Filter>
     </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerDrawTexture.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicDrawTexture.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectDrawTexture.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1052,6 +1061,15 @@
     <ClCompile Include="code\system\point\PointMain.cpp">
       <Filter>ソース ファイル\system\point</Filter>
     </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerDrawTexture.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicDrawTexture.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectDrawTexture.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1136,6 +1154,9 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\Shadow.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\DrawTexture.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

@@ -46,6 +46,7 @@ class Model;
 class Motion;
 class Object;
 class ObjectBlur;
+class ObjectDrawTexture;
 class ObjectLightEffect;
 class ObjectLightReflect;
 class ObjectMerge;
@@ -186,6 +187,7 @@ private:
 
 #ifdef _DEVELOP
 	bool						isPausing_;					// ポーズフラグ
+	ObjectDrawTexture*			pObjectDrawTexture_;		// デバッグテクスチャ描画オブジェクト
 #endif
 };
 

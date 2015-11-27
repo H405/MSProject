@@ -47,6 +47,7 @@
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/ObjectBlur.h"
+#include "../object/ObjectDrawTexture.h"
 #include "../object/ObjectLightEffect.h"
 #include "../object/ObjectLightReflect.h"
 #include "../object/ObjectMerge.h"
@@ -687,6 +688,57 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 
+#ifdef _DEVELOP
+	// テクスチャの集計
+	int					indexTextureForDebug;		// デバッグ用テクスチャ番号
+	int					countTextureForDebug;		// デバッグ用テクスチャ数
+	IDirect3DTexture9**	ppTextureForDebug;			// デバッグ用テクスチャ
+	indexTextureForDebug = 0;
+	countTextureForDebug = 0;
+	for( int counterPass = 0; counterPass < GraphicMain::PASS_MAX; ++counterPass )
+	{
+		countTextureForDebug += pRenderPass_[ counterPass ].GetCountRenderTarget();
+	}
+	ppTextureForDebug = new IDirect3DTexture9*[ countTextureForDebug ];
+	if( ppTextureForDebug == nullptr )
+	{
+		return 1;
+	}
+	for( int counterPass = 0; counterPass < GraphicMain::PASS_MAX; ++counterPass )
+	{
+		int		countTextureInPass;		// パスのテクスチャ数
+		countTextureInPass = pRenderPass_[ counterPass ].GetCountRenderTarget();
+		for( int counterTexture = 0; counterTexture < countTextureInPass; ++counterTexture )
+		{
+			ppTextureForDebug[ indexTextureForDebug ] = pRenderPass_[ counterPass ].GetTexture( counterTexture );
+			++indexTextureForDebug;
+		}
+	}
+
+	// デバッグテクスチャ描画オブジェクトの生成
+	Effect*	pEffectDrawTexture = nullptr;		// ポストエフェクト
+	pObjectDrawTexture_ = new ObjectDrawTexture();
+	if( pObjectDrawTexture_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectDrawTexture_->Initialize( 1, pKeyboard_ );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectDrawTexture = pEffect_->Get( _T( "DrawTexture.fx" ) );
+	result = pObjectDrawTexture_->CreateGraphic( 0, pEffectParameter_, pEffectDrawTexture, countTextureForDebug, ppTextureForDebug );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// デバッグ用テクスチャ格納領域の開放
+	delete[] ppTextureForDebug;
+	ppTextureForDebug = nullptr;
+#endif
+
 	// シーン引数クラスの生成
 	pArgument_ = new SceneArgumentMain();
 	if( pArgument_ == nullptr )
@@ -755,6 +807,12 @@ int ManagerMain::Finalize( void )
 	// シーン引数クラスの開放
 	delete pArgument_;
 	pArgument_ = nullptr;
+
+#ifdef _DEVELOP
+	// デバッグ用テクスチャ描画オブジェクトの開放
+	delete pObjectDrawTexture_;
+	pObjectDrawTexture_ = nullptr;
+#endif
 
 	// 影オブジェクトの開放
 	delete pObjectShadow_;

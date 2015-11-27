@@ -86,6 +86,7 @@
     <ClInclude Include="code\graphic\drawer\Drawer3D.h" />
     <ClInclude Include="code\graphic\drawer\DrawerBillboard.h" />
     <ClInclude Include="code\graphic\drawer\DrawerBlur.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerDrawTexture.h" />
     <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerLightReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerMerge.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="code\graphic\graphic\Graphic3D.h" />
     <ClInclude Include="code\graphic\graphic\GraphicBillboard.h" />
     <ClInclude Include="code\graphic\graphic\GraphicBlur.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicDrawTexture.h" />
     <ClInclude Include="code\graphic\graphic\GraphicLightEffect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicLightReflect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMain.h" />
@@ -129,6 +131,7 @@
     <ClInclude Include="code\object\Object3D.h" />
     <ClInclude Include="code\object\ObjectBillboard.h" />
     <ClInclude Include="code\object\ObjectBlur.h" />
+    <ClInclude Include="code\object\ObjectDrawTexture.h" />
     <ClInclude Include="code\object\ObjectFire.h" />
     <ClInclude Include="code\object\ObjectLightEffect.h" />
     <ClInclude Include="code\object\ObjectLightReflect.h" />
@@ -243,6 +246,7 @@
     <ClCompile Include="code\graphic\drawer\Drawer3D.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerBillboard.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerBlur.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerDrawTexture.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerLightReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerMerge.cpp" />
@@ -267,6 +271,7 @@
     <ClCompile Include="code\graphic\graphic\Graphic3D.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicBillboard.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicBlur.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicDrawTexture.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicLightEffect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicLightReflect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMain.cpp" />
@@ -286,6 +291,7 @@
     <ClCompile Include="code\object\Object3D.cpp" />
     <ClCompile Include="code\object\ObjectBillboard.cpp" />
     <ClCompile Include="code\object\ObjectBlur.cpp" />
+    <ClCompile Include="code\object\ObjectDrawTexture.cpp" />
     <ClCompile Include="code\object\ObjectFire.cpp" />
     <ClCompile Include="code\object\ObjectLightEffect.cpp" />
     <ClCompile Include="code\object\ObjectLightReflect.cpp" />
@@ -333,6 +339,7 @@
     <None Include="code\effect\BlurX.fx" />
     <None Include="code\effect\BlurY.fx" />
     <None Include="code\effect\CalculateLight.fx" />
+    <None Include="code\effect\DrawTexture.fx" />
     <None Include="code\effect\LightEffect.fx" />
     <None Include="code\effect\LightEffect_00.fx" />
     <None Include="code\effect\LightReflect.fx" />
