@@ -156,6 +156,7 @@
     <ClInclude Include="code\system\fireworks\FireworksState.h" />
     <ClInclude Include="code\system\fire\Fire.h" />
     <ClInclude Include="code\system\fire\FireState.h" />
+    <ClInclude Include="code\system\gage\gage.h" />
     <ClInclude Include="code\system\Main.h" />
     <ClInclude Include="code\system\ManagerFireworks.h" />
     <ClInclude Include="code\system\ManagerMain.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="code\system\fireworks\FireworksState.cpp" />
     <ClCompile Include="code\system\fire\Fire.cpp" />
     <ClCompile Include="code\system\fire\FireState.cpp" />
+    <ClCompile Include="code\system\gage\gage.cpp" />
     <ClCompile Include="code\system\Main.cpp" />
     <ClCompile Include="code\system\ManagerFireworks.cpp" />
     <ClCompile Include="code\system\ManagerMain.cpp" />

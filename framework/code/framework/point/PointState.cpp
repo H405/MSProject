@@ -70,7 +70,6 @@ void PointStateAdd::Update( Point* pPoint )
 		pPoint->SetIsEnable( false );
 	}
 }
-
 //==============================================================================
 // Brief  : XVˆ—
 // Return : void								: ‚È‚µ

@@ -20,6 +20,7 @@
 #include "../../framework/light/LightPoint.h"
 #include "../../framework/develop/DebugProc.h"
 #include "../../framework/develop/DebugMeasure.h"
+#include "../../scene/SceneGame.h"
 
 //******************************************************************************
 // ライブラリ
@@ -266,7 +267,7 @@ void Fireworks::Burn2Update( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fireworks::burn(
+int Fireworks::burn(
 	float _hitCheckOffset,
 	float _hitPosLength)
 {
@@ -283,12 +284,17 @@ void Fireworks::burn(
 	//	火花の最大数
 	float fireSize;
 
-	//	可
+	//	返り値
+	int returnValue;
+
+	//	優
 	if(_hitPosLength <= (_hitCheckOffset * 0.1f))
 	{
 		param.fireMax = FIRE_MAX;
 		buffValue = 360.0f / (float)(param.fireMax);
-		fireSize = 15.0f;
+		fireSize = 45.0f;
+
+		returnValue = ADD_10;
 	}
 	//	良
 	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
@@ -296,13 +302,17 @@ void Fireworks::burn(
 		param.fireMax = FIRE_MAX / 2;
 		buffValue = 360.0f / (float)(param.fireMax);
 		fireSize = 30.0f;
+
+		returnValue = ADD_5;
 	}
-	//	優
+	//	可
 	else
 	{
 		param.fireMax = FIRE_MAX / 3;
 		buffValue = 360.0f / (float)(param.fireMax);
-		fireSize = 45.0f;
+		fireSize = 15.0f;
+
+		returnValue = ADD_1;
 	}
 
 
@@ -358,6 +368,8 @@ void Fireworks::burn(
 
 	//	破裂フラグON
 	param.burnFlag = true;
+
+	return returnValue;
 }
 
 //==============================================================================

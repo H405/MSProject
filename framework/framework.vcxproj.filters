@@ -103,6 +103,9 @@
     <Filter Include="ソース ファイル\system\player">
       <UniqueIdentifier>{eb9ff396-24a4-4ed3-ac3f-63e08909095b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\gage">
+      <UniqueIdentifier>{799f46a5-c428-4fdf-b91d-6b9d933097f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -573,6 +576,9 @@
     <ClInclude Include="code\graphic\drawer\DrawerShadow.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\system\gage\gage.h">
+      <Filter>ソース ファイル\system\gage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1042,6 +1048,9 @@
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\gage\gage.cpp">
+      <Filter>ソース ファイル\system\gage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

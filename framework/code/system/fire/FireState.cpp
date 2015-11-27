@@ -41,7 +41,7 @@ static const int fireNum[] =
 };
 
 //	生成する火花エフェクトの大きさ
-static const float effectSize = 30.0f;
+static const float effectSize = 15.0f;
 static const float effectSizeSmall = 5.0f;
 
 //	生成する火花エフェクトの消えるまでの時間

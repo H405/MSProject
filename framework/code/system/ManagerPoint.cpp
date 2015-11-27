@@ -269,6 +269,31 @@ void ManagerPoint::Add( int indexState, const D3DXVECTOR3& position, const D3DXC
 //==============================================================================
 // Brief  : ポイントの追加
 // Return : void								: なし
+// Arg    : int indexState						: ステート番号
+// Arg    : const D3DXVECTOR3& position			: 座標
+// Arg    : const D3DXCOLOR& color				: 色
+// Arg    : float size							: 大きさ
+//==============================================================================
+Point* ManagerPoint::AddR( int indexState, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size )
+{
+	// 空き番号の取得
+	int		index;		// 空き番号
+	index = GetIndex();
+	if( index < 0 )
+	{
+		PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return nullptr;
+	}
+
+	// ポイントの設定
+	pPoint_[ index ].Set( indexState, position, color, size );
+
+	return &pPoint_[index];
+}
+
+//==============================================================================
+// Brief  : ポイントの追加
+// Return : void								: なし
 // Arg    : int timeExist						: 残存時間
 // Arg    : const D3DXVECTOR3& position			: 座標
 // Arg    : const D3DXCOLOR& color				: 色

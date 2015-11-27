@@ -41,11 +41,20 @@ typedef enum
 	CAMERA_STATE_MAX
 }CAMERA_STATE;
 
+typedef enum
+{
+	ADD_1 = 0,
+	ADD_5,
+	ADD_10,
+	ADD_20,
+}ADD_SCORE_STATE;
+
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
 class CameraObject;
 class CameraStateSpline;
+class Gage;
 class LightDirection;
 class ManagerPoint;
 class ManagerFireworks;
@@ -140,6 +149,9 @@ private:
 
 	//	スコアオブジェクト
 	ObjectScore* score;
+
+	//	ゲージオブジェクト
+	Gage* gage;
 
 	//	ポーズ時用背景
 	Object2D* pauseFrame;
@@ -296,6 +308,11 @@ private:
 	// Brief  : 花火打ち上げ処理
 	//==============================================================================
 	void LaunchFireworks();
+
+	//==============================================================================
+	// Brief  : シンクロゲージの加算処理処理
+	//==============================================================================
+	void AddGage(ADD_SCORE_STATE _state);
 
 	//==============================================================================
 	// Brief  : 点と円の当たり判定処理

@@ -50,6 +50,7 @@
 #include "../object/ObjectSky.h"
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectScore.h"
+#include "../system/gage/gage.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectWaterwheel.h"
 #include "../system/player/Player.h"
@@ -93,6 +94,7 @@ void SceneGame::InitializeSelf( void )
 	//----------------------------------------------------------
 	stringScore = nullptr;
 	score = nullptr;
+	gage = nullptr;
 	pauseFrame = nullptr;
 	stringReturn = nullptr;
 	stringStop = nullptr;
@@ -259,7 +261,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	// スカイドームの生成
 	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
 	Effect*	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.jpg" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
 	pObjectSky_ = new ObjectSky();
 	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 5000.0f, 1.0f, 1.0f );
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pEffectSkyReflect, pTexture );
@@ -460,7 +462,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 
 	//	スコアオブジェクト生成
-	pTexture = pArgument_->pTexture_->Get( _T( "common/number.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/number_white.png" ) );
 
 	score = new ObjectScore;
 	score->Initialize(0, 10);
@@ -477,6 +479,22 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	score->SetPosY(300.0f);
 
 	score->SetScoreFuture(123456789);
+
+
+
+	//	ゲージオブジェクト生成
+	gage = new Gage();
+	gage->Initialize(
+		pArgument_->pDevice_,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) ),
+		pArgument_->pTexture_->Get(_T("game/gageBar.png")),
+		pArgument_->pTexture_->Get(_T("game/gageBase.png")),
+		pArgument_->pTexture_->Get(_T("common/effect000.jpg")),
+		pArgument_->pTexture_->Get( _T( "common/number.png" ) ));
+
+	gage->setPosition(-540.0f, -270.0f, 0.0f);
 
 
 	//	ポーズ時用背景オブジェクト生成
@@ -653,6 +671,9 @@ int SceneGame::Finalize( void )
 
 	delete score;
 	score = nullptr;
+
+	delete gage;
+	gage = nullptr;
 
 	delete pauseFrame;
 	pauseFrame = nullptr;

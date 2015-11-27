@@ -149,7 +149,7 @@ public:
 	// Return : void								: ‚È‚µ
 	// Arg    : void								: ‚È‚µ
 	//==============================================================================
-	void burn(
+	int burn(
 		float _hitCheckOffset,
 		float _hitPosLength);
 

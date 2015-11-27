@@ -52,6 +52,7 @@
 #include "../object/ObjectScore.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectWaterwheel.h"
+#include "../system/gage/gage.h"
 #include "../system/player/Player.h"
 
 #include "../framework/system/ManagerDraw.h"
@@ -416,6 +417,9 @@ void SceneGame::normalUpdate(void)
 		MeasureTime("managerPoint");
 		managerPoint->Update();
 	}
+
+	//gage->addPercent(1.0f);
+	gage->Update();
 
 	//	プレイヤー移動処理
 	MovePlayer();
@@ -898,7 +902,9 @@ void SceneGame::collision_fireworks_target()
 			if(hitCheckPointCircle(buffFireworksPos, buffTargetPos, buffTargetSize, &hitPosLength) == true)
 			{
 				//	破裂
-				buffFireworks->burn(buffTargetSize * buffTargetSize, hitPosLength);
+				int returnValue = buffFireworks->burn(buffTargetSize * buffTargetSize, hitPosLength);
+
+				AddGage((ADD_SCORE_STATE)returnValue);
 
 				//	ターゲット消去
 				buffTarget->Dissappear();
@@ -957,6 +963,8 @@ void SceneGame::collision_fireworks_fireworks()
 				buffFireworks->burn2();
 				buffFireworks2->burn2();
 
+				AddGage(ADD_20);
+
 				//	次の花火との当たり判定へ移行
 				break;
 			}
@@ -990,3 +998,32 @@ bool SceneGame::hitCheckPointCircle(D3DXVECTOR3 _pointPos, D3DXVECTOR3 _circlePo
 
 	return false;
 }
+//==============================================================================
+// Brief  : シンクロゲージの加算処理処理
+//==============================================================================
+void SceneGame::AddGage(ADD_SCORE_STATE _state)
+{
+	switch(_state)
+	{
+	case ADD_1:
+		gage->addPercentFuture(1.0f);
+
+		break;
+
+	case ADD_5:
+		gage->addPercentFuture(5.0f);
+
+		break;
+
+	case ADD_10:
+		gage->addPercentFuture(10.0f);
+
+		break;
+
+	case ADD_20:
+		gage->addPercentFuture(20.0f);
+
+		break;
+	}
+}
+
