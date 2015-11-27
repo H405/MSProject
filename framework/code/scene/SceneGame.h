@@ -69,8 +69,11 @@ class PolygonMesh;
 class ObjectMesh;
 class ObjectSky;
 class ObjectBillboard;
+class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectWaterwheel;
+class ObjectWaveData;
+class ObjectWaveDataInitialize;
 class Player;
 
 class GraphicPoint;
@@ -138,8 +141,16 @@ private:
 	SceneGame( const SceneGame& );
 	SceneGame operator=( const SceneGame& );
 
+	static const int	COUNT_WATER_WHEEL;		// 水車の数
+	static const int	COUNT_HOUSE;			// 家の数
+	static const int	COUNT_BRIDGE;			// 橋の数
+	static const int	COUNT_GATE;				// 鳥居
+
 	CameraObject*		pCamera_;		// カメラ
 	LightDirection*		pLight_;		// ライト
+
+	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
+	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
 
 
 	//	ゲームUI関係
