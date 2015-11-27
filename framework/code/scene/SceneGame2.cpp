@@ -158,7 +158,7 @@ int SceneGame::Initialize2( void )
 	{
 		return result;
 	}
-	pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetPosition( 280.0f, -300.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetPosition( -500.0f, -305.0f, 0.0f );
 
 	// タイトルへ
 	Texture*	pTextureToTitle = nullptr;		// タイトルへテクスチャ
@@ -173,7 +173,7 @@ int SceneGame::Initialize2( void )
 	{
 		return result;
 	}
-	pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetPosition( 480.0f, -300.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetPosition( -220.0f, -305.0f, 0.0f );
 
 	// ランキング画像オブジェクトの生成
 	pObjectRanking_ = new Object2D[ IMAGE_RANKING_MAXIMUM ];

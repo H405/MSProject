@@ -48,7 +48,8 @@
 #include "../object/ObjectWaveDataInitialize.h"
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/EffectParameter.h"
-#include "../system/ManagerPoint.h"
+#include "../system/point/ManagerPoint.h"
+#include "../system/point/PointMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -187,7 +188,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	result = pPoint_->Initialize( 4096, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = pPoint_->Initialize( 4096, 8, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		return result;
@@ -570,11 +571,11 @@ void SceneSplash::Update( void )
 
 	// エフェクトの発生
 	pPoint_->Add( 20, positionPointR, D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ), 50.0f,
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, PointMain::STATE_ADD );
 	pPoint_->Add( 20, positionPointB, D3DXCOLOR( 0.25f, 0.25f, 1.0f, 1.0f ), 50.0f,
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, PointMain::STATE_ADD );
 	pPoint_->Add( 20, positionPointG, D3DXCOLOR( 0.25f, 1.0f, 0.25f, 1.0f ), 50.0f,
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, ManagerPoint::STATE_ADD );
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, PointMain::STATE_ADD );
 
 	// 点光源を有効にする
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_LBRACKET ) )

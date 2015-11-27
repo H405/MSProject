@@ -32,7 +32,7 @@
 #include "../framework/system/Fade.h"
 #include "../framework/system/Window.h"
 #include "../system/EffectParameter.h"
-#include "../system/ManagerPoint.h"
+#include "../system/point/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
 #include "../system/ManagerTarget.h"
 #include "../system/ManagerSceneMain.h"
@@ -268,7 +268,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 
 	//	仮のフィールド
-	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
+	pModel = pArgument_->pModel_->Get( _T( "Stagever.1.03.x" ) );
 	Material buffMat;
 	buffMat.specular_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	pModel->SetMaterial(0, buffMat);
@@ -278,7 +278,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	field = new ObjectModel();
 	field->Initialize(0);
 	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
-	field->SetScale(5.0f, 5.0f, 5.0f);
+//	field->SetScale(5.0f, 5.0f, 5.0f);
 	field->AddPositionY(-300.0f);
 
 	//	水車オブジェクトの生成
@@ -364,7 +364,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 25600, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 25600, 17, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;
@@ -488,7 +488,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pDevice_,
 		pArgument_->pEffectParameter_,
 		pEffect,
-		pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) ),
+		pArgument_->pEffect_->Get( _T( "Polygon2DAdd.fx" ) ),
 		pArgument_->pTexture_->Get(_T("game/gageBar.png")),
 		pArgument_->pTexture_->Get(_T("game/gageBase.png")),
 		pArgument_->pTexture_->Get(_T("common/effect000.jpg")),

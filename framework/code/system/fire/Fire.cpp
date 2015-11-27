@@ -12,7 +12,7 @@
 //******************************************************************************
 #include "Fire.h"
 #include "FireState.h"
-#include "../../system/ManagerPoint.h"
+#include "../../system/point/ManagerPoint.h"
 #include "../../framework/radianTable/radianTable.h"
 
 //******************************************************************************

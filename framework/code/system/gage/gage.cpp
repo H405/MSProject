@@ -165,6 +165,7 @@ int Gage::Initialize(
 //==============================================================================
 int Gage::Finalize( void )
 {
+	delete gageScore;
 	delete[] gageBar;
 	delete gageBase;
 	delete gageBack;

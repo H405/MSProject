@@ -106,6 +106,9 @@
     <Filter Include="ソース ファイル\system\gage">
       <UniqueIdentifier>{799f46a5-c428-4fdf-b91d-6b9d933097f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\point">
+      <UniqueIdentifier>{14cb9c72-a1d5-4e23-b6ca-7f70e1236c5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -360,9 +363,6 @@
     <ClInclude Include="code\framework\point\PointState.h">
       <Filter>ソース ファイル\framework\point</Filter>
     </ClInclude>
-    <ClInclude Include="code\system\ManagerPoint.h">
-      <Filter>ソース ファイル\system</Filter>
-    </ClInclude>
     <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h">
       <Filter>ソース ファイル\framework\polygon</Filter>
     </ClInclude>
@@ -578,6 +578,21 @@
     </ClInclude>
     <ClInclude Include="code\system\gage\gage.h">
       <Filter>ソース ファイル\system\gage</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\point\ManagerPoint.h">
+      <Filter>ソース ファイル\system\point</Filter>
+    </ClInclude>
+    <ClInclude Include="code\system\point\PointMain.h">
+      <Filter>ソース ファイル\system\point</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerDrawTexture.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicDrawTexture.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectDrawTexture.h">
+      <Filter>ソース ファイル\object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -830,9 +845,6 @@
     <ClCompile Include="code\framework\point\Point.cpp">
       <Filter>ソース ファイル\framework\point</Filter>
     </ClCompile>
-    <ClCompile Include="code\system\ManagerPoint.cpp">
-      <Filter>ソース ファイル\system</Filter>
-    </ClCompile>
     <ClCompile Include="code\object\ObjectBillboard.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
@@ -1052,6 +1064,21 @@
     <ClCompile Include="code\system\gage\gage.cpp">
       <Filter>ソース ファイル\system\gage</Filter>
     </ClCompile>
+    <ClCompile Include="code\system\point\ManagerPoint.cpp">
+      <Filter>ソース ファイル\system\point</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\point\PointMain.cpp">
+      <Filter>ソース ファイル\system\point</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerDrawTexture.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicDrawTexture.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectDrawTexture.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1136,6 +1163,12 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\Shadow.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\DrawTexture.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Polygon2DAdd.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

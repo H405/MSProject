@@ -11,7 +11,8 @@
 // インクルード
 //******************************************************************************
 #include "ObjectFire.h"
-#include "../system/ManagerPoint.h"
+#include "../system/point/ManagerPoint.h"
+#include "../system/point/PointMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -108,7 +109,7 @@ void ObjectFire::Update( void )
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ),
 			-2.0f,
-			ManagerPoint::STATE_ADD
+			PointMain::STATE_ADD
 			);
 }
 

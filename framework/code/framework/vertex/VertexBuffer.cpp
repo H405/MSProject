@@ -10,8 +10,8 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "VertexBuffer.h"
 #include "Vertex.h"
+#include "VertexBuffer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -120,6 +120,23 @@ int VertexBuffer::Copy( VertexBuffer* pOut ) const
 {
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 頂点バッファの統合
+// Return : void								: なし
+// Arg    : int index							: 番号
+// Arg    : const VertexBuffer& buffer			: 頂点バッファ
+// Arg    : int count							: 個数
+//==============================================================================
+void VertexBuffer::Merge( int index, const VertexBuffer& buffer, int count )
+{
+	// 設定するための情報を取得
+	int		sizeItem;		// 構造体のサイズ
+	sizeItem = pVertex_->GetSize();
+
+	// 頂点バッファの統合
+	memcpy_s( &pBuffer_[ sizeItem * index ], size_, buffer.pBuffer_, sizeItem * count );
 }
 
 //==============================================================================
@@ -1118,6 +1135,24 @@ void VertexBuffer::SetSampler( int index, float value )
 {
 	// バッファに設定
 	SetToBuffer( index, Vertex::TYPE_SAMPLER, &value, sizeof( float ) );
+}
+
+//==============================================================================
+// Brief  : ポイントスプライト専用設定
+// Return : void								: なし
+// Arg    : int index							: 番号
+// Arg    : const D3DXVECTOR3& position			: 座標
+// Arg    : const D3DCOLORVALUE& color			: 色
+// Arg    : float size							: サイズ
+//==============================================================================
+void VertexBuffer::SetValueForPoint( int index, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size )
+{
+	// バッファに設定
+	*(float*)(&pBuffer_[ 20 * index +  0 ]) = position.x;
+	*(float*)(&pBuffer_[ 20 * index +  4 ]) = position.y;
+	*(float*)(&pBuffer_[ 20 * index +  8 ]) = position.z;
+	*(float*)(&pBuffer_[ 20 * index + 12 ]) = size;
+	*(D3DCOLOR*)(&pBuffer_[ 20 * index + 16 ]) = color;
 }
 
 //==============================================================================

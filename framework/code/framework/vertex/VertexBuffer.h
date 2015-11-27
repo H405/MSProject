@@ -82,6 +82,25 @@ public:
 	int Copy( VertexBuffer* pOut ) const;
 
 	//==============================================================================
+	// Brief  : 頂点バッファの統合
+	// Return : void								: なし
+	// Arg    : int index							: 番号
+	// Arg    : const VertexBuffer& buffer			: 頂点バッファ
+	// Arg    : int count							: 個数
+	//==============================================================================
+	void Merge( int index, const VertexBuffer& buffer, int count );
+
+	//==============================================================================
+	// Brief  : ポイントスプライト専用設定
+	// Return : void								: なし
+	// Arg    : int index							: 番号
+	// Arg    : const D3DXVECTOR3& position			: 座標
+	// Arg    : const D3DCOLORVALUE& color			: 色
+	// Arg    : float size							: サイズ
+	//==============================================================================
+	void SetValueForPoint( int index, const D3DXVECTOR3& position, const D3DXCOLOR& color, float size );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	void* GetBuffer( void ) const;

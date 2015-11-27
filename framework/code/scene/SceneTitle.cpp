@@ -43,7 +43,7 @@
 #include "../object/ObjectSky.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../framework/polygon/PolygonMesh.h"
-#include "../system/ManagerPoint.h"
+#include "../system/point/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
 #include "../system/fire/Fire.h"
 
@@ -251,7 +251,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 10000, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 10000, 16, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;
