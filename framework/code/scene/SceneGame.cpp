@@ -38,8 +38,6 @@
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 #include "../system/fire/Fire.h"
-
-// テスト
 #include "../graphic/graphic/Graphic2D.h"
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/Object2D.h"
@@ -417,9 +415,6 @@ void SceneGame::normalUpdate(void)
 		MeasureTime("managerPoint");
 		managerPoint->Update();
 	}
-
-	//gage->addPercent(1.0f);
-	gage->Update();
 
 	//	プレイヤー移動処理
 	MovePlayer();

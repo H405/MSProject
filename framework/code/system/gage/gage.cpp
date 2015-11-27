@@ -46,7 +46,7 @@ static const D3DXCOLOR gageColor[3] =
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Gage::Gage( void )
+Gage::Gage( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -100,6 +100,15 @@ int Gage::Initialize(
 	Texture* pGageBack,
 	Texture* pGageScore)
 {
+	// 基本クラスの処理
+	int		result;		// 実行結果
+	result = Object::Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+
 	//	100%の時用の背景
 	gageBack = new Object2D();
 	gageBack->Initialize(0);
@@ -170,6 +179,16 @@ int Gage::Finalize( void )
 	delete gageBase;
 	delete gageBack;
 
+
+	// 基本クラスの処理
+	int		result;		// 実行結果
+	result = Object::Finalize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+
 	// クラス内の初期化処理
 	InitializeSelf();
 
@@ -230,6 +249,9 @@ void Gage::Update( void )
 	barNumOld = barNum;
 }
 
+//==============================================================================
+// Brief  : 位置セット処理
+//==============================================================================
 void Gage::setPosition(float _x, float _y, float _z)
 {
 	gageBack->SetPosition(_x, _y, _z);
@@ -242,4 +264,7 @@ void Gage::setPosition(float _x, float _y, float _z)
 	{
 		gageBar[count].SetPosition(_x, _y, _z);
 	}
+
+	// 基本クラスの処理
+	ObjectMovement::Update();
 }
