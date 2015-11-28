@@ -100,8 +100,8 @@ int ObjectWaterwheel::Initialize(
 	wheel->SetRotationY(_rotY);
 
 
-	stand->SetScale(70.0f, 70.0f, 70.0f);
-	wheel->SetScale(70.0f, 70.0f, 70.0f);
+	stand->SetScale(170.0f, 170.0f, 170.0f);
+	wheel->SetScale(170.0f, 170.0f, 170.0f);
 
 
 	// ³íI—¹

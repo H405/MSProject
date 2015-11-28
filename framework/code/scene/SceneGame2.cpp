@@ -303,6 +303,10 @@ void SceneGame::InitializeSelf2( void )
 	indexRank_ = 0;
 	pObjectRanking_ = nullptr;
 	pObjectScoreRanking_ = nullptr;
+
+#ifdef _DEVELOP
+	timerPointTest_ = -1;
+#endif
 }
 
 //==============================================================================

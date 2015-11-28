@@ -16,7 +16,7 @@ float3		waveAdd_;			// 波の追加情報
 
 const float	sizeTextureHalf_ = 128.0f;		// テクスチャの半分のサイズ
 const float	offset_ = 1.0f / 256.0f;		// オフセット
-const float	powerSpring_ = 0.5f;			// ばねの強さ
+const float	powerSpring_ = 0.4f;			// ばねの強さ
 
 //******************************************************************************
 // サンプリング

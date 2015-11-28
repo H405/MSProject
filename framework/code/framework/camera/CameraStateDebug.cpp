@@ -215,11 +215,15 @@ void CameraStateDebug::Update( CameraObject* pCamera )
 	positionPreviousY_ = positionMouseY;
 
 	// マニュアル
+	D3DXVECTOR3	vectorCamera;		// 視線ベクトル
+	pCamera->GetVector( &vectorCamera );
+	D3DXVec3Normalize( &vectorCamera, &vectorCamera );
 	PrintDebug( "*--------------------------------------*\n" );
 	PrintDebug( "| デバッグ用カメラ                     |\n" );
 	PrintDebug( "*--------------------------------------*\n" );
 	PrintDebug( "視点の座標       ： ( %11.6f, %11.6f, %11.6f )\n", pCamera->GetPositionCameraX(), pCamera->GetPositionCameraY(), pCamera->GetPositionCameraZ() );
 	PrintDebug( "注視点の座標     ： ( %11.6f, %11.6f, %11.6f )\n", pCamera->GetPositionLookAtX(), pCamera->GetPositionLookAtY(), pCamera->GetPositionLookAtZ() );
+	PrintDebug( "視線ベクトル     ： ( %11.6f, %11.6f, %11.6f )\n", vectorCamera.x, vectorCamera.y, vectorCamera.z );
 	PrintDebug( "左ドラッグ       ： 上/下/左/右 移動\n" );
 	PrintDebug( "ホイール         ： 前/後       移動\n" );
 	PrintDebug( "右ドラッグ       ： 上/下/左/右 回転\n" );

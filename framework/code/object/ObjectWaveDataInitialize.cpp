@@ -138,7 +138,7 @@ void ObjectWaveDataInitialize::Update( void )
 {
 	// グラフィックの管理
 	++timerGraphic_;
-	if( timerGraphic_ > 1 )
+	if( timerGraphic_ > 2 )
 	{
 		pGraphic_->SetIsEnable( false );
 	}

@@ -70,8 +70,6 @@ void SceneArgumentMain::InitializeSelf( void )
 	pSound_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;
-	pTextureHeightWave0_ = nullptr;
-	pTextureHeightWave1_ = nullptr;
 	pTextureNormalWave_ = nullptr;
 	pTextureReflect_ = nullptr;
 	pTextureReflectNotLight_ = nullptr;

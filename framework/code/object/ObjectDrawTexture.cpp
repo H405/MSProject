@@ -150,13 +150,13 @@ void ObjectDrawTexture::Update( void )
 		--indexTexture_;
 		if( indexTexture_ < 0 )
 		{
-			indexTexture_ = countTexture_;
+			indexTexture_ = countTexture_ - 1;
 		}
 	}
 	else if( pKeyboard_->IsTrigger( DIK_F8 ) )
 	{
 		++indexTexture_;
-		if( indexTexture_ > countTexture_ )
+		if( indexTexture_ >= countTexture_ )
 		{
 			indexTexture_ = 0;
 		}
@@ -171,7 +171,7 @@ void ObjectDrawTexture::Update( void )
 
 	// 描画クラスの有効設定
 	bool	isEnableGraphic;		// 描画クラスの有効フラグ
-	if( isEnableDraw_ && indexTexture_ != countTexture_ )
+	if( isEnableDraw_ && indexTexture_ != countTexture_ - 1 )
 	{
 		isEnableGraphic = true;
 	}
@@ -198,10 +198,10 @@ int ObjectDrawTexture::CreateGraphic( int priority, const EffectParameter* pPara
 {
 	// メンバ変数の設定
 	countTexture_ = countTexture;
-	indexTexture_ = countTexture;
+	indexTexture_ = countTexture - 1;
 
 	// テクスチャテーブルの生成
-	ppTableTexture_ = new IDirect3DTexture9*[ countTexture + 1 ];
+	ppTableTexture_ = new IDirect3DTexture9*[ countTexture ];
 	if( ppTableTexture_ == nullptr )
 	{
 		return 1;
@@ -210,7 +210,6 @@ int ObjectDrawTexture::CreateGraphic( int priority, const EffectParameter* pPara
 	{
 		ppTableTexture_[ counterTexture ] = ppTexture[ counterTexture ];
 	}
-	ppTableTexture_[ countTexture ] = nullptr;
 
 	// グラフィックの生成
 	int		result;				// 実行結果

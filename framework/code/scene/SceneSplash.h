@@ -43,8 +43,6 @@ class ObjectModelMaterial;
 class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectSky;
-class ObjectWaveData;
-class ObjectWaveDataInitialize;
 
 //******************************************************************************
 // クラス定義
@@ -124,8 +122,6 @@ private:
 	ObjectModelMaterial*		pObjectModelMaterial_;			// テクスチャなしモデル
 	ObjectBillboard*			pObjectBoard_;					// ビルボード
 	ObjectSkinMesh*				pObjectSkinMesh_;				// スキンメッシュ
-	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
-	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
 	ObjectRiver*				pObjectRiver_;					// 川
 
 	int							timerLight_;					// ライト用タイマー

@@ -196,13 +196,16 @@ void ObjectSkinMesh::Update( void )
 	}
 
 	// ƒtƒŒ[ƒ€‚ği‚ß‚é
-	++indexFrame_;
-	if( static_cast< unsigned int >( indexFrame_ ) >= ppTableMotion_[ indexMotionCurrent_ ]->GetCountFrame() )
+	if( countMotion_ > 0 )
 	{
-		indexFrame_ = 0;
-		if( indexMotionNext_ >= 0 )
+		++indexFrame_;
+		if( static_cast< unsigned int >( indexFrame_ ) >= ppTableMotion_[ indexMotionCurrent_ ]->GetCountFrame() )
 		{
-			indexMotionCurrent_ = indexMotionNext_;
+			indexFrame_ = 0;
+			if( indexMotionNext_ >= 0 )
+			{
+				indexMotionCurrent_ = indexMotionNext_;
+			}
 		}
 	}
 

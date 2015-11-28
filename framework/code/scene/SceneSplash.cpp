@@ -44,8 +44,6 @@
 #include "../object/ObjectRiver.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectSky.h"
-#include "../object/ObjectWaveData.h"
-#include "../object/ObjectWaveDataInitialize.h"
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/EffectParameter.h"
 #include "../system/point/ManagerPoint.h"
@@ -283,47 +281,6 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_->SetPosition( -100.0f, 0.0f, 100.0f );
 
-	// 波情報描画オブジェクトの生成
-	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
-	pObjectWaveData_ = new ObjectWaveData();
-	if( pObjectWaveData_ == nullptr )
-	{
-		return 1;
-	}
-	result = pObjectWaveData_->Initialize( 0 );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pEffectWaveData = pArgument->pEffect_->Get( _T( "WaveData.fx" ) );
-	result = pObjectWaveData_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveData,
-		pArgument->pTextureHeightWave0_, pArgument->pTextureHeightWave1_ );
-	if( result != 0 )
-	{
-		return result;
-	}
-
-	// 波情報初期化オブジェクトの生成
-	Effect*		pEffectWaveDataInitialize = nullptr;		// 波情報初期化エフェクト
-	Texture*	pTextureWaveDataInitialize = nullptr;		// 波情報初期化テクスチャ
-	pObjectWaveDataInitialize_ = new ObjectWaveDataInitialize();
-	if( pObjectWaveDataInitialize_ == nullptr )
-	{
-		return 1;
-	}
-	result = pObjectWaveDataInitialize_->Initialize( 0 );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pEffectWaveDataInitialize = pArgument->pEffect_->Get( _T( "WaveDataInitialize.fx" ) );
-	pTextureWaveDataInitialize = pArgument->pTexture_->Get( _T( "common/wave_initialize.dds" ) );
-	result = pObjectWaveDataInitialize_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveDataInitialize, pTextureWaveDataInitialize );
-	if( result != 0 )
-	{
-		return result;
-	}
-
 	// 川の生成
 	Effect*	pEffectRiver = nullptr;		// エフェクト
 	Model*	pModelRiver = nullptr;		// モデル
@@ -337,8 +294,8 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	}
 	pObjectRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver, pArgument->pTextureNormalWave_,
 		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
-	pObjectRiver_->SetPositionY( 10.0f );
-	pArgument->pEffectParameter_->SetHeightReflect( 10.0f );
+	pObjectRiver_->SetPositionY( 5.0f );
+	pArgument->pEffectParameter_->SetHeightReflect( 5.0f );
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -357,14 +314,6 @@ int SceneSplash::Finalize( void )
 	// 川の開放
 	delete pObjectRiver_;
 	pObjectRiver_ = nullptr;
-
-	// 波情報初期化オブジェクトの開放
-	delete pObjectWaveDataInitialize_;
-	pObjectWaveDataInitialize_ = nullptr;
-
-	// 波情報描画オブジェクトの開放
-	delete pObjectWaveData_;
-	pObjectWaveData_ = nullptr;
 
 	// スキンメッシュの開放
 	delete pObjectSkinMesh_;
@@ -650,8 +599,6 @@ void SceneSplash::InitializeSelf( void )
 	pObjectModelMaterial_ = nullptr;
 	pObjectBoard_ = nullptr;
 	pObjectSkinMesh_ = nullptr;
-	pObjectWaveData_ = nullptr;
-	pObjectWaveDataInitialize_ = nullptr;
 	pObjectRiver_ = nullptr;
 	timerLight_ = 0;
 	countLight_ = 0;

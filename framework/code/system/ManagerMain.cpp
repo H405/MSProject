@@ -53,6 +53,8 @@
 #include "../object/ObjectMerge.h"
 #include "../object/ObjectPostEffect.h"
 #include "../object/ObjectShadow.h"
+#include "../object/ObjectWaveData.h"
+#include "../object/ObjectWaveDataInitialize.h"
 #include "../system/EffectParameter.h"
 
 //******************************************************************************
@@ -535,6 +537,48 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	GraphicMain::SetPolygonBillboard( pPolygonBillboard_ );
 
+	// 波情報描画オブジェクトの生成
+	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
+	pObjectWaveData_ = new ObjectWaveData();
+	if( pObjectWaveData_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveData_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveData = pEffect_->Get( _T( "WaveData.fx" ) );
+	result = pObjectWaveData_->CreateGraphic( 0, pEffectParameter_, pEffectWaveData,
+		pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_HEIGHT, 0 ),
+		pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_HEIGHT, 1 ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 波情報初期化オブジェクトの生成
+	Effect*		pEffectWaveDataInitialize = nullptr;		// 波情報初期化エフェクト
+	Texture*	pTextureWaveDataInitialize = nullptr;		// 波情報初期化テクスチャ
+	pObjectWaveDataInitialize_ = new ObjectWaveDataInitialize();
+	if( pObjectWaveDataInitialize_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectWaveDataInitialize_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectWaveDataInitialize = pEffect_->Get( _T( "WaveDataInitialize.fx" ) );
+	pTextureWaveDataInitialize = pTexture_->Get( _T( "common/wave_initialize.dds" ) );
+	result = pObjectWaveDataInitialize_->CreateGraphic( 0, pEffectParameter_, pEffectWaveDataInitialize, pTextureWaveDataInitialize );
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// 影オブジェクトの生成
 	Effect*	pEffectShadow = nullptr;		// 影エフェクト
 	pObjectShadow_ = new ObjectShadow();
@@ -704,7 +748,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	for( int counterPass = 0; counterPass < GraphicMain::PASS_MAX; ++counterPass )
+	for( int counterPass = 0; counterPass < GraphicMain::PASS_MAX - 1; ++counterPass )
 	{
 		int		countTextureInPass;		// パスのテクスチャ数
 		countTextureInPass = pRenderPass_[ counterPass ].GetCountRenderTarget();
@@ -763,8 +807,6 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pArgument_->pSound_ = pSound_;
 	pArgument_->pDraw_ = pDraw_;
 	pArgument_->pUpdate_ = pUpdate_;
-	pArgument_->pTextureHeightWave0_ = pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_HEIGHT, 0 );
-	pArgument_->pTextureHeightWave1_ = pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_HEIGHT, 1 );
 	pArgument_->pTextureNormalWave_ = pRenderPass_[ GraphicMain::PASS_WAVE_DATA ].GetTexture( GraphicMain::RENDER_PASS_WAVE_DATA_NORMAL );
 	pArgument_->pTextureReflect_ = pRenderPass_[ GraphicMain::PASS_LIGHT_REFLECT ].GetTexture( GraphicMain::RENDER_PASS_LIGHT_REFLECT_COLOR );
 	pArgument_->pTextureReflectNotLight_ = pRenderPass_[ GraphicMain::PASS_REFLECT_NOT_LIGHT ].GetTexture( GraphicMain::RENDER_PASS_REFLECT_NOT_LIGHT_COLOR );
@@ -813,6 +855,14 @@ int ManagerMain::Finalize( void )
 	delete pObjectDrawTexture_;
 	pObjectDrawTexture_ = nullptr;
 #endif
+
+	// 波情報初期化オブジェクトの開放
+	delete pObjectWaveDataInitialize_;
+	pObjectWaveDataInitialize_ = nullptr;
+
+	// 波情報描画オブジェクトの開放
+	delete pObjectWaveData_;
+	pObjectWaveData_ = nullptr;
 
 	// 影オブジェクトの開放
 	delete pObjectShadow_;
@@ -1124,6 +1174,8 @@ void ManagerMain::InitializeSelf( void )
 	pObjectMerge_ = nullptr;
 	pObjectPostEffect_ = nullptr;
 	pObjectShadow_ = nullptr;
+	pObjectWaveData_ = nullptr;
+	pObjectWaveDataInitialize_ = nullptr;
 	pDraw_ = nullptr;
 	pUpdate_ = nullptr;
 	pRenderPass_ = nullptr;

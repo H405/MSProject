@@ -72,8 +72,6 @@ class ObjectBillboard;
 class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectWaterwheel;
-class ObjectWaveData;
-class ObjectWaveDataInitialize;
 class Player;
 
 class GraphicPoint;
@@ -141,16 +139,10 @@ private:
 	SceneGame( const SceneGame& );
 	SceneGame operator=( const SceneGame& );
 
-	static const int	COUNT_WATER_WHEEL;		// 水車の数
-	static const int	COUNT_HOUSE;			// 家の数
-	static const int	COUNT_BRIDGE;			// 橋の数
-	static const int	COUNT_GATE;				// 鳥居
+	static const int	COUNT_HOUSE = 11;		// 家の数
 
 	CameraObject*		pCamera_;		// カメラ
 	LightDirection*		pLight_;		// ライト
-
-	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
-	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
 
 
 	//	ゲームUI関係
@@ -208,19 +200,16 @@ private:
 	//	ゲーム用ステージ・３Dオブジェクト関係
 	//----------------------------------------------------------
 
-	ObjectSky*			pObjectSky_;	// スカイドーム
+	ObjectSky*				pSky_;				// 空
+	ObjectRiver*			pRiver_;			// 川
+	ObjectModel*			pField_;			// 地形
 
-	//	水車オブジェクト
-	ObjectWaterwheel* waterWheel[3];
+	ObjectModelMaterial*	pBridge_;			// 橋
+	ObjectWaterwheel*		pWaterwheel_;		// 水車
+	ObjectModelMaterial*	pHouse_;			// 家
+	ObjectModelMaterial*	pGate_;				// 鳥居
 
-	//	家
-	ObjectModelMaterial* house[3];
-
-	//	橋
-	ObjectModelMaterial* bridge;
-
-	//	フィールド
-	ObjectModel* field;
+	ObjectSkinMesh*			pMarker_;			// 場所の目印
 
 	//	プレイヤー
 	Player* player;
@@ -420,6 +409,10 @@ private:
 	int					indexRank_;							// ランクの番号
 	Object2D*			pObjectRanking_;					// ランキング画像オブジェクト
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
+
+#ifdef _DEVELOP
+	int					timerPointTest_;					// ポイントライトテストタイマー
+#endif
 
 	int Initialize2( void );
 	int Finalize2( void );

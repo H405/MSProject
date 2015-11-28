@@ -344,11 +344,15 @@ int ManagerModel< TypeItem >::LoadModelX( TCHAR* pPath, int index, unsigned long
 	{
 		// 頂点情報を作成
 		Vertex	vertex;		// 頂点情報
-		vertex.Initialize( pDevice_, elementVertex );
+		result = vertex.Initialize( pDevice_, elementVertex );
+		if( result != 0 )
+		{
+			return result;
+		}
 
 		// メッシュ情報を変換
 		ID3DXMesh*	pMeshNew = nullptr;		// 新しいメッシュ
-		result = pMesh->CloneMesh( D3DXMESH_SYSTEMMEM, vertex.GetElement(), pDevice_, &pMeshNew );
+		result = pMesh->CloneMesh( pMesh->GetOptions(), vertex.GetElement(), pDevice_, &pMeshNew );
 		if( result != 0 )
 		{
 			return result;

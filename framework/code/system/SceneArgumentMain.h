@@ -96,8 +96,6 @@ public:
 	ManagerDraw< Graphic >*		pDraw_;							// 描画管理クラス
 	ManagerUpdate< Object >*	pUpdate_;						// 更新管理クラス
 
-	IDirect3DTexture9*			pTextureHeightWave0_;			// 波の高さテクスチャ0
-	IDirect3DTexture9*			pTextureHeightWave1_;			// 波の高さテクスチャ1
 	IDirect3DTexture9*			pTextureNormalWave_;			// 波の法線テクスチャ
 	IDirect3DTexture9*			pTextureReflect_;				// 反射テクスチャ
 	IDirect3DTexture9*			pTextureReflectNotLight_;		// 反射ライティングなしテクスチャ

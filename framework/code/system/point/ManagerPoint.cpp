@@ -198,7 +198,6 @@ int ManagerPoint::Initialize( int maximumItem, int countThread, IDirect3DDevice9
 		EnterCriticalSection( &criticalSectionFinish_ );
 		indexDebug = countThreadFinish_;
 		LeaveCriticalSection( &criticalSectionFinish_ );
-		PrintDebugWnd( _T( "Create %2d\n" ), indexDebug );
 	}
 
 	// 正常終了
@@ -490,7 +489,6 @@ unsigned int _stdcall ManagerPoint::UpdateBuffer( LPVOID pParameter )
 	pManagerPoint->countThreadFinish_ = -1;
 	LeaveCriticalSection( &pManagerPoint->criticalSectionFinish_ );
 	SuspendThread( pManagerPoint->pHandleThread_[ index ] );
-	PrintDebugWnd( _T( "Save Index %2d\n" ), index );
 
 	// 更新ループ
 	bool	needsUpdate;		// 更新フラグ

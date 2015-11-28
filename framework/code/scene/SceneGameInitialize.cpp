@@ -38,8 +38,7 @@
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
 #include "../system/fire/Fire.h"
-#include "../object/ObjectWaveData.h"
-#include "../object/ObjectWaveDataInitialize.h"
+#include "../object/ObjectRiver.h"
 
 // テスト
 #include "../graphic/graphic/Graphic2D.h"
@@ -92,9 +91,6 @@ void SceneGame::InitializeSelf( void )
 	pCamera_ = nullptr;
 	pLight_ = nullptr;
 
-	pObjectWaveData_ = nullptr;
-	pObjectWaveDataInitialize_ = nullptr;
-
 	//	ゲームUI関係
 	//----------------------------------------------------------
 	stringScore = nullptr;
@@ -120,16 +116,16 @@ void SceneGame::InitializeSelf( void )
 
 	//	ゲーム用ステージ・３Dオブジェクト関係
 	//----------------------------------------------------------
-	pObjectSky_ = nullptr;
-	waterWheel[0] = nullptr;
-	waterWheel[1] = nullptr;
-	waterWheel[2] = nullptr;
-	house[0] = nullptr;
-	house[1] = nullptr;
-	house[2] = nullptr;
+	pSky_ = nullptr;
+	pRiver_ = nullptr;
+	pField_ = nullptr;
 
-	bridge = nullptr;
-	field = nullptr;
+	pBridge_ = nullptr;
+	pWaterwheel_ = nullptr;
+	pHouse_ = nullptr;
+	pGate_ = nullptr;
+
+	pMarker_ = nullptr;
 
 	player = nullptr;
 
@@ -195,9 +191,9 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetWidth(),
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
-		10000.0f,
-		D3DXVECTOR3( 0.0f, 120.0f, -2400.0f ),
-		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
+		20000.0f,
+		D3DXVECTOR3( 1000.0f, 590.0f, 5760.0f ),
+		D3DXVECTOR3( 760.0f, -20.0f, 3380.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
 
@@ -208,48 +204,19 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	{
 		return 1;
 	}
-	pLight_->Set( D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( 0.0f, -0.7f, 0.7f ) );
-
-	// 波情報描画オブジェクトの生成
-	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
-	pObjectWaveData_ = new ObjectWaveData();
-	if( pObjectWaveData_ == nullptr )
-	{
-		return 1;
-	}
-	result = pObjectWaveData_->Initialize( 0 );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pEffectWaveData = pArgument->pEffect_->Get( _T( "WaveData.fx" ) );
-	result = pObjectWaveData_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveData,
-		pArgument->pTextureHeightWave0_, pArgument->pTextureHeightWave1_ );
-	if( result != 0 )
-	{
-		return result;
-	}
-
-	// 波情報初期化オブジェクトの生成
-	Effect*		pEffectWaveDataInitialize = nullptr;		// 波情報初期化エフェクト
-	Texture*	pTextureWaveDataInitialize = nullptr;		// 波情報初期化テクスチャ
-	pObjectWaveDataInitialize_ = new ObjectWaveDataInitialize();
-	if( pObjectWaveDataInitialize_ == nullptr )
-	{
-		return 1;
-	}
-	result = pObjectWaveDataInitialize_->Initialize( 0 );
-	if( result != 0 )
-	{
-		return result;
-	}
-	pEffectWaveDataInitialize = pArgument->pEffect_->Get( _T( "WaveDataInitialize.fx" ) );
-	pTextureWaveDataInitialize = pArgument->pTexture_->Get( _T( "common/wave_initialize.dds" ) );
-	result = pObjectWaveDataInitialize_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectWaveDataInitialize, pTextureWaveDataInitialize );
-	if( result != 0 )
-	{
-		return result;
-	}
+	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, -1.0f ) );
+#if 0
+	// 影用カメラの設定
+	CameraObject*	pCameraShadow = nullptr;		// 影用カメラ
+	D3DXVECTOR3		vectorLight;					// ライトベクトル
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -3500.0f;
+	pCameraShadow = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCameraShadow->Set( D3DX_PI / 4.0f, 8 * pArgument->pWindow_->GetWidth(), 8 * pArgument->pWindow_->GetHeight(), 0.1f, 7000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
+#endif
+	// 環境光の設定
+	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
 
 
@@ -296,92 +263,135 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 {
-	//	オブジェクトの生成開始
-	Effect*		pEffect = nullptr;
-	Effect*		pEffectReflect = nullptr;
-	Effect*		pEffectShadow = nullptr;
-	Texture*	pTexture = nullptr;
-	Model*		pModel = nullptr;
-
-
 	// スカイドームの生成
-	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
-	Effect*	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
-	pObjectSky_ = new ObjectSky();
-	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 5000.0f, 1.0f, 1.0f );
-	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pEffectSkyReflect, pTexture );
+	Texture*	pTextureSky = nullptr;				// テクスチャ
+	Effect*		pEffectSkyGeneral = nullptr;		// 通常描画エフェクト
+	Effect*		pEffectSkyReflect = nullptr;		// 反射描画エフェクト
+	pTextureSky = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
+	pEffectSkyGeneral = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
+	pSky_ = new ObjectSky();
+	pSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 11500.0f, 1.0f, 1.0f );
+	pSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSkyGeneral, pEffectSkyReflect, pTextureSky );
 
+	// 川の生成
+	Model*	pModelRiver = nullptr;		// モデル
+	Effect*	pEffectRiver = nullptr;		// エフェクト
+	pModelRiver = pArgument->pModel_->Get( _T( "river_ver103_04.x" ), Vertex::ELEMENT_SET_NORMAL_MAP );
+	pEffectRiver = pArgument->pEffect_->Get( "Water.fx" );
+	pRiver_ = new ObjectRiver();
+	pRiver_->Initialize( 0 );
+	pRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver, pArgument->pTextureNormalWave_,
+		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
+	pRiver_->SetPositionY( -100.0f );
+	pArgument->pEffectParameter_->SetHeightReflect( -100.0f );
 
-	//	仮のフィールド
-	pModel = pArgument_->pModel_->Get( _T( "Stagever.1.03.x" ) );
-	Material buffMat;
-	buffMat.specular_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pModel->SetMaterial(0, buffMat);
-	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
-	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
-	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
-	field = new ObjectModel();
-	field->Initialize(0);
-	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
-//	field->SetScale(5.0f, 5.0f, 5.0f);
-	field->AddPositionY(-300.0f);
+	// 地形の生成
+	Model*	pModelField = nullptr;				// モデル
+	Effect*	pEffectFieldGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectFieldReflect = nullptr;		// 反射エフェクト
+	Effect*	pEffectFieldShadow = nullptr;		// 影エフェクト
+	pModelField = pArgument->pModel_->Get( _T( "Stagever.1.03.x" ) );
+	pEffectFieldGeneral = pArgument->pEffect_->Get( "Model.fx" );
+	pEffectFieldReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
+	pEffectFieldShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
+	pField_ = new ObjectModel();
+	pField_->Initialize( 0 );
+	pField_->CreateGraphic( 0, pModelField, pArgument->pEffectParameter_, pEffectFieldGeneral, pEffectFieldReflect, pEffectFieldShadow );
+	pField_->SetPositionY( -400.0f );
+	pField_->SetScale( 2.0f, 2.0f, 2.0f );
 
-	//	水車オブジェクトの生成
-	waterWheel[0] = new ObjectWaterwheel;
-	waterWheel[0]->Initialize(
-		D3DXVECTOR3(-2500.0f, 200.0f, -300.0f),
-		DEG_TO_RAD(90),
-		0.001f,
-		pArgument);
+	// 橋の生成
+	Model*	pModelBridge = nullptr;				// モデル
+	Effect*	pEffectBridgeGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectBridgeReflect = nullptr;		// 反射エフェクト
+	pModelBridge = pArgument->pModel_->Get( _T( "bridge.x" ) );
+	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
+	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pBridge_ = new ObjectModelMaterial();
+	pBridge_->Initialize( 0 );
+	pBridge_->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect );
+	pBridge_->SetPosition( 1558.0f, 460.0f, -2240.0f );
+	pBridge_->SetRotationY( DEG_TO_RAD( 101.0f ) );
+	pBridge_->SetScale( 285.0f, 285.0f, 285.0f );
 
-	waterWheel[1] = new ObjectWaterwheel;
-	waterWheel[1]->Initialize(
-		D3DXVECTOR3(-2500.0f, 200.0f, -900.0f),
-		DEG_TO_RAD(90),
-		0.001f,
-		pArgument);
+	// 水車の生成
+	pWaterwheel_ = new ObjectWaterwheel();
+	pWaterwheel_->Initialize( D3DXVECTOR3( 110.0f, 230.0f, 3780.0f ), DEG_TO_RAD( 74 ), -0.001f, pArgument );
 
-	waterWheel[2] = new ObjectWaterwheel;
-	waterWheel[2]->Initialize(
-		D3DXVECTOR3(-2500.0f, 200.0f, -1500.0f),
-		DEG_TO_RAD(90),
-		0.001f,
-		pArgument);
+	// 家の生成
+	Model*	pModelHouse = nullptr;				// モデル
+	Effect*	pEffectHouseGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectHouseReflect = nullptr;		// 反射エフェクト
+	pModelHouse = pArgument->pModel_->Get( _T( "house_002.x" ) );
+	pEffectHouseGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
+	pEffectHouseReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pHouse_ = new ObjectModelMaterial[ COUNT_HOUSE ];
+	for( int counterHouse = 0; counterHouse < COUNT_HOUSE; ++counterHouse )
+	{
+		pHouse_[ counterHouse ].Initialize( 0 );
+		pHouse_[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect );
+		pHouse_[ counterHouse ].SetScale( 300.0f, 300.0f, 300.0f );
+	}
+	pHouse_[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
+	pHouse_[ 0 ].SetRotationY( DEG_TO_RAD( 254.0f ) );
+	pHouse_[ 0 ].SetScale( 150.0f, 150.0f, 150.0f );
+	pHouse_[ 1 ].SetPosition( -3700.0f, 0.0f, 2480.0f );
+	pHouse_[ 1 ].SetRotationY( DEG_TO_RAD( 252.0f ) );
+	pHouse_[ 2 ].SetPosition( -3120.0f, 0.0f, 1010.0f );
+	pHouse_[ 2 ].SetRotationY( DEG_TO_RAD( 243.0f ) );
+	pHouse_[ 3 ].SetPosition( -2030.0f, 0.0f, -750.0f );
+	pHouse_[ 3 ].SetRotationY( DEG_TO_RAD( 222.0f ) );
+	pHouse_[ 4 ].SetPosition( -1880.0f, 0.0f, 3160.0f );
+	pHouse_[ 4 ].SetRotationY( DEG_TO_RAD( 51.0f ) );
+	pHouse_[ 5 ].SetPosition( 3500.0f, 0.0f, 5500.0f );
+	pHouse_[ 5 ].SetRotationY( DEG_TO_RAD( 58.0f ) );
+	pHouse_[ 6 ].SetPosition( 4260.0f, 0.0f, 3650.0f );
+	pHouse_[ 6 ].SetRotationY( DEG_TO_RAD( 76.0f ) );
+	pHouse_[ 7 ].SetPosition( 4460.0f, 0.0f, 1610.0f );
+	pHouse_[ 7 ].SetRotationY( DEG_TO_RAD( 92.0f ) );
+	pHouse_[ 8 ].SetPosition( 1200.0f, 0.0f, 6400.0f );
+	pHouse_[ 8 ].SetRotationY( DEG_TO_RAD( 353.0f ) );
+	pHouse_[ 9 ].SetPosition( 4500.0f, 0.0f, -4500.0f );
+	pHouse_[ 9 ].SetRotationY( DEG_TO_RAD( 125.0f ) );
+	pHouse_[ 10 ].SetPosition( 2660.0f, 0.0f, -5720.0f );
+	pHouse_[ 10 ].SetRotationY( DEG_TO_RAD( 169.0f ) );
 
+	// 鳥居の生成
+	Model*	pModelGate = nullptr;				// モデル
+	Effect*	pEffectGateGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectGateReflect = nullptr;		// 反射エフェクト
+	pModelGate = pArgument->pModel_->Get( _T( "torii.x" ) );
+	pEffectGateGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
+	pEffectGateReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pGate_ = new ObjectModelMaterial();
+	pGate_->Initialize( 0 );
+	pGate_->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect );
+	pGate_->SetPosition( 5870.0f, 0.0f, -400.0f );
+	pGate_->SetRotationY( DEG_TO_RAD( 90 ) );
+	pGate_->SetScale( 1.0f, 1.0f, 1.0f );
 
-	//	家生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "house_002.x" ) );
-	house[0] = new ObjectModelMaterial();
-	house[0]->Initialize(0);
-	house[0]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
-	house[0]->SetPosition(3200.0f, 100.0f, -700.0f);
-	house[0]->SetScale(30.0f, 30.0f, 30.0f);
-	
-	house[1] = new ObjectModelMaterial();
-	house[1]->Initialize(0);
-	house[1]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
-	house[1]->SetPosition(3200.0f, 100.0f, -1300.0f);
-	house[1]->SetScale(30.0f, 30.0f, 30.0f);
-	
-	house[2] = new ObjectModelMaterial();
-	house[2]->Initialize(0);
-	house[2]->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
-	house[2]->SetPosition(3200.0f, 100.0f, -1900.0f);
-	house[2]->SetScale(30.0f, 30.0f, 30.0f);
-
-	//	橋生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "bridge.x" ) );
-	bridge = new ObjectModelMaterial();
-	bridge->Initialize(0);
-	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
-	bridge->SetPosition(0.0f, 1000.0f, 2300.0f);
-	bridge->SetScale(350.0f, 350.0f, 350.0f);
-	bridge->SetRotationY(DEG_TO_RAD(90));
+	// 場所の目印オブジェクトの生成
+	Model*	pModelMarker = nullptr;				// モデル
+	Effect*	pEffectMarkerGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectMarkerReflect = nullptr;		// 反射エフェクト
+	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
+	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	pMarker_ = new ObjectSkinMesh[ 4 ];
+	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
+	{
+		pMarker_[ counterMarker ].Initialize( 0, 0 );
+		pMarker_[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_, pEffectMarkerGeneral, pEffectMarkerReflect );
+	}
+	pMarker_[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
+	pMarker_[ 0 ].SetRotationY( 0.0f );
+	pMarker_[ 1 ].SetPosition( -1920.0f, 0.0f, 610.0f );
+	pMarker_[ 1 ].SetRotationY( 0.0f );
+	pMarker_[ 2 ].SetPosition( 1230.0f, 0.0f, 990.0f );
+	pMarker_[ 2 ].SetRotationY( 0.0f );
+	pMarker_[ 3 ].SetPosition( 490.0f, 0.0f, 470.0f );
+	pMarker_[ 3 ].SetRotationY( 0.0f );
 }
 
 //==============================================================================
@@ -766,38 +776,37 @@ int SceneGame::Finalize( void )
 	pObjectSkinMesh_[1] = nullptr;
 	pObjectSkinMesh_[0] = nullptr;
 
-	delete pObjectSky_;
-	pObjectSky_ = nullptr;
+	// 場所目印オブジェクトの開放
+	delete[] pMarker_;
+	pMarker_ = nullptr;
 
-	delete field;
-	field = nullptr;
+	// 鳥居オブジェクトの開放
+	delete pGate_;
+	pGate_ = nullptr;
 
-	delete waterWheel[2];
-	delete waterWheel[1];
-	delete waterWheel[0];
+	// 家オブジェクトの開放
+	delete[] pHouse_;
+	pHouse_ = nullptr;
 
-	waterWheel[2] = nullptr;
-	waterWheel[1] = nullptr;
-	waterWheel[0] = nullptr;
+	// 水車オブジェクトの開放
+	delete pWaterwheel_;
+	pWaterwheel_ = nullptr;
 
-	delete house[2];
-	delete house[1];
-	delete house[0];
+	// 橋オブジェクトの開放
+	delete pBridge_;
+	pBridge_ = nullptr;
 
-	house[2] = nullptr;
-	house[1] = nullptr;
-	house[0] = nullptr;
+	// 地形オブジェクトの開放
+	delete pField_;
+	pField_ = nullptr;
 
-	delete bridge;
-	bridge = nullptr;
+	// 川オブジェクトの開放
+	delete pRiver_;
+	pRiver_ = nullptr;
 
-	// 波情報描画オブジェクトの開放
-	delete pObjectWaveData_;
-	pObjectWaveData_ = nullptr;
-
-	// 波情報初期化オブジェクトの開放
-	delete pObjectWaveDataInitialize_;
-	pObjectWaveDataInitialize_ = nullptr;
+	// 空オブジェクトの開放
+	delete pSky_;
+	pSky_ = nullptr;
 
 	// ライトの開放
 	if( pLight_ != nullptr )

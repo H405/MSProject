@@ -145,7 +145,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;
 
 	// 出力値の格納
-	output.textureCoord_ = textureCoord;
+	output.textureCoord_ = 20.0f * textureCoord;
 
 	// 頂点シェーダ出力を返す
 	return output;
