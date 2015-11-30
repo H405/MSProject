@@ -22,7 +22,7 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
-
+#define _CRT_SECURE_NO_WARNINGS
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
@@ -46,6 +46,10 @@ void ManagerTarget::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	target = nullptr;
+	targetAppearData = nullptr;
+	targetAppearDataMax = 0;
+	targetAppearCount = 0;
+	targetAppearIndex = 0;
 
 	for(int count = 0;count < TARGET_MAX;count++)
 		enableOld[count] = false;
@@ -102,6 +106,7 @@ int ManagerTarget::Initialize(
 //==============================================================================
 int ManagerTarget::Finalize( void )
 {
+	delete targetAppearData;
 	delete[] target;
 
 	// クラス内の初期化処理
@@ -117,6 +122,9 @@ int ManagerTarget::Finalize( void )
 //==============================================================================
 void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
+	//	自動で生成
+	autoAppear();
+
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
 	{
 		//	消えた瞬間を判定して、テーブルを再構築
@@ -137,6 +145,44 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 		}
 		target[counterPoint].setInvViewMatrix(invViewMatrix);
 		target[counterPoint].Update();
+	}
+}
+//==============================================================================
+// Brief  : 自動生成処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ManagerTarget::autoAppear()
+{
+	//	出現カウント加算
+	if(targetAppearIndex < targetAppearDataMax)
+		targetAppearCount++;
+
+	//	現在の出現データの、出現時間がカウンタと一致したら
+	if(targetAppearData[targetAppearIndex].appearTime == targetAppearCount)
+	{
+		//	生成
+		Add(targetAppearData[targetAppearIndex].appearPos);
+		targetAppearIndex++;
+
+		//	同じ時間に複数生成される場合があるので、その判定
+		int tempIndex = targetAppearIndex;
+
+		//	カウンタが同じである限り続ける
+		while(targetAppearData[tempIndex].appearTime == targetAppearCount)
+		{
+			//	生成
+			Add(targetAppearData[tempIndex].appearPos);
+
+			//	さらに次のインデックスと判定
+			tempIndex++;
+
+			if(tempIndex >= targetAppearDataMax)
+				break;
+		}
+
+		//	インデックス値をセットし直す
+		targetAppearIndex = tempIndex;
 	}
 }
 //==============================================================================
@@ -215,4 +261,155 @@ int ManagerTarget::GetIndex()
 
 	// 空いていなかった
 	return -1;
+}
+
+//==============================================================================
+// Brief  : ターゲット生成スクリプト読み込み処理
+//==============================================================================
+void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName)
+{
+	//	ファイル読み込み開始
+	FILE* fp;
+
+	if(fopen_s(&fp, _fileName, "r") != NULL)
+		return;
+
+	char readBuff[256];
+	int readDataIndex = 0;
+
+	//	生成するターゲット情報を読み込み
+	ReadAppearTargetMax(fp);
+
+	//	読み込み位置を戻す
+	fseek(fp, 0, SEEK_SET);
+
+	//	一行読み込んで
+	while(fgets(readBuff, sizeof(readBuff), fp) != NULL)
+	{
+		//	以下、最初の３文字によって分岐して読み込みを行う
+		//-----------------------------------------------------------------------
+		//	複数行コメントを認識したら
+		if(readBuff[0] == '/' && readBuff[1] == '-' && readBuff[2] == '-')
+		{
+			//	コメントスキップ
+			SkipComment(fp);
+		}
+		//	１行コメントを認識したら
+		else if(readBuff[0] == 'C' && readBuff[1] == 'O' && readBuff[2] == 'M')
+		{
+			continue;
+		}
+		//	オブジェクトの名前を認識したら
+		else if(readBuff[0] == 'N' && readBuff[1] == 'A' && readBuff[2] == 'M')
+		{
+			//	NAM を読み飛ばす
+			char* setName;
+			char* ctx;
+			ctx = strtok_s(readBuff, " ", &setName);
+
+			//	名前保存
+			strcpy_s(targetAppearData[readDataIndex].name, setName);
+
+			//	出現時間と位置の読み込み
+			Read_TIM_POS(fp, readDataIndex);
+			readDataIndex++;
+		}
+		//-----------------------------------------------------------------------
+	}
+
+	fclose(fp);
+
+
+	//	データのソート
+	SortAppearTargetData();
+}
+
+void ManagerTarget::ReadAppearTargetMax(FILE* _fp)
+{
+	char readBuff[256];
+	targetAppearDataMax = 0;
+
+	//	一行読み込んで
+	while(fgets(readBuff, sizeof(readBuff), _fp) != NULL)
+	{
+		//	以下、最初の３文字によって分岐して読み込みを行う
+		//-----------------------------------------------------------------------
+		//	複数行コメントを認識したら
+		if(readBuff[0] == '/' && readBuff[1] == '-' && readBuff[2] == '-')
+		{
+			//	コメントスキップ
+			SkipComment(_fp);
+		}
+		//	１行コメントを認識したら
+		else if(readBuff[0] == 'C' && readBuff[1] == 'O' && readBuff[2] == 'M')
+		{
+			continue;
+		}
+		//	オブジェクトの名前を認識したら
+		else if(readBuff[0] == 'N' && readBuff[1] == 'A' && readBuff[2] == 'M')
+		{
+			targetAppearDataMax++;
+		}
+		//-----------------------------------------------------------------------
+	}
+
+	//	データ生成
+	targetAppearData = new TARGET_APPEAR_DATA[targetAppearDataMax];
+}
+
+void ManagerTarget::Read_TIM_POS(FILE* _fp, int _readDataIndex)
+{
+	//	TIM の読み飛ばし
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+	//	実数値読み込み
+	fscanf_s(_fp, "%d", &targetAppearData[_readDataIndex].appearTime);
+
+	//	POSの読み飛ばし
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+
+	//	実数値読み込み
+	//fread_s(targetAppearData[_readDataIndex].appearPos, sizeof(float) * 3, sizeof(float), 3, _fp);
+	fscanf_s(_fp, "%f %f %f", &targetAppearData[_readDataIndex].appearPos.x, &targetAppearData[_readDataIndex].appearPos.y, &targetAppearData[_readDataIndex].appearPos.z);
+	//-----------------------------------------------------------------------
+}
+
+void ManagerTarget::SkipComment(FILE* _fp)
+{
+	char readBuff[512];
+	while(fgets(readBuff, sizeof(readBuff), _fp) != NULL)
+	{
+		//	以下、最初の３文字によって分岐して読み込みを行う
+		//-----------------------------------------------------------------------
+		//	コメントの終了を認識したら
+		if(readBuff[0] == '-' && readBuff[1] == '-' && readBuff[2] == '/')
+		{
+			return;
+		}
+		//-----------------------------------------------------------------------
+	}
+
+	//	コメントの終了を認識できなかったら
+	return;
+}
+
+void ManagerTarget::SortAppearTargetData()
+{
+	for(int i = 0;i < targetAppearDataMax - 1;i++)
+	{
+		for(int j = targetAppearDataMax - 1; j > i;j--)
+		{
+			if(targetAppearData[j - 1].appearTime >= targetAppearData[j].appearTime)
+			{
+				TARGET_APPEAR_DATA temp = targetAppearData[j];
+				targetAppearData[j] = targetAppearData[j - 1];
+				targetAppearData[j - 1] = temp;
+			}
+		}
+	}
 }

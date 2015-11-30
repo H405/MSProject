@@ -17,6 +17,7 @@
 // インクルード
 //******************************************************************************
 #include "target/Target.h"
+#include <stdio.h>
 
 //******************************************************************************
 // ライブラリ
@@ -47,6 +48,13 @@ public:
 		STATE_NORMAL = 0,
 		STATE_MAX
 	}STATE;
+
+	typedef struct
+	{
+		char name[256];
+		int appearTime;
+		D3DXVECTOR3 appearPos;
+	}TARGET_APPEAR_DATA;
 
 	//==============================================================================
 	// Brief  : コンストラクタ
@@ -115,6 +123,11 @@ public:
 	void Sort(int* _table, int _deleteIndex);
 
 	//==============================================================================
+	// Brief  : ターゲット生成スクリプト読み込み処理
+	//==============================================================================
+	void ReadTargetScriptFromFile(const char* _fileName);
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	Target* getTarget(int _index){return &target[_index];}
@@ -130,6 +143,21 @@ protected:
 
 	//	ターゲットの自然消滅認識用フラグ
 	bool enableOld[TARGET_MAX];
+
+	TARGET_APPEAR_DATA* targetAppearData;
+	int targetAppearDataMax;
+
+	int targetAppearCount;
+	int targetAppearIndex;
+
+	//==============================================================================
+	// Brief  : ターゲット生成スクリプト読み込み処理
+	//==============================================================================
+	void SkipComment(FILE* _fp);
+	void Read_TIM_POS(FILE* _fp, int _readDataIndex);
+	void ReadAppearTargetMax(FILE* _fp);
+	void SortAppearTargetData();
+	void autoAppear();
 
 private:
 	void InitializeSelf( void );

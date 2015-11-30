@@ -512,21 +512,21 @@ void SceneGame::normalUpdate(void)
 	//PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
 
 	//	ターゲット出現
-	targetAppearCount++;
-	if(targetAppearCount == 50)
-	{
-		int buff;
-		buff = managerTarget->Add(
-			D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ)
-			);
-		if(buff != -1)
-		{
-			targetTable[targetTableIndex] = buff;
-			targetTableIndex++;
-		}
-
-		targetAppearCount = 0;
-	}
+	//targetAppearCount++;
+	//if(targetAppearCount == 50)
+	//{
+	//	int buff;
+	//	buff = managerTarget->Add(
+	//		D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ)
+	//		);
+	//	if(buff != -1)
+	//	{
+	//		targetTable[targetTableIndex] = buff;
+	//		targetTableIndex++;
+	//	}
+	//
+	//	targetAppearCount = 0;
+	//}
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
 

@@ -285,6 +285,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
 	pRiver_->SetPositionY( -100.0f );
 	pArgument->pEffectParameter_->SetHeightReflect( -100.0f );
+	//pRiver_->SetIsEnable(false);
 
 	// 地形の生成
 	Model*	pModelField = nullptr;				// モデル
@@ -450,6 +451,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureArrow,
 		pTextureCircle
 		);
+	managerTarget->ReadTargetScriptFromFile("data/script/script_test.txt");
 
 
 	//	プレイヤーオブジェクト(Posはカメラとの相対座標)
