@@ -145,86 +145,15 @@ void SceneGame::Update( void )
 
 #ifdef _DEVELOP
 	// 更新関数の変更
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_F5 ) )
+	{
+		timerSceneGame_ = -1;
+		fpUpdate = &SceneGame::UpdateTest;
+	}
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F6 ) )
 	{
 		timerSceneGame_ = 0;
-		fpUpdate = &SceneGame::UpdateResult;
-	}
-
-	// オブジェクトの移動
-	Object*	pObject = nullptr;		// 移動対象オブジェクト
-	float	velocity;				// 移動速度
-	pObject = &pHouse_[ 1 ];
-	if( pArgument_->pKeyboard_->IsPress( DIK_LCONTROL ) )
-	{
-		velocity = 10.0f;
-	}
-	else if( pArgument_->pKeyboard_->IsPress( DIK_LSHIFT ) )
-	{
-		velocity = 100.0f;
-	}
-	else
-	{
-		velocity = 1.0f;
-	}
-	if( pArgument_->pKeyboard_->IsRepeat( DIK_W, 30, 1 ) )
-	{
-		pObject->AddPositionZ( velocity );
-	}
-	else if( pArgument_->pKeyboard_->IsRepeat( DIK_S, 30, 1 ) )
-	{
-		pObject->AddPositionZ( -velocity );
-	}
-	if( pArgument_->pKeyboard_->IsRepeat( DIK_A, 30, 1 ) )
-	{
-		pObject->AddPositionX( velocity );
-	}
-	else if( pArgument_->pKeyboard_->IsRepeat( DIK_D, 30, 1 ) )
-	{
-		pObject->AddPositionX( -velocity );
-	}
-	if( pArgument_->pKeyboard_->IsRepeat( DIK_Q, 30, 1 ) )
-	{
-		pObject->AddPositionY( velocity );
-	}
-	else if( pArgument_->pKeyboard_->IsRepeat( DIK_E, 30, 1 ) )
-	{
-		pObject->AddPositionY( -velocity );
-	}
-	if( pArgument_->pKeyboard_->IsRepeat( DIK_Z, 30, 1 ) )
-	{
-		pObject->AddRotationY( DEG_TO_RAD( 1.0f ) );
-	}
-	else if( pArgument_->pKeyboard_->IsRepeat( DIK_X, 30, 1 ) )
-	{
-		pObject->AddRotationY( -DEG_TO_RAD( 1.0f ) );
-	}
-	if( pArgument_->pKeyboard_->IsRepeat( DIK_C, 30, 1 ) )
-	{
-		pObject->AddScale( 1.0f, 1.0f, 1.0f );
-	}
-	else if( pArgument_->pKeyboard_->IsRepeat( DIK_V, 30, 1 ) )
-	{
-		pObject->AddScale( -1.0f, -1.0f, -1.0f );
-	}
-	PrintDebug( "*--------------------------------------*\n" );
-	PrintDebug( "| デバッグオブジェクト                 |\n" );
-	PrintDebug( "*--------------------------------------*\n" );
-	PrintDebug( "座標 ： ( %11.6f, %11.6f, %11.6f )\n", pObject->GetPositionX(), pObject->GetPositionY(), pObject->GetPositionZ() );
-	PrintDebug( "回転 ： ( %11.6f, %11.6f, %11.6f )\n", 180.0f / D3DX_PI * pObject->GetRotationX(), 180.0f / D3DX_PI * pObject->GetRotationY(), 180.0f / D3DX_PI * pObject->GetRotationZ() );
-	PrintDebug( "拡縮 ： ( %11.6f, %11.6f, %11.6f )\n", pObject->GetScaleX(), pObject->GetScaleY(), pObject->GetScaleZ() );
-
-	// 点光源テスト
-	D3DXVECTOR3	pPositionPointTest[ 3 ] =
-	{
-		D3DXVECTOR3( 260.0f, 2500.0f, 3540.0f ),
-		D3DXVECTOR3( -2700.0f, 2500.0f, 2570.0f ),
-		D3DXVECTOR3( 1080.0f, 2500.0f, -2750.0f )
-	};
-	for( int counterPoint = 0; counterPoint < 3; ++counterPoint )
-	{
-		managerPoint->Add( 20, pPositionPointTest[ counterPoint ], D3DXCOLOR( 0.8f, 0.6f, 0.25f, 1.0f ), 50.0f,
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, 1 );
+		fpUpdate = &SceneGame::UpdatePreviousGame;
 	}
 #endif
 

@@ -24,6 +24,12 @@
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/SceneArgumentMain.h"
 
+// テスト用
+#include "../framework/light/LightPoint.h"
+#include "../framework/light/ManagerLight.h"
+#include "../object/ObjectModelMaterial.h"
+#include "../system/point/ManagerPoint.h"
+
 //******************************************************************************
 // ライブラリ
 //******************************************************************************
@@ -303,10 +309,6 @@ void SceneGame::InitializeSelf2( void )
 	indexRank_ = 0;
 	pObjectRanking_ = nullptr;
 	pObjectScoreRanking_ = nullptr;
-
-#ifdef _DEVELOP
-	timerPointTest_ = -1;
-#endif
 }
 
 //==============================================================================
@@ -800,6 +802,178 @@ void SceneGame::UpdateRanking( void )
 
 	// タイマーの経過
 	++timerSceneGame_;
+}
+
+//==============================================================================
+// Brief  : テスト更新
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::UpdateTest( void )
+{
+	// オブジェクトの移動
+	Object*	pObject = nullptr;		// 移動対象オブジェクト
+	float	velocity;				// 移動速度
+	pObject = &houses[ 1 ];
+	if( pArgument_->pKeyboard_->IsPress( DIK_LCONTROL ) )
+	{
+		velocity = 10.0f;
+	}
+	else if( pArgument_->pKeyboard_->IsPress( DIK_LSHIFT ) )
+	{
+		velocity = 100.0f;
+	}
+	else
+	{
+		velocity = 1.0f;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_W, 30, 1 ) )
+	{
+		pObject->AddPositionZ( velocity );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_S, 30, 1 ) )
+	{
+		pObject->AddPositionZ( -velocity );
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_A, 30, 1 ) )
+	{
+		pObject->AddPositionX( velocity );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_D, 30, 1 ) )
+	{
+		pObject->AddPositionX( -velocity );
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_Q, 30, 1 ) )
+	{
+		pObject->AddPositionY( velocity );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_E, 30, 1 ) )
+	{
+		pObject->AddPositionY( -velocity );
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_Z, 30, 1 ) )
+	{
+		pObject->AddRotationY( 1.0f * D3DX_PI / 180.0f );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_X, 30, 1 ) )
+	{
+		pObject->AddRotationY( -1.0f * D3DX_PI / 180.0f );
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_C, 30, 1 ) )
+	{
+		pObject->AddScale( 1.0f, 1.0f, 1.0f );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_V, 30, 1 ) )
+	{
+		pObject->AddScale( -1.0f, -1.0f, -1.0f );
+	}
+	PrintDebug( "*--------------------------------------*\n" );
+	PrintDebug( "| デバッグオブジェクト                 |\n" );
+	PrintDebug( "*--------------------------------------*\n" );
+	PrintDebug( "座標 ： ( %11.6f, %11.6f, %11.6f )\n", pObject->GetPositionX(), pObject->GetPositionY(), pObject->GetPositionZ() );
+	PrintDebug( "回転 ： ( %11.6f, %11.6f, %11.6f )\n", 180.0f / D3DX_PI * pObject->GetRotationX(), 180.0f / D3DX_PI * pObject->GetRotationY(), 180.0f / D3DX_PI * pObject->GetRotationZ() );
+	PrintDebug( "拡縮 ： ( %11.6f, %11.6f, %11.6f )\n", pObject->GetScaleX(), pObject->GetScaleY(), pObject->GetScaleZ() );
+
+	// 点光源テスト
+	D3DXVECTOR3	pPositionPointTest[ 3 ] =
+	{
+		D3DXVECTOR3( 260.0f, 1000.0f, 3540.0f ),
+		D3DXVECTOR3( -2700.0f, 1000.0f, 2570.0f ),
+		D3DXVECTOR3( 1080.0f, 1000.0f, -2750.0f )
+	};
+	for( int counterPoint = 0; counterPoint < 3; ++counterPoint )
+	{
+		managerPoint->Add( 20, pPositionPointTest[ counterPoint ], D3DXCOLOR( 0.8f, 0.6f, 0.25f, 1.0f ), 50.0f,
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.05f ), -2.0f, 1 );
+	}
+
+	// 点光源テスト
+	static LightPoint*	pLightTest = nullptr;		// ポイントライト
+	static D3DXVECTOR3	attenuationTest;			// 減衰率
+	bool				needsSetLight;				// ライト設定フラグ
+	int					indexPoint;					// 場所番号
+	needsSetLight = false;
+	if( timerSceneGame_ <= 0 && pLightTest == nullptr )
+	{
+		for( int counterPoint = 0; counterPoint < 3; ++counterPoint )
+		{
+			if( pArgument_->pKeyboard_->IsTrigger( DIK_1 + counterPoint ) )
+			{
+				needsSetLight = true;
+				indexPoint = counterPoint;
+			}
+		}
+	}
+	if( needsSetLight )
+	{
+		// タイマーの経過
+		timerSceneGame_ = 0;
+
+		// ライトの設定
+		attenuationTest = D3DXVECTOR3( 0.0f, 0.00028f, 0.00000005f );
+		pLightTest = pArgument_->pLight_->GetLightPoint();
+		pLightTest->Set( D3DXCOLOR( 1.0f, 0.7f, 0.2f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), pPositionPointTest[ indexPoint ], D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
+	}
+
+	// 減衰率の調整
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_K, 30, 1 ) )
+	{
+		attenuationTest.y -= 0.000001f;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_L, 30, 1 ) )
+	{
+		attenuationTest.y += 0.000001f;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_COMMA, 30, 1 ) )
+	{
+		attenuationTest.z -= 0.00000001f;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_PERIOD, 30, 1 ) )
+	{
+		attenuationTest.z += 0.00000001f;
+	}
+	PrintDebug( "減衰率 ： ( %13.8f, %13.8f )\n", attenuationTest.y, attenuationTest.z );
+
+	// 点光源の更新
+	if( pLightTest != nullptr )
+	{
+		// 割合の決定
+		float	proportion;		// 割合
+		if( timerSceneGame_ < 15 )
+		{
+			proportion = Utility::Easing( 1.0f, 0.0f, static_cast< float >( timerSceneGame_ ) / 15.0f );
+		}
+		else if( timerSceneGame_ < 30 )
+		{
+			proportion = 0.0f;
+		}
+		else
+		{
+			proportion = Utility::Easing( 0.0f, 1.0f, static_cast< float >( timerSceneGame_ - 30 ) / 150.0f );
+		}
+
+		// 減衰率の設定
+		D3DXVECTOR3	attenuation;		// 減衰率
+		attenuation = attenuationTest + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
+		pLightTest->SetAttenuation( attenuation );
+
+		// 消滅
+		if( timerSceneGame_ >= 180 )
+		{
+			timerSceneGame_ = -1;
+			pLightTest->Release();
+			pLightTest = nullptr;
+		}
+	}
+
+	// ポイントスプライトの更新
+	managerPoint->Update();
+
+	// タイマーの経過
+	if( timerSceneGame_ >= 0 )
+	{
+		++timerSceneGame_;
+	}
 }
 
 //==============================================================================

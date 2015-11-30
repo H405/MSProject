@@ -131,16 +131,16 @@ int LightPoint::Copy( LightPoint* pOut ) const
 // Arg    : const D3DXCOLOR& diffuse			: ディフューズカラー
 // Arg    : const D3DXCOLOR& specular			: スペキュラカラー
 // Arg    : const D3DXVECTOR3& position			: 座標
-// Arg    : const D3DXVECTOR3& attemuation		: 減衰率
+// Arg    : const D3DXVECTOR3& attenuation		: 減衰率
 //==============================================================================
-void LightPoint::Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation )
+void LightPoint::Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attenuation )
 {
 	// 基本クラスの処理
 	Light::Set( diffuse, specular );
 
 	// メンバ変数の設定
 	position_ = position;
-	attemuation_ = attemuation;
+	attenuation_ = attenuation;
 }
 
 //==============================================================================
@@ -251,10 +251,10 @@ float LightPoint::GetPositionZ( void ) const
 // Return : void								: なし
 // Arg    : const D3DXVECTOR3& value			: 設定する値
 //==============================================================================
-void LightPoint::SetAttemuation( const D3DXVECTOR3& value )
+void LightPoint::SetAttenuation( const D3DXVECTOR3& value )
 {
 	// 値の設定
-	attemuation_ = value;
+	attenuation_ = value;
 }
 
 //==============================================================================
@@ -264,12 +264,12 @@ void LightPoint::SetAttemuation( const D3DXVECTOR3& value )
 // Arg    : float y								: Y値
 // Arg    : float z								: Z値
 //==============================================================================
-void LightPoint::SetAttemuation( float x, float y, float z )
+void LightPoint::SetAttenuation( float x, float y, float z )
 {
 	// 値の設定
-	attemuation_.x = x;
-	attemuation_.y = y;
-	attemuation_.z = z;
+	attenuation_.x = x;
+	attenuation_.y = y;
+	attenuation_.z = z;
 }
 
 //==============================================================================
@@ -277,10 +277,10 @@ void LightPoint::SetAttemuation( float x, float y, float z )
 // Return : void								: なし
 // Arg    : float x								: X値
 //==============================================================================
-void LightPoint::SetAttemuationX( float x )
+void LightPoint::SetAttenuationX( float x )
 {
 	// 値の設定
-	attemuation_.x = x;
+	attenuation_.x = x;
 }
 
 //==============================================================================
@@ -288,10 +288,10 @@ void LightPoint::SetAttemuationX( float x )
 // Return : void								: なし
 // Arg    : float y								: Y値
 //==============================================================================
-void LightPoint::SetAttemuationY( float y )
+void LightPoint::SetAttenuationY( float y )
 {
 	// 値の設定
-	attemuation_.y = y;
+	attenuation_.y = y;
 }
 
 //==============================================================================
@@ -299,10 +299,10 @@ void LightPoint::SetAttemuationY( float y )
 // Return : void								: なし
 // Arg    : float z								: Z値
 //==============================================================================
-void LightPoint::SetAttemuationZ( float z )
+void LightPoint::SetAttenuationZ( float z )
 {
 	// 値の設定
-	attemuation_.z = z;
+	attenuation_.z = z;
 }
 
 //==============================================================================
@@ -310,10 +310,10 @@ void LightPoint::SetAttemuationZ( float z )
 // Return : void								: なし
 // Arg    : D3DXVECTOR3* pOut					: 値の格納アドレス
 //==============================================================================
-void LightPoint::GetAttemuation( D3DXVECTOR3* pOut ) const
+void LightPoint::GetAttenuation( D3DXVECTOR3* pOut ) const
 {
 	// 値の返却
-	*pOut = attemuation_;
+	*pOut = attenuation_;
 }
 
 //==============================================================================
@@ -321,10 +321,10 @@ void LightPoint::GetAttemuation( D3DXVECTOR3* pOut ) const
 // Return : float								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-float LightPoint::GetAttemuationX( void ) const
+float LightPoint::GetAttenuationX( void ) const
 {
 	// 値の返却
-	return attemuation_.x;
+	return attenuation_.x;
 }
 
 //==============================================================================
@@ -332,10 +332,10 @@ float LightPoint::GetAttemuationX( void ) const
 // Return : float								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-float LightPoint::GetAttemuationY( void ) const
+float LightPoint::GetAttenuationY( void ) const
 {
 	// 値の返却
-	return attemuation_.y;
+	return attenuation_.y;
 }
 
 //==============================================================================
@@ -343,10 +343,10 @@ float LightPoint::GetAttemuationY( void ) const
 // Return : float								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-float LightPoint::GetAttemuationZ( void ) const
+float LightPoint::GetAttenuationZ( void ) const
 {
 	// 値の返却
-	return attemuation_.z;
+	return attenuation_.z;
 }
 
 //==============================================================================
@@ -358,5 +358,5 @@ void LightPoint::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	position_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
-	attemuation_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+	attenuation_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
 }

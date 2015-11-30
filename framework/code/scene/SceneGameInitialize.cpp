@@ -116,16 +116,16 @@ void SceneGame::InitializeSelf( void )
 
 	//	ゲーム用ステージ・３Dオブジェクト関係
 	//----------------------------------------------------------
-	pSky_ = nullptr;
-	pRiver_ = nullptr;
-	pField_ = nullptr;
+	sky = nullptr;
+	river = nullptr;
+	field = nullptr;
 
-	pBridge_ = nullptr;
-	pWaterwheel_ = nullptr;
-	pHouse_ = nullptr;
-	pGate_ = nullptr;
+	bridge = nullptr;
+	waterwheel = nullptr;
+	houses = nullptr;
+	gate = nullptr;
 
-	pMarker_ = nullptr;
+	markers = nullptr;
 
 	player = nullptr;
 
@@ -270,20 +270,20 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pTextureSky = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
 	pEffectSkyGeneral = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
 	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
-	pSky_ = new ObjectSky();
-	pSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 11500.0f, 1.0f, 1.0f );
-	pSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSkyGeneral, pEffectSkyReflect, pTextureSky );
+	sky = new ObjectSky();
+	sky->Initialize( 0, pArgument->pDevice_, 32, 32, 11500.0f, 1.0f, 1.0f );
+	sky->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSkyGeneral, pEffectSkyReflect, pTextureSky );
 
 	// 川の生成
 	Model*	pModelRiver = nullptr;		// モデル
 	Effect*	pEffectRiver = nullptr;		// エフェクト
 	pModelRiver = pArgument->pModel_->Get( _T( "river_ver103_04.x" ), Vertex::ELEMENT_SET_NORMAL_MAP );
 	pEffectRiver = pArgument->pEffect_->Get( "Water.fx" );
-	pRiver_ = new ObjectRiver();
-	pRiver_->Initialize( 0 );
-	pRiver_->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver, pArgument->pTextureNormalWave_,
+	river = new ObjectRiver();
+	river->Initialize( 0 );
+	river->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver, pArgument->pTextureNormalWave_,
 		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
-	pRiver_->SetPositionY( -100.0f );
+	river->SetPositionY( -100.0f );
 	pArgument->pEffectParameter_->SetHeightReflect( -100.0f );
 
 	// 地形の生成
@@ -295,11 +295,11 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pEffectFieldGeneral = pArgument->pEffect_->Get( "Model.fx" );
 	pEffectFieldReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
 	pEffectFieldShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
-	pField_ = new ObjectModel();
-	pField_->Initialize( 0 );
-	pField_->CreateGraphic( 0, pModelField, pArgument->pEffectParameter_, pEffectFieldGeneral, pEffectFieldReflect, pEffectFieldShadow );
-	pField_->SetPositionY( -400.0f );
-	pField_->SetScale( 2.0f, 2.0f, 2.0f );
+	field = new ObjectModel();
+	field->Initialize( 0 );
+	field->CreateGraphic( 0, pModelField, pArgument->pEffectParameter_, pEffectFieldGeneral, pEffectFieldReflect, pEffectFieldShadow );
+	field->SetPositionY( -400.0f );
+	field->SetScale( 2.0f, 2.0f, 2.0f );
 
 	// 橋の生成
 	Model*	pModelBridge = nullptr;				// モデル
@@ -308,16 +308,16 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pModelBridge = pArgument->pModel_->Get( _T( "bridge.x" ) );
 	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
-	pBridge_ = new ObjectModelMaterial();
-	pBridge_->Initialize( 0 );
-	pBridge_->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect );
-	pBridge_->SetPosition( 1558.0f, 460.0f, -2240.0f );
-	pBridge_->SetRotationY( DEG_TO_RAD( 101.0f ) );
-	pBridge_->SetScale( 285.0f, 285.0f, 285.0f );
+	bridge = new ObjectModelMaterial();
+	bridge->Initialize( 0 );
+	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect );
+	bridge->SetPosition( 1558.0f, 460.0f, -2240.0f );
+	bridge->SetRotationY( DEG_TO_RAD( 101.0f ) );
+	bridge->SetScale( 285.0f, 285.0f, 285.0f );
 
 	// 水車の生成
-	pWaterwheel_ = new ObjectWaterwheel();
-	pWaterwheel_->Initialize( D3DXVECTOR3( 110.0f, 230.0f, 3780.0f ), DEG_TO_RAD( 74 ), -0.001f, pArgument );
+	waterwheel = new ObjectWaterwheel();
+	waterwheel->Initialize( D3DXVECTOR3( 110.0f, 230.0f, 3780.0f ), DEG_TO_RAD( 74 ), -0.001f, pArgument );
 
 	// 家の生成
 	Model*	pModelHouse = nullptr;				// モデル
@@ -326,36 +326,36 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pModelHouse = pArgument->pModel_->Get( _T( "house_002.x" ) );
 	pEffectHouseGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectHouseReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
-	pHouse_ = new ObjectModelMaterial[ COUNT_HOUSE ];
+	houses = new ObjectModelMaterial[ COUNT_HOUSE ];
 	for( int counterHouse = 0; counterHouse < COUNT_HOUSE; ++counterHouse )
 	{
-		pHouse_[ counterHouse ].Initialize( 0 );
-		pHouse_[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect );
-		pHouse_[ counterHouse ].SetScale( 300.0f, 300.0f, 300.0f );
+		houses[ counterHouse ].Initialize( 0 );
+		houses[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect );
+		houses[ counterHouse ].SetScale( 300.0f, 300.0f, 300.0f );
 	}
-	pHouse_[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
-	pHouse_[ 0 ].SetRotationY( DEG_TO_RAD( 254.0f ) );
-	pHouse_[ 0 ].SetScale( 150.0f, 150.0f, 150.0f );
-	pHouse_[ 1 ].SetPosition( -3700.0f, 0.0f, 2480.0f );
-	pHouse_[ 1 ].SetRotationY( DEG_TO_RAD( 252.0f ) );
-	pHouse_[ 2 ].SetPosition( -3120.0f, 0.0f, 1010.0f );
-	pHouse_[ 2 ].SetRotationY( DEG_TO_RAD( 243.0f ) );
-	pHouse_[ 3 ].SetPosition( -2030.0f, 0.0f, -750.0f );
-	pHouse_[ 3 ].SetRotationY( DEG_TO_RAD( 222.0f ) );
-	pHouse_[ 4 ].SetPosition( -1880.0f, 0.0f, 3160.0f );
-	pHouse_[ 4 ].SetRotationY( DEG_TO_RAD( 51.0f ) );
-	pHouse_[ 5 ].SetPosition( 3500.0f, 0.0f, 5500.0f );
-	pHouse_[ 5 ].SetRotationY( DEG_TO_RAD( 58.0f ) );
-	pHouse_[ 6 ].SetPosition( 4260.0f, 0.0f, 3650.0f );
-	pHouse_[ 6 ].SetRotationY( DEG_TO_RAD( 76.0f ) );
-	pHouse_[ 7 ].SetPosition( 4460.0f, 0.0f, 1610.0f );
-	pHouse_[ 7 ].SetRotationY( DEG_TO_RAD( 92.0f ) );
-	pHouse_[ 8 ].SetPosition( 1200.0f, 0.0f, 6400.0f );
-	pHouse_[ 8 ].SetRotationY( DEG_TO_RAD( 353.0f ) );
-	pHouse_[ 9 ].SetPosition( 4500.0f, 0.0f, -4500.0f );
-	pHouse_[ 9 ].SetRotationY( DEG_TO_RAD( 125.0f ) );
-	pHouse_[ 10 ].SetPosition( 2660.0f, 0.0f, -5720.0f );
-	pHouse_[ 10 ].SetRotationY( DEG_TO_RAD( 169.0f ) );
+	houses[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
+	houses[ 0 ].SetRotationY( DEG_TO_RAD( 254.0f ) );
+	houses[ 0 ].SetScale( 150.0f, 150.0f, 150.0f );
+	houses[ 1 ].SetPosition( -3700.0f, 0.0f, 2480.0f );
+	houses[ 1 ].SetRotationY( DEG_TO_RAD( 252.0f ) );
+	houses[ 2 ].SetPosition( -3120.0f, 0.0f, 1010.0f );
+	houses[ 2 ].SetRotationY( DEG_TO_RAD( 243.0f ) );
+	houses[ 3 ].SetPosition( -2030.0f, 0.0f, -750.0f );
+	houses[ 3 ].SetRotationY( DEG_TO_RAD( 222.0f ) );
+	houses[ 4 ].SetPosition( -1880.0f, 0.0f, 3160.0f );
+	houses[ 4 ].SetRotationY( DEG_TO_RAD( 51.0f ) );
+	houses[ 5 ].SetPosition( 3500.0f, 0.0f, 5500.0f );
+	houses[ 5 ].SetRotationY( DEG_TO_RAD( 58.0f ) );
+	houses[ 6 ].SetPosition( 4260.0f, 0.0f, 3650.0f );
+	houses[ 6 ].SetRotationY( DEG_TO_RAD( 76.0f ) );
+	houses[ 7 ].SetPosition( 4460.0f, 0.0f, 1610.0f );
+	houses[ 7 ].SetRotationY( DEG_TO_RAD( 92.0f ) );
+	houses[ 8 ].SetPosition( 1200.0f, 0.0f, 6400.0f );
+	houses[ 8 ].SetRotationY( DEG_TO_RAD( 353.0f ) );
+	houses[ 9 ].SetPosition( 4500.0f, 0.0f, -4500.0f );
+	houses[ 9 ].SetRotationY( DEG_TO_RAD( 125.0f ) );
+	houses[ 10 ].SetPosition( 2660.0f, 0.0f, -5720.0f );
+	houses[ 10 ].SetRotationY( DEG_TO_RAD( 169.0f ) );
 
 	// 鳥居の生成
 	Model*	pModelGate = nullptr;				// モデル
@@ -364,12 +364,12 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pModelGate = pArgument->pModel_->Get( _T( "torii.x" ) );
 	pEffectGateGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectGateReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
-	pGate_ = new ObjectModelMaterial();
-	pGate_->Initialize( 0 );
-	pGate_->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect );
-	pGate_->SetPosition( 5870.0f, 0.0f, -400.0f );
-	pGate_->SetRotationY( DEG_TO_RAD( 90 ) );
-	pGate_->SetScale( 1.0f, 1.0f, 1.0f );
+	gate = new ObjectModelMaterial();
+	gate->Initialize( 0 );
+	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect );
+	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
+	gate->SetRotationY( DEG_TO_RAD( 90 ) );
+	gate->SetScale( 1.0f, 1.0f, 1.0f );
 
 	// 場所の目印オブジェクトの生成
 	Model*	pModelMarker = nullptr;				// モデル
@@ -378,20 +378,20 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
 	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
-	pMarker_ = new ObjectSkinMesh[ 4 ];
+	markers = new ObjectSkinMesh[ 4 ];
 	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
 	{
-		pMarker_[ counterMarker ].Initialize( 0, 0 );
-		pMarker_[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_, pEffectMarkerGeneral, pEffectMarkerReflect );
+		markers[ counterMarker ].Initialize( 0, 0 );
+		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_, pEffectMarkerGeneral, pEffectMarkerReflect );
 	}
-	pMarker_[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
-	pMarker_[ 0 ].SetRotationY( 0.0f );
-	pMarker_[ 1 ].SetPosition( -1920.0f, 0.0f, 610.0f );
-	pMarker_[ 1 ].SetRotationY( 0.0f );
-	pMarker_[ 2 ].SetPosition( 1230.0f, 0.0f, 990.0f );
-	pMarker_[ 2 ].SetRotationY( 0.0f );
-	pMarker_[ 3 ].SetPosition( 490.0f, 0.0f, 470.0f );
-	pMarker_[ 3 ].SetRotationY( 0.0f );
+	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
+	markers[ 0 ].SetRotationY( 0.0f );
+	markers[ 1 ].SetPosition( -1920.0f, 0.0f, 610.0f );
+	markers[ 1 ].SetRotationY( 0.0f );
+	markers[ 2 ].SetPosition( 1230.0f, 0.0f, 990.0f );
+	markers[ 2 ].SetRotationY( 0.0f );
+	markers[ 3 ].SetPosition( 490.0f, 0.0f, 470.0f );
+	markers[ 3 ].SetRotationY( 0.0f );
 }
 
 //==============================================================================
@@ -777,36 +777,36 @@ int SceneGame::Finalize( void )
 	pObjectSkinMesh_[0] = nullptr;
 
 	// 場所目印オブジェクトの開放
-	delete[] pMarker_;
-	pMarker_ = nullptr;
+	delete[] markers;
+	markers = nullptr;
 
 	// 鳥居オブジェクトの開放
-	delete pGate_;
-	pGate_ = nullptr;
+	delete gate;
+	gate = nullptr;
 
 	// 家オブジェクトの開放
-	delete[] pHouse_;
-	pHouse_ = nullptr;
+	delete[] houses;
+	houses = nullptr;
 
 	// 水車オブジェクトの開放
-	delete pWaterwheel_;
-	pWaterwheel_ = nullptr;
+	delete waterwheel;
+	waterwheel = nullptr;
 
 	// 橋オブジェクトの開放
-	delete pBridge_;
-	pBridge_ = nullptr;
+	delete bridge;
+	bridge = nullptr;
 
 	// 地形オブジェクトの開放
-	delete pField_;
-	pField_ = nullptr;
+	delete field;
+	field = nullptr;
 
 	// 川オブジェクトの開放
-	delete pRiver_;
-	pRiver_ = nullptr;
+	delete river;
+	river = nullptr;
 
 	// 空オブジェクトの開放
-	delete pSky_;
-	pSky_ = nullptr;
+	delete sky;
+	sky = nullptr;
 
 	// ライトの開放
 	if( pLight_ != nullptr )

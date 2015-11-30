@@ -255,7 +255,7 @@ void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXVECTOR3			attemuationPoint;		// ポイントライトの減衰率
 	float				pPositionPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];			// ポイントライトの座標
 	float				pColorPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];			// ポイントライトの色
-	float				pAttemuationPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];		// ポイントライトの減衰率
+	float				pAttenuationPoint[ 3 * GraphicMain::LIGHT_POINT_MAX ];		// ポイントライトの減衰率
 	countPoint = pEffectParameter_->GetCountLightPoint();
 	for( int counterLight = 0; counterLight < countPoint; ++counterLight )
 	{
@@ -274,10 +274,10 @@ void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 		pColorPoint[ 3 * counterLight + 2 ] = colorPoint.b;
 
 		// ポイントライトの減衰率
-		pLightPoint->GetAttemuation( &attemuationPoint );
-		pAttemuationPoint[ 3 * counterLight + 0 ] = attemuationPoint.x;
-		pAttemuationPoint[ 3 * counterLight + 1 ] = attemuationPoint.y;
-		pAttemuationPoint[ 3 * counterLight + 2 ] = attemuationPoint.z;
+		pLightPoint->GetAttenuation( &attemuationPoint );
+		pAttenuationPoint[ 3 * counterLight + 0 ] = attemuationPoint.x;
+		pAttenuationPoint[ 3 * counterLight + 1 ] = attemuationPoint.y;
+		pAttenuationPoint[ 3 * counterLight + 2 ] = attemuationPoint.z;
 	}
 
 	// ポイントライトの座標
@@ -287,7 +287,7 @@ void DrawerLightReflect::Draw( const D3DXMATRIX& matrixWorld )
 	pEffect_->SetFloatArray( PARAMETER_COLOR_LIGHT_POINT, pColorPoint, 3 * countPoint );
 
 	// ポイントライトの減衰率
-	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, pAttemuationPoint, 3 * countPoint );
+	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, pAttenuationPoint, 3 * countPoint );
 
 	// 描画
 	pEffect_->Begin( 0 );
