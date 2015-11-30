@@ -200,16 +200,16 @@ private:
 	//	ゲーム用ステージ・３Dオブジェクト関係
 	//----------------------------------------------------------
 
-	ObjectSky*				pSky_;				// 空
-	ObjectRiver*			pRiver_;			// 川
-	ObjectModel*			pField_;			// 地形
+	ObjectSky*				sky;			// 空
+	ObjectRiver*			river;			// 川
+	ObjectModel*			field;			// 地形
 
-	ObjectModelMaterial*	pBridge_;			// 橋
-	ObjectWaterwheel*		pWaterwheel_;		// 水車
-	ObjectModelMaterial*	pHouse_;			// 家
-	ObjectModelMaterial*	pGate_;				// 鳥居
+	ObjectModelMaterial*	bridge;			// 橋
+	ObjectWaterwheel*		waterwheel;		// 水車
+	ObjectModelMaterial*	houses;			// 家
+	ObjectModelMaterial*	gate;			// 鳥居
 
-	ObjectSkinMesh*			pMarker_;			// 場所の目印
+	ObjectSkinMesh*			markers;		// 場所の目印
 
 	//	プレイヤー
 	Player* player;
@@ -410,10 +410,6 @@ private:
 	Object2D*			pObjectRanking_;					// ランキング画像オブジェクト
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
-#ifdef _DEVELOP
-	int					timerPointTest_;					// ポイントライトテストタイマー
-#endif
-
 	int Initialize2( void );
 	int Finalize2( void );
 	void InitializeSelf2( void );
@@ -435,6 +431,9 @@ private:
 
 	// ランキング更新
 	void UpdateRanking( void );
+
+	// テスト更新
+	void UpdateTest( void );
 
 	// リザルトオブジェクトを非表示にする
 	void DisableObjectResult( void );

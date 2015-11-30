@@ -81,7 +81,7 @@ public:
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attemuation );
+	void Set( const D3DXCOLOR& diffuse, const D3DXCOLOR& specular, const D3DXVECTOR3& position, const D3DXVECTOR3& attenuation );
 	void SetPosition( const D3DXVECTOR3& value );
 	void SetPosition( float x, float y, float z );
 	void SetPositionX( float x );
@@ -91,19 +91,19 @@ public:
 	float GetPositionX( void ) const;
 	float GetPositionY( void ) const;
 	float GetPositionZ( void ) const;
-	void SetAttemuation( const D3DXVECTOR3& value );
-	void SetAttemuation( float x, float y, float z );
-	void SetAttemuationX( float x );
-	void SetAttemuationY( float y );
-	void SetAttemuationZ( float z );
-	void GetAttemuation( D3DXVECTOR3* pOut ) const;
-	float GetAttemuationX( void ) const;
-	float GetAttemuationY( void ) const;
-	float GetAttemuationZ( void ) const;
+	void SetAttenuation( const D3DXVECTOR3& value );
+	void SetAttenuation( float x, float y, float z );
+	void SetAttenuationX( float x );
+	void SetAttenuationY( float y );
+	void SetAttenuationZ( float z );
+	void GetAttenuation( D3DXVECTOR3* pOut ) const;
+	float GetAttenuationX( void ) const;
+	float GetAttenuationY( void ) const;
+	float GetAttenuationZ( void ) const;
 
 protected:
 	D3DXVECTOR3	position_;			// 座標
-	D3DXVECTOR3	attemuation_;		// 減衰率
+	D3DXVECTOR3	attenuation_;		// 減衰率
 
 private:
 	void InitializeSelf( void );

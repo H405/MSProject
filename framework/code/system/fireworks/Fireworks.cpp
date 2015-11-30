@@ -143,7 +143,7 @@ int Fireworks::Set(
 		lightPoint = managerLight->GetLightPoint();
 		lightPoint->SetDiffuse(1.0f, 0.0f, 1.0f);
 		lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
-		lightPoint->SetAttemuation(0.00f, 0.0006f, 0.00006f);
+		lightPoint->SetAttenuation(0.00f, 0.0006f, 0.00006f);
 	}
 	lightPoint->SetIsEnable(true);
 
