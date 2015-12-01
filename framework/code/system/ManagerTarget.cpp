@@ -123,7 +123,7 @@ int ManagerTarget::Finalize( void )
 void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
 	//	自動で生成
-	autoAppear();
+	autoAppear(_table, _targetTableIndex);
 
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
 	{
@@ -152,7 +152,7 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ManagerTarget::autoAppear()
+void ManagerTarget::autoAppear(int* _table , int* _targetTableIndex)
 {
 	//	出現カウント加算
 	if(targetAppearIndex < targetAppearDataMax)
@@ -162,8 +162,15 @@ void ManagerTarget::autoAppear()
 	if(targetAppearData[targetAppearIndex].appearTime == targetAppearCount)
 	{
 		//	生成
-		Add(targetAppearData[targetAppearIndex].appearPos);
+		int buff = Add(targetAppearData[targetAppearIndex].appearPos);
 		targetAppearIndex++;
+
+		//	テーブルへ追加
+		if(buff != -1)
+		{
+			_table[*_targetTableIndex] = buff;
+			*_targetTableIndex += 1;
+		}
 
 		//	同じ時間に複数生成される場合があるので、その判定
 		int tempIndex = targetAppearIndex;
@@ -172,7 +179,15 @@ void ManagerTarget::autoAppear()
 		while(targetAppearData[tempIndex].appearTime == targetAppearCount)
 		{
 			//	生成
-			Add(targetAppearData[tempIndex].appearPos);
+			buff = Add(targetAppearData[tempIndex].appearPos);
+
+			//	テーブルへ追加
+			if(buff != -1)
+			{
+				_table[*_targetTableIndex] = buff;
+				*_targetTableIndex += 1;
+			}
+
 
 			//	さらに次のインデックスと判定
 			tempIndex++;

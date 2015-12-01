@@ -157,7 +157,7 @@ protected:
 	void Read_TIM_POS(FILE* _fp, int _readDataIndex);
 	void ReadAppearTargetMax(FILE* _fp);
 	void SortAppearTargetData();
-	void autoAppear();
+	void autoAppear(int* _table , int* _targetTableIndex);
 
 private:
 	void InitializeSelf( void );

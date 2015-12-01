@@ -720,13 +720,13 @@ void CWiiController::CommonUpdate()
 				joystick.y = -joyStickMax;
 		}
 
-		//PrintDebug( _T( "accel.x = %f\n" ), accel.x);
-		//PrintDebug( _T( "accel.y = %f\n" ), accel.y);
-		//PrintDebug( _T( "accel.z = %f\n" ), accel.z);
-		//
-		//PrintDebug( _T( "rot.x = %f\n" ), rot.x);
-		//PrintDebug( _T( "rot.y = %f\n" ), rot.y);
-		//PrintDebug( _T( "rot.z = %f\n" ), rot.z);
+		PrintDebug( _T( "accel.x = %f\n" ), accel.x);
+		PrintDebug( _T( "accel.y = %f\n" ), accel.y);
+		PrintDebug( _T( "accel.z = %f\n" ), accel.z);
+		
+		PrintDebug( _T( "rot.x = %f\n" ), rot.x);
+		PrintDebug( _T( "rot.y = %f\n" ), rot.y);
+		PrintDebug( _T( "rot.z = %f\n" ), rot.z);
 	}
 
 	//	バランスwiiボード(以下、wiiボード)が接続されていれば

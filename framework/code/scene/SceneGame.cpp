@@ -249,7 +249,7 @@ void SceneGame::LaunchFireworks()
 			int buff;
 			D3DXVECTOR3 buffPos = player->getPosition();
 
-			if(buffWiiAccel.x >= 0.0f)
+			if(buffWiiAccel.x <= 0.0f)
 			{
 				//	rotは90度で真っ直ぐ飛ぶ
 				//	rotSpeedがマイナス値なら右側に曲がる
@@ -258,9 +258,9 @@ void SceneGame::LaunchFireworks()
 					ManagerFireworks::STATE_RIGHT,
 					managerPoint,
 					buffPos,
-					D3DXVECTOR3(buffWiiAccel.x, 1.0f, 0.0f),
-					buffWiiAccel.x * 20.0f,
-					buffWiiAccel.x * 0.5f
+					D3DXVECTOR3(3.0f, 1.0f, 0.0f),
+					90.0f,
+					buffWiiAccel.x * 0.3f
 					);
 			}
 			else
@@ -269,8 +269,8 @@ void SceneGame::LaunchFireworks()
 					ManagerFireworks::STATE_LEFT,
 					managerPoint,
 					buffPos,
-					D3DXVECTOR3(buffWiiAccel.x, 1.0f, 0.0f),
-					buffWiiAccel.x * 20.0f,
+					D3DXVECTOR3(3.0f, 1.0f, 0.0f),
+					90.0f,
 					buffWiiAccel.x * 0.5f
 					);
 			}
@@ -338,7 +338,8 @@ void SceneGame::LaunchFireworks()
 		}
 	}
 
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_UP))
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_UP) ||
+		pArgument_->pWiiController_->getTrigger(WC_ONE))
 	{
 		int buff;
 		D3DXVECTOR3 buffPos = player->getPosition();
@@ -433,12 +434,12 @@ void SceneGame::normalUpdate(void)
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
-	//PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
-	//PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
-	//PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
-	//PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
-	//PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
-	//PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
+	PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
+	PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
+	PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
+	PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
+	PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
+	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
 
 	//	ターゲット出現
 	//targetAppearCount++;
