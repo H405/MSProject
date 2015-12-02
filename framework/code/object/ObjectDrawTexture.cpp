@@ -11,6 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "ObjectDrawTexture.h"
+#include "../framework/camera/Camera.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../graphic/graphic/GraphicDrawTexture.h"
 #include "../system/EffectParameter.h"
@@ -180,7 +181,24 @@ void ObjectDrawTexture::Update( void )
 		isEnableGraphic = false;
 	}
 	pGraphic_->SetIsEnable( isEnableGraphic );
-
+#if 0
+	// 色の倍率の設定
+	D3DSURFACE_DESC	description;			// 情報
+	const Camera*	pCamera = nullptr;		// カメラ
+	if( pParameter_ != nullptr && pTextureCurrent_ != nullptr )
+	{
+		pTextureCurrent_->GetLevelDesc( 0, &description );
+		pCamera = pParameter_->GetCamera( GraphicMain::CAMERA_GENERAL );
+		if( description.Format == D3DFMT_R32F )
+		{
+			pMultiply_[ 0 ] = 1.0f / pCamera->GetClipFar();
+		}
+		else
+		{
+			pMultiply_[ 0 ] = 1.0f;
+		}
+	}
+#endif
 	// 基本クラスの処理
 	Object::Update();
 }
@@ -199,6 +217,7 @@ int ObjectDrawTexture::CreateGraphic( int priority, const EffectParameter* pPara
 	// メンバ変数の設定
 	countTexture_ = countTexture;
 	indexTexture_ = countTexture - 1;
+	pParameter_ = pParameter;
 
 	// テクスチャテーブルの生成
 	ppTableTexture_ = new IDirect3DTexture9*[ countTexture ];
@@ -268,6 +287,7 @@ void ObjectDrawTexture::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pGraphic_ = nullptr;
+	pParameter_ = nullptr;
 	countTexture_ = 0;
 	indexTexture_ = 0;
 	ppTableTexture_ = nullptr;
