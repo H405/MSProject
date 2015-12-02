@@ -14,6 +14,7 @@
 #include "CameraStateSpline.h"
 #include "../../framework/camera/CameraObject.h"
 #include "../../framework/develop/Debug.h"
+#include "../../framework/develop/DebugProc.h"
 
 //******************************************************************************
 // ライブラリ
@@ -526,6 +527,15 @@ void CameraStateSpline::Update( CameraObject* pCamera )
 			indexSection_ = 0;
 		}
 	}
+
+	// デバッグ表示
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "| カメラ                               |\n" ) );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "開始座標 ： ( %12.6f, %12.6f, %12.6f )\n" ), pTablePointCamera_[ indexPointCameraBegin ].position_.x, pTablePointCamera_[ indexPointCameraBegin ].position_.y, pTablePointCamera_[ indexPointCameraBegin ].position_.z );
+	PrintDebug( _T( "終了座標 ： ( %12.6f, %12.6f, %12.6f )\n" ), pTablePointCamera_[ indexPointCameraEnd ].position_.x, pTablePointCamera_[ indexPointCameraEnd ].position_.y, pTablePointCamera_[ indexPointCameraEnd ].position_.z );
+	PrintDebug( _T( "現在座標 ： ( %12.6f, %12.6f, %12.6f )\n" ), positionCamera.x, positionCamera.y, positionCamera.z );
+	PrintDebug( _T( "比率     ： %12.6f\n" ), static_cast< float >( countFrame_ ) / pFrame_[ indexSection_ ] );
 }
 
 //==============================================================================

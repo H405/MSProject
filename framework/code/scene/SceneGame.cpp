@@ -155,7 +155,17 @@ void SceneGame::Update( void )
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::UpdatePreviousGame;
 	}
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_F7 ) )
+	{
+		timerSceneGame_ = 0;
+		fpUpdate = &SceneGame::UpdateBetweenSection;
+	}
 #endif
+
+	// 焦点距離の更新
+	D3DXVECTOR3	positionLookAt;		// 注視点
+	pCamera_[ GraphicMain::CAMERA_GENERAL ].GetPositionLookAt( &positionLookAt );
+	pArgument_->pEffectParameter_->SetForcus( pCamera_[ GraphicMain::CAMERA_GENERAL ].GetViewZ( positionLookAt ) );
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();

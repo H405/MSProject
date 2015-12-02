@@ -62,6 +62,27 @@ int SceneGame::Initialize2( void )
 		return result;
 	}
 
+	// ゲームセクション間カメラ処理の生成
+	TCHAR	pNameFileState[ SECTION_MAXIMUM - 1 ][ _MAX_PATH ] =
+	{
+		_T( "data/camera/Section12.txt" ),
+		_T( "data/camera/Section23.txt" ),
+		_T( "data/camera/Section34.txt" )
+	};
+	pStateCameraBetween_ = new CameraStateSpline[ SECTION_MAXIMUM - 1 ];
+	if( pStateCameraBetween_ == nullptr )
+	{
+		return 1;
+	}
+	for( int counterState = 0; counterState < SECTION_MAXIMUM - 1; ++counterState )
+	{
+		result = pStateCameraBetween_[ counterState ].Initialize( &pNameFileState[ counterState ][ 0 ] );
+		if( result != 0 )
+		{
+			return result;
+		}
+	}
+
 	// リザルト前カメラ処理の生成
 	pStateCameraResult_ = new CameraStateSpline();
 	if( pStateCameraResult_ == nullptr )
@@ -283,6 +304,10 @@ int SceneGame::Finalize2( void )
 	delete pStateCameraResult_;
 	pStateCameraResult_ = nullptr;
 
+	// ゲームセクション間カメラ処理の開放
+	delete[] pStateCameraBetween_;
+	pStateCameraBetween_ = nullptr;
+
 	// ゲーム開始前カメラ処理の開放
 	delete pStateCameraPrevious_;
 	pStateCameraPrevious_ = nullptr;
@@ -300,6 +325,7 @@ void SceneGame::InitializeSelf2( void )
 {
 	// メンバ変数の初期化
 	pStateCameraPrevious_ = nullptr;
+	pStateCameraBetween_ = nullptr;
 	pStateCameraResult_ = nullptr;
 	timerSceneGame_ = 0;
 	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
@@ -309,6 +335,7 @@ void SceneGame::InitializeSelf2( void )
 	indexRank_ = 0;
 	pObjectRanking_ = nullptr;
 	pObjectScoreRanking_ = nullptr;
+	indexSection_ = 0;
 }
 
 //==============================================================================
@@ -360,6 +387,47 @@ void SceneGame::UpdateCountDownGame( void )
 
 	// 更新処理の切り替え
 	if( timerSceneGame_ >= 240 )
+	{
+		timerSceneGame_ = 0;
+		fpUpdate = &SceneGame::normalUpdate;
+	}
+}
+
+//==============================================================================
+// Brief  : ゲームセクション間更新
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::UpdateBetweenSection( void )
+{
+	// テスト
+	PrintDebug( _T( "UpdateBetweenSection\n" ) );
+	PrintDebug( _T( "Timer        : %05d\n" ), timerSceneGame_ );
+	PrintDebug( _T( "IndexSection : %05d\n" ), indexSection_ );
+
+	// エラー処理
+	if( indexSection_ >= SECTION_MAXIMUM )
+	{
+		indexSection_ = 0;
+	}
+
+	// カメラの処理を設定
+	if( timerSceneGame_ == 0 )
+	{
+		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( &pStateCameraBetween_[ indexSection_ ] );
+	}
+
+	// セクション番号を進める
+	if( timerSceneGame_ == 0 )
+	{
+		++indexSection_;
+	}
+
+	// タイマーの経過
+	++timerSceneGame_;
+
+	// 更新処理の切り替え
+	if( timerSceneGame_ >= pStateCameraPrevious_->GetCountFrame() )
 	{
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::normalUpdate;
@@ -867,12 +935,12 @@ void SceneGame::UpdateTest( void )
 	{
 		pObject->AddScale( -1.0f, -1.0f, -1.0f );
 	}
-	PrintDebug( "*--------------------------------------*\n" );
-	PrintDebug( "| デバッグオブジェクト                 |\n" );
-	PrintDebug( "*--------------------------------------*\n" );
-	PrintDebug( "座標 ： ( %11.6f, %11.6f, %11.6f )\n", pObject->GetPositionX(), pObject->GetPositionY(), pObject->GetPositionZ() );
-	PrintDebug( "回転 ： ( %11.6f, %11.6f, %11.6f )\n", 180.0f / D3DX_PI * pObject->GetRotationX(), 180.0f / D3DX_PI * pObject->GetRotationY(), 180.0f / D3DX_PI * pObject->GetRotationZ() );
-	PrintDebug( "拡縮 ： ( %11.6f, %11.6f, %11.6f )\n", pObject->GetScaleX(), pObject->GetScaleY(), pObject->GetScaleZ() );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "| デバッグオブジェクト                 |\n" ) );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "座標 ： ( %11.6f, %11.6f, %11.6f )\n" ), pObject->GetPositionX(), pObject->GetPositionY(), pObject->GetPositionZ() );
+	PrintDebug( _T( "回転 ： ( %11.6f, %11.6f, %11.6f )\n" ), 180.0f / D3DX_PI * pObject->GetRotationX(), 180.0f / D3DX_PI * pObject->GetRotationY(), 180.0f / D3DX_PI * pObject->GetRotationZ() );
+	PrintDebug( _T( "拡縮 ： ( %11.6f, %11.6f, %11.6f )\n" ), pObject->GetScaleX(), pObject->GetScaleY(), pObject->GetScaleZ() );
 
 	// 点光源テスト
 	D3DXVECTOR3	pPositionPointTest[ 3 ] =

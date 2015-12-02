@@ -327,6 +327,16 @@ private:
 	//==============================================================================
 	// ↓白川追加
 	//==============================================================================
+	// ゲームセクション
+	enum
+	{
+		SECTION_WATERWHEEL = 0,		// 水車
+		SECTION_HOUSE,				// 民家
+		SECTION_BRIDGE,				// 橋
+		SECTION_GATE,				// 鳥居
+		SECTION_MAXIMUM				// 最大値
+	};
+
 	// リザルト画像
 	enum
 	{
@@ -400,6 +410,7 @@ private:
 	static const int	MAXIMUM_RANK = 5;		// ランキング最大数
 
 	CameraStateSpline*	pStateCameraPrevious_;				// ゲーム開始前カメラ処理
+	CameraStateSpline*	pStateCameraBetween_;				// ゲームセクション間カメラ処理
 	CameraStateSpline*	pStateCameraResult_;				// リザルト前カメラ処理
 	int					timerSceneGame_;					// ゲームシーン経過時間
 
@@ -410,6 +421,8 @@ private:
 	Object2D*			pObjectRanking_;					// ランキング画像オブジェクト
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
+	int					indexSection_;						// ゲームセクション番号
+
 	int Initialize2( void );
 	int Finalize2( void );
 	void InitializeSelf2( void );
@@ -419,6 +432,9 @@ private:
 
 	// ゲーム開始前カウントダウン更新
 	void UpdateCountDownGame( void );
+
+	// ゲームセクション間更新
+	void UpdateBetweenSection( void );
 
 	// リザルト待機更新
 	void UpdateWaitResult( void );

@@ -739,7 +739,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	IDirect3DTexture9**	ppTextureForDebug;			// デバッグ用テクスチャ
 	indexTextureForDebug = 0;
 	countTextureForDebug = 0;
-	for( int counterPass = 0; counterPass < GraphicMain::PASS_MAX; ++counterPass )
+	for( int counterPass = 0; counterPass < GraphicMain::PASS_MAX - 1; ++counterPass )
 	{
 		countTextureForDebug += pRenderPass_[ counterPass ].GetCountRenderTarget();
 	}

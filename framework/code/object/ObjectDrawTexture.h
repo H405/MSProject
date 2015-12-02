@@ -116,13 +116,14 @@ private:
 	ObjectDrawTexture( const ObjectDrawTexture& );
 	ObjectDrawTexture operator=( const ObjectDrawTexture& );
 
-	int					countTexture_;			// テクスチャ数
-	int					indexTexture_;			// テクスチャ番号
-	IDirect3DTexture9**	ppTableTexture_;		// テクスチャテーブル
-	IDirect3DTexture9*	pTextureCurrent_;		// 現在のテクスチャ
-	float				pMultiply_[ 3 ];		// 色の倍率
-	InputKeyboard*		pKeyboard_;				// キーボード入力
-	bool				isEnableDraw_;			// 表示フラグ
+	const EffectParameter*	pParameter_;			// エフェクトのパラメータ
+	int						countTexture_;			// テクスチャ数
+	int						indexTexture_;			// テクスチャ番号
+	IDirect3DTexture9**		ppTableTexture_;		// テクスチャテーブル
+	IDirect3DTexture9*		pTextureCurrent_;		// 現在のテクスチャ
+	float					pMultiply_[ 3 ];		// 色の倍率
+	InputKeyboard*			pKeyboard_;				// キーボード入力
+	bool					isEnableDraw_;			// 表示フラグ
 };
 
 #endif	// MY_OBJECT_DRAW_TEXTURE_H
