@@ -39,6 +39,8 @@
 //	リピートカウントの最大値
 #define REPEAT_COUNT_MAX (60)
 
+#define WIIMOTE_SAVE_DATA_MAX (60 * 60 * 10) //フレームレート×必要秒数＊必要分数
+
 //*****************************************************************************
 //	列挙体定義
 //*****************************************************************************
@@ -104,6 +106,18 @@ typedef enum
 	ROT_RESET_TYPE_Z_P_ONE,
 	ROT_RESET_TYPE_Z_M_ONE,
 }ROT_RESET_TYPE;
+
+
+typedef struct
+{
+	WORD buttonState;
+
+	D3DXVECTOR3 rot;
+
+	D3DXVECTOR3 accel;
+
+	D3DXVECTOR2 IRScreen;
+}WIIMOTE_SAVE_DATA;
 
 //	長いから省略（WiiBoardSencer）
 #define WBS wiimote_state::balance_board::sensors_f
@@ -296,9 +310,12 @@ private:
 	//	角速度をまるめる
 	void adJustmentRotSpeed();
 
-	//	お遊び用
 	void CommonUpdate();
+	void ReadUpdate();
 	void NormalUpdate();
+	void SaveUpdate();
+
+	//	お遊び用
 	void updateMode1();
 	void updateMode2();
 	void updateMode3();
@@ -398,6 +415,7 @@ private:
 
 	//	更新関数
 	void (CWiiController::*fpUpdate)(void);
+	void (CWiiController::*fpCommonUpdate)(void);
 
 	//	接続状態
 	bool isConnectWiimote;
@@ -428,6 +446,22 @@ private:
 	void initializeSelf();
 	void initializeSelfWiiRemote();
 	void initializeSelfWiiBoard();
+
+
+
+
+
+
+
+
+
+
+	//	wiiリモコンのセーブデータ
+	WIIMOTE_SAVE_DATA saveData[WIIMOTE_SAVE_DATA_MAX];
+	int saveDataNum;
+	int saveDataNumMax;
+	void Save();
+	void Read();
 };
 
 #endif

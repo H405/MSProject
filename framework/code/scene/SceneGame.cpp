@@ -184,7 +184,6 @@ void SceneGame::calibrationUpdate(void)
 	if(wiiLostCheck() == false)
 		return;
 
-
 	if(pArgument_->pVirtualController_->IsTrigger(VC_GAME_START))
 	{
 		pArgument_->pWiiController_->rotReset();

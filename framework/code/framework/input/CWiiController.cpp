@@ -9,12 +9,16 @@
 #include "CWiiController.h"
 #include <iostream>
 
+#include "../develop/Debug.h"
 #include "../develop/DebugProc.h"
 #include "../develop/DebugMeasure.h"
 
 //*****************************************************************************
 //	定数定義
 //*****************************************************************************
+#define UPDATE_NORMAL
+//#define UPDATE_SAVE
+//#define UPDATE_READ
 
 //SlowMode（低速時モード）→ 1.45[deg / s]
 //FastMode（高速時モード）→ 6.59[deg / s]
@@ -110,6 +114,7 @@ CWiiController::CWiiController()
 
 					//	更新関数セット
 					fpUpdate = &CWiiController::NormalUpdate;
+					fpCommonUpdate = &CWiiController::CommonUpdate;
 
 					return;
 				}
@@ -129,10 +134,39 @@ CWiiController::CWiiController()
 					//bool b = wiiRemote->Load16bitMonoSampleWAV("Produce__.wav", sample);
 
 					//wiiRemote->PlaySample(sample,0x10, FREQ_4200HZ);
-					playSound(FREQ_2760HZ, 0x10);
+					//playSound(FREQ_2760HZ, 0x10);
 
 					//	更新関数セット
 					fpUpdate = &CWiiController::NormalUpdate;
+
+
+
+
+
+
+					//	通常の更新関数
+					//--------------------------------------------------
+#ifdef UPDATE_NORMAL
+					fpCommonUpdate = &CWiiController::CommonUpdate;
+#endif
+					//--------------------------------------------------
+
+					//	セーブ用の更新関数
+					//--------------------------------------------------
+#ifdef UPDATE_SAVE
+					fpCommonUpdate = &CWiiController::SaveUpdate;
+					saveDataNumMax = WIIMOTE_SAVE_DATA_MAX;
+#endif
+					//--------------------------------------------------
+
+					//	読み込み用の更新関数
+					//--------------------------------------------------
+#ifdef UPDATE_READ
+					saveDataNumMax = 0;
+					Read();
+					fpCommonUpdate = &CWiiController::ReadUpdate;
+#endif
+					//--------------------------------------------------
 
 					return;
 				}
@@ -186,6 +220,7 @@ CWiiController::CWiiController()
 
 	//	更新関数セット
 	fpUpdate = &CWiiController::NormalUpdate;
+	fpCommonUpdate = &CWiiController::CommonUpdate;
 }
 //=============================================================================
 //	変数初期化
@@ -249,6 +284,8 @@ void CWiiController::initializeSelfWiiRemote()
 
 	isConnectWiimote = false;
 	isReConnectWiimote = false;
+
+	saveDataNum = 0;
 }
 //=============================================================================
 //	変数初期化
@@ -373,6 +410,13 @@ void CWiiController::reConnectWiiboard()
 //=============================================================================
 CWiiController::~CWiiController()
 {
+	//	セーブ用の更新処理で動いていたら
+	if(fpCommonUpdate == &CWiiController::SaveUpdate)
+	{
+		//	書き込み
+		Save();
+	}
+
 	if(wiiRemote != nullptr)
 	{
 		//	LED消灯
@@ -783,6 +827,362 @@ void CWiiController::CommonUpdate()
 	}
 }
 //=============================================================================
+//	操作をセーブする際の更新処理
+//=============================================================================
+void CWiiController::SaveUpdate()
+{
+	//	普通に更新
+	CommonUpdate();
+
+	if(saveDataNum < WIIMOTE_SAVE_DATA_MAX)
+	{
+		//	セーブ用のバッファに値を詰めておく
+		saveData[saveDataNum].buttonState = buttonState;
+
+		saveData[saveDataNum].rot = rot;
+
+		saveData[saveDataNum].accel = accel;
+
+		saveData[saveDataNum].IRScreen = IRScreen;
+
+		//	書き込み位置修正
+		saveDataNum++;
+	}
+}
+//=============================================================================
+//	実際の書き込み処理
+//=============================================================================
+void CWiiController::Save()
+{
+	TCHAR fileName[100];	//	ファイル名
+	FILE* fp;	//	ファイルポインタ
+	char cImageNum[10];	//	読み書き用文字列
+	int nImageNum = 0;	//	文字列から数字への変更
+
+	//	ファイルからwiiリモコンセーブデータ数情報読み取り
+	//-------------------------------------------------------------------------------
+	fopen_s(&fp, "data/wiimoteSave/wiimoteSaveIndex.txt", "r");
+	if (fp == NULL)
+	{
+#ifdef _DEBUG
+		PrintDebugWnd("wiiリモコン用ファイルのオープン失敗");
+#endif
+	}
+
+	fgets(cImageNum, 10, fp);
+
+	fclose(fp);
+	//-------------------------------------------------------------------------------
+
+	//	ファイル名設定
+	//-------------------------------------------------------------------------------
+	//	文字列から数字への変換
+	nImageNum = atoi(cImageNum);
+
+	//	ファイル名保存( 識別子もここで保存 )
+	sprintf_s(fileName, "data/wiimoteSave/saveData%d.bin", nImageNum);
+
+	nImageNum++;
+
+	//	数字から文字列への変換
+	_itoa_s(nImageNum, cImageNum, 10);
+	//-------------------------------------------------------------------------------
+
+	//	wiiリモコンセーブデータ数情報書き込み
+	//-------------------------------------------------------------------------------
+	fopen_s(&fp, "data/wiimoteSave/wiimoteSaveIndex.txt", "w");
+	if (fp == NULL)
+	{
+#ifdef _DEBUG
+		PrintDebugWnd("wiiリモコン用ファイルのオープン失敗");
+#endif
+	}
+
+	fputs(cImageNum, fp);
+
+	fclose(fp);
+	//-------------------------------------------------------------------------------
+
+	//	データ書き込み
+	//-------------------------------------------------------------------------------
+	fopen_s(&fp, fileName, "wb");
+	if (fp == NULL)
+	{
+#ifdef _DEBUG
+		PrintDebugWnd("wiiリモコン用ファイルのオープン失敗");
+#endif
+	}
+
+	//	セーブデータ数書き込み
+	//fprintf(fp, "%d ", saveDataNum);
+	fwrite(&saveDataNum, sizeof(int), 1, fp);
+
+	for(int count = 0; count < saveDataNum;count++)
+	{
+		//	ボタン押下状態の書き込み
+		//fprintf(fp, "%u ", saveData[count].buttonState);
+		fwrite(&saveData[count].buttonState, sizeof(unsigned short), 1, fp);
+
+		//	回転量の書き込み
+		//fprintf(fp, "%f %f %f ", saveData[count].rot.x,		saveData[count].rot.y,		saveData[count].rot.z);
+		fwrite(&saveData[count].rot.x, sizeof(float), 1, fp);
+		fwrite(&saveData[count].rot.y, sizeof(float), 1, fp);
+		fwrite(&saveData[count].rot.z, sizeof(float), 1, fp);
+
+		//	加速度の書き込み
+		//fprintf(fp, "%f %f %f ", saveData[count].accel.x,		saveData[count].accel.y,			saveData[count].accel.z);
+		fwrite(&saveData[count].accel.x, sizeof(float), 1, fp);
+		fwrite(&saveData[count].accel.y, sizeof(float), 1, fp);
+		fwrite(&saveData[count].accel.z, sizeof(float), 1, fp);
+
+		//	IR情報の書き込み
+		//fprintf(fp, "%f %f ", saveData[count].IRScreen.x,		saveData[count].IRScreen.y);
+		fwrite(&saveData[count].IRScreen.x, sizeof(float), 1, fp);
+		fwrite(&saveData[count].IRScreen.y, sizeof(float), 1, fp);
+	}
+
+	fclose(fp);
+	//-------------------------------------------------------------------------------
+}
+//=============================================================================
+//	操作を読み込みする際の更新処理
+//=============================================================================
+void CWiiController::ReadUpdate()
+{
+	if(saveDataNum < saveDataNumMax)
+	{
+		//	前回の状態を保存
+		buttonStatePrev = buttonState;
+
+		accelPrev = accel;
+		accelRawPrev = accelRaw;
+
+		rotPrev = rot;
+		rotRawPrev = rotRaw;
+
+		rotSpeedPrev = rotSpeed;
+		rotSpeedRawPrev = rotSpeedRaw;
+
+		joystickPrev = joystick;
+
+		IRPrev = IR;
+		IRScreenPrev = IRScreen;
+
+		motionConnectPrev = motionConnect;
+
+		updateAgePrev = updateAge;
+
+		//	LED点灯
+		batteryLightingLED();
+
+		//	ボタンの押下状態を保存
+		buttonState = saveData[saveDataNum].buttonState;
+
+		//	リピートカウントの更新
+		for (int count = 0; count < WC_BUTTON_MAX; count++)
+		{
+			if (buttonState & BUTTON_STATE_BITS[count])
+				(repeatCount[count] < REPEAT_COUNT_MAX) ? repeatCount[count]++ : repeatCount[count] = REPEAT_COUNT_MAX;
+			else
+				repeatCount[count] = 0;
+		}
+
+		//	加速度を保存
+		accel = D3DXVECTOR3(saveData[saveDataNum].accel.x, saveData[saveDataNum].accel.y, saveData[saveDataNum].accel.z);
+
+		//	回転角を保存（本体のみ）
+		rot = D3DXVECTOR3(saveData[saveDataNum].rot.x, saveData[saveDataNum].rot.y, saveData[saveDataNum].rot.z);
+
+		//	スクリーン座標系計算
+		IRScreen.x = saveData[saveDataNum].IRScreen.x;
+		IRScreen.y = saveData[saveDataNum].IRScreen.y;
+
+		PrintDebug( _T( "accel.x = %f\n" ), accel.x);
+		PrintDebug( _T( "accel.y = %f\n" ), accel.y);
+		PrintDebug( _T( "accel.z = %f\n" ), accel.z);
+		
+		PrintDebug( _T( "rot.x = %f\n" ), rot.x);
+		PrintDebug( _T( "rot.y = %f\n" ), rot.y);
+		PrintDebug( _T( "rot.z = %f\n" ), rot.z);
+
+		//	バランスwiiボード(以下、wiiボード)が接続されていれば
+		if(wiiBoard != nullptr)
+		{
+			//	wiiボードの接続が切れたら
+			if(wiiBoard->IsConnected() == false || isConnectWiiboard == false)
+			{
+				//	接続切れ
+				isConnectWiiboard = false;
+
+				//	再接続要求
+				isReConnectWiiboard = true;
+
+				//	オブジェクト破棄
+				delete wiiBoard;
+				wiiBoard = nullptr;
+
+				//	関数終了
+				return;
+			}
+
+			//	前フレームの値取得
+			kgPrev = kg;
+
+			//	wiiボードの状態を取得...というかリセット
+			//	これやらないとステータスが更新されない
+			wiiBoard->RefreshState();
+
+			//	値の格納
+			kg = wiiBoard->BalanceBoard.Kg;
+
+			//PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
+			//PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
+			//PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
+			//PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
+			//PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
+
+			//PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
+			//PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
+			//PrintDebug( _T( "Kg.TopL = %f\n" ),		kg.TopL);
+			//PrintDebug( _T( "Kg.TopR = %f\n" ),		kg.TopR);
+			//PrintDebug( _T( "Kg.Total = %f\n" ),	kg.Total);
+		}
+	}
+	else
+	{
+		fpCommonUpdate = &CWiiController::CommonUpdate;
+		CommonUpdate();
+	}
+
+	saveDataNum++;
+}
+//=============================================================================
+//	実際の読み込み処理
+//=============================================================================
+void CWiiController::Read()
+{
+	FILE* fp;	//	ファイルポインタ
+
+	//	データ読み込み
+	//-------------------------------------------------------------------------------
+	fopen_s(&fp, "data/wiimoteSave/wiimoteSave.bin", "rb");
+	if (fp == NULL)
+	{
+#ifdef _DEBUG
+		PrintDebugWnd("データないお？");
+#endif
+	}
+
+
+	//	セーブデータ数読み込み
+	//fscanf_s(fp, "%d", &saveDataNumMax);
+	fread_s(&saveDataNumMax, sizeof(int), sizeof(int), 1, fp);
+
+	for(int count = 0; count < saveDataNumMax;count++)
+	{
+		//	ボタン押下状態の書き込み
+		//fscanf_s(fp, "%u", &saveData[count].buttonState);
+		fread_s(&saveData[count].buttonState, sizeof(unsigned short), sizeof(unsigned short), 1, fp);
+
+		//	回転量の書き込み
+		//fscanf_s(fp, "%f %f %f", &saveData[count].rot.x,		&saveData[count].rot.y,		&saveData[count].rot.z);
+		fread_s(&saveData[count].rot.x, sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].rot.y, sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].rot.z, sizeof(float), sizeof(float), 1, fp);
+
+		//	加速度の書き込み
+		//fscanf_s(fp, "%f %f %f", &saveData[count].accel.x,		&saveData[count].accel.y,		&saveData[count].accel.z);
+		fread_s(&saveData[count].accel.x, sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].accel.y, sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].accel.z, sizeof(float), sizeof(float), 1, fp);
+
+		//	IR情報の書き込み
+		//fscanf_s(fp, "%f %f", &saveData[count].IRScreen.x,		&saveData[count].IRScreen.y);
+		fread_s(&saveData[count].IRScreen.x, sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].IRScreen.y, sizeof(float), sizeof(float), 1, fp);
+	}
+
+
+	fclose(fp);
+}
+//=============================================================================
+//	更新処理
+//=============================================================================
+void CWiiController::update()
+{
+	(this->*fpCommonUpdate)();
+	(this->*fpUpdate)();
+}
+//=============================================================================
+//	角速度のまるめ操作（調整）
+//=============================================================================
+void CWiiController::adJustmentRotSpeed()
+{
+	if(rotSpeed.x > rotSpeedMax)
+		rotSpeed.x = rotSpeedMax;
+	if(rotSpeed.y > rotSpeedMax)
+		rotSpeed.y = rotSpeedMax;
+	if(rotSpeed.z > rotSpeedMax)
+		rotSpeed.z = rotSpeedMax;
+
+	if(rotSpeed.x < -rotSpeedMax)
+		rotSpeed.x = -rotSpeedMax;
+	if(rotSpeed.y < -rotSpeedMax)
+		rotSpeed.y = -rotSpeedMax;
+	if(rotSpeed.z < -rotSpeedMax)
+		rotSpeed.z = -rotSpeedMax;
+
+
+	if (rotSpeedRaw.x > rotSpeedRawMax)
+		rotSpeedRaw.x = rotSpeedRawMax;
+	if (rotSpeedRaw.y > rotSpeedRawMax)
+		rotSpeedRaw.y = rotSpeedRawMax;
+	if (rotSpeedRaw.z > rotSpeedRawMax)
+		rotSpeedRaw.z = rotSpeedRawMax;
+
+	if (rotSpeedRaw.x < -rotSpeedRawMax)
+		rotSpeedRaw.x = -rotSpeedRawMax;
+	if (rotSpeedRaw.y < -rotSpeedRawMax)
+		rotSpeedRaw.y = -rotSpeedRawMax;
+	if (rotSpeedRaw.z < -rotSpeedRawMax)
+		rotSpeedRaw.z = -rotSpeedRawMax;
+}
+//=============================================================================
+//	各種ゲッター
+//=============================================================================
+bool CWiiController::getPress(WC_BUTTON _button)
+{
+	return (buttonState & BUTTON_STATE_BITS[_button]) ? true : false;
+}
+bool CWiiController::getTrigger(WC_BUTTON _button)
+{
+	return (!(buttonStatePrev & BUTTON_STATE_BITS[_button]) && (buttonState & BUTTON_STATE_BITS[_button])) ? true : false;
+}
+bool CWiiController::getRelease(WC_BUTTON _button)
+{
+	return ((buttonStatePrev & BUTTON_STATE_BITS[_button]) && !(buttonState & BUTTON_STATE_BITS[_button])) ? true : false;
+}
+bool CWiiController::getRepeat(WC_BUTTON _button)
+{
+	if (repeatCount[_button] == REPEAT_COUNT_MAX)
+		return (buttonState & BUTTON_STATE_BITS[_button]) ? true : false;
+	else
+		return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//=============================================================================
 //	初期状態の更新処理
 //=============================================================================
 void CWiiController::NormalUpdate()
@@ -796,7 +1196,6 @@ void CWiiController::NormalUpdate()
 	}
 #endif
 }
-
 //=============================================================================
 //	更新処理モード１
 //
@@ -944,70 +1343,4 @@ void CWiiController::updateMode5()
 		mode5Count = 0;
 	}
 }
-
-//=============================================================================
-//	更新処理
-//=============================================================================
-void CWiiController::update()
-{
-	CommonUpdate();
-	(this->*fpUpdate)();
-}
-//=============================================================================
-//	角速度のまるめ操作（調整）
-//=============================================================================
-void CWiiController::adJustmentRotSpeed()
-{
-	if(rotSpeed.x > rotSpeedMax)
-		rotSpeed.x = rotSpeedMax;
-	if(rotSpeed.y > rotSpeedMax)
-		rotSpeed.y = rotSpeedMax;
-	if(rotSpeed.z > rotSpeedMax)
-		rotSpeed.z = rotSpeedMax;
-
-	if(rotSpeed.x < -rotSpeedMax)
-		rotSpeed.x = -rotSpeedMax;
-	if(rotSpeed.y < -rotSpeedMax)
-		rotSpeed.y = -rotSpeedMax;
-	if(rotSpeed.z < -rotSpeedMax)
-		rotSpeed.z = -rotSpeedMax;
-
-
-	if (rotSpeedRaw.x > rotSpeedRawMax)
-		rotSpeedRaw.x = rotSpeedRawMax;
-	if (rotSpeedRaw.y > rotSpeedRawMax)
-		rotSpeedRaw.y = rotSpeedRawMax;
-	if (rotSpeedRaw.z > rotSpeedRawMax)
-		rotSpeedRaw.z = rotSpeedRawMax;
-
-	if (rotSpeedRaw.x < -rotSpeedRawMax)
-		rotSpeedRaw.x = -rotSpeedRawMax;
-	if (rotSpeedRaw.y < -rotSpeedRawMax)
-		rotSpeedRaw.y = -rotSpeedRawMax;
-	if (rotSpeedRaw.z < -rotSpeedRawMax)
-		rotSpeedRaw.z = -rotSpeedRawMax;
-}
-//=============================================================================
-//	各種ゲッター
-//=============================================================================
-bool CWiiController::getPress(WC_BUTTON _button)
-{
-	return (buttonState & BUTTON_STATE_BITS[_button]) ? true : false;
-}
-bool CWiiController::getTrigger(WC_BUTTON _button)
-{
-	return (!(buttonStatePrev & BUTTON_STATE_BITS[_button]) && (buttonState & BUTTON_STATE_BITS[_button])) ? true : false;
-}
-bool CWiiController::getRelease(WC_BUTTON _button)
-{
-	return ((buttonStatePrev & BUTTON_STATE_BITS[_button]) && !(buttonState & BUTTON_STATE_BITS[_button])) ? true : false;
-}
-bool CWiiController::getRepeat(WC_BUTTON _button)
-{
-	if (repeatCount[_button] == REPEAT_COUNT_MAX)
-		return (buttonState & BUTTON_STATE_BITS[_button]) ? true : false;
-	else
-		return false;
-}
-
 //-----------------------------------EOF---------------------------------------
