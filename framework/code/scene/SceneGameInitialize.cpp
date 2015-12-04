@@ -817,6 +817,10 @@ int SceneGame::Finalize( void )
 		pLight_ = nullptr;
 	}
 
+	// カメラの開放
+	pCamera_->SetState( nullptr );
+	pCamera_ = nullptr;
+
 	// 基本クラスの処理
 	result = SceneMain::Finalize();
 	if( result != 0 )

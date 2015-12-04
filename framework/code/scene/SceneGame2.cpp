@@ -351,7 +351,7 @@ void SceneGame::UpdatePreviousGame( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( pStateCameraPrevious_ );
+		pCamera_->SetState( pStateCameraPrevious_ );
 	}
 
 	// タイマーの経過
@@ -379,7 +379,7 @@ void SceneGame::UpdateCountDownGame( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( nullptr );
+		pCamera_->SetState( nullptr );
 	}
 
 	// タイマーの経過
@@ -406,7 +406,7 @@ void SceneGame::UpdateBetweenSection( void )
 	PrintDebug( _T( "IndexSection : %05d\n" ), indexSection_ );
 
 	// エラー処理
-	if( indexSection_ >= SECTION_MAXIMUM )
+	if( indexSection_ >= SECTION_MAXIMUM - 1 )
 	{
 		indexSection_ = 0;
 	}
@@ -414,7 +414,7 @@ void SceneGame::UpdateBetweenSection( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( &pStateCameraBetween_[ indexSection_ ] );
+		pCamera_->SetState( &pStateCameraBetween_[ indexSection_ ] );
 	}
 
 	// セクション番号を進める
@@ -427,7 +427,7 @@ void SceneGame::UpdateBetweenSection( void )
 	++timerSceneGame_;
 
 	// 更新処理の切り替え
-	if( timerSceneGame_ >= pStateCameraPrevious_->GetCountFrame() )
+	if( timerSceneGame_ >= pStateCameraBetween_[ indexSection_ - 1 ].GetCountFrame() )
 	{
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::normalUpdate;
@@ -447,7 +447,7 @@ void SceneGame::UpdateWaitResult( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( nullptr );
+		pCamera_->SetState( nullptr );
 	}
 
 	// タイマーの経過
@@ -474,7 +474,7 @@ void SceneGame::UpdatePreviousResult( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( pStateCameraResult_ );
+		pCamera_->SetState( pStateCameraResult_ );
 	}
 
 	// タイマーの経過
@@ -495,7 +495,7 @@ void SceneGame::UpdateResult( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( nullptr );
+		pCamera_->SetState( nullptr );
 	}
 
 	// 背景の表示
@@ -736,7 +736,7 @@ void SceneGame::UpdateRanking( void )
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
-		pCamera_[ GraphicMain::CAMERA_GENERAL ].SetState( nullptr );
+		pCamera_->SetState( nullptr );
 	}
 
 	// ロゴの表示
