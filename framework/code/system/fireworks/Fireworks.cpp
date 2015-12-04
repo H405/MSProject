@@ -22,6 +22,7 @@
 #include "../../framework/develop/DebugProc.h"
 #include "../../framework/develop/DebugMeasure.h"
 #include "../../scene/SceneGame.h"
+#include "../../framework/system/Utility.h"
 
 //******************************************************************************
 // ライブラリ
@@ -42,6 +43,8 @@ static const int fireBGExistTime = 50;
 static const float fireBGAddSize = 5.0f;
 
 static int createFireNum = 0;
+
+static const D3DXVECTOR3 attenuationValue = D3DXVECTOR3(0.0f, 0.0028f, 0.0000005f);
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -141,9 +144,9 @@ int Fireworks::Set(
 	if(lightPoint == nullptr)
 	{
 		lightPoint = managerLight->GetLightPoint();
-		lightPoint->SetDiffuse(1.0f, 0.0f, 1.0f);
+		lightPoint->SetDiffuse(1.0f, 1.0f, 0.5f);
 		lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
-		lightPoint->SetAttenuation(0.00f, 0.0006f, 0.00006f);
+		lightPoint->SetAttenuation(0.0f, 0.0028f, 0.00005f);
 	}
 	lightPoint->SetIsEnable(true);
 
@@ -230,6 +233,29 @@ void Fireworks::BurnUpdate( void )
 		param.enable = false;
 		lightPoint->SetIsEnable(false);
 	}
+
+
+	// 割合の決定
+	float	proportion;		// 割合
+	int counter = param.fire[0].getDeleteCount();
+	if( counter < 20 )
+	{
+		proportion = Utility::Easing( 1.0f, 0.0f, static_cast< float >( counter ) / 20.0f );
+	}
+	else if( counter < 60 )
+	{
+		proportion = 0.0f;
+	}
+	else
+	{
+		proportion = Utility::Easing( 0.0f, 1.0f, static_cast< float >( counter - 60.0f ) / 80.0f );
+	}
+
+	// 減衰率の設定
+	D3DXVECTOR3	attenuation;		// 減衰率
+	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
+	lightPoint->SetAttenuation( attenuation );
+
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -261,6 +287,30 @@ void Fireworks::Burn2Update( void )
 		param.enable = false;
 		lightPoint->SetIsEnable(false);
 	}
+
+
+	// 割合の決定
+	float	proportion;		// 割合
+	int counter = param.fire[0].getDeleteCount();
+	if( counter < 20 )
+	{
+		//	３番目の引数は、それぞれ最小値と最大値が0.0～1.0になるように調整する
+		proportion = Utility::Easing( 1.0f, 0.0f, static_cast< float >( counter ) / 20.0f );
+	}
+	else if( counter < 60 )
+	{
+		proportion = 0.0f;
+	}
+	else
+	{
+		proportion = Utility::Easing( 0.0f, 1.0f, static_cast< float >( counter - 60.0f ) / 20.0f );
+	}
+
+	// 減衰率の設定
+	D3DXVECTOR3	attenuation;		// 減衰率
+	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
+	lightPoint->SetAttenuation( attenuation );
+
 }
 
 //==============================================================================
@@ -370,6 +420,9 @@ int Fireworks::burn(
 	//	破裂フラグON
 	param.burnFlag = true;
 
+	//	点光源色設定
+	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
+
 	return returnValue;
 }
 
@@ -455,6 +508,9 @@ void Fireworks::burn2()
 
 	//	破裂フラグON
 	param.burnFlag = true;
+
+	//	点光源色設定
+	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
 }
 
 void Fireworks::setManagerLight(ManagerLight* _managerLight)

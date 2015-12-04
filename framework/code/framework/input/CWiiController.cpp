@@ -103,7 +103,9 @@ CWiiController::CWiiController()
 				//	wiiリモコンが接続されてない
 				if (wiiRemote == nullptr)
 				{
+#ifdef _DEBUG
 					MessageBox(NULL, "wiiリモコンの接続はされませんでした", "Message", MB_ICONWARNING);
+#endif
 					delete buff;
 
 					//	更新関数セット
@@ -114,12 +116,20 @@ CWiiController::CWiiController()
 				//	wiiリモコンは接続されてる
 				else if (wiiBoard == nullptr)
 				{
+#ifdef _DEBUG
 					MessageBox(NULL, "wiiボードの接続はされませんでした", "Message", MB_ICONWARNING);
+#endif
 					delete buff;
 
 					//	リピートカウンタの初期化
 					for (int count = 0; count < WC_ALL; count++)
 						repeatCount[count] = 0;
+
+					//wiimote_sample sample;
+					//bool b = wiiRemote->Load16bitMonoSampleWAV("Produce__.wav", sample);
+
+					//wiiRemote->PlaySample(sample,0x10, FREQ_4200HZ);
+					playSound(FREQ_2760HZ, 0x10);
 
 					//	更新関数セット
 					fpUpdate = &CWiiController::NormalUpdate;

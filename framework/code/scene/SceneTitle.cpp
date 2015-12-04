@@ -32,6 +32,7 @@
 #include "../system/EffectParameter.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
+#include "../object/ObjectRiver.h"
 
 #include "../graphic/graphic/Graphic2D.h"
 #include "../graphic/graphic/GraphicMain.h"
@@ -45,7 +46,10 @@
 #include "../framework/polygon/PolygonMesh.h"
 #include "../system/point/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
+#include "../system/ManagerTarget.h"
 #include "../system/fire/Fire.h"
+#include "../object/ObjectWaterwheel.h"
+#include "../system/player/Player.h"
 
 //******************************************************************************
 // ライブラリ
@@ -117,13 +121,24 @@ void SceneTitle::InitializeSelf( void )
 
 
 
-	//	タイトル用ステージ・３Dオブジェクト関係
+	//	ゲーム用ステージ・３Dオブジェクト関係
 	//----------------------------------------------------------
-	pObjectSky_ = nullptr;
+	sky = nullptr;
+	river = nullptr;
 	field = nullptr;
+
 	bridge = nullptr;
+	waterwheel = nullptr;
+	houses = nullptr;
+	gate = nullptr;
+
+	markers = nullptr;
+
+	player = nullptr;
+
 	managerPoint = nullptr;
 	managerFireworks = nullptr;
+
 	pObjectSkinMesh_[0] = nullptr;
 	pObjectSkinMesh_[1] = nullptr;
 	pObjectSkinMesh_[2] = nullptr;
@@ -199,43 +214,135 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 
 	// スカイドームの生成
-	Effect*	pEffectSky = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
-	Effect*	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "common/sky.jpg" ) );
-	pObjectSky_ = new ObjectSky();
-	pObjectSky_->Initialize( 0, pArgument->pDevice_, 32, 32, 5000.0f, 1.0f, 1.0f );
-	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pEffectSkyReflect, pTexture );
+	Texture*	pTextureSky = nullptr;				// テクスチャ
+	Effect*		pEffectSkyGeneral = nullptr;		// 通常描画エフェクト
+	Effect*		pEffectSkyReflect = nullptr;		// 反射描画エフェクト
+	pTextureSky = pArgument_->pTexture_->Get( _T( "test/night.png" ) );
+	pEffectSkyGeneral = pArgument->pEffect_->Get( _T( "Sky.fx" ) );
+	pEffectSkyReflect = pArgument->pEffect_->Get( _T( "SkyReflect.fx" ) );
+	sky = new ObjectSky();
+	sky->Initialize( 0, pArgument->pDevice_, 32, 32, 11500.0f, 1.0f, 1.0f );
+	sky->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSkyGeneral, pEffectSkyReflect, pTextureSky );
 
+	// 川の生成
+	Model*	pModelRiver = nullptr;		// モデル
+	Effect*	pEffectRiver = nullptr;		// エフェクト
+	pModelRiver = pArgument->pModel_->Get( _T( "river_ver103_04.x" ), Vertex::ELEMENT_SET_NORMAL_MAP );
+	pEffectRiver = pArgument->pEffect_->Get( "Water.fx" );
+	river = new ObjectRiver();
+	river->Initialize( 0 );
+	river->CreateGraphic( 0, pModelRiver, pArgument->pEffectParameter_, pEffectRiver, pArgument->pTextureNormalWave_,
+		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
+	river->SetPositionY( -100.0f );
+	pArgument->pEffectParameter_->SetHeightReflect( -100.0f );
+	//pRiver_->SetIsEnable(false);
 
-
-	//	仮のフィールド
-	pModel = pArgument_->pModel_->Get( _T( "testfield_01_low.x" ) );
-	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
-	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
-	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	// 地形の生成
+	Model*	pModelField = nullptr;				// モデル
+	Effect*	pEffectFieldGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectFieldReflect = nullptr;		// 反射エフェクト
+	Effect*	pEffectFieldShadow = nullptr;		// 影エフェクト
+	pModelField = pArgument->pModel_->Get( _T( "Stagever.1.03.x" ) );
+	pEffectFieldGeneral = pArgument->pEffect_->Get( "Model.fx" );
+	pEffectFieldReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
+	pEffectFieldShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
 	field = new ObjectModel();
-	field->Initialize(0);
-	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
-	field->SetScale(5.0f, 5.0f, 5.0f);
-	field->AddPositionY(-300.0f);
+	field->Initialize( 0 );
+	field->CreateGraphic( 0, pModelField, pArgument->pEffectParameter_, pEffectFieldGeneral, pEffectFieldReflect, pEffectFieldShadow );
+	field->SetPositionY( -400.0f );
+	field->SetScale( 2.0f, 2.0f, 2.0f );
 
-
-
-	//	橋生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "bridge.x" ) );
+	// 橋の生成
+	Model*	pModelBridge = nullptr;				// モデル
+	Effect*	pEffectBridgeGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectBridgeReflect = nullptr;		// 反射エフェクト
+	pModelBridge = pArgument->pModel_->Get( _T( "bridge.x" ) );
+	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
+	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
 	bridge = new ObjectModelMaterial();
-	bridge->Initialize(0);
-	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
-	bridge->SetPosition(0.0f, 1000.0f, 2300.0f);
-	bridge->SetScale(350.0f, 350.0f, 350.0f);
-	bridge->SetRotationY(DEG_TO_RAD(90));
+	bridge->Initialize( 0 );
+	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect );
+	bridge->SetPosition( 1558.0f, 460.0f, -2240.0f );
+	bridge->SetRotationY( DEG_TO_RAD( 101.0f ) );
+	bridge->SetScale( 285.0f, 285.0f, 285.0f );
 
+	// 水車の生成
+	waterwheel = new ObjectWaterwheel();
+	waterwheel->Initialize( D3DXVECTOR3( 110.0f, 230.0f, 3780.0f ), DEG_TO_RAD( 74 ), -0.001f, pArgument );
 
+	// 家の生成
+	Model*	pModelHouse = nullptr;				// モデル
+	Effect*	pEffectHouseGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectHouseReflect = nullptr;		// 反射エフェクト
+	pModelHouse = pArgument->pModel_->Get( _T( "house_002.x" ) );
+	pEffectHouseGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
+	pEffectHouseReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	houses = new ObjectModelMaterial[ COUNT_HOUSE ];
+	for( int counterHouse = 0; counterHouse < COUNT_HOUSE; ++counterHouse )
+	{
+		houses[ counterHouse ].Initialize( 0 );
+		houses[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect );
+		houses[ counterHouse ].SetScale( 300.0f, 300.0f, 300.0f );
+	}
+	houses[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
+	houses[ 0 ].SetRotationY( DEG_TO_RAD( 254.0f ) );
+	houses[ 0 ].SetScale( 150.0f, 150.0f, 150.0f );
+	houses[ 1 ].SetPosition( -3700.0f, 0.0f, 2480.0f );
+	houses[ 1 ].SetRotationY( DEG_TO_RAD( 252.0f ) );
+	houses[ 2 ].SetPosition( -3120.0f, 0.0f, 1010.0f );
+	houses[ 2 ].SetRotationY( DEG_TO_RAD( 243.0f ) );
+	houses[ 3 ].SetPosition( -2030.0f, 0.0f, -750.0f );
+	houses[ 3 ].SetRotationY( DEG_TO_RAD( 222.0f ) );
+	houses[ 4 ].SetPosition( -1880.0f, 0.0f, 3160.0f );
+	houses[ 4 ].SetRotationY( DEG_TO_RAD( 51.0f ) );
+	houses[ 5 ].SetPosition( 3500.0f, 0.0f, 5500.0f );
+	houses[ 5 ].SetRotationY( DEG_TO_RAD( 58.0f ) );
+	houses[ 6 ].SetPosition( 4260.0f, 0.0f, 3650.0f );
+	houses[ 6 ].SetRotationY( DEG_TO_RAD( 76.0f ) );
+	houses[ 7 ].SetPosition( 4460.0f, 0.0f, 1610.0f );
+	houses[ 7 ].SetRotationY( DEG_TO_RAD( 92.0f ) );
+	houses[ 8 ].SetPosition( 1200.0f, 0.0f, 6400.0f );
+	houses[ 8 ].SetRotationY( DEG_TO_RAD( 353.0f ) );
+	houses[ 9 ].SetPosition( 4500.0f, 0.0f, -4500.0f );
+	houses[ 9 ].SetRotationY( DEG_TO_RAD( 125.0f ) );
+	houses[ 10 ].SetPosition( 2660.0f, 0.0f, -5720.0f );
+	houses[ 10 ].SetRotationY( DEG_TO_RAD( 169.0f ) );
 
+	// 鳥居の生成
+	Model*	pModelGate = nullptr;				// モデル
+	Effect*	pEffectGateGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectGateReflect = nullptr;		// 反射エフェクト
+	pModelGate = pArgument->pModel_->Get( _T( "torii.x" ) );
+	pEffectGateGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
+	pEffectGateReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	gate = new ObjectModelMaterial();
+	gate->Initialize( 0 );
+	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect );
+	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
+	gate->SetRotationY( DEG_TO_RAD( 90 ) );
+	gate->SetScale( 1.0f, 1.0f, 1.0f );
 
-
+	// 場所の目印オブジェクトの生成
+	Model*	pModelMarker = nullptr;				// モデル
+	Effect*	pEffectMarkerGeneral = nullptr;		// 通常描画エフェクト
+	Effect*	pEffectMarkerReflect = nullptr;		// 反射エフェクト
+	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
+	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	markers = new ObjectSkinMesh[ 4 ];
+	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
+	{
+		markers[ counterMarker ].Initialize( 0, 0 );
+		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_, pEffectMarkerGeneral, pEffectMarkerReflect );
+	}
+	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
+	markers[ 0 ].SetRotationY( 0.0f );
+	markers[ 1 ].SetPosition( -1920.0f, 0.0f, 610.0f );
+	markers[ 1 ].SetRotationY( 0.0f );
+	markers[ 2 ].SetPosition( 1230.0f, 0.0f, 990.0f );
+	markers[ 2 ].SetRotationY( 0.0f );
+	markers[ 3 ].SetPosition( 490.0f, 0.0f, 470.0f );
+	markers[ 3 ].SetRotationY( 0.0f );
 
 
 
@@ -251,7 +358,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 10000, 16, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 25600, 17, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;
@@ -264,7 +371,16 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	managerFireworks = new ManagerFireworks;
 	managerFireworks->Initialize(managerPoint);
 
+	// ライトの生成
+	managerFireworks->setManagerLight(pArgument->pLight_);
 
+
+	//	プレイヤーオブジェクト(Posはカメラとの相対座標)
+	player = new Player;
+	player->Initialize(
+		//D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
+		D3DXVECTOR3(0.0f, -100.0f, 400.0f),
+		pArgument);
 
 
 	// スキンメッシュの生成
@@ -454,31 +570,55 @@ int SceneTitle::Finalize( void )
 	delete titleLogo;
 	titleLogo = nullptr;
 
-	delete pObjectSkinMesh_[2];
-	pObjectSkinMesh_[2] = nullptr;
+	delete managerPoint;
+	managerPoint = nullptr;
 
-	delete pObjectSkinMesh_[1];
-	pObjectSkinMesh_[1] = nullptr;
-
-	delete pObjectSkinMesh_[0];
-	pObjectSkinMesh_[0] = nullptr;
+	Fire::FinalizeState();
 
 	delete managerFireworks;
 	managerFireworks = nullptr;
 
-	Fire::FinalizeState();
+	delete player;
+	player = nullptr;
 
-	delete managerPoint;
-	managerPoint = nullptr;
+	delete pObjectSkinMesh_[2];
+	delete pObjectSkinMesh_[1];
+	delete pObjectSkinMesh_[0];
+	pObjectSkinMesh_[2] = nullptr;
+	pObjectSkinMesh_[1] = nullptr;
+	pObjectSkinMesh_[0] = nullptr;
 
+	// 場所目印オブジェクトの開放
+	delete[] markers;
+	markers = nullptr;
+
+	// 鳥居オブジェクトの開放
+	delete gate;
+	gate = nullptr;
+
+	// 家オブジェクトの開放
+	delete[] houses;
+	houses = nullptr;
+
+	// 水車オブジェクトの開放
+	delete waterwheel;
+	waterwheel = nullptr;
+
+	// 橋オブジェクトの開放
 	delete bridge;
 	bridge = nullptr;
 
+	// 地形オブジェクトの開放
 	delete field;
 	field = nullptr;
 
-	delete pObjectSky_;
-	pObjectSky_ = nullptr;
+	// 川オブジェクトの開放
+	delete river;
+	river = nullptr;
+
+	// 空オブジェクトの開放
+	delete sky;
+	sky = nullptr;
 
 	// ライトの開放
 	if( pLight_ != nullptr )

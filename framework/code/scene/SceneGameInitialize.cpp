@@ -549,7 +549,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pEffect_->Get( _T( "Polygon2DAdd.fx" ) ),
 		pArgument_->pTexture_->Get(_T("game/gageBar.png")),
 		pArgument_->pTexture_->Get(_T("game/gageBase.png")),
-		pArgument_->pTexture_->Get(_T("common/effect000.jpg")),
+		pArgument_->pTexture_->Get(_T("game/effect.png")),
 		pArgument_->pTexture_->Get( _T( "common/number.png" ) ));
 
 	gage->setPosition(-540.0f, -270.0f, 0.0f);

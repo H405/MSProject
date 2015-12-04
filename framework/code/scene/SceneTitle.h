@@ -26,6 +26,8 @@
 // マクロ
 //******************************************************************************
 #define FIREWORKS_MAX (16)
+#define TARGET_MAX (16)
+
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
@@ -42,6 +44,9 @@ class PolygonMesh;
 class ObjectSky;
 class ObjectSkinMesh;
 class ObjectMesh;
+class ObjectRiver;
+class ObjectWaterwheel;
+class Player;
 
 //******************************************************************************
 // クラス定義
@@ -149,15 +154,22 @@ private:
 	//----------------------------------------------------------
 
 
-	//	タイトル用ステージ・３Dオブジェクト関係
+	//	ゲーム用ステージ・３Dオブジェクト関係
 	//----------------------------------------------------------
-	ObjectSky*			pObjectSky_;	// スカイドーム
 
-	//	仮フィールド
-	ObjectModel* field;
+	ObjectSky*				sky;			// 空
+	ObjectRiver*			river;			// 川
+	ObjectModel*			field;			// 地形
 
-	//	橋
-	ObjectModelMaterial* bridge;
+	ObjectModelMaterial*	bridge;			// 橋
+	ObjectWaterwheel*		waterwheel;		// 水車
+	ObjectModelMaterial*	houses;			// 家
+	ObjectModelMaterial*	gate;			// 鳥居
+
+	ObjectSkinMesh*			markers;		// 場所の目印
+
+	//	プレイヤー
+	Player* player;
 
 	// ポイントスプライト管理クラス
 	ManagerPoint* managerPoint;
@@ -167,13 +179,15 @@ private:
 
 	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
 
-
 	//	打ち上げに関するフラグとカウンタ
 	bool launchFlag;
 	int launchCount;
 
+	//	ターゲットと花火の当たり判定用テーブル
 	int fireworksTable[FIREWORKS_MAX];
 	int fireworksTableIndex;
+
+	static const int	COUNT_HOUSE = 11;		// 家の数
 	//----------------------------------------------------------
 
 	//==============================================================================

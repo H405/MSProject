@@ -163,7 +163,6 @@ int Gage::Initialize(
 	gageBase->GetScale(&buffScale);
 	gageBack->SetScale(buffScale * 1.2f);
 
-
 	// ³íI—¹
 	return 0;
 }

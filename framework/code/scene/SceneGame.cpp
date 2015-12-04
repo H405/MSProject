@@ -452,21 +452,21 @@ void SceneGame::normalUpdate(void)
 	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
 
 	//	ターゲット出現
-	//targetAppearCount++;
-	//if(targetAppearCount == 50)
-	//{
-	//	int buff;
-	//	buff = managerTarget->Add(
-	//		D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ)
-	//		);
-	//	if(buff != -1)
-	//	{
-	//		targetTable[targetTableIndex] = buff;
-	//		targetTableIndex++;
-	//	}
-	//
-	//	targetAppearCount = 0;
-	//}
+	targetAppearCount++;
+	if(targetAppearCount == 50)
+	{
+		int buff;
+		buff = managerTarget->Add(
+			D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ)
+			);
+		if(buff != -1)
+		{
+			targetTable[targetTableIndex] = buff;
+			targetTableIndex++;
+		}
+	
+		targetAppearCount = 0;
+	}
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
 
@@ -889,7 +889,7 @@ void SceneGame::collision_fireworks_target()
 	float hitPosLength = 0.0f;
 
 	//	存在する花火の数分ループ
-	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
 	{
 		//	花火の情報取得
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
@@ -924,9 +924,9 @@ void SceneGame::collision_fireworks_target()
 				break;
 			}
 		}
-	}
+	}*/
 
-	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
 	{
 		//	花火の情報取得
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
@@ -935,7 +935,7 @@ void SceneGame::collision_fireworks_target()
 
 		//	破裂
 		buffFireworks->burn(0.0f, 0.0f);
-	}*/
+	}
 }
 //==============================================================================
 // Brief  : 花火と花火の当たり判定処理
