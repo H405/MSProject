@@ -148,7 +148,7 @@ void SceneGame::Update( void )
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F5 ) )
 	{
 		timerSceneGame_ = -1;
-		fpUpdate = &SceneGame::UpdateTest;
+		fpUpdate = &SceneGame::UpdatePreviousResult;
 	}
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F6 ) )
 	{

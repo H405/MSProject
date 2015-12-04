@@ -45,6 +45,7 @@
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/Object2D.h"
 #include "../object/Object3D.h"
+#include "../object/ObjectBillboard.h"
 #include "../object/ObjectModel.h"
 #include "../object/ObjectModelMaterial.h"
 #include "../object/ObjectMesh.h"
@@ -124,6 +125,8 @@ void SceneGame::InitializeSelf( void )
 	waterwheel = nullptr;
 	houses = nullptr;
 	gate = nullptr;
+
+	grasses = nullptr;
 
 	markers = nullptr;
 
@@ -306,7 +309,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Model*	pModelBridge = nullptr;				// モデル
 	Effect*	pEffectBridgeGeneral = nullptr;		// 通常描画エフェクト
 	Effect*	pEffectBridgeReflect = nullptr;		// 反射エフェクト
-	pModelBridge = pArgument->pModel_->Get( _T( "bridge.x" ) );
+	pModelBridge = pArgument->pModel_->Get( _T( "bridge_002.x" ) );
 	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
 	bridge = new ObjectModelMaterial();
@@ -371,6 +374,23 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
 	gate->SetRotationY( DEG_TO_RAD( 90 ) );
 	gate->SetScale( 1.0f, 1.0f, 1.0f );
+
+	// 草の生成
+	Texture*	pTextureGrass = nullptr;		// テクスチャ
+	Effect*		pEffectGrass = nullptr;			// エフェクト
+	pTextureGrass = pArgument->pTexture_->Get( _T( "common/grass.png" ) );
+	pEffectGrass = pArgument->pEffect_->Get( "Billboard.fx" );
+	grasses = new ObjectBillboard[ COUNT_GRASS ];
+	for( int counterGrass = 0; counterGrass < COUNT_GRASS; ++counterGrass )
+	{
+		float	positionX;		// X座標
+		float	positionZ;		// Z座標
+		positionX = -2300.0f + 2000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
+		positionZ = 6800.0f + 1000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
+		grasses[ counterGrass ].Initialize( 0 );
+		grasses[ counterGrass ].CreateGraphic( 0, pArgument->pEffectParameter_, pEffectGrass, pTextureGrass );
+		grasses[ counterGrass ].SetPosition( positionX, 0.5f * pTextureGrass->height_, positionZ );
+	}
 
 	// 場所の目印オブジェクトの生成
 	Model*	pModelMarker = nullptr;				// モデル
@@ -781,6 +801,10 @@ int SceneGame::Finalize( void )
 	// 場所目印オブジェクトの開放
 	delete[] markers;
 	markers = nullptr;
+
+	// 草オブジェクトの開放
+	delete[] grasses;
+	grasses = nullptr;
 
 	// 鳥居オブジェクトの開放
 	delete gate;

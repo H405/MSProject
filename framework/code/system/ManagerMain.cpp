@@ -386,7 +386,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pDraw_->Initialize( 1024, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
+	result = pDraw_->Initialize( 4096, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
 	if( result != 0 )
 	{
 		return result;
@@ -408,7 +408,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pUpdate_->Initialize( 1024 );
+	result = pUpdate_->Initialize( 4096 );
 	if( result != 0 )
 	{
 		return result;

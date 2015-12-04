@@ -140,6 +140,7 @@ private:
 	SceneGame operator=( const SceneGame& );
 
 	static const int	COUNT_HOUSE = 11;		// 家の数
+	static const int	COUNT_GRASS = 500;		// 草の数
 
 	CameraObject*		pCamera_;		// カメラ
 	LightDirection*		pLight_;		// ライト
@@ -208,6 +209,8 @@ private:
 	ObjectWaterwheel*		waterwheel;		// 水車
 	ObjectModelMaterial*	houses;			// 家
 	ObjectModelMaterial*	gate;			// 鳥居
+
+	ObjectBillboard*		grasses;		// 草
 
 	ObjectSkinMesh*			markers;		// 場所の目印
 
@@ -333,8 +336,17 @@ private:
 		SECTION_WATERWHEEL = 0,		// 水車
 		SECTION_HOUSE,				// 民家
 		SECTION_BRIDGE,				// 橋
-		SECTION_GATE,				// 鳥居
 		SECTION_MAXIMUM				// 最大値
+	};
+
+	// カウントダウン画像
+	enum
+	{
+		IMAGE_COUNT_3 = 0,			// カウント3
+		IMAGE_COUNT_2,				// カウント2
+		IMAGE_COUNT_1,				// カウント1
+		IMAGE_COUNT_START,			// 演武開始
+		IMAGE_COUNT_MAXIMUM			// 最大値
 	};
 
 	// リザルト画像
@@ -413,6 +425,8 @@ private:
 	CameraStateSpline*	pStateCameraBetween_;				// ゲームセクション間カメラ処理
 	CameraStateSpline*	pStateCameraResult_;				// リザルト前カメラ処理
 	int					timerSceneGame_;					// ゲームシーン経過時間
+
+	Object2D*			pObjectCount_;						// カウントダウン画像オブジェクト
 
 	Object2D*			pObjectResult_;						// リザルト画像オブジェクト
 

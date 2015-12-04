@@ -66,8 +66,7 @@ int SceneGame::Initialize2( void )
 	TCHAR	pNameFileState[ SECTION_MAXIMUM - 1 ][ _MAX_PATH ] =
 	{
 		_T( "data/camera/Section12.txt" ),
-		_T( "data/camera/Section23.txt" ),
-		_T( "data/camera/Section34.txt" )
+		_T( "data/camera/Section23.txt" )
 	};
 	pStateCameraBetween_ = new CameraStateSpline[ SECTION_MAXIMUM - 1 ];
 	if( pStateCameraBetween_ == nullptr )
@@ -95,9 +94,35 @@ int SceneGame::Initialize2( void )
 		return result;
 	}
 
-	// リザルト画像オブジェクトの生成
+	// カウントダウン画像オブジェクトの生成
 	Effect*	pEffect2D = nullptr;		// 2D描画エフェクト
 	pEffect2D = pArgument_->pEffect_->Get( "Polygon2D.fx" );
+	pObjectCount_ = new Object2D[ IMAGE_COUNT_MAXIMUM ];
+	if( pObjectCount_ == nullptr )
+	{
+		return 1;
+	}
+
+	// 演武開始
+	Texture*	pTextureFont = nullptr;		// フォントテクスチャ
+	pTextureFont = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	result = pObjectCount_[ IMAGE_COUNT_START ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectCount_[ IMAGE_COUNT_START ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureFont );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectCount_[ IMAGE_COUNT_START ].SetPosition( 0.0f, 0.0f, 0.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetScale( pTextureFont->width_ / 2.0f, pTextureFont->height_ / 12.0f, 1.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetPositionTextureY( 5.0f / 12.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetScaleTexture( 2.0f, 12.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetEnableGraphic( false );
+
+	// リザルト画像オブジェクトの生成
 	pObjectResult_ = new Object2D[ IMAGE_RESULT_MAXIMUM ];
 	if( pObjectResult_ == nullptr )
 	{
@@ -300,6 +325,10 @@ int SceneGame::Finalize2( void )
 	delete[] pObjectResult_;
 	pObjectResult_ = nullptr;
 
+	// カウントダウン画像オブジェクトの開放
+	delete[] pObjectCount_;
+	pObjectCount_ = nullptr;
+
 	// リザルト前カメラ処理の開放
 	delete pStateCameraResult_;
 	pStateCameraResult_ = nullptr;
@@ -328,6 +357,8 @@ void SceneGame::InitializeSelf2( void )
 	pStateCameraBetween_ = nullptr;
 	pStateCameraResult_ = nullptr;
 	timerSceneGame_ = 0;
+	pObjectCount_ = nullptr;
+	pObjectResult_ = nullptr;
 	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
 	{
 		pRankingScore_[ counterRank ] = 0;
@@ -361,7 +392,7 @@ void SceneGame::UpdatePreviousGame( void )
 	if( timerSceneGame_ >= pStateCameraPrevious_->GetCountFrame() )
 	{
 		timerSceneGame_ = 0;
-		fpUpdate = &SceneGame::UpdateCountDownGame;
+		fpUpdate = &SceneGame::calibrationUpdate;
 	}
 }
 
@@ -479,6 +510,13 @@ void SceneGame::UpdatePreviousResult( void )
 
 	// タイマーの経過
 	++timerSceneGame_;
+
+	// 更新処理の切り替え
+	if( timerSceneGame_ >= pStateCameraResult_->GetCountFrame() )
+	{
+		timerSceneGame_ = 0;
+		fpUpdate = &SceneGame::UpdateResult;
+	}
 }
 
 //==============================================================================
@@ -606,22 +644,6 @@ void SceneGame::UpdateResult( void )
 		float	proportion;		// 割合
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_TITLE) ) / COUNT_RESULT_BEGIN_TO_TITLE;
 		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-	}
-
-	// ランキングへの点滅
-	if( timerSceneGame_ >= TIME_RESULT_END )
-	{
-		float	proportion;		// 割合
-		proportion = D3DX_PI * 2.0f * static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_RANKING) % 120 ) / 120;
-		pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetColorAlpha( 0.2f * cosf( proportion ) + 0.8f );
-	}
-
-	// タイトルへの点滅
-	if( timerSceneGame_ >= TIME_RESULT_END )
-	{
-		float	proportion;		// 割合
-		proportion = D3DX_PI * 2.0f * static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_TITLE) % 120 ) / 120;
-		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetColorAlpha( 0.2f * cosf( proportion ) + 0.8f );
 	}
 
 	// タイマーの経過
