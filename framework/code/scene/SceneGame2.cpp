@@ -1067,6 +1067,229 @@ void SceneGame::UpdateTest( void )
 }
 
 //==============================================================================
+// Brief  : カメラのテスト更新
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::UpdateTestCamera( void )
+{
+	// スプラインカメラ処理の取得
+	CameraStateSpline*	pState = nullptr;		// カメラ処理
+	pState = pStateCameraResult_;
+
+	// セクション番号の変更
+	static int	indexSectionTestStatic = 0;		// セクション番号
+	int			countSection;					// セクション数
+	countSection = pState->GetCountSection();
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_LEFT ) )
+	{
+		--indexSectionTestStatic;
+		if( indexSectionTestStatic < 0 )
+		{
+			indexSectionTestStatic = countSection - 1;
+		}
+	}
+	else if( pArgument_->pKeyboard_->IsTrigger( DIK_RIGHT ) )
+	{
+		++indexSectionTestStatic;
+		if( indexSectionTestStatic >= countSection )
+		{
+			indexSectionTestStatic = 0;
+		}
+	}
+
+	// フレーム数の変更
+	int		countFrame;		// フレーム数
+	countFrame = pState->GetCountFrame( indexSectionTestStatic );
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_COMMA, 30, 1 ) )
+	{
+		--countFrame;
+		if( countFrame <= 0 )
+		{
+			countFrame = 1;
+		}
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_PERIOD, 30, 1 ) )
+	{
+		++countFrame;
+	}
+	pState->SetCountFrame( indexSectionTestStatic, countFrame );
+
+	// コントロールポイントの取得
+	int			indexCameraBegin;			// 開始視点番号
+	int			indexCameraEnd;				// 終了視点番号
+	int			indexLookAtBegin;			// 開始注視点番号
+	int			indexLookAtEnd;				// 終了注視点番号
+	D3DXVECTOR3	positionCameraBegin;		// 開始視点座標
+	D3DXVECTOR3	positionCameraEnd;			// 終了視点座標
+	D3DXVECTOR3	positionLookAtBegin;		// 開始注視点座標
+	D3DXVECTOR3	positionLookAtEnd;			// 終了注視点座標
+	D3DXVECTOR3	vectorCameraBegin;			// 開始視点ベクトル
+	D3DXVECTOR3	vectorCameraEnd;			// 終了視点ベクトル
+	D3DXVECTOR3	vectorLookAtBegin;			// 開始注視点ベクトル
+	D3DXVECTOR3	vectorLookAtEnd;			// 終了注視点ベクトル
+	indexCameraBegin = pState->GetIndexCameraBegin( indexSectionTestStatic );
+	indexCameraEnd = pState->GetIndexCameraEnd( indexSectionTestStatic );
+	indexLookAtBegin = pState->GetIndexLookAtBegin( indexSectionTestStatic );
+	indexLookAtEnd = pState->GetIndexLookAtEnd( indexSectionTestStatic );
+	pState->GetControlPointCamera( indexCameraBegin, &positionCameraBegin, &vectorCameraBegin );
+	pState->GetControlPointCamera( indexCameraEnd, &positionCameraEnd, &vectorCameraEnd );
+	pState->GetControlPointLookAt( indexLookAtBegin, &positionLookAtBegin, &vectorLookAtBegin );
+	pState->GetControlPointLookAt( indexLookAtEnd, &positionLookAtEnd, &vectorLookAtEnd );
+
+	// 編集対象の決定
+	static int		indexTargetTestStatic = 0;		// 対象情報番号
+	D3DXVECTOR3*	pPositionTarget = nullptr;		// 対象情報座標
+	D3DXVECTOR3*	pVectorTarget = nullptr;		// 対象情報ベクトル
+	if( pArgument_->pKeyboard_->IsTrigger( DIK_UP ) )
+	{
+		--indexTargetTestStatic;
+		if( indexTargetTestStatic < 0 )
+		{
+			indexTargetTestStatic = 4 - 1;
+		}
+	}
+	else if( pArgument_->pKeyboard_->IsTrigger( DIK_DOWN ) )
+	{
+		++indexTargetTestStatic;
+		if( indexTargetTestStatic >= 4 )
+		{
+			indexTargetTestStatic = 0;
+		}
+	}
+	switch( indexTargetTestStatic )
+	{
+		case 0:
+			pPositionTarget = &positionCameraBegin;
+			pVectorTarget = &vectorCameraBegin;
+			break;
+		case 1:
+			pPositionTarget = &positionCameraEnd;
+			pVectorTarget = &vectorCameraEnd;
+			break;
+		case 2:
+			pPositionTarget = &positionLookAtBegin;
+			pVectorTarget = &vectorLookAtBegin;
+			break;
+		case 3:
+			pPositionTarget = &positionLookAtEnd;
+			pVectorTarget = &vectorLookAtEnd;
+			break;
+		default:
+			break;
+	}
+
+	// コントロールポイント情報の変更
+	float	velocity;		// 変更速度
+	velocity = 1.0f;
+	if( pArgument_->pKeyboard_->IsPress( DIK_BACKSLASH ) )
+	{
+		velocity *= 10.0f;
+	}
+	if( pArgument_->pKeyboard_->IsPress( DIK_RSHIFT ) )
+	{
+		velocity *= 100.0f;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_Q, 30, 1 ) )
+	{
+		pPositionTarget->x -= velocity;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_W, 30, 1 ) )
+	{
+		pPositionTarget->x += velocity;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_A, 30, 1 ) )
+	{
+		pPositionTarget->y -= velocity;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_S, 30, 1 ) )
+	{
+		pPositionTarget->y += velocity;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_Z, 30, 1 ) )
+	{
+		pPositionTarget->z -= velocity;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_X, 30, 1 ) )
+	{
+		pPositionTarget->z += velocity;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_E, 30, 1 ) )
+	{
+		pVectorTarget->x -= velocity;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_R, 30, 1 ) )
+	{
+		pVectorTarget->x += velocity;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_D, 30, 1 ) )
+	{
+		pVectorTarget->y -= velocity;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_F, 30, 1 ) )
+	{
+		pVectorTarget->y += velocity;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_C, 30, 1 ) )
+	{
+		pVectorTarget->z -= velocity;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_V, 30, 1 ) )
+	{
+		pVectorTarget->z += velocity;
+	}
+
+	// コントロールポイントの設定
+	pState->SetControlPointCamera( indexCameraBegin, positionCameraBegin, vectorCameraBegin );
+	pState->SetControlPointCamera( indexCameraEnd, positionCameraEnd, vectorCameraEnd );
+	pState->SetControlPointLookAt( indexLookAtBegin, positionLookAtBegin, vectorLookAtBegin );
+	pState->SetControlPointLookAt( indexLookAtEnd, positionLookAtEnd, vectorLookAtEnd );
+
+	// 情報の表示
+	TCHAR	pStringNameTarget[ 4 ][ 32 ] =
+	{
+		_T( "開始視点" ),
+		_T( "終了視点" ),
+		_T( "開始注視点" ),
+		_T( "終了注視点" )
+	};
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "| カメラ処理                           |\n" ) );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "フレーム数 : %d\n" ), countFrame );
+	PrintDebug( _T( "開始視点座標       ( %9.2f, %9.2f, %9.2f )\n" ), positionCameraBegin.x, positionCameraBegin.y, positionCameraBegin.z );
+	PrintDebug( _T( "開始視点ベクトル   ( %9.2f, %9.2f, %9.2f )\n" ), vectorCameraBegin.x, vectorCameraBegin.y, vectorCameraBegin.z );
+	PrintDebug( _T( "終了視点座標       ( %9.2f, %9.2f, %9.2f )\n" ), positionCameraEnd.x, positionCameraEnd.y, positionCameraEnd.z );
+	PrintDebug( _T( "終了視点ベクトル   ( %9.2f, %9.2f, %9.2f )\n" ), vectorCameraEnd.x, vectorCameraEnd.y, vectorCameraEnd.z );
+	PrintDebug( _T( "開始注視点座標     ( %9.2f, %9.2f, %9.2f )\n" ), positionLookAtBegin.x, positionLookAtBegin.y, positionLookAtBegin.z );
+	PrintDebug( _T( "開始注視点ベクトル ( %9.2f, %9.2f, %9.2f )\n" ), vectorLookAtBegin.x, vectorLookAtBegin.y, vectorLookAtBegin.z );
+	PrintDebug( _T( "終了注視点座標     ( %9.2f, %9.2f, %9.2f )\n" ), positionLookAtEnd.x, positionLookAtEnd.y, positionLookAtEnd.z );
+	PrintDebug( _T( "終了注視点ベクトル ( %9.2f, %9.2f, %9.2f )\n" ), vectorLookAtEnd.x, vectorLookAtEnd.y, vectorLookAtEnd.z );
+	PrintDebug( _T( "編集対象 : %s\n" ), &pStringNameTarget[ indexTargetTestStatic ][ 0 ] );
+
+	// 線の表示
+	for( int counterFrame = 0; counterFrame < countFrame; ++counterFrame )
+	{
+		D3DXVECTOR3	position;		// 座標
+		pState->GetPositionCamera( indexSectionTestStatic, counterFrame, &position );
+		managerPoint->Add( 1, position, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), 50.0f,
+			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, 0.0f ), 0.0f, 1 );
+		pState->GetPositionLookAt( indexSectionTestStatic, counterFrame, &position );
+		managerPoint->Add( 1, position, D3DXCOLOR( 1.0f, 0.5f, 0.5f, 1.0f ), 50.0f,
+			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXCOLOR( 0.0f, 0.0f, 0.0f, 0.0f ), 0.0f, 1 );
+	}
+
+	// ポイントスプライトの更新
+	managerPoint->Update();
+
+	// タイマーの経過
+	if( timerSceneGame_ >= 0 )
+	{
+		++timerSceneGame_;
+	}
+}
+
+//==============================================================================
 // Brief  : リザルトオブジェクトを非表示にする
 // Return : void								: なし
 // Arg    : void								: なし

@@ -465,6 +465,9 @@ private:
 	// テスト更新
 	void UpdateTest( void );
 
+	// カメラのテスト更新
+	void UpdateTestCamera( void );
+
 	// リザルトオブジェクトを非表示にする
 	void DisableObjectResult( void );
 

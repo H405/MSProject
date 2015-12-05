@@ -527,15 +527,6 @@ void CameraStateSpline::Update( CameraObject* pCamera )
 			indexSection_ = 0;
 		}
 	}
-
-	// デバッグ表示
-	PrintDebug( _T( "*--------------------------------------*\n" ) );
-	PrintDebug( _T( "| カメラ                               |\n" ) );
-	PrintDebug( _T( "*--------------------------------------*\n" ) );
-	PrintDebug( _T( "開始座標 ： ( %12.6f, %12.6f, %12.6f )\n" ), pTablePointCamera_[ indexPointCameraBegin ].position_.x, pTablePointCamera_[ indexPointCameraBegin ].position_.y, pTablePointCamera_[ indexPointCameraBegin ].position_.z );
-	PrintDebug( _T( "終了座標 ： ( %12.6f, %12.6f, %12.6f )\n" ), pTablePointCamera_[ indexPointCameraEnd ].position_.x, pTablePointCamera_[ indexPointCameraEnd ].position_.y, pTablePointCamera_[ indexPointCameraEnd ].position_.z );
-	PrintDebug( _T( "現在座標 ： ( %12.6f, %12.6f, %12.6f )\n" ), positionCamera.x, positionCamera.y, positionCamera.z );
-	PrintDebug( _T( "比率     ： %12.6f\n" ), static_cast< float >( countFrame_ ) / pFrame_[ indexSection_ ] );
 }
 
 //==============================================================================
@@ -579,6 +570,20 @@ void CameraStateSpline::SetControlPointCamera( int index, const D3DXVECTOR3& pos
 }
 
 //==============================================================================
+// Brief  : 視点コントロールポイントの取得
+// Return : void								: なし
+// Arg    : int index							: 取得する番号
+// Arg    : D3DXVECTOR3* pOutPosition			: 座標
+// Arg    : D3DXVECTOR3* pOutVector				: ベクトル
+//==============================================================================
+void CameraStateSpline::GetControlPointCamera( int index, D3DXVECTOR3* pOutPosition, D3DXVECTOR3* pOutVector ) const
+{
+	// 値を返す
+	*pOutPosition = pTablePointCamera_[ index ].position_;
+	*pOutVector = pTablePointCamera_[ index ].vector_;
+}
+
+//==============================================================================
 // Brief  : 注視点コントロールポイントの設定
 // Return : void								: なし
 // Arg    : int index							: 設定する番号
@@ -593,6 +598,32 @@ void CameraStateSpline::SetControlPointLookAt( int index, const D3DXVECTOR3& pos
 	// メンバ変数の設定
 	pTablePointLookAt_[ index ].position_ = position;
 	pTablePointLookAt_[ index ].vector_ = vector;
+}
+
+//==============================================================================
+// Brief  : 注視点コントロールポイントの取得
+// Return : void								: なし
+// Arg    : int index							: 取得する番号
+// Arg    : D3DXVECTOR3* pOutPosition			: 座標
+// Arg    : D3DXVECTOR3* pOutVector				: ベクトル
+//==============================================================================
+void CameraStateSpline::GetControlPointLookAt( int index, D3DXVECTOR3* pOutPosition, D3DXVECTOR3* pOutVector ) const
+{
+	// 値を返す
+	*pOutPosition = pTablePointLookAt_[ index ].position_;
+	*pOutVector = pTablePointLookAt_[ index ].vector_;
+}
+
+//==============================================================================
+// Brief  : フレーム数の設定
+// Return : void								: なし
+// Arg    : int indexSection					: セクション番号
+// Arg    : int countFrame						: フレーム数
+//==============================================================================
+void CameraStateSpline::SetCountFrame( int indexSection, int countFrame )
+{
+	// フレーム数を設定する
+	pFrame_[ indexSection ] = countFrame;
 }
 
 //==============================================================================
@@ -612,6 +643,118 @@ int CameraStateSpline::GetCountFrame( void )
 
 	// 総フレーム数を返す
 	return countFrame;
+}
+
+//==============================================================================
+// Brief  : 総フレーム数の取得
+// Return : int									: 総フレーム数
+// Arg    : int indexSection					: セクション番号
+//==============================================================================
+int CameraStateSpline::GetCountFrame( int indexSection )
+{
+	// フレーム数を返す
+	return pFrame_[ indexSection ];
+}
+
+//==============================================================================
+// Brief  : 開始視点番号の取得
+// Return : int									: 開始視点番号
+// Arg    : int indexSection					: セクション番号
+//==============================================================================
+int CameraStateSpline::GetIndexCameraBegin( int indexSection )
+{
+	// 開始視点番号を返す
+	return pIndexPointCameraBegin_[ indexSection ];
+}
+
+//==============================================================================
+// Brief  : 終了視点番号の取得
+// Return : int									: 終了視点番号
+// Arg    : int indexSection					: セクション番号
+//==============================================================================
+int CameraStateSpline::GetIndexCameraEnd( int indexSection )
+{
+	// 終了視点番号を返す
+	return pIndexPointCameraEnd_[ indexSection ];
+}
+
+//==============================================================================
+// Brief  : 開始注視点番号の取得
+// Return : int									: 開始注視点番号
+// Arg    : int indexSection					: セクション番号
+//==============================================================================
+int CameraStateSpline::GetIndexLookAtBegin( int indexSection )
+{
+	// 開始注視点番号を返す
+	return pIndexPointLookAtBegin_[ indexSection ];
+}
+
+//==============================================================================
+// Brief  : 終了注視点番号の取得
+// Return : int									: 終了注視点番号
+// Arg    : int indexSection					: セクション番号
+//==============================================================================
+int CameraStateSpline::GetIndexLookAtEnd( int indexSection )
+{
+	// 終了注視点番号を返す
+	return pIndexPointLookAtEnd_[ indexSection ];
+}
+
+//==============================================================================
+// Brief  : 視点座標の取得
+// Return : void								: なし
+// Arg    : int indexSection					: セクション番号
+// Arg    : int indexFrame						: フレーム番号
+// Arg    : D3DXVECTOR3* pOut					: 出力先
+//==============================================================================
+void CameraStateSpline::GetPositionCamera( int indexSection, int indexFrame, D3DXVECTOR3* pOut )
+{
+	// 視点座標を設定
+	int		indexPointCameraBegin;		// 開始視点番号
+	int		indexPointCameraEnd;		// 終了視点番号
+	indexPointCameraBegin = pIndexPointCameraBegin_[ indexSection ];
+	indexPointCameraEnd = pIndexPointCameraEnd_[ indexSection ];
+	if( indexPointCameraBegin == -1 )
+	{
+		Assert( indexSection != 0, _T( "スプラインカメラステートの設定が不正です。" ) );
+		indexPointCameraBegin = pIndexPointCameraEnd_[ indexSection - 1 ];
+	}
+	Utility::Spline( pTablePointCamera_[ indexPointCameraBegin ], pTablePointCamera_[ indexPointCameraEnd ],
+		static_cast< float >( indexFrame ) / pFrame_[ indexSection ], pOut );
+}
+
+//==============================================================================
+// Brief  : 注視点座標の取得
+// Return : void								: なし
+// Arg    : int indexSection					: セクション番号
+// Arg    : int indexFrame						: フレーム番号
+// Arg    : D3DXVECTOR3* pOut					: 出力先
+//==============================================================================
+void CameraStateSpline::GetPositionLookAt( int indexSection, int indexFrame, D3DXVECTOR3* pOut )
+{
+	// 視点座標を設定
+	int		indexPointLookAtBegin;		// 開始視点番号
+	int		indexPointLookAtEnd;		// 終了視点番号
+	indexPointLookAtBegin = pIndexPointLookAtBegin_[ indexSection ];
+	indexPointLookAtEnd = pIndexPointLookAtEnd_[ indexSection ];
+	if( indexPointLookAtBegin == -1 )
+	{
+		Assert( indexSection != 0, _T( "スプラインカメラステートの設定が不正です。" ) );
+		indexPointLookAtBegin = pIndexPointLookAtEnd_[ indexSection - 1 ];
+	}
+	Utility::Spline( pTablePointLookAt_[ indexPointLookAtBegin ], pTablePointLookAt_[ indexPointLookAtEnd ],
+		static_cast< float >( indexFrame ) / pFrame_[ indexSection ], pOut );
+}
+
+//==============================================================================
+// Brief  : セクション数の取得
+// Return : int									: セクション数
+// Arg    : void								: なし
+//==============================================================================
+int CameraStateSpline::GetCountSection( void ) const
+{
+	// 値の返却
+	return countSection_;
 }
 
 //==============================================================================
