@@ -199,7 +199,8 @@ public:
 	enum
 	{
 		CAMERA_GENERAL = 0,					// 通常カメラ
-		CAMERA_SHADOW,						// 影用カメラ
+		CAMERA_SHADOW_NEAR,					// 影用カメラ近
+		CAMERA_SHADOW_FAR,					// 影用カメラ遠
 		CAMERA_MAX							// 最大値
 	};
 

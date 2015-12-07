@@ -90,6 +90,8 @@ void SceneGame::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
+	pCameraShadowNear_ = nullptr;
+	pCameraShadowFar_ = nullptr;
 	pLight_ = nullptr;
 
 	//	ゲームUI関係
@@ -208,16 +210,22 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return 1;
 	}
 	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, -1.0f ) );
-#if 0
-	// 影用カメラの設定
-	CameraObject*	pCameraShadow = nullptr;		// 影用カメラ
-	D3DXVECTOR3		vectorLight;					// ライトベクトル
+
+	// 影用カメラ近の設定
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
 	pLight_->GetVector( &vectorLight );
 	vectorLight *= -3500.0f;
-	pCameraShadow = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
-	pCameraShadow->Set( D3DX_PI / 4.0f, 8 * pArgument->pWindow_->GetWidth(), 8 * pArgument->pWindow_->GetHeight(), 0.1f, 7000.0f,
+	pCameraShadowNear_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
+	pCameraShadowNear_->Set( D3DX_PI / 4.0f, 8 * pArgument->pWindow_->GetWidth(), 8 * pArgument->pWindow_->GetHeight(), 0.1f, 7000.0f,
 		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
-#endif
+
+	// 影用カメラ遠の設定
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -10000.0f;
+	pCameraShadowFar_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_FAR );
+	pCameraShadowFar_->Set( D3DX_PI / 4.0f, 24 * pArgument->pWindow_->GetWidth(), 24 * pArgument->pWindow_->GetHeight(), 0.1f, 20000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
+
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
@@ -841,9 +849,26 @@ int SceneGame::Finalize( void )
 		pLight_ = nullptr;
 	}
 
+	// 影用カメラ遠の開放
+	if( pCameraShadowFar_ != nullptr )
+	{
+		pCameraShadowFar_->SetState( nullptr );
+		pCameraShadowFar_ = nullptr;
+	}
+
+	// 影用カメラ近の開放
+	if( pCameraShadowNear_ != nullptr )
+	{
+		pCameraShadowNear_->SetState( nullptr );
+		pCameraShadowNear_ = nullptr;
+	}
+
 	// カメラの開放
-	pCamera_->SetState( nullptr );
-	pCamera_ = nullptr;
+	if( pCamera_ != nullptr )
+	{
+		pCamera_->SetState( nullptr );
+		pCamera_ = nullptr;
+	}
 
 	// 基本クラスの処理
 	result = SceneMain::Finalize();

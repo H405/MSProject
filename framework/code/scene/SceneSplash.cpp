@@ -167,7 +167,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	D3DXVECTOR3	vectorLight;		// ライトベクトル
 	pLight_->GetVector( &vectorLight );
 	vectorLight *= -500.0f;
-	pCameraShadow_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCameraShadow_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
 	pCameraShadow_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
 		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
 
@@ -441,6 +441,13 @@ void SceneSplash::Update( void )
 	D3DXVECTOR3	positionLookAt;		// 注視点
 	pCamera_[ GraphicMain::CAMERA_GENERAL ].GetPositionLookAt( &positionLookAt );
 	pArgument_->pEffectParameter_->SetForcus( pCamera_[ GraphicMain::CAMERA_GENERAL ].GetViewZ( positionLookAt ) );
+
+	// 影用カメラの更新
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -500.0f;
+	pCameraShadow_->SetPositionCamera( positionLookAt + vectorLight );
+	pCameraShadow_->SetPositionLookAt( positionLookAt );
 
 	// モデルの回転
 	pObjectModel_[ 0 ].AddRotationY( 0.01f );

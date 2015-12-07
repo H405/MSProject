@@ -51,6 +51,7 @@ public:
 		PARAMETER_MATRIX_TRANSFORM_LIGHT,			// ライトの変換行列
 		PARAMETER_MATRIX_VIEW_LIGHT,				// ライトのビュー変換行列
 		PARAMETER_TEXTURE_DEPTH_LIGHT,				// ライトの深度テクスチャ
+		PARAMETER_CLIP_FAR_LIGHT,					// ライトのファークリップ面
 
 		PARAMETER_MAX								// 最大値
 	};

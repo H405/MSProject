@@ -172,6 +172,20 @@ void SceneGame::Update( void )
 	pCamera_->GetPositionLookAt( &positionLookAt );
 	pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( positionLookAt ) );
 
+	// 影用カメラ近の更新
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	positionLookAt.y = 0.0f;
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -3500.0f;
+	pCameraShadowNear_->SetPositionCamera( positionLookAt + vectorLight );
+	pCameraShadowNear_->SetPositionLookAt( positionLookAt );
+
+	// 影用カメラ遠の更新
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -10000.0f;
+	pCameraShadowFar_->SetPositionCamera( positionLookAt + vectorLight );
+	pCameraShadowFar_->SetPositionLookAt( positionLookAt );
+
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
 }

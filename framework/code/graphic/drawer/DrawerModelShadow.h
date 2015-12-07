@@ -44,6 +44,7 @@ public:
 	{
 		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
 		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
+		PARAMETER_CLIP_FAR,					// ファークリップ面
 		PARAMETER_MAX						// 最大値
 	};
 

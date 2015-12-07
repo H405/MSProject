@@ -19,6 +19,7 @@ texture		textureDepth_;					// 深度テクスチャ
 float4x4	matrixTransformLight_;			// ライトの変換行列
 float4x4	matrixViewLight_;				// ライトのビュー変換行列
 texture		textureDepthLight_;				// ライトの深度テクスチャ
+float		clipFarLight_;					// ライトのファークリップ面
 
 //******************************************************************************
 // サンプリング
@@ -94,7 +95,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	positionTextureLight *= 0.5f;
 
 	// 深度を取得
-	float	depthLight = 1000.0f - tex2D( samplerTextureDepthLight, positionTextureLight ).r;
+	float	depthLight = clipFarLight_ - tex2D( samplerTextureDepthLight, positionTextureLight ).r;
 	float	depth = mul( float4( positionWorld, 1.0f ), matrixViewLight_ ).z;
 
 	// 色を返す

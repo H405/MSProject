@@ -162,7 +162,7 @@ void DrawerModelShadow::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMATRIX		matrixView;						// ビュー変換行列
 	const Camera*	pCamera = nullptr;				// カメラ
 	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
-	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
 	pRenderMatrix = pCamera->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
 	pRenderMatrix->GetMatrixView( &matrixView );
@@ -170,6 +170,9 @@ void DrawerModelShadow::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
+
+	// ファークリップ面
+	pEffect_->SetFloat( PARAMETER_CLIP_FAR, pCamera->GetClipFar() );
 
 	// 描画
 	unsigned int	countMaterial;		// マテリアル数

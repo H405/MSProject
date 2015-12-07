@@ -197,7 +197,7 @@ void DrawerShadow::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
 	D3DXMATRIX		matrixView;						// ビュー変換行列
 	const Camera*	pCameraShadow = nullptr;		// カメラ
-	pCameraShadow = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCameraShadow = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
 	pRenderMatrix = pCameraShadow->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
 	pRenderMatrix->GetMatrixView( &matrixView );
@@ -206,6 +206,9 @@ void DrawerShadow::Draw( const D3DXMATRIX& matrixWorld )
 
 	// ライトテクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_LIGHT, pTextureLight_ );
+
+	// ライトのファークリップ面
+	pEffect_->SetFloat( PARAMETER_CLIP_FAR_LIGHT, pCameraShadow->GetClipFar() );
 
 	// 描画
 	pEffect_->Begin( 0 );

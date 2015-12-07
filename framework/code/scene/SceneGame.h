@@ -142,8 +142,10 @@ private:
 	static const int	COUNT_HOUSE = 11;		// 家の数
 	static const int	COUNT_GRASS = 500;		// 草の数
 
-	CameraObject*		pCamera_;		// カメラ
-	LightDirection*		pLight_;		// ライト
+	CameraObject*	pCamera_;				// カメラ
+	CameraObject*	pCameraShadowNear_;		// 影用カメラ近
+	CameraObject*	pCameraShadowFar_;		// 影用カメラ遠
+	LightDirection*	pLight_;				// ライト
 
 
 	//	ゲームUI関係
@@ -436,6 +438,8 @@ private:
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
 	int					indexSection_;						// ゲームセクション番号
+
+	ObjectModel*		pObjectTestForShadow_;				// 影確認用
 
 	int Initialize2( void );
 	int Finalize2( void );

@@ -12,6 +12,7 @@
 //******************************************************************************
 float4x4	matrixTransform_;		// 変換行列
 float4x4	matrixWorldView_;		// ワールドビュー変換行列
+float		clipFar_;				// ファークリップ面
 
 //******************************************************************************
 // サンプリング
@@ -24,7 +25,7 @@ float4x4	matrixWorldView_;		// ワールドビュー変換行列
 struct VertexOutput
 {
 	float4	position_	: POSITION;			// 座標
-	float	depth_		: TEXCOORD2;		// 深度
+	float	depth_		: TEXCOORD0;		// 深度
 };
 
 //==============================================================================
@@ -55,7 +56,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	// ピクセルシェーダ出力を返す
 	float4	depth;
 	depth.gba = 0.0f;
-	depth.r = 1000.0f - vertex.depth_;
+	depth.r = clipFar_ - vertex.depth_;
 	return depth;
 }
 
