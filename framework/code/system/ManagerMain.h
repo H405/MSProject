@@ -46,6 +46,7 @@ class Model;
 class Motion;
 class Object;
 class ObjectBlur;
+class ObjectBlurShadow;
 class ObjectDrawTexture;
 class ObjectLightEffect;
 class ObjectLightReflect;
@@ -169,6 +170,7 @@ private:
 	ObjectMerge*				pObjectMerge_;					// 総合3D描画オブジェクト
 	ObjectPostEffect*			pObjectPostEffect_;				// ポストエフェクトオブジェクト
 	ObjectShadow*				pObjectShadow_;					// 影オブジェクト
+	ObjectBlurShadow*			pObjectBlurShadow_;				// 影用ブラーオブジェクト
 	ObjectWaveData*				pObjectWaveData_;				// 波情報描画オブジェクト
 	ObjectWaveDataInitialize*	pObjectWaveDataInitialize_;		// 波情報初期化オブジェクト
 	ManagerDraw< Graphic >*		pDraw_;							// 描画管理クラス

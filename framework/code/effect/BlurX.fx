@@ -1,7 +1,7 @@
 //==============================================================================
 // 
 // File   : BlurBase.fx
-// Brief  : ブラー基エフェクト
+// Brief  : Y方向ブラーエフェクト
 // Author : Taiga Shirakawa
 // Date   : 2015/11/10 tsu : Taiga Shirakawa : create
 // 

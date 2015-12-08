@@ -47,6 +47,7 @@
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/ObjectBlur.h"
+#include "../object/ObjectBlurShadow.h"
 #include "../object/ObjectDrawTexture.h"
 #include "../object/ObjectLightEffect.h"
 #include "../object/ObjectLightReflect.h"
@@ -267,6 +268,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	RenderPassParameter	parameterPassDepthShadowNear;		// 影用深度(近)パスのパラメータ
 	RenderPassParameter	parameterPassDepthShadowFar;		// 影用深度(遠)パスのパラメータ
 	RenderPassParameter	parameterPassShadow;				// 影パスのパラメータ
+	RenderPassParameter	parameterPassBlurShadow;			// 影用ブラーパスのパラメータ
 	RenderPassParameter	parameterPassReflect;				// 反射パスのパラメータ
 	RenderPassParameter	parameterPassReflectLight;			// 反射ライティングパスのパラメータ
 	RenderPassParameter	parameterPassReflectAdd;			// 反射加算合成パスのパラメータ
@@ -309,6 +311,14 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	parameterPassShadow.pFormat_[ GraphicMain::RENDER_PASS_SHADOW_COLOR ] = D3DFMT_R32F;
 	result = pRenderPass_[ GraphicMain::PASS_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_SHADOW_MAX, &parameterPassShadow );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassBlurShadow.width_ = widthWindow / 2;
+	parameterPassBlurShadow.height_ = heightWindow / 2;
+	parameterPassBlurShadow.pFormat_[ GraphicMain::RENDER_PASS_BLUR_SHADOW_COLOR ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_BLUR_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_SHADOW_MAX, &parameterPassBlurShadow );
 	if( result != 0 )
 	{
 		return result;
@@ -608,6 +618,26 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return result;
 	}
 
+	// 影用ブラーオブジェクトの生成
+	Effect*	pEffectBlurShadow = nullptr;		// 影エフェクト
+	pObjectBlurShadow_ = new ObjectBlurShadow();
+	if( pObjectBlurShadow_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectBlurShadow_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectBlurShadow = pEffect_->Get( _T( "BlurShadow.fx" ) );
+	result = pObjectBlurShadow_->CreateGraphic( 0, pEffectParameter_, pEffectBlurShadow,
+		pRenderPass_[ GraphicMain::PASS_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_SHADOW_COLOR ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+
 	// 反射ライティングオブジェクトの生成
 	Effect*	ppEffectLightReflect[ GraphicMain::LIGHT_POINT_MAX + 1 ];		// ライティングエフェクト
 	TCHAR	pNameFileEffectLight[ _MAX_PATH ];								// ライティングエフェクトファイル名
@@ -662,7 +692,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_SPECULAR ),
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_NORMAL ),
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_SHADOW_COLOR ) );
+		pRenderPass_[ GraphicMain::PASS_BLUR_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_BLUR_SHADOW_COLOR ) );
 	if( result != 0 )
 	{
 		return result;
@@ -871,6 +901,10 @@ int ManagerMain::Finalize( void )
 	// 波情報描画オブジェクトの開放
 	delete pObjectWaveData_;
 	pObjectWaveData_ = nullptr;
+
+	// 影用ブラーオブジェクトの開放
+	delete pObjectBlurShadow_;
+	pObjectBlurShadow_ = nullptr;
 
 	// 影オブジェクトの開放
 	delete pObjectShadow_;
@@ -1182,6 +1216,7 @@ void ManagerMain::InitializeSelf( void )
 	pObjectMerge_ = nullptr;
 	pObjectPostEffect_ = nullptr;
 	pObjectShadow_ = nullptr;
+	pObjectBlurShadow_ = nullptr;
 	pObjectWaveData_ = nullptr;
 	pObjectWaveDataInitialize_ = nullptr;
 	pDraw_ = nullptr;

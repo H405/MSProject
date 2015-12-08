@@ -47,6 +47,7 @@ public:
 		PASS_DEPTH_SHADOW_NEAR,		// 影用深度(近)
 		PASS_DEPTH_SHADOW_FAR,		// 影用深度(遠)
 		PASS_SHADOW,				// 影
+		PASS_BLUR_SHADOW,			// 影用ブラー
 		PASS_REFLECT,				// 反射
 		PASS_LIGHT_REFLECT,			// 反射のライティング
 		PASS_REFLECT_NOT_LIGHT,		// 反射ライティングなし
@@ -98,6 +99,13 @@ public:
 	{
 		RENDER_PASS_SHADOW_COLOR = 0,					// 色
 		RENDER_PASS_SHADOW_MAX							// 最大値
+	};
+
+	// 影用ブラー
+	enum
+	{
+		RENDER_PASS_BLUR_SHADOW_COLOR = 0,				// 色
+		RENDER_PASS_BLUR_SHADOW_MAX						// 最大値
 	};
 
 	// 反射
