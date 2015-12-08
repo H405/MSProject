@@ -262,18 +262,19 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pXAudio = pXAudio_->GetXAudio();
 
 	// パスクラスの生成
-	RenderPassParameter	parameterPassWaveData;			// 波情報描画パスのパラメータ
-	RenderPassParameter	parameterPass3D;				// 3D描画パスのパラメータ
-	RenderPassParameter	parameterPassDepthShadow;		// 影用深度パスのパラメータ
-	RenderPassParameter	parameterPassShadow;			// 影パスのパラメータ
-	RenderPassParameter	parameterPassReflect;			// 反射パスのパラメータ
-	RenderPassParameter	parameterPassReflectLight;		// 反射ライティングパスのパラメータ
-	RenderPassParameter	parameterPassReflectAdd;		// 反射加算合成パスのパラメータ
-	RenderPassParameter	parameterPassWater;				// 水描画パスのパラメータ
-	RenderPassParameter	parameterPassNotLight;			// ライティングなし3D描画パスのパラメータ
-	RenderPassParameter	parameterPassLightEffect;		// ライティングパスのパラメータ
-	RenderPassParameter	parameterPassMerge;				// 総合3D描画パスのパラメータ
-	RenderPassParameter	parameterPassBlur;				// ブラーパスのパラメータ
+	RenderPassParameter	parameterPassWaveData;				// 波情報描画パスのパラメータ
+	RenderPassParameter	parameterPass3D;					// 3D描画パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadowNear;		// 影用深度(近)パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadowFar;		// 影用深度(遠)パスのパラメータ
+	RenderPassParameter	parameterPassShadow;				// 影パスのパラメータ
+	RenderPassParameter	parameterPassReflect;				// 反射パスのパラメータ
+	RenderPassParameter	parameterPassReflectLight;			// 反射ライティングパスのパラメータ
+	RenderPassParameter	parameterPassReflectAdd;			// 反射加算合成パスのパラメータ
+	RenderPassParameter	parameterPassWater;					// 水描画パスのパラメータ
+	RenderPassParameter	parameterPassNotLight;				// ライティングなし3D描画パスのパラメータ
+	RenderPassParameter	parameterPassLightEffect;			// ライティングパスのパラメータ
+	RenderPassParameter	parameterPassMerge;					// 総合3D描画パスのパラメータ
+	RenderPassParameter	parameterPassBlur;					// ブラーパスのパラメータ
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
 	{
@@ -294,8 +295,14 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	parameterPassDepthShadow.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_DEPTH ] = D3DFMT_R32F;
-	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_MAX, &parameterPassDepthShadow );
+	parameterPassDepthShadowNear.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_MAX, &parameterPassDepthShadowNear );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadowFar.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_MAX, &parameterPassDepthShadowFar );
 	if( result != 0 )
 	{
 		return result;
@@ -594,7 +601,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pEffectShadow = pEffect_->Get( _T( "Shadow.fx" ) );
 	result = pObjectShadow_->CreateGraphic( 0, pEffectParameter_, pEffectShadow,
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;

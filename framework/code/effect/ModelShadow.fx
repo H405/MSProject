@@ -37,7 +37,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 {
 	// 頂点の変換
 	VertexOutput	output;		// 頂点シェーダ出力
-	output.position_ = mul( float4( positionLocal + 2.5f * vectorNormal, 1.0f ), matrixTransform_ );
+	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
 
 	// 深度の計算
 	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;

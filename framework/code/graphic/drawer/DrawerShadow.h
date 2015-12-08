@@ -47,11 +47,18 @@ public:
 		PARAMETER_MATRIX_PROJECTION_INVERSE,		// プロジェクション変換逆行列
 		PARAMETER_MATRIX_VIEW_INVERSE,				// ビュー変換逆行列
 		PARAMETER_TEXTURE_DEPTH,					// 深度テクスチャ
-		
-		PARAMETER_MATRIX_TRANSFORM_LIGHT,			// ライトの変換行列
-		PARAMETER_MATRIX_VIEW_LIGHT,				// ライトのビュー変換行列
-		PARAMETER_TEXTURE_DEPTH_LIGHT,				// ライトの深度テクスチャ
-		PARAMETER_CLIP_FAR_LIGHT,					// ライトのファークリップ面
+
+		PARAMETER_POSITION_LOOK_AT_LIGHT,			// 平行光源の注視点
+
+		PARAMETER_MATRIX_TRANSFORM_LIGHT_NEAR,		// 平行光源(近)の変換行列
+		PARAMETER_MATRIX_VIEW_LIGHT_NEAR,			// 平行光源(近)のビュー変換行列
+		PARAMETER_TEXTURE_DEPTH_LIGHT_NEAR,			// 平行光源(近)の深度テクスチャ
+		PARAMETER_CLIP_FAR_LIGHT_NEAR,				// 平行光源(近)のファークリップ面
+
+		PARAMETER_MATRIX_TRANSFORM_LIGHT_FAR,		// 平行光源(遠)の変換行列
+		PARAMETER_MATRIX_VIEW_LIGHT_FAR,			// 平行光源(遠)のビュー変換行列
+		PARAMETER_TEXTURE_DEPTH_LIGHT_FAR,			// 平行光源(遠)の深度テクスチャ
+		PARAMETER_CLIP_FAR_LIGHT_FAR,				// 平行光源(遠)のファークリップ面
 
 		PARAMETER_MAX								// 最大値
 	};
@@ -77,10 +84,11 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -96,10 +104,11 @@ public:
 	// Arg    : Effect* pEffect						: 描画エフェクト
 	// Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -119,7 +128,8 @@ protected:
 	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
 	Effect*					pEffect_;				// エフェクト
 	IDirect3DTexture9*		pTextureDepth_;			// 深度情報テクスチャ
-	IDirect3DTexture9*		pTextureLight_;			// ライトの深度情報テクスチャ
+	IDirect3DTexture9*		pTextureLightNear_;		// 平行光源(近)の深度情報テクスチャ
+	IDirect3DTexture9*		pTextureLightFar_;		// 平行光源(遠)の深度情報テクスチャ
 	Polygon2D*				pPolygon_;				// ポリゴン
 
 private:

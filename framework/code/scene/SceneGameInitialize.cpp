@@ -317,12 +317,14 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Model*	pModelBridge = nullptr;				// モデル
 	Effect*	pEffectBridgeGeneral = nullptr;		// 通常描画エフェクト
 	Effect*	pEffectBridgeReflect = nullptr;		// 反射エフェクト
+	Effect*	pEffectBridgeShadow = nullptr;		// 影エフェクト
 	pModelBridge = pArgument->pModel_->Get( _T( "bridge_002.x" ) );
 	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectBridgeShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
 	bridge = new ObjectModelMaterial();
 	bridge->Initialize( 0 );
-	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect );
+	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect, pEffectBridgeShadow );
 	bridge->SetPosition( 1558.0f, 460.0f, -2240.0f );
 	bridge->SetRotationY( DEG_TO_RAD( 101.0f ) );
 	bridge->SetScale( 285.0f, 285.0f, 285.0f );
@@ -335,14 +337,16 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Model*	pModelHouse = nullptr;				// モデル
 	Effect*	pEffectHouseGeneral = nullptr;		// 通常描画エフェクト
 	Effect*	pEffectHouseReflect = nullptr;		// 反射エフェクト
+	Effect*	pEffectHouseShadow = nullptr;		// 影エフェクト
 	pModelHouse = pArgument->pModel_->Get( _T( "house_002.x" ) );
 	pEffectHouseGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectHouseReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectHouseShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
 	houses = new ObjectModelMaterial[ COUNT_HOUSE ];
 	for( int counterHouse = 0; counterHouse < COUNT_HOUSE; ++counterHouse )
 	{
 		houses[ counterHouse ].Initialize( 0 );
-		houses[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect );
+		houses[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect, pEffectHouseShadow );
 		houses[ counterHouse ].SetScale( 300.0f, 300.0f, 300.0f );
 	}
 	houses[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
@@ -373,12 +377,14 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Model*	pModelGate = nullptr;				// モデル
 	Effect*	pEffectGateGeneral = nullptr;		// 通常描画エフェクト
 	Effect*	pEffectGateReflect = nullptr;		// 反射エフェクト
+	Effect*	pEffectGateShadow = nullptr;		// 影エフェクト
 	pModelGate = pArgument->pModel_->Get( _T( "torii.x" ) );
 	pEffectGateGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectGateReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectGateShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
 	gate = new ObjectModelMaterial();
 	gate->Initialize( 0 );
-	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect );
+	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect, pEffectGateShadow );
 	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
 	gate->SetRotationY( DEG_TO_RAD( 90 ) );
 	gate->SetScale( 1.0f, 1.0f, 1.0f );

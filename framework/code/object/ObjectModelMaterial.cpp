@@ -146,8 +146,10 @@ void ObjectModelMaterial::Update( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
 //==============================================================================
-int ObjectModelMaterial::CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect )
+int ObjectModelMaterial::CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow )
 {
 	// グラフィックの生成
 	int		result;		// 実行結果
@@ -156,7 +158,7 @@ int ObjectModelMaterial::CreateGraphic( int priority, Model* pModel, const Effec
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect );
+	result = pGraphic_->Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow );
 	if( result != 0 )
 	{
 		return result;

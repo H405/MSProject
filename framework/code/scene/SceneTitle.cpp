@@ -224,10 +224,11 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	//	‹´¶¬
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "bridge.x" ) );
 	bridge = new ObjectModelMaterial();
 	bridge->Initialize(0);
-	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
+	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow);
 	bridge->SetPosition(0.0f, 1000.0f, 2300.0f);
 	bridge->SetScale(350.0f, 350.0f, 350.0f);
 	bridge->SetRotationY(DEG_TO_RAD(90));

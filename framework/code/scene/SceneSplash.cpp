@@ -248,13 +248,16 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	// テクスチャなしモデルの生成
 	Effect*	pEffectModelMaterial = nullptr;				// エフェクト
 	Effect*	pEffectModelMaterialReflect = nullptr;		// エフェクト
+	Effect*	pEffectModelMaterialShadow = nullptr;		// エフェクト
 	Model*	pModelModelMaterial = nullptr;				// モデル
 	pEffectModelMaterial = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectModelMaterialReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffectModelMaterialShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	pModelModelMaterial = pArgument_->pModel_->Get( _T( "head.x" ) );
 	pObjectModelMaterial_ = new ObjectModelMaterial();
 	pObjectModelMaterial_->Initialize( 0 );
-	pObjectModelMaterial_->CreateGraphic( 0, pModelModelMaterial, pArgument->pEffectParameter_, pEffectModelMaterial, pEffectModelMaterialReflect );
+	pObjectModelMaterial_->CreateGraphic( 0, pModelModelMaterial, pArgument->pEffectParameter_,
+		pEffectModelMaterial, pEffectModelMaterialReflect, pEffectModelMaterialShadow );
 	pObjectModelMaterial_->SetPosition( -10.0f, 30.0f, 40.0f );
 
 	// ビルボードの生成

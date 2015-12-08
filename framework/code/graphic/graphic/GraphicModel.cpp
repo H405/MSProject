@@ -90,15 +90,25 @@ int GraphicModel::Initialize( int priority, Model* pModel, const EffectParameter
 	result = pDrawerModelReflect->Initialize( pModel, pParameter, pEffectReflect );
 	ppDraw_[ GraphicMain::PASS_REFLECT ] = pDrawerModelReflect;
 
-	// 影描画クラスの生成
-	DrawerModelShadow*	pDrawerModelShadow = nullptr;		// 描画クラス
-	pDrawerModelShadow = new DrawerModelShadow();
-	if( pDrawerModelShadow == nullptr )
+	// 影(近)描画クラスの生成
+	DrawerModelShadow*	pDrawerModelShadowNear = nullptr;		// 描画クラス
+	pDrawerModelShadowNear = new DrawerModelShadow();
+	if( pDrawerModelShadowNear == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerModelShadow->Initialize( pModel, pParameter, pEffectShadow );
-	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW ] = pDrawerModelShadow;
+	result = pDrawerModelShadowNear->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_NEAR );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ] = pDrawerModelShadowNear;
+
+	// 影(遠)描画クラスの生成
+	DrawerModelShadow*	pDrawerModelShadowFar = nullptr;		// 描画クラス
+	pDrawerModelShadowFar = new DrawerModelShadow();
+	if( pDrawerModelShadowFar == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelShadowFar->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_FAR );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ] = pDrawerModelShadowFar;
 
 	// 正常終了
 	return 0;

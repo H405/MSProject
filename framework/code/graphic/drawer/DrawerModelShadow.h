@@ -68,8 +68,9 @@ public:
 	// Arg    : Model* pModel						: モデル
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : int indexCamera						: カメラ番号
 	//==============================================================================
-	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect );
+	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -84,8 +85,9 @@ public:
 	// Arg    : Model* pModel						: モデル
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : int indexCamera						: カメラ番号
 	//==============================================================================
-	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect );
+	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -111,6 +113,7 @@ protected:
 	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
 	Effect*					pEffect_;				// エフェクト
 	Model*					pModel_;				// モデル
+	int						indexCamera_;			// カメラ番号
 
 private:
 	void InitializeSelf( void );

@@ -63,10 +63,11 @@ DrawerShadow::~DrawerShadow( void )
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
 //==============================================================================
 int DrawerShadow::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -80,7 +81,8 @@ int DrawerShadow::Initialize( const EffectParameter* pParameter, Effect* pEffect
 	pEffectParameter_ = pParameter;
 	pEffect_ = pEffect;
 	pTextureDepth_ = pTextureDepth;
-	pTextureLight_ = pTextureLight;
+	pTextureLightNear_ = pTextureLightNear;
+	pTextureLightFar_ = pTextureLightFar;
 	pPolygon_ = pPolygon;
 
 	// ハンドルの読み込み
@@ -123,10 +125,11 @@ int DrawerShadow::Finalize( void )
 // Arg    : Effect* pEffect						: 描画エフェクト
 // Arg    : Polygon2D* pPolygon					: 2Dポリゴン
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
 //==============================================================================
 int DrawerShadow::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -137,7 +140,7 @@ int DrawerShadow::Reinitialize( const EffectParameter* pParameter, Effect* pEffe
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTextureDepth, pTextureLight );
+	return Initialize( pParameter, pEffect, pPolygon, pTextureDepth, pTextureLightNear, pTextureLightFar );
 }
 
 //==============================================================================
@@ -193,22 +196,42 @@ void DrawerShadow::Draw( const D3DXMATRIX& matrixWorld )
 	// 深度テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH, pTextureDepth_ );
 
-	// ライト変換行列
-	D3DXMATRIX		matrixViewProjection;			// ビュープロジェクション変換行列
-	D3DXMATRIX		matrixView;						// ビュー変換行列
-	const Camera*	pCameraShadow = nullptr;		// カメラ
-	pCameraShadow = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
-	pRenderMatrix = pCameraShadow->GetRenderMatrix();
+	// 平行光源の注視点
+	const Camera*	pCameraShadowNear = nullptr;		// カメラ
+	D3DXVECTOR3		positionLookAtLight;				// 平行光源の注視点
+	pCameraShadowNear = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
+	pCameraShadowNear->GetPositionLookAt( &positionLookAtLight );
+	pEffect_->SetFloatArray( PARAMETER_POSITION_LOOK_AT_LIGHT, &positionLookAtLight.x, 3 );
+
+	// 平行光源(近)の変換行列
+	D3DXMATRIX	matrixViewProjection;		// ビュープロジェクション変換行列
+	D3DXMATRIX	matrixView;					// ビュー変換行列
+	pRenderMatrix = pCameraShadowNear->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
 	pRenderMatrix->GetMatrixView( &matrixView );
-	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM_LIGHT, matrixViewProjection );
-	pEffect_->SetMatrix( PARAMETER_MATRIX_VIEW_LIGHT, matrixView );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM_LIGHT_NEAR, matrixViewProjection );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_VIEW_LIGHT_NEAR, matrixView );
 
-	// ライトテクスチャ
-	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_LIGHT, pTextureLight_ );
+	// 平行光源(近)のテクスチャ
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_LIGHT_NEAR, pTextureLightNear_ );
 
-	// ライトのファークリップ面
-	pEffect_->SetFloat( PARAMETER_CLIP_FAR_LIGHT, pCameraShadow->GetClipFar() );
+	// 平行光源(近)のファークリップ面
+	pEffect_->SetFloat( PARAMETER_CLIP_FAR_LIGHT_NEAR, pCameraShadowNear->GetClipFar() );
+
+	// 平行光源(遠)の変換行列
+	const Camera*	pCameraShadowFar = nullptr;		// カメラ
+	pCameraShadowFar = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW_FAR );
+	pRenderMatrix = pCameraShadowFar->GetRenderMatrix();
+	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
+	pRenderMatrix->GetMatrixView( &matrixView );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM_LIGHT_FAR, matrixViewProjection );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_VIEW_LIGHT_FAR, matrixView );
+
+	// 平行光源(遠)のテクスチャ
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_LIGHT_FAR, pTextureLightFar_ );
+
+	// 平行光源(遠)のファークリップ面
+	pEffect_->SetFloat( PARAMETER_CLIP_FAR_LIGHT_FAR, pCameraShadowFar->GetClipFar() );
 
 	// 描画
 	pEffect_->Begin( 0 );
@@ -227,6 +250,7 @@ void DrawerShadow::InitializeSelf( void )
 	pEffectParameter_ = nullptr;
 	pEffect_ = nullptr;
 	pTextureDepth_ = nullptr;
-	pTextureLight_ = nullptr;
+	pTextureLightNear_ = nullptr;
+	pTextureLightFar_ = nullptr;
 	pPolygon_ = nullptr;
 }
