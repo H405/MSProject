@@ -65,9 +65,10 @@ DrawerShadow::~DrawerShadow( void )
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 //==============================================================================
 int DrawerShadow::Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -83,6 +84,7 @@ int DrawerShadow::Initialize( const EffectParameter* pParameter, Effect* pEffect
 	pTextureDepth_ = pTextureDepth;
 	pTextureLightNear_ = pTextureLightNear;
 	pTextureLightFar_ = pTextureLightFar;
+	pTextureLightPoint_ = pTextureLightPoint;
 	pPolygon_ = pPolygon;
 
 	// ハンドルの読み込み
@@ -127,9 +129,10 @@ int DrawerShadow::Finalize( void )
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
 // Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 //==============================================================================
 int DrawerShadow::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -140,7 +143,7 @@ int DrawerShadow::Reinitialize( const EffectParameter* pParameter, Effect* pEffe
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pPolygon, pTextureDepth, pTextureLightNear, pTextureLightFar );
+	return Initialize( pParameter, pEffect, pPolygon, pTextureDepth, pTextureLightNear, pTextureLightFar, pTextureLightPoint );
 }
 
 //==============================================================================
@@ -233,6 +236,33 @@ void DrawerShadow::Draw( const D3DXMATRIX& matrixWorld )
 	// 平行光源(遠)のファークリップ面
 	pEffect_->SetFloat( PARAMETER_CLIP_FAR_LIGHT_FAR, pCameraShadowFar->GetClipFar() );
 
+	// 点光源の変換行列
+	const Camera*	pCameraShadowPoint = nullptr;		// カメラ
+	pCameraShadowPoint = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT );
+	pRenderMatrix = pCameraShadowPoint->GetRenderMatrix();
+	pRenderMatrix->GetMatrixView( &matrixView );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_VIEW_LIGHT_POINT, matrixView );
+
+	// 点光源のテクスチャ
+	pEffect_->SetTexture( PARAMETER_TEXTURE_DEPTH_LIGHT_POINT, pTextureLightPoint_ );
+
+	// 点光源のファークリップ面
+	pEffect_->SetFloat( PARAMETER_CLIP_FAR_LIGHT_POINT, pCameraShadowPoint->GetClipFar() );
+
+	// 点光源の減衰率
+	const LightPoint*	pLightPoint = nullptr;		// ポイントライト
+	D3DXVECTOR3			attenuationLightPoint;		// 点光源の減衰率
+	if( pEffectParameter_->GetCountLightPoint() > 0 )
+	{
+		pLightPoint = pEffectParameter_->GetLightPoint( 0 );
+		pLightPoint->GetAttenuation( &attenuationLightPoint );
+	}
+	else
+	{
+		attenuationLightPoint.x = attenuationLightPoint.y = attenuationLightPoint.z = 10000.0f;
+	}
+	pEffect_->SetFloatArray( PARAMETER_ATTENUATION_LIGHT_POINT, &attenuationLightPoint.x, 3 );
+
 	// 描画
 	pEffect_->Begin( 0 );
 	pPolygon_->Draw();
@@ -252,5 +282,6 @@ void DrawerShadow::InitializeSelf( void )
 	pTextureDepth_ = nullptr;
 	pTextureLightNear_ = nullptr;
 	pTextureLightFar_ = nullptr;
+	pTextureLightPoint_ = nullptr;
 	pPolygon_ = nullptr;
 }

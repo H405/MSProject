@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectShadow.h
-// Brief  : ライト描画オブジェクトクラス
+// File   : DrawerModelParaboloid.h
+// Brief  : モデル影描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/31 sat : Taiga Shirakawa : create
+// Date   : 2015/11/24 sun : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SHADOW_H
-#define MY_OBJECT_SHADOW_H
+#ifndef MY_DRAWER_MODEL_PARABOLOID_H
+#define MY_DRAWER_MODEL_PARABOLOID_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/object.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,34 +31,45 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class GraphicShadow;
+class Model;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectShadow : public Object
+class DrawerModelParaboloid : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_WORLD_VIEW = 0,		// ワールドビュー変換行列
+		PARAMETER_CLIP_CAMERA,					// カメラのクリップ面
+		PARAMETER_MAX							// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectShadow( void );
+	DrawerModelParaboloid( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectShadow( void );
+	~DrawerModelParaboloid( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : int indexCamera						: カメラ番号
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -70,52 +81,43 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : int indexCamera						: カメラ番号
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectShadow* pOut					: コピー先アドレス
+	// Arg    : DrawerModelParaboloid* pOut			: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectShadow* pOut ) const;
+	int Copy( DrawerModelParaboloid* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint );
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicShadow* pValue );
-	GraphicShadow* GetGraphic( void ) const;
+	void SetModel( Model* pValue );
+	Model* GetModel( void ) const;
 
 protected:
-	GraphicShadow*	pGraphic_;		// 描画クラス
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	Model*					pModel_;				// モデル
+	int						indexCamera_;			// カメラ番号
 
 private:
 	void InitializeSelf( void );
-	ObjectShadow( const ObjectShadow& );
-	ObjectShadow operator=( const ObjectShadow& );
-
+	DrawerModelParaboloid( const DrawerModelParaboloid& );
+	DrawerModelParaboloid operator=( const DrawerModelParaboloid& );
 };
 
-#endif	// MY_OBJECT_SHADOW_H
+#endif	// MY_DRAWER_MODEL_PARABOLOID_H

@@ -1,9 +1,9 @@
 //==============================================================================
 // 
-// File   : ModelShadow.fx
-// Brief  : モデル影エフェクト
+// File   : SkinMeshShadow.fx
+// Brief  : スキンメッシュ影エフェクト
 // Author : Taiga Shirakawa
-// Date   : 2015/11/24 tsu : Taiga Shirakawa : create
+// Date   : 2015/12/09 wed : Taiga Shirakawa : create
 // 
 //==============================================================================
 
@@ -12,6 +12,7 @@
 //******************************************************************************
 float4x4	matrixTransform_;		// 変換行列
 float4x4	matrixWorldView_;		// ワールドビュー変換行列
+float4x3	matrixBone_[ 70 ];		// ボーン変換行列
 float		clipFar_;				// ファークリップ面
 
 //******************************************************************************
@@ -32,15 +33,27 @@ struct VertexOutput
 // Brief  : 頂点変換
 // Return : VertexOutput					: 頂点シェーダ出力
 // Arg    : float4 positionLocal			: ローカル座標
+// Arg    : float3 weight					: ブレンド割合
+// Arg    : float4 indices					: 頂点番号
 //==============================================================================
-VertexOutput TransformVertex( float3 positionLocal : POSITION )
+VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 weight : BLENDWEIGHT, float4 indices : BLENDINDICES )
 {
-	// 頂点の変換
-	VertexOutput	output;		// 頂点シェーダ出力
-	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
+	// ボーン行列変換
+	VertexOutput	output;				// 頂点シェーダ出力
+	float4x3		matrixBone;			// ボーン変換行列
+	float4x4		matrixBone4x4;		// 4x4ボーン変換行列
+	matrixBone = matrixBone_[ indices[ 0 ] ] * weight.x;
+	matrixBone += matrixBone_[ indices[ 1 ] ] * weight.y;
+	matrixBone += matrixBone_[ indices[ 2 ] ] * weight.z;
+	matrixBone += matrixBone_[ indices[ 3 ] ] * (1.0f - weight.x - weight.y - weight.z);
+	matrixBone4x4 = float4x4( matrixBone[ 0 ], 0.0f, matrixBone[ 1 ], 0.0f, matrixBone[ 2 ], 0.0f, matrixBone[ 3 ], 1.0f );
+	output.position_ = mul( float4( positionLocal, 1.0f ), matrixBone4x4 );
 
 	// 深度の計算
-	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;
+	output.depth_ = mul( output.position_, matrixWorldView_ ).z;
+
+	// 頂点の変換
+	output.position_ = mul( output.position_, matrixTransform_ );
 
 	// 頂点シェーダ出力を返す
 	return output;

@@ -60,6 +60,11 @@ public:
 		PARAMETER_TEXTURE_DEPTH_LIGHT_FAR,			// 平行光源(遠)の深度テクスチャ
 		PARAMETER_CLIP_FAR_LIGHT_FAR,				// 平行光源(遠)のファークリップ面
 
+		PARAMETER_MATRIX_VIEW_LIGHT_POINT,			// 点光源のビュー変換行列
+		PARAMETER_TEXTURE_DEPTH_LIGHT_POINT,		// 点光源の深度テクスチャ
+		PARAMETER_CLIP_FAR_LIGHT_POINT,				// 点光源のファークリップ面
+		PARAMETER_ATTENUATION_LIGHT_POINT,			// 点光源の減衰率
+
 		PARAMETER_MAX								// 最大値
 	};
 
@@ -86,9 +91,10 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 	//==============================================================================
 	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -106,9 +112,10 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 	//==============================================================================
 	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Polygon2D* pPolygon,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -125,12 +132,13 @@ public:
 	void Draw( const D3DXMATRIX& matrixWorld );
 
 protected:
-	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
-	Effect*					pEffect_;				// エフェクト
-	IDirect3DTexture9*		pTextureDepth_;			// 深度情報テクスチャ
-	IDirect3DTexture9*		pTextureLightNear_;		// 平行光源(近)の深度情報テクスチャ
-	IDirect3DTexture9*		pTextureLightFar_;		// 平行光源(遠)の深度情報テクスチャ
-	Polygon2D*				pPolygon_;				// ポリゴン
+	const EffectParameter*	pEffectParameter_;			// エフェクトパラメータ
+	Effect*					pEffect_;					// エフェクト
+	IDirect3DTexture9*		pTextureDepth_;				// 深度情報テクスチャ
+	IDirect3DTexture9*		pTextureLightNear_;			// 平行光源(近)の深度情報テクスチャ
+	IDirect3DTexture9*		pTextureLightFar_;			// 平行光源(遠)の深度情報テクスチャ
+	IDirect3DTexture9*		pTextureLightPoint_;		// 点光源の深度情報テクスチャ
+	Polygon2D*				pPolygon_;					// ポリゴン
 
 private:
 	void InitializeSelf( void );

@@ -1,18 +1,23 @@
 //==============================================================================
 //
-// File   : ObjectModel.cpp
-// Brief  : モデルオブジェクトクラス
+// File   : DrawerModelParaboloid.cpp
+// Brief  : モデル影描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/18 sun : Taiga Shirakawa : create
+// Date   : 2015/11/24 sun : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "ObjectModel.h"
-#include "../framework/resource/Model.h"
-#include "../graphic/graphic/GraphicModel.h"
+#include "DrawerModelParaboloid.h"
+#include "../graphic/GraphicMain.h"
+#include "../../framework/camera/Camera.h"
+#include "../../framework/graphic/Material.h"
+#include "../../framework/render/RenderMatrix.h"
+#include "../../framework/resource/Effect.h"
+#include "../../framework/resource/Model.h"
+#include "../../system/EffectParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,7 +36,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectModel::ObjectModel( void ) : ObjectMovement()
+DrawerModelParaboloid::DrawerModelParaboloid( void ) : Drawer()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -42,7 +47,7 @@ ObjectModel::ObjectModel( void ) : ObjectMovement()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-ObjectModel::~ObjectModel( void )
+DrawerModelParaboloid::~DrawerModelParaboloid( void )
 {
 	// 終了処理
 	Finalize();
@@ -51,13 +56,29 @@ ObjectModel::~ObjectModel( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : int priority						: 更新優先度
+// Arg    : Model* pModel						: モデル
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : int indexCamera						: カメラ番号
 //==============================================================================
-int ObjectModel::Initialize( int priority )
+int DrawerModelParaboloid::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Object::Initialize( priority );
+	result = Drawer::Initialize();
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// メンバ変数の設定
+	pEffectParameter_ = pParameter;
+	pEffect_ = pEffect;
+	pModel_ = pModel;
+	indexCamera_ = indexCamera;
+
+	// ハンドルの読み込み
+	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
 	if( result != 0 )
 	{
 		return result;
@@ -72,11 +93,11 @@ int ObjectModel::Initialize( int priority )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int ObjectModel::Finalize( void )
+int DrawerModelParaboloid::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Object::Finalize();
+	result = Drawer::Finalize();
 	if( result != 0 )
 	{
 		return result;
@@ -92,9 +113,12 @@ int ObjectModel::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : int priority						: 更新優先度
+// Arg    : Model* pModel						: モデル
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : int indexCamera						: カメラ番号
 //==============================================================================
-int ObjectModel::Reinitialize( int priority )
+int DrawerModelParaboloid::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -105,19 +129,19 @@ int ObjectModel::Reinitialize( int priority )
 	}
 
 	// 初期化処理
-	return Initialize( priority );
+	return Initialize( pModel, pParameter, pEffect, indexCamera );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : ObjectModel* pOut					: コピー先アドレス
+// Arg    : DrawerModelParaboloid* pOut			: コピー先アドレス
 //==============================================================================
-int ObjectModel::Copy( ObjectModel* pOut ) const
+int DrawerModelParaboloid::Copy( DrawerModelParaboloid* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Object::Copy( pOut );
+	result = Drawer::Copy( pOut );
 	if( result != 0 )
 	{
 		return result;
@@ -128,69 +152,61 @@ int ObjectModel::Copy( ObjectModel* pOut ) const
 }
 
 //==============================================================================
-// Brief  : 更新処理
+// Brief  : 描画処理
 // Return : void								: なし
-// Arg    : void								: なし
+// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 //==============================================================================
-void ObjectModel::Update( void )
+void DrawerModelParaboloid::Draw( const D3DXMATRIX& matrixWorld )
 {
-	// 基本クラスの処理
-	ObjectMovement::Update();
+	// 変換行列
+	D3DXMATRIX		matrixWorldView;				// ワールドビュー変換行列
+	D3DXMATRIX		matrixView;						// ビュー変換行列
+	const Camera*	pCamera = nullptr;				// カメラ
+	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
+	pCamera = pEffectParameter_->GetCamera( indexCamera_ );
+	pRenderMatrix = pCamera->GetRenderMatrix();
+	pRenderMatrix->GetMatrixView( &matrixView );
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
+
+	// カメラのクリップ面
+	float	pClipCamera[ 2 ];		// カメラのクリップ面
+	pClipCamera[ 0 ] = pCamera->GetClipNear();
+	pClipCamera[ 1 ] = pCamera->GetClipFar();
+	pEffect_->SetFloatArray( PARAMETER_CLIP_CAMERA, pClipCamera, 2 );
+
+	// 描画
+	unsigned int	countMaterial;		// マテリアル数
+	countMaterial = pModel_->GetCountMaterial();
+	for( unsigned int counterMaterial = 0; counterMaterial < countMaterial; ++counterMaterial )
+	{
+		// モデルの描画
+		pEffect_->Begin( 0 );
+		pModel_->Draw( counterMaterial );
+		pEffect_->End();
+	}
 }
 
 //==============================================================================
-// Brief  : 描画クラスの生成
-// Return : int									: 実行結果
-// Arg    : int priority						: 描画優先度
-// Arg    : Model* pModel						: モデル
-// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
-// Arg    : Effect* pEffectShadow				: 影描画エフェクト
-// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
-//==============================================================================
-int ObjectModel::CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter,
-	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid )
-{
-	// グラフィックの生成
-	int		result;		// 実行結果
-	pGraphic_ = new GraphicModel();
-	if( pGraphic_ == nullptr )
-	{
-		return 1;
-	}
-	result = pGraphic_->Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow, pEffectParaboloid );
-	if( result != 0 )
-	{
-		return result;
-	}
-	Object::pGraphic_ = pGraphic_;
-
-	// 正常終了
-	return 0;
-}
-
-//==============================================================================
-// Brief  : 描画クラスの設定
+// Brief  : モデルの設定
 // Return : void								: なし
-// Arg    : GraphicModel* pValue				: 設定する値
+// Arg    : Model* pValue						: 設定する値
 //==============================================================================
-void ObjectModel::SetGraphic( GraphicModel* pValue )
+void DrawerModelParaboloid::SetModel( Model* pValue )
 {
 	// 値の設定
-	pGraphic_ = pValue;
-	Object::pGraphic_ = pValue;
+	pModel_ = pValue;
 }
 
 //==============================================================================
-// Brief  : 描画クラスの取得
-// Return : GraphicModel*						: 返却する値
+// Brief  : モデルの取得
+// Return : Model*								: 返却する値
 // Arg    : void								: なし
 //==============================================================================
-GraphicModel* ObjectModel::GetGraphic( void ) const
+Model* DrawerModelParaboloid::GetModel( void ) const
 {
 	// 値の返却
-	return pGraphic_;
+	return pModel_;
 }
 
 //==============================================================================
@@ -198,8 +214,11 @@ GraphicModel* ObjectModel::GetGraphic( void ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void ObjectModel::InitializeSelf( void )
+void DrawerModelParaboloid::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	pGraphic_ = nullptr;
+	pEffectParameter_ = nullptr;
+	pEffect_ = nullptr;
+	pModel_ = nullptr;
+	indexCamera_ = 0;
 }

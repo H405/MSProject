@@ -42,24 +42,25 @@ public:
 	// パス
 	enum
 	{
-		PASS_WAVE_DATA = 0,			// 波情報
-		PASS_3D,					// 3D描画
-		PASS_DEPTH_SHADOW_NEAR,		// 影用深度(近)
-		PASS_DEPTH_SHADOW_FAR,		// 影用深度(遠)
-		PASS_SHADOW,				// 影
-		PASS_BLUR_SHADOW,			// 影用ブラー
-		PASS_REFLECT,				// 反射
-		PASS_LIGHT_REFLECT,			// 反射のライティング
-		PASS_REFLECT_NOT_LIGHT,		// 反射ライティングなし
-		PASS_WATER,					// 水
-		PASS_3D_NOT_LIGHT,			// ライティングなし3D描画
-		PASS_LIGHT_EFFECT,			// ライティング
-		PASS_3D_MERGE,				// 総合3D描画
-		PASS_BLUR_X,				// X方向ブラー
-		PASS_BLUR_Y,				// Y方向ブラー
-		PASS_2D,					// 2D描画
-		PASS_POST_EFFECT,			// ポストエフェクト
-		PASS_MAX					// 最大数
+		PASS_WAVE_DATA = 0,				// 波情報
+		PASS_3D,						// 3D描画
+		PASS_DEPTH_SHADOW_NEAR,			// 影用深度(近)
+		PASS_DEPTH_SHADOW_FAR,			// 影用深度(遠)
+		PASS_DEPTH_SHADOW_POINT,		// 影用深度(点)
+		PASS_SHADOW,					// 影
+		PASS_BLUR_SHADOW,				// 影用ブラー
+		PASS_REFLECT,					// 反射
+		PASS_LIGHT_REFLECT,				// 反射のライティング
+		PASS_REFLECT_NOT_LIGHT,			// 反射ライティングなし
+		PASS_WATER,						// 水
+		PASS_3D_NOT_LIGHT,				// ライティングなし3D描画
+		PASS_LIGHT_EFFECT,				// ライティング
+		PASS_3D_MERGE,					// 総合3D描画
+		PASS_BLUR_X,					// X方向ブラー
+		PASS_BLUR_Y,					// Y方向ブラー
+		PASS_2D,						// 2D描画
+		PASS_POST_EFFECT,				// ポストエフェクト
+		PASS_MAX						// 最大数
 	};
 
 	// 波
@@ -92,6 +93,13 @@ public:
 	{
 		RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH = 0,			// 深度
 		RENDER_PASS_DEPTH_SHADOW_FAR_MAX				// 最大値
+	};
+
+	// 影用深度(点)
+	enum
+	{
+		RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH = 0,		// 深度
+		RENDER_PASS_DEPTH_SHADOW_POINT_MAX				// 最大値
 	};
 
 	// 影
@@ -217,6 +225,7 @@ public:
 		CAMERA_GENERAL = 0,					// 通常カメラ
 		CAMERA_SHADOW_NEAR,					// 影用カメラ近
 		CAMERA_SHADOW_FAR,					// 影用カメラ遠
+		CAMERA_SHADOW_POINT,				// 影用カメラ点
 		CAMERA_MAX							// 最大値
 	};
 

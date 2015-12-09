@@ -305,17 +305,19 @@ int SceneGame::Initialize2( void )
 	DisableObjectRanking();
 
 	// 影確認用オブジェクトの生成
-	Effect*	pEffectModel = nullptr;				// エフェクト
-	Effect*	pEffectModelReflect = nullptr;		// エフェクト
-	Effect*	pEffectModelShadow = nullptr;		// エフェクト
-	Model*	pModel = nullptr;					// モデル
+	Effect*	pEffectModel = nullptr;					// エフェクト
+	Effect*	pEffectModelReflect = nullptr;			// エフェクト
+	Effect*	pEffectModelShadow = nullptr;			// エフェクト
+	Effect*	pEffectModelParaboloid = nullptr;		// エフェクト
+	Model*	pModel = nullptr;						// モデル
 	pEffectModel = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectModelReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectModelShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectModelParaboloid = pArgument_->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument_->pModel_->Get( _T( "kuma.x" ) );
 	pObjectTestForShadow_ = new ObjectModel();
 	pObjectTestForShadow_->Initialize( 0 );
-	pObjectTestForShadow_->CreateGraphic( 0, pModel, pArgument_->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
+	pObjectTestForShadow_->CreateGraphic( 0, pModel, pArgument_->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow, pEffectModelParaboloid );
 	pObjectTestForShadow_->SetPosition( 2170.0f, 0.0f, 4000.0f );
 	pObjectTestForShadow_->SetScale( 5.0f, 5.0f, 5.0f );
 

@@ -95,6 +95,7 @@
     <ClInclude Include="code\graphic\drawer\DrawerModel.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterial.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelMaterialReflect.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerModelParaboloid.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerModelShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerPoint.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="code\graphic\drawer\DrawerModel.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterial.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelMaterialReflect.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerModelParaboloid.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerModelShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerPoint.cpp" />
@@ -358,6 +360,7 @@
     <None Include="code\effect\Model.fx" />
     <None Include="code\effect\ModelMaterial.fx" />
     <None Include="code\effect\ModelMaterialReflect.fx" />
+    <None Include="code\effect\ModelParaboloid.fx" />
     <None Include="code\effect\ModelReflect.fx" />
     <None Include="code\effect\ModelShadow.fx" />
     <None Include="code\effect\Point.fx" />
@@ -368,7 +371,9 @@
     <None Include="code\effect\PostEffect.fx" />
     <None Include="code\effect\Shadow.fx" />
     <None Include="code\effect\SkinMesh.fx" />
+    <None Include="code\effect\SkinMeshParaboloid.fx" />
     <None Include="code\effect\SkinMeshReflect.fx" />
+    <None Include="code\effect\SkinMeshShadow.fx" />
     <None Include="code\effect\Sky.fx" />
     <None Include="code\effect\SkyReflect.fx" />
     <None Include="code\effect\Water.fx" />

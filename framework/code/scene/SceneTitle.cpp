@@ -194,6 +194,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	Effect*		pEffect = nullptr;
 	Effect*		pEffectReflect = nullptr;
 	Effect*		pEffectShadow = nullptr;
+	Effect*		pEffectParaboloid = nullptr;
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
@@ -213,9 +214,10 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	pEffect = pArgument_->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectReflect = pArgument_->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectShadow = pArgument_->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectParaboloid = pArgument_->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	field = new ObjectModel();
 	field->Initialize(0);
-	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow );
+	field->CreateGraphic( 0, pModel,pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid );
 	field->SetScale(5.0f, 5.0f, 5.0f);
 	field->AddPositionY(-300.0f);
 
@@ -225,10 +227,11 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
 	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectParaboloid = pArgument_->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "bridge.x" ) );
 	bridge = new ObjectModelMaterial();
 	bridge->Initialize(0);
-	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow);
+	bridge->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	bridge->SetPosition(0.0f, 1000.0f, 2300.0f);
 	bridge->SetScale(350.0f, 350.0f, 350.0f);
 	bridge->SetRotationY(DEG_TO_RAD(90));

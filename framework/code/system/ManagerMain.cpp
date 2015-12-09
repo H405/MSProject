@@ -267,6 +267,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	RenderPassParameter	parameterPass3D;					// 3D描画パスのパラメータ
 	RenderPassParameter	parameterPassDepthShadowNear;		// 影用深度(近)パスのパラメータ
 	RenderPassParameter	parameterPassDepthShadowFar;		// 影用深度(遠)パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadowPoint;		// 影用深度(点)パスのパラメータ
 	RenderPassParameter	parameterPassShadow;				// 影パスのパラメータ
 	RenderPassParameter	parameterPassBlurShadow;			// 影用ブラーパスのパラメータ
 	RenderPassParameter	parameterPassReflect;				// 反射パスのパラメータ
@@ -305,6 +306,12 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	parameterPassDepthShadowFar.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ] = D3DFMT_R32F;
 	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_MAX, &parameterPassDepthShadowFar );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_MAX, &parameterPassDepthShadowPoint );
 	if( result != 0 )
 	{
 		return result;
@@ -612,7 +619,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	result = pObjectShadow_->CreateGraphic( 0, pEffectParameter_, pEffectShadow,
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
 		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;
