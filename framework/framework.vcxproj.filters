@@ -594,6 +594,18 @@
     <ClInclude Include="code\object\ObjectDrawTexture.h">
       <Filter>ソース ファイル\object</Filter>
     </ClInclude>
+    <ClInclude Include="code\object\ObjectBlurShadow.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicBlurShadow.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerBlurShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerModelParaboloid.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1079,6 +1091,18 @@
     <ClCompile Include="code\object\ObjectDrawTexture.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
+    <ClCompile Include="code\object\ObjectBlurShadow.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicBlurShadow.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerBlurShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerModelParaboloid.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1169,6 +1193,18 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\Polygon2DAdd.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\BlurShadow.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\ModelParaboloid.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkinMeshShadow.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\SkinMeshParaboloid.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

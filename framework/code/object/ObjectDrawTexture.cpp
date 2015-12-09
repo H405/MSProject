@@ -146,7 +146,7 @@ int ObjectDrawTexture::Copy( ObjectDrawTexture* pOut ) const
 void ObjectDrawTexture::Update( void )
 {
 	// テクスチャの切り替え
-	if( pKeyboard_->IsTrigger( DIK_F7 ) )
+	if( pKeyboard_->IsTrigger( DIK_Z ) )
 	{
 		--indexTexture_;
 		if( indexTexture_ < 0 )
@@ -154,7 +154,7 @@ void ObjectDrawTexture::Update( void )
 			indexTexture_ = countTexture_ - 1;
 		}
 	}
-	else if( pKeyboard_->IsTrigger( DIK_F8 ) )
+	else if( pKeyboard_->IsTrigger( DIK_X ) )
 	{
 		++indexTexture_;
 		if( indexTexture_ >= countTexture_ )
@@ -162,7 +162,7 @@ void ObjectDrawTexture::Update( void )
 			indexTexture_ = 0;
 		}
 	}
-	if( pKeyboard_->IsTrigger( DIK_F9 ) )
+	if( pKeyboard_->IsTrigger( DIK_LSHIFT ) )
 	{
 		isEnableDraw_ = !isEnableDraw_;
 	}

@@ -89,15 +89,19 @@ int Player::Initialize(
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
 	Effect*		pEffectReflect = nullptr;
+	Effect*		pEffectShadow = nullptr;
+	Effect*		pEffectParaboloid = nullptr;
 	Model*		pModel = nullptr;
 
 	//	プレイヤー固定用の台生成
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
 	body = new ObjectModelMaterial();
 	body->Initialize(0);
-	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
+	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	body->SetPosition(pos);
 	body->AddPositionX(offsetPosX);
 	body->AddPositionY(offsetPosY);
@@ -106,10 +110,12 @@ int Player::Initialize(
 	//	プレイヤー生成
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "arm_r.x" ) );
 	arm = new ObjectModelMaterial();
 	arm->Initialize(0);
-	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
+	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	arm->SetPosition(pos);
 	//arm->SetPosition(0.0f, 50.0f, 300.0f);
 

@@ -59,8 +59,9 @@ DrawerModelShadow::~DrawerModelShadow( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : int indexCamera						: カメラ番号
 //==============================================================================
-int DrawerModelShadow::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerModelShadow::Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -74,6 +75,7 @@ int DrawerModelShadow::Initialize( Model* pModel, const EffectParameter* pParame
 	pEffectParameter_ = pParameter;
 	pEffect_ = pEffect;
 	pModel_ = pModel;
+	indexCamera_ = indexCamera;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -114,8 +116,9 @@ int DrawerModelShadow::Finalize( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffect						: 描画エフェクト
+// Arg    : int indexCamera						: カメラ番号
 //==============================================================================
-int DrawerModelShadow::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect )
+int DrawerModelShadow::Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -126,7 +129,7 @@ int DrawerModelShadow::Reinitialize( Model* pModel, const EffectParameter* pPara
 	}
 
 	// 初期化処理
-	return Initialize( pModel, pParameter, pEffect );
+	return Initialize( pModel, pParameter, pEffect, indexCamera );
 }
 
 //==============================================================================
@@ -162,7 +165,7 @@ void DrawerModelShadow::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMATRIX		matrixView;						// ビュー変換行列
 	const Camera*	pCamera = nullptr;				// カメラ
 	RenderMatrix*	pRenderMatrix = nullptr;		// レンダーマトリクス
-	pCamera = pEffectParameter_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCamera = pEffectParameter_->GetCamera( indexCamera_ );
 	pRenderMatrix = pCamera->GetRenderMatrix();
 	pRenderMatrix->GetMatrixViewProjection( &matrixViewProjection );
 	pRenderMatrix->GetMatrixView( &matrixView );
@@ -170,6 +173,9 @@ void DrawerModelShadow::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMatrixMultiply( &matrixWorldView, &matrixWorld, &matrixView );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
+
+	// ファークリップ面
+	pEffect_->SetFloat( PARAMETER_CLIP_FAR, pCamera->GetClipFar() );
 
 	// 描画
 	unsigned int	countMaterial;		// マテリアル数
@@ -216,4 +222,5 @@ void DrawerModelShadow::InitializeSelf( void )
 	pEffectParameter_ = nullptr;
 	pEffect_ = nullptr;
 	pModel_ = nullptr;
+	indexCamera_ = 0;
 }

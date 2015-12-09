@@ -97,8 +97,11 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+	// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+	// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 	//==============================================================================
-	int CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect );
+	int CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid );
 
 	//==============================================================================
 	// アクセサ

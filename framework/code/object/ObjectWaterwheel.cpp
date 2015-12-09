@@ -76,25 +76,31 @@ int ObjectWaterwheel::Initialize(
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
 	Effect*		pEffectReflect = nullptr;
+	Effect*		pEffectShadow = nullptr;
+	Effect*		pEffectParaboloid = nullptr;
 	Model*		pModel = nullptr;
 
 	//	水車固定用の台生成
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "suisya_dai_005.x" ) );
+	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
+	pModel = pArgument->pModel_->Get( _T( "suisya_dai_002.x" ) );
 	stand = new ObjectModelMaterial();
 	stand->Initialize(0);
-	stand->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
+	stand->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	stand->SetPosition(pos);
 	stand->SetRotationY(_rotY);
 
 	//	水車生成
 	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "suisya_gear_005.x" ) );
+	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
+	pModel = pArgument->pModel_->Get( _T( "suisya_gear_002.x" ) );
 	wheel = new ObjectModelMaterial();
 	wheel->Initialize(0);
-	wheel->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect);
+	wheel->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	wheel->SetPosition(pos);
 	wheel->AddPositionY(offsetPositionY);
 	wheel->SetRotationY(_rotY);

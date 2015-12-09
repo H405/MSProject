@@ -167,7 +167,7 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	D3DXVECTOR3	vectorLight;		// ライトベクトル
 	pLight_->GetVector( &vectorLight );
 	vectorLight *= -500.0f;
-	pCameraShadow_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
+	pCameraShadow_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
 	pCameraShadow_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 1000.0f,
 		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
 
@@ -226,35 +226,42 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectSky_->CreateGraphic( 0, pArgument->pEffectParameter_, pEffectSky, pEffectSkyReflect, pTextureSky );
 
 	// モデルの生成
-	Effect*	pEffectModel = nullptr;				// エフェクト
-	Effect*	pEffectModelReflect = nullptr;		// エフェクト
-	Effect*	pEffectModelShadow = nullptr;		// エフェクト
-	Model*	pModel = nullptr;					// モデル
+	Effect*	pEffectModel = nullptr;					// エフェクト
+	Effect*	pEffectModelReflect = nullptr;			// エフェクト
+	Effect*	pEffectModelShadow = nullptr;			// エフェクト
+	Effect*	pEffectModelParaboloid = nullptr;		// エフェクト
+	Model*	pModel = nullptr;						// モデル
 	pEffectModel = pArgument->pEffect_->Get( _T( "Model.fx" ) );
 	pEffectModelReflect = pArgument->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectModelShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectModelParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
 	pObjectModel_ = new ObjectModel[ COUNT_MODEL ];
 	pObjectModel_[ 0 ].Initialize( 0 );
-	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
+	pObjectModel_[ 0 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow, pEffectModelParaboloid );
 	pObjectModel_[ 1 ].Initialize( 0 );
-	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
+	pObjectModel_[ 1 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow, pEffectModelParaboloid );
 	pObjectModel_[ 1 ].SetPositionX( 50.0f );
 	pObjectModel_[ 2 ].Initialize( 0 );
-	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow );
+	pObjectModel_[ 2 ].CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffectModel, pEffectModelReflect, pEffectModelShadow, pEffectModelParaboloid );
 	pObjectModel_[ 2 ].SetPositionX( -50.0f );
 	pObjectModel_[ 2 ].SetPositionY( 20.0f );
 
 	// テクスチャなしモデルの生成
-	Effect*	pEffectModelMaterial = nullptr;				// エフェクト
-	Effect*	pEffectModelMaterialReflect = nullptr;		// エフェクト
-	Model*	pModelModelMaterial = nullptr;				// モデル
+	Effect*	pEffectModelMaterial = nullptr;					// エフェクト
+	Effect*	pEffectModelMaterialReflect = nullptr;			// エフェクト
+	Effect*	pEffectModelMaterialShadow = nullptr;			// エフェクト
+	Effect*	pEffectModelMaterialParaboloid = nullptr;		// エフェクト
+	Model*	pModelModelMaterial = nullptr;					// モデル
 	pEffectModelMaterial = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
 	pEffectModelMaterialReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffectModelMaterialShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
+	pEffectModelMaterialParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModelModelMaterial = pArgument_->pModel_->Get( _T( "head.x" ) );
 	pObjectModelMaterial_ = new ObjectModelMaterial();
 	pObjectModelMaterial_->Initialize( 0 );
-	pObjectModelMaterial_->CreateGraphic( 0, pModelModelMaterial, pArgument->pEffectParameter_, pEffectModelMaterial, pEffectModelMaterialReflect );
+	pObjectModelMaterial_->CreateGraphic( 0, pModelModelMaterial, pArgument->pEffectParameter_,
+		pEffectModelMaterial, pEffectModelMaterialReflect, pEffectModelMaterialShadow, pEffectModelMaterialParaboloid );
 	pObjectModelMaterial_->SetPosition( -10.0f, 30.0f, 40.0f );
 
 	// ビルボードの生成
@@ -441,6 +448,13 @@ void SceneSplash::Update( void )
 	D3DXVECTOR3	positionLookAt;		// 注視点
 	pCamera_[ GraphicMain::CAMERA_GENERAL ].GetPositionLookAt( &positionLookAt );
 	pArgument_->pEffectParameter_->SetForcus( pCamera_[ GraphicMain::CAMERA_GENERAL ].GetViewZ( positionLookAt ) );
+
+	// 影用カメラの更新
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -500.0f;
+	pCameraShadow_->SetPositionCamera( positionLookAt + vectorLight );
+	pCameraShadow_->SetPositionLookAt( positionLookAt );
 
 	// モデルの回転
 	pObjectModel_[ 0 ].AddRotationY( 0.01f );

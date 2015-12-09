@@ -47,6 +47,7 @@
 #include "../framework/system/ManagerUpdate.h"
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/ObjectBlur.h"
+#include "../object/ObjectBlurShadow.h"
 #include "../object/ObjectDrawTexture.h"
 #include "../object/ObjectLightEffect.h"
 #include "../object/ObjectLightReflect.h"
@@ -262,18 +263,21 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pXAudio = pXAudio_->GetXAudio();
 
 	// パスクラスの生成
-	RenderPassParameter	parameterPassWaveData;			// 波情報描画パスのパラメータ
-	RenderPassParameter	parameterPass3D;				// 3D描画パスのパラメータ
-	RenderPassParameter	parameterPassDepthShadow;		// 影用深度パスのパラメータ
-	RenderPassParameter	parameterPassShadow;			// 影パスのパラメータ
-	RenderPassParameter	parameterPassReflect;			// 反射パスのパラメータ
-	RenderPassParameter	parameterPassReflectLight;		// 反射ライティングパスのパラメータ
-	RenderPassParameter	parameterPassReflectAdd;		// 反射加算合成パスのパラメータ
-	RenderPassParameter	parameterPassWater;				// 水描画パスのパラメータ
-	RenderPassParameter	parameterPassNotLight;			// ライティングなし3D描画パスのパラメータ
-	RenderPassParameter	parameterPassLightEffect;		// ライティングパスのパラメータ
-	RenderPassParameter	parameterPassMerge;				// 総合3D描画パスのパラメータ
-	RenderPassParameter	parameterPassBlur;				// ブラーパスのパラメータ
+	RenderPassParameter	parameterPassWaveData;				// 波情報描画パスのパラメータ
+	RenderPassParameter	parameterPass3D;					// 3D描画パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadowNear;		// 影用深度(近)パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadowFar;		// 影用深度(遠)パスのパラメータ
+	RenderPassParameter	parameterPassDepthShadowPoint;		// 影用深度(点)パスのパラメータ
+	RenderPassParameter	parameterPassShadow;				// 影パスのパラメータ
+	RenderPassParameter	parameterPassBlurShadow;			// 影用ブラーパスのパラメータ
+	RenderPassParameter	parameterPassReflect;				// 反射パスのパラメータ
+	RenderPassParameter	parameterPassReflectLight;			// 反射ライティングパスのパラメータ
+	RenderPassParameter	parameterPassReflectAdd;			// 反射加算合成パスのパラメータ
+	RenderPassParameter	parameterPassWater;					// 水描画パスのパラメータ
+	RenderPassParameter	parameterPassNotLight;				// ライティングなし3D描画パスのパラメータ
+	RenderPassParameter	parameterPassLightEffect;			// ライティングパスのパラメータ
+	RenderPassParameter	parameterPassMerge;					// 総合3D描画パスのパラメータ
+	RenderPassParameter	parameterPassBlur;					// ブラーパスのパラメータ
 	pRenderPass_ = new RenderPass[ GraphicMain::PASS_MAX ];
 	if( pRenderPass_ == nullptr )
 	{
@@ -294,14 +298,34 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	parameterPassDepthShadow.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_DEPTH ] = D3DFMT_R32F;
-	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_MAX, &parameterPassDepthShadow );
+	parameterPassDepthShadowNear.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_MAX, &parameterPassDepthShadowNear );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadowFar.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_MAX, &parameterPassDepthShadowFar );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_MAX, &parameterPassDepthShadowPoint );
 	if( result != 0 )
 	{
 		return result;
 	}
 	parameterPassShadow.pFormat_[ GraphicMain::RENDER_PASS_SHADOW_COLOR ] = D3DFMT_R32F;
 	result = pRenderPass_[ GraphicMain::PASS_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_SHADOW_MAX, &parameterPassShadow );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassBlurShadow.width_ = widthWindow / 2;
+	parameterPassBlurShadow.height_ = heightWindow / 2;
+	parameterPassBlurShadow.pFormat_[ GraphicMain::RENDER_PASS_BLUR_SHADOW_COLOR ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_BLUR_SHADOW ].Initialize( pDevice, GraphicMain::RENDER_PASS_SHADOW_MAX, &parameterPassBlurShadow );
 	if( result != 0 )
 	{
 		return result;
@@ -386,7 +410,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pDraw_->Initialize( 1024, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
+	result = pDraw_->Initialize( 4096, pDevice, GraphicMain::PASS_MAX, pRenderPass_ );
 	if( result != 0 )
 	{
 		return result;
@@ -408,7 +432,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pUpdate_->Initialize( 1024 );
+	result = pUpdate_->Initialize( 4096 );
 	if( result != 0 )
 	{
 		return result;
@@ -594,7 +618,29 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	pEffectShadow = pEffect_->Get( _T( "Shadow.fx" ) );
 	result = pObjectShadow_->CreateGraphic( 0, pEffectParameter_, pEffectShadow,
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ) );
+	if( result != 0 )
+	{
+		return result;
+	}
+
+	// 影用ブラーオブジェクトの生成
+	Effect*	pEffectBlurShadow = nullptr;		// 影エフェクト
+	pObjectBlurShadow_ = new ObjectBlurShadow();
+	if( pObjectBlurShadow_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectBlurShadow_->Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pEffectBlurShadow = pEffect_->Get( _T( "BlurShadow.fx" ) );
+	result = pObjectBlurShadow_->CreateGraphic( 0, pEffectParameter_, pEffectBlurShadow,
+		pRenderPass_[ GraphicMain::PASS_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_SHADOW_COLOR ) );
 	if( result != 0 )
 	{
 		return result;
@@ -654,7 +700,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_SPECULAR ),
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_NORMAL ),
 		pRenderPass_[ GraphicMain::PASS_WATER ].GetTexture( GraphicMain::RENDER_PASS_WATER_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_SHADOW_COLOR ) );
+		pRenderPass_[ GraphicMain::PASS_BLUR_SHADOW ].GetTexture( GraphicMain::RENDER_PASS_BLUR_SHADOW_COLOR ) );
 	if( result != 0 )
 	{
 		return result;
@@ -863,6 +909,10 @@ int ManagerMain::Finalize( void )
 	// 波情報描画オブジェクトの開放
 	delete pObjectWaveData_;
 	pObjectWaveData_ = nullptr;
+
+	// 影用ブラーオブジェクトの開放
+	delete pObjectBlurShadow_;
+	pObjectBlurShadow_ = nullptr;
 
 	// 影オブジェクトの開放
 	delete pObjectShadow_;
@@ -1174,6 +1224,7 @@ void ManagerMain::InitializeSelf( void )
 	pObjectMerge_ = nullptr;
 	pObjectPostEffect_ = nullptr;
 	pObjectShadow_ = nullptr;
+	pObjectBlurShadow_ = nullptr;
 	pObjectWaveData_ = nullptr;
 	pObjectWaveDataInitialize_ = nullptr;
 	pDraw_ = nullptr;

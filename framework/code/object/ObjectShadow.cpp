@@ -146,10 +146,12 @@ void ObjectShadow::Update( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 //==============================================================================
 int ObjectShadow::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint )
 {
 	// グラフィックの生成
 	int		result;				// 実行結果
@@ -158,7 +160,7 @@ int ObjectShadow::CreateGraphic( int priority, const EffectParameter* pParameter
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureDepth, pTextureLight );
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureDepth, pTextureLightNear, pTextureLightFar, pTextureLightPoint );
 	if( result != 0 )
 	{
 		return result;

@@ -55,10 +55,12 @@ GraphicShadow::~GraphicShadow( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 //==============================================================================
 int GraphicShadow::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -78,7 +80,7 @@ int GraphicShadow::Initialize( int priority, const EffectParameter* pParameter, 
 	{
 		return 1;
 	}
-	result = pDrawerShadow->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureDepth, pTextureLight );
+	result = pDrawerShadow->Initialize( pParameter, pEffectGeneral, pPolygon2D_, pTextureDepth, pTextureLightNear, pTextureLightFar, pTextureLightPoint );
 	ppDraw_[ GraphicMain::PASS_SHADOW ] = pDrawerShadow;
 
 	// 正常終了
@@ -114,10 +116,12 @@ int GraphicShadow::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLight	: ライトの深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
 //==============================================================================
 int GraphicShadow::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLight )
+	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -128,7 +132,7 @@ int GraphicShadow::Reinitialize( int priority, const EffectParameter* pParameter
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pTextureDepth, pTextureLight );
+	return Initialize( priority, pParameter, pEffectGeneral, pTextureDepth, pTextureLightNear, pTextureLightFar, pTextureLightPoint );
 }
 
 //==============================================================================

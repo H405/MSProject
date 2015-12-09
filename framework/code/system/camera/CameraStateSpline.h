@@ -120,6 +120,15 @@ public:
 	void SetControlPointCamera( int index, const D3DXVECTOR3& position, const D3DXVECTOR3& vector );
 
 	//==============================================================================
+	// Brief  : 視点コントロールポイントの取得
+	// Return : void								: なし
+	// Arg    : int index							: 取得する番号
+	// Arg    : D3DXVECTOR3* pOutPosition			: 座標
+	// Arg    : D3DXVECTOR3* pOutVector				: ベクトル
+	//==============================================================================
+	void GetControlPointCamera( int index, D3DXVECTOR3* pOutPosition, D3DXVECTOR3* pOutVector ) const;
+
+	//==============================================================================
 	// Brief  : 注視点コントロールポイントの設定
 	// Return : void								: なし
 	// Arg    : int index							: 設定する番号
@@ -129,6 +138,23 @@ public:
 	void SetControlPointLookAt( int index, const D3DXVECTOR3& position, const D3DXVECTOR3& vector );
 
 	//==============================================================================
+	// Brief  : 注視点コントロールポイントの取得
+	// Return : void								: なし
+	// Arg    : int index							: 取得する番号
+	// Arg    : D3DXVECTOR3* pOutPosition			: 座標
+	// Arg    : D3DXVECTOR3* pOutVector				: ベクトル
+	//==============================================================================
+	void GetControlPointLookAt( int index, D3DXVECTOR3* pOutPosition, D3DXVECTOR3* pOutVector ) const;
+
+	//==============================================================================
+	// Brief  : フレーム数の設定
+	// Return : void								: なし
+	// Arg    : int indexSection					: セクション番号
+	// Arg    : int countFrame						: フレーム数
+	//==============================================================================
+	void SetCountFrame( int indexSection, int countFrame );
+
+	//==============================================================================
 	// Brief  : 総フレーム数の取得
 	// Return : int									: 総フレーム数
 	// Arg    : void								: カメラクラス
@@ -136,8 +162,62 @@ public:
 	int GetCountFrame( void );
 
 	//==============================================================================
+	// Brief  : フレーム数の取得
+	// Return : int									: 総フレーム数
+	// Arg    : int indexSection					: セクション番号
+	//==============================================================================
+	int GetCountFrame( int indexSection );
+
+	//==============================================================================
+	// Brief  : 開始視点番号の取得
+	// Return : int									: 開始視点番号
+	// Arg    : int indexSection					: セクション番号
+	//==============================================================================
+	int GetIndexCameraBegin( int indexSection );
+
+	//==============================================================================
+	// Brief  : 終了視点番号の取得
+	// Return : int									: 終了視点番号
+	// Arg    : int indexSection					: セクション番号
+	//==============================================================================
+	int GetIndexCameraEnd( int indexSection );
+
+	//==============================================================================
+	// Brief  : 開始注視点番号の取得
+	// Return : int									: 開始注視点番号
+	// Arg    : int indexSection					: セクション番号
+	//==============================================================================
+	int GetIndexLookAtBegin( int indexSection );
+
+	//==============================================================================
+	// Brief  : 終了注視点番号の取得
+	// Return : int									: 終了注視点番号
+	// Arg    : int indexSection					: セクション番号
+	//==============================================================================
+	int GetIndexLookAtEnd( int indexSection );
+
+	//==============================================================================
+	// Brief  : 視点座標の取得
+	// Return : void								: なし
+	// Arg    : int indexSection					: セクション番号
+	// Arg    : int indexFrame						: フレーム番号
+	// Arg    : D3DXVECTOR3* pOut					: 出力先
+	//==============================================================================
+	void GetPositionCamera( int indexSection, int indexFrame, D3DXVECTOR3* pOut );
+
+	//==============================================================================
+	// Brief  : 注視点座標の取得
+	// Return : void								: なし
+	// Arg    : int indexSection					: セクション番号
+	// Arg    : int indexFrame						: フレーム番号
+	// Arg    : D3DXVECTOR3* pOut					: 出力先
+	//==============================================================================
+	void GetPositionLookAt( int indexSection, int indexFrame, D3DXVECTOR3* pOut );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
+	int GetCountSection( void ) const;
 	void SetIsEnable( bool value );
 	bool GetIsEnable( void ) const;
 	bool IsEnable( void ) const;

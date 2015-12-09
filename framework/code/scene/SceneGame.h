@@ -140,9 +140,13 @@ private:
 	SceneGame operator=( const SceneGame& );
 
 	static const int	COUNT_HOUSE = 11;		// 家の数
+	static const int	COUNT_GRASS = 500;		// 草の数
 
-	CameraObject*		pCamera_;		// カメラ
-	LightDirection*		pLight_;		// ライト
+	CameraObject*	pCamera_;					// カメラ
+	CameraObject*	pCameraShadowNear_;			// 影用カメラ近
+	CameraObject*	pCameraShadowFar_;			// 影用カメラ遠
+	CameraObject*	pCameraShadowPoint_;		// 影用カメラ点
+	LightDirection*	pLight_;					// ライト
 
 
 	//	ゲームUI関係
@@ -208,6 +212,8 @@ private:
 	ObjectWaterwheel*		waterwheel;		// 水車
 	ObjectModelMaterial*	houses;			// 家
 	ObjectModelMaterial*	gate;			// 鳥居
+
+	ObjectBillboard*		grasses;		// 草
 
 	ObjectSkinMesh*			markers;		// 場所の目印
 
@@ -333,8 +339,17 @@ private:
 		SECTION_WATERWHEEL = 0,		// 水車
 		SECTION_HOUSE,				// 民家
 		SECTION_BRIDGE,				// 橋
-		SECTION_GATE,				// 鳥居
 		SECTION_MAXIMUM				// 最大値
+	};
+
+	// カウントダウン画像
+	enum
+	{
+		IMAGE_COUNT_3 = 0,			// カウント3
+		IMAGE_COUNT_2,				// カウント2
+		IMAGE_COUNT_1,				// カウント1
+		IMAGE_COUNT_START,			// 演武開始
+		IMAGE_COUNT_MAXIMUM			// 最大値
 	};
 
 	// リザルト画像
@@ -414,6 +429,8 @@ private:
 	CameraStateSpline*	pStateCameraResult_;				// リザルト前カメラ処理
 	int					timerSceneGame_;					// ゲームシーン経過時間
 
+	Object2D*			pObjectCount_;						// カウントダウン画像オブジェクト
+
 	Object2D*			pObjectResult_;						// リザルト画像オブジェクト
 
 	int					pRankingScore_[ MAXIMUM_RANK ];		// ランキングのスコア
@@ -422,6 +439,8 @@ private:
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
 	int					indexSection_;						// ゲームセクション番号
+
+	ObjectModel*		pObjectTestForShadow_;				// 影確認用
 
 	int Initialize2( void );
 	int Finalize2( void );
@@ -450,6 +469,9 @@ private:
 
 	// テスト更新
 	void UpdateTest( void );
+
+	// カメラのテスト更新
+	void UpdateTestCamera( void );
 
 	// リザルトオブジェクトを非表示にする
 	void DisableObjectResult( void );

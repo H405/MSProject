@@ -13,6 +13,8 @@
 #include "GraphicModelMaterial.h"
 #include "../drawer/DrawerModelMaterial.h"
 #include "../drawer/DrawerModelMaterialReflect.h"
+#include "../drawer/DrawerModelParaboloid.h"
+#include "../drawer/DrawerModelShadow.h"
 
 //******************************************************************************
 // ライブラリ
@@ -56,8 +58,11 @@ GraphicModelMaterial::~GraphicModelMaterial( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 //==============================================================================
-int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect )
+int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -86,6 +91,36 @@ int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectP
 	}
 	result = pDrawerModelMaterialReflect->Initialize( pModel, pParameter, pEffectReflect );
 	ppDraw_[ GraphicMain::PASS_REFLECT ] = pDrawerModelMaterialReflect;
+
+	// 影(近)描画クラスの生成
+	DrawerModelShadow*	pDrawerModelShadowNear = nullptr;		// 描画クラス
+	pDrawerModelShadowNear = new DrawerModelShadow();
+	if( pDrawerModelShadowNear == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelShadowNear->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_NEAR );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ] = pDrawerModelShadowNear;
+
+	// 影(遠)描画クラスの生成
+	DrawerModelShadow*	pDrawerModelShadowFar = nullptr;		// 描画クラス
+	pDrawerModelShadowFar = new DrawerModelShadow();
+	if( pDrawerModelShadowFar == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelShadowFar->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_FAR );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ] = pDrawerModelShadowFar;
+
+	// 影(点)描画クラスの生成
+	DrawerModelParaboloid*	pDrawerModelParaboloid = nullptr;		// 描画クラス
+	pDrawerModelParaboloid = new DrawerModelParaboloid();
+	if( pDrawerModelParaboloid == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelParaboloid->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ] = pDrawerModelParaboloid;
 
 	// 正常終了
 	return 0;
@@ -121,8 +156,11 @@ int GraphicModelMaterial::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 //==============================================================================
-int GraphicModelMaterial::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect )
+int GraphicModelMaterial::Reinitialize( int priority, Model* pModel, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -133,7 +171,7 @@ int GraphicModelMaterial::Reinitialize( int priority, Model* pModel, const Effec
 	}
 
 	// 初期化処理
-	return Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect );
+	return Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow, pEffectParaboloid );
 }
 
 //==============================================================================

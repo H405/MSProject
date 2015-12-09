@@ -16,9 +16,22 @@ float4x4	matrixProjectionInverse_;		// プロジェクション変換逆行列
 float4x4	matrixViewInverse_;				// ビュー変換逆行列
 texture		textureDepth_;					// 深度テクスチャ
 
-float4x4	matrixTransformLight_;			// ライトの変換行列
-float4x4	matrixViewLight_;				// ライトのビュー変換行列
-texture		textureDepthLight_;				// ライトの深度テクスチャ
+float3		positionLookAtLight_;			// 平行光源の注視点
+
+float4x4	matrixTransformLightNear_;		// 平行光源(近)の変換行列
+float4x4	matrixViewLightNear_;			// 平行光源(近)のビュー変換行列
+texture		textureDepthLightNear_;			// 平行光源(近)の深度テクスチャ
+float		clipFarLightNear_;				// 平行光源(近)のファークリップ面
+
+float4x4	matrixTransformLightFar_;		// 平行光源(遠)の変換行列
+float4x4	matrixViewLightFar_;			// 平行光源(遠)のビュー変換行列
+texture		textureDepthLightFar_;			// 平行光源(遠)の深度テクスチャ
+float		clipFarLightFar_;				// 平行光源(遠)のファークリップ面
+
+float4x4	matrixViewLightPoint_;			// 点光源のビュー変換行列
+texture		textureDepthLightPoint_;		// 点光源の深度テクスチャ
+float		clipFarLightPoint_;				// 点光源のファークリップ面
+float3		attenuationLightPoint_;			// 点光源の減衰率
 
 //******************************************************************************
 // サンプリング
@@ -33,9 +46,29 @@ sampler samplerTextureDepth = sampler_state
 	AddressV  = Clamp;
 };
 
-sampler samplerTextureDepthLight = sampler_state
+sampler samplerTextureDepthLightNear = sampler_state
 {
-	Texture = < textureDepthLight_ >;
+	Texture = < textureDepthLightNear_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepthLightFar = sampler_state
+{
+	Texture = < textureDepthLightFar_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepthLightPoint = sampler_state
+{
+	Texture = < textureDepthLightPoint_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -52,6 +85,105 @@ struct VertexOutput
 	float4	position_		: POSITION;			// 座標
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
 };
+
+//==============================================================================
+// Brief  : 平行光源(近)の影を計算
+// Return : float							: 影の濃さ
+// Arg    : float3 positionWorld			: ワールド座標
+//==============================================================================
+float CalculateShadowNear( float3 positionWorld )
+{
+	// テクスチャの座標を求める
+	float4	positionLightNear = mul( float4( positionWorld, 1.0f ), matrixTransformLightNear_ );
+	float2	positionTextureLightNear = positionLightNear.xy / positionLightNear.w;
+	positionTextureLightNear = float2( 1.0f + positionTextureLightNear.x, 1.0f - positionTextureLightNear.y );
+	positionTextureLightNear *= 0.5f;
+
+	// 深度を取得
+	float	depthLightNear = clipFarLightNear_ - tex2D( samplerTextureDepthLightNear, positionTextureLightNear ).r;
+	float	depth = mul( float4( positionWorld, 1.0f ), matrixViewLightNear_ ).z;
+
+	// 色を返す
+	float	shadow;
+	if( depth - depthLightNear > 17.0f )
+	{
+		shadow = 0.5f;
+	}
+	else
+	{
+		shadow = 1.0f;
+	}
+	return shadow;
+}
+
+//==============================================================================
+// Brief  : 平行光源(遠)の影を計算
+// Return : float							: 影の濃さ
+// Arg    : float3 positionWorld			: ワールド座標
+//==============================================================================
+float CalculateShadowFar( float3 positionWorld )
+{
+	// テクスチャの座標を求める
+	float4	positionLightFar = mul( float4( positionWorld, 1.0f ), matrixTransformLightFar_ );
+	float2	positionTextureLightFar = positionLightFar.xy / positionLightFar.w;
+	positionTextureLightFar = float2( 1.0f + positionTextureLightFar.x, 1.0f - positionTextureLightFar.y );
+	positionTextureLightFar *= 0.5f;
+
+	// 深度を取得
+	float	depthLightFar = clipFarLightFar_ - tex2D( samplerTextureDepthLightFar, positionTextureLightFar ).r;
+	float	depth = mul( float4( positionWorld, 1.0f ), matrixViewLightFar_ ).z;
+
+	// 色を返す
+	float	shadow;
+	if( depth - depthLightFar > 50.0f )
+	{
+		shadow = 0.5f;
+	}
+	else
+	{
+		shadow = 1.0f;
+	}
+	return shadow;
+}
+
+//==============================================================================
+// Brief  : 点光源の影を計算
+// Return : float							: 影の濃さ
+// Arg    : float3 positionWorld			: ワールド座標
+//==============================================================================
+float CalculateShadowPoint( float3 positionWorld )
+{
+	// 必要な情報を求める
+	float4	positionView = mul( float4( positionWorld, 1.0f ), matrixViewLightPoint_ );
+	float	distanceProjection = positionView.x * positionView.x + positionView.y * positionView.y;
+	float	distanceToVertex = length( positionView );
+
+	// テクスチャの座標を求める
+	float2	positionTextureLightPoint = positionView * (distanceToVertex - positionView.z) / distanceProjection;
+	positionTextureLightPoint = float2( 1.0f + positionTextureLightPoint.x, 1.0f - positionTextureLightPoint.y );
+	positionTextureLightPoint *= 0.5f;
+
+	// 深度を取得
+	float	depthLightPoint = clipFarLightPoint_ - tex2D( samplerTextureDepthLightPoint, positionTextureLightPoint ).r;
+
+	// 色を返す
+	float	shadow;
+	if( distanceToVertex - depthLightPoint > 25.0f )
+	{
+		// 減衰率を求める
+		float	attenuation = attenuationLightPoint_.x
+			+ attenuationLightPoint_.y * distanceToVertex
+			+ attenuationLightPoint_.z * distanceToVertex * distanceToVertex;
+
+		// 影の濃さを決定
+		shadow = 1.0f - 0.7f / (1.0f + attenuation);
+	}
+	else
+	{
+		shadow = 1.0f;
+	}
+	return shadow;
+}
 
 //==============================================================================
 // Brief  : 頂点変換
@@ -87,28 +219,24 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	float3	positionView = float3( positionProjection.xy, 1.0f ) * dataDepth;
 	float3	positionWorld = mul( float4( positionView, 1.0f ), matrixViewInverse_ );
 
-	// テクスチャの座標を求める
-	float4	positionLight = mul( float4( positionWorld, 1.0f ), matrixTransformLight_ );
-	float2	positionTextureLight = positionLight.xy / positionLight.w;
-	positionTextureLight = float2( 1.0f + positionTextureLight.x, 1.0f - positionTextureLight.y );
-	positionTextureLight *= 0.5f;
+	// 平行光源の影を決定
+	float	shadow;
+	if( distance( positionWorld, positionLookAtLight_ ) < 4000.0f )
+	{
+		shadow = CalculateShadowNear( positionWorld );
+	}
+	else
+	{
+		shadow = CalculateShadowFar( positionWorld );
+	}
 
-	// 深度を取得
-	float	depthLight = 1000.0f - tex2D( samplerTextureDepthLight, positionTextureLight ).r;
-	float	depth = mul( float4( positionWorld, 1.0f ), matrixViewLight_ ).z;
+	// 点光源の影を決定
+	shadow *= CalculateShadowPoint( positionWorld );
 
 	// 色を返す
 	float4	color;
 	color.gba = 0.0f;
-	if( depth - depthLight > 2.0f )
-	{
-		color.r = 0.5f;
-	}
-	else
-	{
-		color.r = 1.0f;
-	}
-//	color.r = depthLight;
+	color.r = shadow;
 	return color;
 }
 

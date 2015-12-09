@@ -45,6 +45,7 @@
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/Object2D.h"
 #include "../object/Object3D.h"
+#include "../object/ObjectBillboard.h"
 #include "../object/ObjectModel.h"
 #include "../object/ObjectModelMaterial.h"
 #include "../object/ObjectMesh.h"
@@ -89,6 +90,9 @@ void SceneGame::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
+	pCameraShadowNear_ = nullptr;
+	pCameraShadowFar_ = nullptr;
+	pCameraShadowPoint_ = nullptr;
 	pLight_ = nullptr;
 
 	//	ゲームUI関係
@@ -124,6 +128,8 @@ void SceneGame::InitializeSelf( void )
 	waterwheel = nullptr;
 	houses = nullptr;
 	gate = nullptr;
+
+	grasses = nullptr;
 
 	markers = nullptr;
 
@@ -197,7 +203,6 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f )
 		);
 
-
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
@@ -205,16 +210,27 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return 1;
 	}
 	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, -1.0f ) );
-#if 0
-	// 影用カメラの設定
-	CameraObject*	pCameraShadow = nullptr;		// 影用カメラ
-	D3DXVECTOR3		vectorLight;					// ライトベクトル
+
+	// 影用カメラ近の設定
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
 	pLight_->GetVector( &vectorLight );
 	vectorLight *= -3500.0f;
-	pCameraShadow = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW );
-	pCameraShadow->Set( D3DX_PI / 4.0f, 8 * pArgument->pWindow_->GetWidth(), 8 * pArgument->pWindow_->GetHeight(), 0.1f, 7000.0f,
+	pCameraShadowNear_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
+	pCameraShadowNear_->Set( D3DX_PI / 4.0f, 8 * pArgument->pWindow_->GetWidth(), 8 * pArgument->pWindow_->GetHeight(), 0.1f, 7000.0f,
 		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
-#endif
+
+	// 影用カメラ遠の設定
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -10000.0f;
+	pCameraShadowFar_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_FAR );
+	pCameraShadowFar_->Set( D3DX_PI / 4.0f, 24 * pArgument->pWindow_->GetWidth(), 24 * pArgument->pWindow_->GetHeight(), 0.1f, 20000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
+
+	// 影用カメラ点の設定
+	pCameraShadowPoint_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT );
+	pCameraShadowPoint_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 10000.0f,
+		D3DXVECTOR3( 260.0f, 1000.0f, 3540.0f ), D3DXVECTOR3( 260.0f, 0.0f, 3540.0f ), D3DXVECTOR3( 0.0f, 0.0f, 1.0f ), false );
+
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
@@ -288,30 +304,36 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	//pRiver_->SetIsEnable(false);
 
 	// 地形の生成
-	Model*	pModelField = nullptr;				// モデル
-	Effect*	pEffectFieldGeneral = nullptr;		// 通常描画エフェクト
-	Effect*	pEffectFieldReflect = nullptr;		// 反射エフェクト
-	Effect*	pEffectFieldShadow = nullptr;		// 影エフェクト
+	Model*	pModelField = nullptr;					// モデル
+	Effect*	pEffectFieldGeneral = nullptr;			// 通常描画エフェクト
+	Effect*	pEffectFieldReflect = nullptr;			// 反射エフェクト
+	Effect*	pEffectFieldShadow = nullptr;			// 影エフェクト
+	Effect*	pEffectFieldParaboloid = nullptr;		// 放物変換エフェクト
 	pModelField = pArgument->pModel_->Get( _T( "Stagever.1.03.x" ) );
 	pEffectFieldGeneral = pArgument->pEffect_->Get( "Model.fx" );
 	pEffectFieldReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
 	pEffectFieldShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
+	pEffectFieldParaboloid = pArgument->pEffect_->Get( "ModelParaboloid.fx" );
 	field = new ObjectModel();
 	field->Initialize( 0 );
-	field->CreateGraphic( 0, pModelField, pArgument->pEffectParameter_, pEffectFieldGeneral, pEffectFieldReflect, pEffectFieldShadow );
+	field->CreateGraphic( 0, pModelField, pArgument->pEffectParameter_, pEffectFieldGeneral, pEffectFieldReflect, pEffectFieldShadow, pEffectFieldParaboloid );
 	field->SetPositionY( -400.0f );
 	field->SetScale( 2.0f, 2.0f, 2.0f );
 
 	// 橋の生成
-	Model*	pModelBridge = nullptr;				// モデル
-	Effect*	pEffectBridgeGeneral = nullptr;		// 通常描画エフェクト
-	Effect*	pEffectBridgeReflect = nullptr;		// 反射エフェクト
-	pModelBridge = pArgument->pModel_->Get( _T( "bridge.x" ) );
+	Model*	pModelBridge = nullptr;					// モデル
+	Effect*	pEffectBridgeGeneral = nullptr;			// 通常描画エフェクト
+	Effect*	pEffectBridgeReflect = nullptr;			// 反射エフェクト
+	Effect*	pEffectBridgeShadow = nullptr;			// 影エフェクト
+	Effect*	pEffectBridgeParaboloid = nullptr;		// 放物変換エフェクト
+	pModelBridge = pArgument->pModel_->Get( _T( "bridge_002.x" ) );
 	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectBridgeShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
+	pEffectBridgeParaboloid = pArgument->pEffect_->Get( "ModelParaboloid.fx" );
 	bridge = new ObjectModelMaterial();
 	bridge->Initialize( 0 );
-	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect );
+	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect, pEffectBridgeShadow, pEffectBridgeParaboloid );
 	bridge->SetPosition( 1558.0f, 460.0f, -2240.0f );
 	bridge->SetRotationY( DEG_TO_RAD( 101.0f ) );
 	bridge->SetScale( 285.0f, 285.0f, 285.0f );
@@ -321,17 +343,21 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	waterwheel->Initialize( D3DXVECTOR3( 110.0f, 230.0f, 3780.0f ), DEG_TO_RAD( 74 ), -0.001f, pArgument );
 
 	// 家の生成
-	Model*	pModelHouse = nullptr;				// モデル
-	Effect*	pEffectHouseGeneral = nullptr;		// 通常描画エフェクト
-	Effect*	pEffectHouseReflect = nullptr;		// 反射エフェクト
+	Model*	pModelHouse = nullptr;					// モデル
+	Effect*	pEffectHouseGeneral = nullptr;			// 通常描画エフェクト
+	Effect*	pEffectHouseReflect = nullptr;			// 反射エフェクト
+	Effect*	pEffectHouseShadow = nullptr;			// 影エフェクト
+	Effect*	pEffectHouseParaboloid = nullptr;		// 放物変換エフェクト
 	pModelHouse = pArgument->pModel_->Get( _T( "house_002.x" ) );
 	pEffectHouseGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectHouseReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectHouseShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
+	pEffectHouseParaboloid = pArgument->pEffect_->Get( "ModelParaboloid.fx" );
 	houses = new ObjectModelMaterial[ COUNT_HOUSE ];
 	for( int counterHouse = 0; counterHouse < COUNT_HOUSE; ++counterHouse )
 	{
 		houses[ counterHouse ].Initialize( 0 );
-		houses[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect );
+		houses[ counterHouse ].CreateGraphic( 0, pModelHouse, pArgument->pEffectParameter_, pEffectHouseGeneral, pEffectHouseReflect, pEffectHouseShadow, pEffectHouseParaboloid );
 		houses[ counterHouse ].SetScale( 300.0f, 300.0f, 300.0f );
 	}
 	houses[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
@@ -359,18 +385,39 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	houses[ 10 ].SetRotationY( DEG_TO_RAD( 169.0f ) );
 
 	// 鳥居の生成
-	Model*	pModelGate = nullptr;				// モデル
-	Effect*	pEffectGateGeneral = nullptr;		// 通常描画エフェクト
-	Effect*	pEffectGateReflect = nullptr;		// 反射エフェクト
+	Model*	pModelGate = nullptr;					// モデル
+	Effect*	pEffectGateGeneral = nullptr;			// 通常描画エフェクト
+	Effect*	pEffectGateReflect = nullptr;			// 反射エフェクト
+	Effect*	pEffectGateShadow = nullptr;			// 影エフェクト
+	Effect*	pEffectGateParaboloid = nullptr;		// 放物変換エフェクト
 	pModelGate = pArgument->pModel_->Get( _T( "torii.x" ) );
 	pEffectGateGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectGateReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectGateShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
+	pEffectGateParaboloid = pArgument->pEffect_->Get( "ModelParaboloid.fx" );
 	gate = new ObjectModelMaterial();
 	gate->Initialize( 0 );
-	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect );
+	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect, pEffectGateShadow, pEffectGateParaboloid );
 	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
 	gate->SetRotationY( DEG_TO_RAD( 90 ) );
 	gate->SetScale( 1.0f, 1.0f, 1.0f );
+
+	// 草の生成
+	Texture*	pTextureGrass = nullptr;		// テクスチャ
+	Effect*		pEffectGrass = nullptr;			// エフェクト
+	pTextureGrass = pArgument->pTexture_->Get( _T( "common/grass.png" ) );
+	pEffectGrass = pArgument->pEffect_->Get( "Billboard.fx" );
+	grasses = new ObjectBillboard[ COUNT_GRASS ];
+	for( int counterGrass = 0; counterGrass < COUNT_GRASS; ++counterGrass )
+	{
+		float	positionX;		// X座標
+		float	positionZ;		// Z座標
+		positionX = -2300.0f + 2000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
+		positionZ = 6800.0f + 1000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
+		grasses[ counterGrass ].Initialize( 0 );
+		grasses[ counterGrass ].CreateGraphic( 0, pArgument->pEffectParameter_, pEffectGrass, pTextureGrass );
+		grasses[ counterGrass ].SetPosition( positionX, 0.5f * pTextureGrass->height_, positionZ );
+	}
 
 	// 場所の目印オブジェクトの生成
 	Model*	pModelMarker = nullptr;				// モデル
@@ -782,6 +829,10 @@ int SceneGame::Finalize( void )
 	delete[] markers;
 	markers = nullptr;
 
+	// 草オブジェクトの開放
+	delete[] grasses;
+	grasses = nullptr;
+
 	// 鳥居オブジェクトの開放
 	delete gate;
 	gate = nullptr;
@@ -815,6 +866,34 @@ int SceneGame::Finalize( void )
 	{
 		pLight_->Release();
 		pLight_ = nullptr;
+	}
+
+	// 影用カメラ点の開放
+	if( pCameraShadowPoint_ != nullptr )
+	{
+		pCameraShadowPoint_->SetState( nullptr );
+		pCameraShadowPoint_ = nullptr;
+	}
+
+	// 影用カメラ遠の開放
+	if( pCameraShadowFar_ != nullptr )
+	{
+		pCameraShadowFar_->SetState( nullptr );
+		pCameraShadowFar_ = nullptr;
+	}
+
+	// 影用カメラ近の開放
+	if( pCameraShadowNear_ != nullptr )
+	{
+		pCameraShadowNear_->SetState( nullptr );
+		pCameraShadowNear_ = nullptr;
+	}
+
+	// カメラの開放
+	if( pCamera_ != nullptr )
+	{
+		pCamera_->SetState( nullptr );
+		pCamera_ = nullptr;
 	}
 
 	// 基本クラスの処理

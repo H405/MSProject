@@ -147,9 +147,10 @@ void ObjectModel::Update( void )
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
 // Arg    : Effect* pEffectShadow				: 影描画エフェクト
+// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 //==============================================================================
 int ObjectModel::CreateGraphic( int priority, Model* pModel, const EffectParameter* pParameter,
-	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow )
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid )
 {
 	// グラフィックの生成
 	int		result;		// 実行結果
@@ -158,7 +159,7 @@ int ObjectModel::CreateGraphic( int priority, Model* pModel, const EffectParamet
 	{
 		return 1;
 	}
-	result = pGraphic_->Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow );
+	result = pGraphic_->Initialize( priority, pModel, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow, pEffectParaboloid );
 	if( result != 0 )
 	{
 		return result;
