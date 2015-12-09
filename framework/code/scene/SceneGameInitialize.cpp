@@ -420,17 +420,22 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	}
 
 	// 場所の目印オブジェクトの生成
-	Model*	pModelMarker = nullptr;				// モデル
-	Effect*	pEffectMarkerGeneral = nullptr;		// 通常描画エフェクト
-	Effect*	pEffectMarkerReflect = nullptr;		// 反射エフェクト
+	Model*	pModelMarker = nullptr;					// モデル
+	Effect*	pEffectMarkerGeneral = nullptr;			// 通常描画エフェクト
+	Effect*	pEffectMarkerReflect = nullptr;			// 反射エフェクト
+	Effect*	pEffectMarkerShadow = nullptr;			// 影エフェクト
+	Effect*	pEffectMarkerParaboloid = nullptr;		// 放物変換エフェクト
 	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
 	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	pEffectMarkerShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
+	pEffectMarkerParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
 	markers = new ObjectSkinMesh[ 4 ];
 	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
 	{
 		markers[ counterMarker ].Initialize( 0, 0 );
-		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_, pEffectMarkerGeneral, pEffectMarkerReflect );
+		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
+			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );
@@ -510,27 +515,34 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 
 
 	// スキンメッシュの生成
-	Effect*	pEffectSkinMesh = nullptr;				// エフェクト
-	Effect*	pEffectSkinMeshReflect = nullptr;		// エフェクト
-	Model*	pModelSkinMesh = nullptr;				// モデル
+	Effect*	pEffectSkinMesh = nullptr;					// エフェクト
+	Effect*	pEffectSkinMeshReflect = nullptr;			// エフェクト
+	Effect*	pEffectSkinMeshShadow = nullptr;			// エフェクト
+	Effect*	pEffectSkinMeshParaboloid = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;					// モデル
 	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectSkinMeshReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	pEffectSkinMeshShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
+	pEffectSkinMeshParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
 	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
 	pObjectSkinMesh_[0] = new ObjectSkinMesh();
 	pObjectSkinMesh_[0]->Initialize( 0, 1 );
-	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[0]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[0]->SetPosition( 300.0f, 100.0f, 0.0f );
 
 	pObjectSkinMesh_[1] = new ObjectSkinMesh();
 	pObjectSkinMesh_[1]->Initialize( 0, 1 );
-	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[1]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[1]->SetPosition( 0.0f, 100.0f, 0.0f );
 
 	pObjectSkinMesh_[2] = new ObjectSkinMesh();
 	pObjectSkinMesh_[2]->Initialize( 0, 1 );
-	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[2]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[2]->SetPosition( -300.0f, 100.0f, 0.0f );
 }

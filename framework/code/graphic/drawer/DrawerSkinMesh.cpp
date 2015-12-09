@@ -61,9 +61,8 @@ DrawerSkinMesh::~DrawerSkinMesh( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : int countBone						: ボーン数
 // Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int DrawerSkinMesh::Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
+int DrawerSkinMesh::Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -79,7 +78,6 @@ int DrawerSkinMesh::Initialize( const EffectParameter* pParameter, Effect* pEffe
 	pModel_ = pModel;
 	countBone_ = countBone;
 	pMatrixBone_ = pMatrixBone;
-	pIndexFrame_ = pIndexFrame;
 
 	// ハンドルの読み込み
 	result = pEffect_->LoadHandle( 1, PARAMETER_MAX );
@@ -122,9 +120,8 @@ int DrawerSkinMesh::Finalize( void )
 // Arg    : Model* pModel						: モデル
 // Arg    : int countBone						: ボーン数
 // Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int DrawerSkinMesh::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
+int DrawerSkinMesh::Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -135,7 +132,7 @@ int DrawerSkinMesh::Reinitialize( const EffectParameter* pParameter, Effect* pEf
 	}
 
 	// 初期化処理
-	return Initialize( pParameter, pEffect, pModel, countBone, pMatrixBone, pIndexFrame );
+	return Initialize( pParameter, pEffect, pModel, countBone, pMatrixBone );
 }
 
 //==============================================================================
@@ -252,5 +249,4 @@ void DrawerSkinMesh::InitializeSelf( void )
 	pModel_ = nullptr;
 	countBone_ = 0;
 	pMatrixBone_ = nullptr;
-	pIndexFrame_ = nullptr;
 }

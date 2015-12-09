@@ -104,7 +104,9 @@
     <ClInclude Include="code\graphic\drawer\DrawerRiver.h" />
     <ClInclude Include="code\graphic\drawer\DrawerShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMesh.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshParaboloid.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMeshReflect.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSky.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkyReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerWaveData.h" />
@@ -269,7 +271,9 @@
     <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMesh.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshParaboloid.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMeshReflect.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSky.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkyReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerWaveData.cpp" />

@@ -276,15 +276,18 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pObjectBoard_->SetPosition( -50.0f, 90.0f, 0.0f );
 
 	// スキンメッシュの生成
-	Effect*	pEffectSkinMesh = nullptr;				// エフェクト
-	Effect*	pEffectSkinMeshReflect = nullptr;		// エフェクト
-	Model*	pModelSkinMesh = nullptr;				// モデル
+	Effect*	pEffectSkinMesh = nullptr;					// エフェクト
+	Effect*	pEffectSkinMeshReflect = nullptr;			// エフェクト
+	Effect*	pEffectSkinMeshShadow = nullptr;			// エフェクト
+	Effect*	pEffectSkinMeshParaboloid = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;					// モデル
 	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectSkinMeshReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
 	pObjectSkinMesh_ = new ObjectSkinMesh();
 	pObjectSkinMesh_->Initialize( 0, 1 );
-	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_->SetPosition( -100.0f, 0.0f, 100.0f );
 

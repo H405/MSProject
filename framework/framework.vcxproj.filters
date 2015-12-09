@@ -606,6 +606,12 @@
     <ClInclude Include="code\graphic\drawer\DrawerModelParaboloid.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshParaboloid.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1101,6 +1107,12 @@
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerModelParaboloid.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshParaboloid.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClCompile>
   </ItemGroup>

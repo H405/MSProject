@@ -60,13 +60,15 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+	// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+	// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 	// Arg    : Model* pModel						: モデル
 	// Arg    : int countBone						: ボーン数
 	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
-		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
+	int Initialize( int priority, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid,
+		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -82,13 +84,15 @@ public:
 	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 	// Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+	// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+	// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 	// Arg    : Model* pModel						: モデル
 	// Arg    : int countBone						: ボーン数
 	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
-		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
+	int Reinitialize( int priority, const EffectParameter* pParameter,
+		Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid,
+		Model* pModel, int countBone, D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
