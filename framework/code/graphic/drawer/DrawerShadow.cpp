@@ -252,9 +252,9 @@ void DrawerShadow::Draw( const D3DXMATRIX& matrixWorld )
 	// 点光源の減衰率
 	const LightPoint*	pLightPoint = nullptr;		// ポイントライト
 	D3DXVECTOR3			attenuationLightPoint;		// 点光源の減衰率
-	if( pEffectParameter_->GetCountLightPoint() > 0 )
+	pLightPoint = pEffectParameter_->GetLightPointLightness( 0 );
+	if( pLightPoint != nullptr )
 	{
-		pLightPoint = pEffectParameter_->GetLightPoint( 0 );
 		pLightPoint->GetAttenuation( &attenuationLightPoint );
 	}
 	else

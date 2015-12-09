@@ -20,6 +20,7 @@
 #include "../framework/input/VirtualController.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/light/LightDirection.h"
+#include "../framework/light/LightPoint.h"
 #include "../framework/light/ManagerLight.h"
 #include "../framework/object/Object.h"
 #include "../framework/resource/Effect.h"
@@ -185,6 +186,20 @@ void SceneGame::Update( void )
 	vectorLight *= -10000.0f;
 	pCameraShadowFar_->SetPositionCamera( positionLookAt + vectorLight );
 	pCameraShadowFar_->SetPositionLookAt( positionLookAt );
+
+	// 影用カメラ点の更新
+	const LightPoint*	pLightPoint = nullptr;		// 点光源
+	pLightPoint = pArgument_->pEffectParameter_->GetLightPointLightness( 0 );
+	if( pLightPoint != nullptr )
+	{
+		D3DXVECTOR3	positionLightPointCamera;		// 点光源の視点座標
+		D3DXVECTOR3	positionLightPointLookAt;		// 点光源の注視点座標
+		pLightPoint->GetPosition( &positionLightPointCamera );
+		positionLightPointLookAt = positionLightPointCamera;
+		positionLightPointLookAt.y -= 1000.0f;
+		pCameraShadowPoint_->SetPositionCamera( positionLightPointCamera );
+		pCameraShadowPoint_->SetPositionLookAt( positionLightPointLookAt );
+	}
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();

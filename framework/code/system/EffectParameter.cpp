@@ -14,6 +14,7 @@
 #include "../framework/camera/Camera.h"
 #include "../framework/light/LightDirection.h"
 #include "../framework/light/LightPoint.h"
+#include "../graphic/graphic/GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -159,6 +160,79 @@ int EffectParameter::Copy( EffectParameter* pOut ) const
 {
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 明るい点光源の取得
+// Return : const LightPoint*					: 点光源
+// Arg    : int index							: 何番目に明るい点光源か
+//==============================================================================
+const LightPoint* EffectParameter::GetLightPointLightness( int index ) const
+{
+	// 明るい点光源の検索
+	int		countOrder;													// 候補ライト数
+	int		pIndexLight[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];		// ライト番号
+	float	pLightness[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];		// 明るさ
+	countOrder = 0;
+	for( int counterOrder = 0; counterOrder < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterOrder )
+	{
+		pIndexLight[ counterOrder ] = -1;
+		pLightness[ counterOrder ] = 0.0f;
+	}
+	for( int counterLight = 0; counterLight < countLightPoint_; ++counterLight )
+	{
+		// 影を落とさない場合は次へ
+		if( !ppLightPoint_[ counterLight ]->IsEnable() || !ppLightPoint_[ counterLight ]->CastsShadow() )
+		{
+			continue;
+		}
+
+		// 明るさを計算
+		float		lightness;					// 明るさ
+		float		distanceBaseToLight;		// 基準からライトへの距離
+		D3DXCOLOR	color;						// 色
+		D3DXVECTOR3	attenuation;				// 減衰率
+		D3DXVECTOR3	positionLight;				// ライトの座標
+		D3DXVECTOR3	vectorBaseToLight;			// 基準からライトへのベクトル
+		ppLightPoint_[ counterLight ]->GetPosition( &positionLight );
+		ppLightPoint_[ counterLight ]->GetDiffuse( &color );
+		ppLightPoint_[ counterLight ]->GetAttenuation( &attenuation );
+		vectorBaseToLight = positionBaseLight_ - positionLight;
+		distanceBaseToLight = D3DXVec3Length( &vectorBaseToLight );
+		lightness = color.r + color.g + color.b;
+		lightness /= attenuation.x + distanceBaseToLight * attenuation.y + distanceBaseToLight * distanceBaseToLight * attenuation.z;
+
+		// 順番の入れ替え
+		int		indexOrder;		// 候補番号
+		indexOrder = 0;
+		for( int counterOrder = 0; counterOrder < countOrder; ++counterOrder )
+		{
+			if( lightness >= pLightness[ counterOrder ] )
+			{
+				indexOrder = counterOrder;
+				break;
+			}
+		}
+		for( int counterOrder = GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW - 1; counterOrder > 0; --counterOrder )
+		{
+			pIndexLight[ counterOrder ] = pIndexLight[ counterOrder - 1 ];
+			pLightness[ counterOrder ] = pLightness[ counterOrder - 1 ];
+		}
+		pIndexLight[ indexOrder ] = counterLight;
+		pLightness[ indexOrder ] = lightness;
+		++countOrder;
+		if( countOrder > GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW )
+		{
+			countOrder = GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW;
+		}
+	}
+
+	// ライトを返す
+	if( pIndexLight[ index ] >= 0 )
+	{
+		return ppLightPoint_[ pIndexLight[ index ] ];
+	}
+	return nullptr;
 }
 
 //==============================================================================
@@ -560,4 +634,5 @@ void EffectParameter::InitializeSelf( void )
 	heightScreen_ = 0.0f;
 	forcus_ = 0.0f;
 	heightReflect_ = 0.0f;
+	positionBaseLight_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
 }

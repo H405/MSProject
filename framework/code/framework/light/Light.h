@@ -122,6 +122,9 @@ public:
 	float GetSpecularG( void ) const;
 	float GetSpecularB( void ) const;
 	float GetSpecularA( void ) const;
+	void SetCastsShadow( bool value );
+	bool GetCastsShadow( void ) const;
+	bool CastsShadow( void ) const;
 	void SetIsEnable( bool value );
 	bool GetIsEnable( void ) const;
 	bool IsEnable( void ) const;
@@ -129,10 +132,11 @@ public:
 	bool IsUsed( void ) const;
 
 protected:
-	D3DXCOLOR	diffuse_;		// ディフューズカラー
-	D3DXCOLOR	specular_;		// スペキュラカラー
-	bool		isEnable_;		// 有効フラグ
-	bool		isUsed_;		// 使用フラグ
+	D3DXCOLOR	diffuse_;			// ディフューズカラー
+	D3DXCOLOR	specular_;			// スペキュラカラー
+	bool		castsShadow_;		// 影を落とすか
+	bool		isEnable_;			// 有効フラグ
+	bool		isUsed_;			// 使用フラグ
 
 private:
 	virtual void InitializeSelf( void );

@@ -292,6 +292,8 @@ public:
 	//==============================================================================
 	static void SetPolygonBillboard( PolygonBillboard* pValue );
 
+	static const int	MAXIMUM_LIGHT_POINT_SHADOW = 2;		// ‰e‚ğ—‚Æ‚·“_ŒõŒ¹Å‘å”
+
 protected:
 	static Polygon2D*			pPolygon2D_;			// 2Dƒ|ƒŠƒSƒ“
 	static Polygon3D*			pPolygon3D_;			// 3Dƒ|ƒŠƒSƒ“

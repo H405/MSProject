@@ -86,6 +86,13 @@ public:
 	int Copy( EffectParameter* pOut ) const;
 
 	//==============================================================================
+	// Brief  : 明るい点光源の取得
+	// Return : const LightPoint*					: 点光源
+	// Arg    : int index							: 何番目に明るい点光源か
+	//==============================================================================
+	const LightPoint* GetLightPointLightness( int index ) const;
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	void SetCountLightDirection( int value );
@@ -143,6 +150,7 @@ private:
 	float					heightScreen_;				// 画面高さ
 	float					forcus_;					// 焦点距離
 	float					heightReflect_;				// 反射面の高さ
+	D3DXVECTOR3				positionBaseLight_;			// ライト優先基準座標
 };
 
 #endif	// MY_EFFECT_PARAMETER_H
