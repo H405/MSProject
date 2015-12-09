@@ -570,23 +570,23 @@ int SceneTitle::Finalize( void )
 	delete titleLogo;
 	titleLogo = nullptr;
 
-	delete managerPoint;
-	managerPoint = nullptr;
-
-	Fire::FinalizeState();
-
-	delete managerFireworks;
-	managerFireworks = nullptr;
-
-	delete player;
-	player = nullptr;
-
 	delete pObjectSkinMesh_[2];
 	delete pObjectSkinMesh_[1];
 	delete pObjectSkinMesh_[0];
 	pObjectSkinMesh_[2] = nullptr;
 	pObjectSkinMesh_[1] = nullptr;
 	pObjectSkinMesh_[0] = nullptr;
+
+	delete player;
+	player = nullptr;
+
+	delete managerFireworks;
+	managerFireworks = nullptr;
+
+	Fire::FinalizeState();
+
+	delete managerPoint;
+	managerPoint = nullptr;
 
 	// 場所目印オブジェクトの開放
 	delete[] markers;
