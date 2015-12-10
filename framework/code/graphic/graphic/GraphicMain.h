@@ -46,7 +46,8 @@ public:
 		PASS_3D,						// 3D描画
 		PASS_DEPTH_SHADOW_NEAR,			// 影用深度(近)
 		PASS_DEPTH_SHADOW_FAR,			// 影用深度(遠)
-		PASS_DEPTH_SHADOW_POINT,		// 影用深度(点)
+		PASS_DEPTH_SHADOW_POINT_0,		// 影用深度(点0)
+		PASS_DEPTH_SHADOW_POINT_1,		// 影用深度(点1)
 		PASS_SHADOW,					// 影
 		PASS_BLUR_SHADOW,				// 影用ブラー
 		PASS_REFLECT,					// 反射
@@ -95,11 +96,18 @@ public:
 		RENDER_PASS_DEPTH_SHADOW_FAR_MAX				// 最大値
 	};
 
-	// 影用深度(点)
+	// 影用深度(点0)
 	enum
 	{
-		RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH = 0,		// 深度
-		RENDER_PASS_DEPTH_SHADOW_POINT_MAX				// 最大値
+		RENDER_PASS_DEPTH_SHADOW_POINT_0_DEPTH = 0,		// 深度
+		RENDER_PASS_DEPTH_SHADOW_POINT_0_MAX			// 最大値
+	};
+
+	// 影用深度(点1)
+	enum
+	{
+		RENDER_PASS_DEPTH_SHADOW_POINT_1_DEPTH = 0,		// 深度
+		RENDER_PASS_DEPTH_SHADOW_POINT_1_MAX			// 最大値
 	};
 
 	// 影
@@ -225,7 +233,8 @@ public:
 		CAMERA_GENERAL = 0,					// 通常カメラ
 		CAMERA_SHADOW_NEAR,					// 影用カメラ近
 		CAMERA_SHADOW_FAR,					// 影用カメラ遠
-		CAMERA_SHADOW_POINT,				// 影用カメラ点
+		CAMERA_SHADOW_POINT_0,				// 影用カメラ点0
+		CAMERA_SHADOW_POINT_1,				// 影用カメラ点1
 		CAMERA_MAX							// 最大値
 	};
 

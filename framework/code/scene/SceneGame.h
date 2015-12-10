@@ -145,7 +145,7 @@ private:
 	CameraObject*	pCamera_;					// カメラ
 	CameraObject*	pCameraShadowNear_;			// 影用カメラ近
 	CameraObject*	pCameraShadowFar_;			// 影用カメラ遠
-	CameraObject*	pCameraShadowPoint_;		// 影用カメラ点
+	CameraObject**	ppCameraShadowPoint_;		// 影用カメラ点
 	LightDirection*	pLight_;					// ライト
 
 

@@ -92,7 +92,7 @@ void SceneGame::InitializeSelf( void )
 	pCamera_ = nullptr;
 	pCameraShadowNear_ = nullptr;
 	pCameraShadowFar_ = nullptr;
-	pCameraShadowPoint_ = nullptr;
+	ppCameraShadowPoint_ = nullptr;
 	pLight_ = nullptr;
 
 	//	ゲームUI関係
@@ -227,9 +227,17 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
 
 	// 影用カメラ点の設定
-	pCameraShadowPoint_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT );
-	pCameraShadowPoint_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 10000.0f,
-		D3DXVECTOR3( 260.0f, 1000.0f, 3540.0f ), D3DXVECTOR3( 260.0f, 0.0f, 3540.0f ), D3DXVECTOR3( 0.0f, 0.0f, 1.0f ), false );
+	ppCameraShadowPoint_ = new CameraObject*[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];
+	if( ppCameraShadowPoint_ == nullptr )
+	{
+		return 1;
+	}
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++ counterLightPoint )
+	{
+		ppCameraShadowPoint_[ counterLightPoint ] = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT_0 + counterLightPoint );
+		ppCameraShadowPoint_[ counterLightPoint ]->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 10000.0f,
+			D3DXVECTOR3( 0.0f, 1000.0f, 0.0f ), D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 0.0f, 1.0f ), false );
+	}
 
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
@@ -881,11 +889,16 @@ int SceneGame::Finalize( void )
 	}
 
 	// 影用カメラ点の開放
-	if( pCameraShadowPoint_ != nullptr )
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterLightPoint )
 	{
-		pCameraShadowPoint_->SetState( nullptr );
-		pCameraShadowPoint_ = nullptr;
+		if( ppCameraShadowPoint_[ counterLightPoint ] != nullptr )
+		{
+			ppCameraShadowPoint_[ counterLightPoint ]->SetState( nullptr );
+			ppCameraShadowPoint_[ counterLightPoint ] = nullptr;
+		}
 	}
+	delete[] ppCameraShadowPoint_;
+	ppCameraShadowPoint_ = nullptr;
 
 	// 影用カメラ遠の開放
 	if( pCameraShadowFar_ != nullptr )

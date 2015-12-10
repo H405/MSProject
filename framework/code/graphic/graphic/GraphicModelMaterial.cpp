@@ -112,15 +112,25 @@ int GraphicModelMaterial::Initialize( int priority, Model* pModel, const EffectP
 	result = pDrawerModelShadowFar->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_FAR );
 	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ] = pDrawerModelShadowFar;
 
-	// 影(点)描画クラスの生成
-	DrawerModelParaboloid*	pDrawerModelParaboloid = nullptr;		// 描画クラス
-	pDrawerModelParaboloid = new DrawerModelParaboloid();
-	if( pDrawerModelParaboloid == nullptr )
+	// 影(点0)描画クラスの生成
+	DrawerModelParaboloid*	pDrawerModelParaboloid0 = nullptr;		// 描画クラス
+	pDrawerModelParaboloid0 = new DrawerModelParaboloid();
+	if( pDrawerModelParaboloid0 == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerModelParaboloid->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT );
-	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ] = pDrawerModelParaboloid;
+	result = pDrawerModelParaboloid0->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT_0 );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ] = pDrawerModelParaboloid0;
+
+	// 影(点1)描画クラスの生成
+	DrawerModelParaboloid*	pDrawerModelParaboloid1 = nullptr;		// 描画クラス
+	pDrawerModelParaboloid1 = new DrawerModelParaboloid();
+	if( pDrawerModelParaboloid1 == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerModelParaboloid1->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT_1 );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ] = pDrawerModelParaboloid1;
 
 	// 正常終了
 	return 0;

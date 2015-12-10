@@ -97,10 +97,12 @@ public:
 	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
 	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint	: 点光源の深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
+	// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
 	//==============================================================================
 	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar, IDirect3DTexture9* pTextureLightPoint );
+		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
+		IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 );
 
 	//==============================================================================
 	// アクセサ

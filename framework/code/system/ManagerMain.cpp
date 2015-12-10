@@ -310,8 +310,14 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ] = D3DFMT_R32F;
-	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_MAX, &parameterPassDepthShadowPoint );
+	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_0_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_0_MAX, &parameterPassDepthShadowPoint );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_1_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_1_MAX, &parameterPassDepthShadowPoint );
 	if( result != 0 )
 	{
 		return result;
@@ -620,7 +626,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
 		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ),
 		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_0_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_1_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;

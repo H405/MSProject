@@ -115,15 +115,25 @@ int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter
 	result = pDrawerSkinMeshShadowFar->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_FAR, countBone, pMatrixBone );
 	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ] = pDrawerSkinMeshShadowFar;
 
-	// 影(点)描画クラスの生成
-	DrawerSkinMeshParaboloid*	pDrawerSkinMeshParaboloid = nullptr;		// 描画クラス
-	pDrawerSkinMeshParaboloid = new DrawerSkinMeshParaboloid();
-	if( pDrawerSkinMeshParaboloid == nullptr )
+	// 影(点0)描画クラスの生成
+	DrawerSkinMeshParaboloid*	pDrawerSkinMeshParaboloid0 = nullptr;		// 描画クラス
+	pDrawerSkinMeshParaboloid0 = new DrawerSkinMeshParaboloid();
+	if( pDrawerSkinMeshParaboloid0 == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerSkinMeshParaboloid->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT, countBone, pMatrixBone );
-	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ] = pDrawerSkinMeshParaboloid;
+	result = pDrawerSkinMeshParaboloid0->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT_0, countBone, pMatrixBone );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ] = pDrawerSkinMeshParaboloid0;
+
+	// 影(点1)描画クラスの生成
+	DrawerSkinMeshParaboloid*	pDrawerSkinMeshParaboloid1 = nullptr;		// 描画クラス
+	pDrawerSkinMeshParaboloid1 = new DrawerSkinMeshParaboloid();
+	if( pDrawerSkinMeshParaboloid1 == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkinMeshParaboloid1->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT_1, countBone, pMatrixBone );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ] = pDrawerSkinMeshParaboloid1;
 
 	// 正常終了
 	return 0;
