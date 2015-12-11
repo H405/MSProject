@@ -443,6 +443,39 @@ float Light::GetSpecularA( void ) const
 }
 
 //==============================================================================
+// Brief  : 影を落とすかの設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void Light::SetCastsShadow( bool value )
+{
+	// 値の設定
+	castsShadow_ = value;
+}
+
+//==============================================================================
+// Brief  : 影を落とすかの取得
+// Return : bool								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+bool Light::GetCastsShadow( void ) const
+{
+	// 値の返却
+	return castsShadow_;
+}
+
+//==============================================================================
+// Brief  : 影を落とすかの判定
+// Return : bool								: 判定結果
+// Arg    : void								: なし
+//==============================================================================
+bool Light::CastsShadow( void ) const
+{
+	// 値の返却
+	return castsShadow_;
+}
+
+//==============================================================================
 // Brief  : 有効フラグの設定
 // Return : void								: なし
 // Arg    : bool value							: 設定する値
@@ -507,6 +540,7 @@ void Light::InitializeSelf( void )
 	// メンバ変数の初期化
 	diffuse_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	specular_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	castsShadow_ = true;
 	isEnable_ = true;
 	isUsed_ = false;
 }

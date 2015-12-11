@@ -44,6 +44,7 @@
     <ClInclude Include="code\framework\polygon\Polygon2D.h" />
     <ClInclude Include="code\framework\polygon\Polygon3D.h" />
     <ClInclude Include="code\framework\polygon\PolygonBillboard.h" />
+    <ClInclude Include="code\framework\polygon\PolygonSignboard.h" />
     <ClInclude Include="code\framework\polygon\PolygonMesh.h" />
     <ClInclude Include="code\framework\polygon\PolygonMeshDomeInside.h" />
     <ClInclude Include="code\framework\polygon\PolygonPoint.h" />
@@ -88,6 +89,7 @@
     <ClInclude Include="code\graphic\drawer\DrawerBlur.h" />
     <ClInclude Include="code\graphic\drawer\DrawerBlurShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerDrawTexture.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerGrass.h" />
     <ClInclude Include="code\graphic\drawer\DrawerLightEffect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerLightReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerMerge.h" />
@@ -104,7 +106,9 @@
     <ClInclude Include="code\graphic\drawer\DrawerRiver.h" />
     <ClInclude Include="code\graphic\drawer\DrawerShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMesh.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshParaboloid.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkinMeshReflect.h" />
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshShadow.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSky.h" />
     <ClInclude Include="code\graphic\drawer\DrawerSkyReflect.h" />
     <ClInclude Include="code\graphic\drawer\DrawerWaveData.h" />
@@ -115,6 +119,7 @@
     <ClInclude Include="code\graphic\graphic\GraphicBlur.h" />
     <ClInclude Include="code\graphic\graphic\GraphicBlurShadow.h" />
     <ClInclude Include="code\graphic\graphic\GraphicDrawTexture.h" />
+    <ClInclude Include="code\graphic\graphic\GraphicGrass.h" />
     <ClInclude Include="code\graphic\graphic\GraphicLightEffect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicLightReflect.h" />
     <ClInclude Include="code\graphic\graphic\GraphicMain.h" />
@@ -137,6 +142,7 @@
     <ClInclude Include="code\object\ObjectBlurShadow.h" />
     <ClInclude Include="code\object\ObjectDrawTexture.h" />
     <ClInclude Include="code\object\ObjectFire.h" />
+    <ClInclude Include="code\object\ObjectGrass.h" />
     <ClInclude Include="code\object\ObjectLightEffect.h" />
     <ClInclude Include="code\object\ObjectLightReflect.h" />
     <ClInclude Include="code\object\ObjectMerge.h" />
@@ -158,6 +164,7 @@
     <ClInclude Include="code\scene\SceneSplash.h" />
     <ClInclude Include="code\scene\SceneTitle.h" />
     <ClInclude Include="code\system\camera\CameraStateSpline.h" />
+    <ClInclude Include="code\system\combo\combo.h" />
     <ClInclude Include="code\system\EffectParameter.h" />
     <ClInclude Include="code\system\fireworks\Fireworks.h" />
     <ClInclude Include="code\system\fireworks\FireworksState.h" />
@@ -209,6 +216,7 @@
     <ClCompile Include="code\framework\polygon\Polygon2D.cpp" />
     <ClCompile Include="code\framework\polygon\Polygon3D.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonBillboard.cpp" />
+    <ClCompile Include="code\framework\polygon\PolygonSignboard.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonMesh.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonMeshDomeInside.cpp" />
     <ClCompile Include="code\framework\polygon\PolygonPoint.cpp" />
@@ -253,6 +261,7 @@
     <ClCompile Include="code\graphic\drawer\DrawerBlur.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerBlurShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerDrawTexture.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerGrass.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerLightEffect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerLightReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerMerge.cpp" />
@@ -269,7 +278,9 @@
     <ClCompile Include="code\graphic\drawer\DrawerRiver.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMesh.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshParaboloid.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkinMeshReflect.cpp" />
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshShadow.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSky.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerSkyReflect.cpp" />
     <ClCompile Include="code\graphic\drawer\DrawerWaveData.cpp" />
@@ -280,6 +291,7 @@
     <ClCompile Include="code\graphic\graphic\GraphicBlur.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicBlurShadow.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicDrawTexture.cpp" />
+    <ClCompile Include="code\graphic\graphic\GraphicGrass.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicLightEffect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicLightReflect.cpp" />
     <ClCompile Include="code\graphic\graphic\GraphicMain.cpp" />
@@ -302,6 +314,7 @@
     <ClCompile Include="code\object\ObjectBlurShadow.cpp" />
     <ClCompile Include="code\object\ObjectDrawTexture.cpp" />
     <ClCompile Include="code\object\ObjectFire.cpp" />
+    <ClCompile Include="code\object\ObjectGrass.cpp" />
     <ClCompile Include="code\object\ObjectLightEffect.cpp" />
     <ClCompile Include="code\object\ObjectLightReflect.cpp" />
     <ClCompile Include="code\object\ObjectMerge.cpp" />
@@ -325,6 +338,7 @@
     <ClCompile Include="code\scene\SceneSplash.cpp" />
     <ClCompile Include="code\scene\SceneTitle.cpp" />
     <ClCompile Include="code\system\camera\CameraStateSpline.cpp" />
+    <ClCompile Include="code\system\combo\combo.cpp" />
     <ClCompile Include="code\system\EffectParameter.cpp" />
     <ClCompile Include="code\system\fireworks\Fireworks.cpp" />
     <ClCompile Include="code\system\fireworks\FireworksState.cpp" />
@@ -351,6 +365,7 @@
     <None Include="code\effect\BlurY.fx" />
     <None Include="code\effect\CalculateLight.fx" />
     <None Include="code\effect\DrawTexture.fx" />
+    <None Include="code\effect\Grass.fx" />
     <None Include="code\effect\LightEffect.fx" />
     <None Include="code\effect\LightEffect_00.fx" />
     <None Include="code\effect\LightReflect.fx" />

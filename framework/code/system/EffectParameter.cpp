@@ -14,6 +14,7 @@
 #include "../framework/camera/Camera.h"
 #include "../framework/light/LightDirection.h"
 #include "../framework/light/LightPoint.h"
+#include "../graphic/graphic/GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -159,6 +160,79 @@ int EffectParameter::Copy( EffectParameter* pOut ) const
 {
 	// 正常終了
 	return 0;
+}
+
+//==============================================================================
+// Brief  : 明るい点光源の取得
+// Return : const LightPoint*					: 点光源
+// Arg    : int index							: 何番目に明るい点光源か
+//==============================================================================
+const LightPoint* EffectParameter::GetLightPointLightness( int index ) const
+{
+	// 明るい点光源の検索
+	int		countOrder;													// 候補ライト数
+	int		pIndexLight[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];		// ライト番号
+	float	pLightness[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];		// 明るさ
+	countOrder = 0;
+	for( int counterOrder = 0; counterOrder < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterOrder )
+	{
+		pIndexLight[ counterOrder ] = -1;
+		pLightness[ counterOrder ] = 0.0f;
+	}
+	for( int counterLight = 0; counterLight < countLightPoint_; ++counterLight )
+	{
+		// 影を落とさない場合は次へ
+		if( !ppLightPoint_[ counterLight ]->IsEnable() || !ppLightPoint_[ counterLight ]->CastsShadow() )
+		{
+			continue;
+		}
+
+		// 明るさを計算
+		float		lightness;					// 明るさ
+		float		distanceBaseToLight;		// 基準からライトへの距離
+		D3DXCOLOR	color;						// 色
+		D3DXVECTOR3	attenuation;				// 減衰率
+		D3DXVECTOR3	positionLight;				// ライトの座標
+		D3DXVECTOR3	vectorBaseToLight;			// 基準からライトへのベクトル
+		ppLightPoint_[ counterLight ]->GetPosition( &positionLight );
+		ppLightPoint_[ counterLight ]->GetDiffuse( &color );
+		ppLightPoint_[ counterLight ]->GetAttenuation( &attenuation );
+		vectorBaseToLight = positionBaseLight_ - positionLight;
+		distanceBaseToLight = D3DXVec3Length( &vectorBaseToLight );
+		lightness = color.r + color.g + color.b;
+		lightness /= attenuation.x + distanceBaseToLight * attenuation.y + distanceBaseToLight * distanceBaseToLight * attenuation.z;
+
+		// 順番の入れ替え
+		int		indexOrder;		// 候補番号
+		indexOrder = 0;
+		for( int counterOrder = 0; counterOrder < countOrder; ++counterOrder )
+		{
+			if( lightness >= pLightness[ counterOrder ] )
+			{
+				indexOrder = counterOrder;
+				break;
+			}
+		}
+		for( int counterOrder = GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW - 1; counterOrder > 0; --counterOrder )
+		{
+			pIndexLight[ counterOrder ] = pIndexLight[ counterOrder - 1 ];
+			pLightness[ counterOrder ] = pLightness[ counterOrder - 1 ];
+		}
+		pIndexLight[ indexOrder ] = counterLight;
+		pLightness[ indexOrder ] = lightness;
+		++countOrder;
+		if( countOrder > GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW )
+		{
+			countOrder = GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW;
+		}
+	}
+
+	// ライトを返す
+	if( pIndexLight[ index ] >= 0 )
+	{
+		return ppLightPoint_[ pIndexLight[ index ] ];
+	}
+	return nullptr;
 }
 
 //==============================================================================
@@ -539,6 +613,212 @@ float EffectParameter::GetHeightReflect( void ) const
 }
 
 //==============================================================================
+// Brief  : 座標の設定
+// Return : void								: なし
+// Arg    : const D3DXVECTOR3& value			: 設定する値
+//==============================================================================
+void EffectParameter::SetPositionBaseLight( const D3DXVECTOR3& value )
+{
+	// 値の設定
+	positionBaseLight_ = value;
+}
+
+//==============================================================================
+// Brief  : 座標の設定
+// Return : void								: なし
+// Arg    : float x								: X値
+// Arg    : float y								: Y値
+// Arg    : float z								: Z値
+//==============================================================================
+void EffectParameter::SetPositionBaseLight( float x, float y, float z )
+{
+	// 値の設定
+	positionBaseLight_.x = x;
+	positionBaseLight_.y = y;
+	positionBaseLight_.z = z;
+}
+
+//==============================================================================
+// Brief  : 座標のX値の設定
+// Return : void								: なし
+// Arg    : float x								: X値
+//==============================================================================
+void EffectParameter::SetPositionBaseLightX( float x )
+{
+	// 値の設定
+	positionBaseLight_.x = x;
+}
+
+//==============================================================================
+// Brief  : 座標のY値の設定
+// Return : void								: なし
+// Arg    : float y								: Y値
+//==============================================================================
+void EffectParameter::SetPositionBaseLightY( float y )
+{
+	// 値の設定
+	positionBaseLight_.y = y;
+}
+
+//==============================================================================
+// Brief  : 座標のZ値の設定
+// Return : void								: なし
+// Arg    : float z								: Z値
+//==============================================================================
+void EffectParameter::SetPositionBaseLightZ( float z )
+{
+	// 値の設定
+	positionBaseLight_.z = z;
+}
+
+//==============================================================================
+// Brief  : 座標の取得
+// Return : void								: なし
+// Arg    : D3DXVECTOR3* pOut					: 値の格納アドレス
+//==============================================================================
+void EffectParameter::GetPositionBaseLight( D3DXVECTOR3* pOut ) const
+{
+	// 値の返却
+	*pOut = positionBaseLight_;
+}
+
+//==============================================================================
+// Brief  : 座標のX値の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetPositionBaseLightX( void ) const
+{
+	// 値の返却
+	return positionBaseLight_.x;
+}
+
+//==============================================================================
+// Brief  : 座標のY値の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetPositionBaseLightY( void ) const
+{
+	// 値の返却
+	return positionBaseLight_.y;
+}
+
+//==============================================================================
+// Brief  : 座標のZ値の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetPositionBaseLightZ( void ) const
+{
+	// 値の返却
+	return positionBaseLight_.z;
+}
+
+//==============================================================================
+// Brief  : 風向きの設定
+// Return : void								: なし
+// Arg    : const D3DXVECTOR3& value			: 設定する値
+//==============================================================================
+void EffectParameter::SetVectorWind( const D3DXVECTOR3& value )
+{
+	// 値の設定
+	vectorWind_ = value;
+}
+
+//==============================================================================
+// Brief  : 風向きの設定
+// Return : void								: なし
+// Arg    : float x								: X値
+// Arg    : float y								: Y値
+// Arg    : float z								: Z値
+//==============================================================================
+void EffectParameter::SetVectorWind( float x, float y, float z )
+{
+	// 値の設定
+	vectorWind_.x = x;
+	vectorWind_.y = y;
+	vectorWind_.z = z;
+}
+
+//==============================================================================
+// Brief  : 風向きのX値の設定
+// Return : void								: なし
+// Arg    : float x								: X値
+//==============================================================================
+void EffectParameter::SetVectorWindX( float x )
+{
+	// 値の設定
+	vectorWind_.x = x;
+}
+
+//==============================================================================
+// Brief  : 風向きのY値の設定
+// Return : void								: なし
+// Arg    : float y								: Y値
+//==============================================================================
+void EffectParameter::SetVectorWindY( float y )
+{
+	// 値の設定
+	vectorWind_.y = y;
+}
+
+//==============================================================================
+// Brief  : 風向きのZ値の設定
+// Return : void								: なし
+// Arg    : float z								: Z値
+//==============================================================================
+void EffectParameter::SetVectorWindZ( float z )
+{
+	// 値の設定
+	vectorWind_.z = z;
+}
+
+//==============================================================================
+// Brief  : 風向きの取得
+// Return : void								: なし
+// Arg    : D3DXVECTOR3* pOut					: 値の格納アドレス
+//==============================================================================
+void EffectParameter::GetVectorWind( D3DXVECTOR3* pOut ) const
+{
+	// 値の返却
+	*pOut = vectorWind_;
+}
+
+//==============================================================================
+// Brief  : 風向きのX値の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetVectorWindX( void ) const
+{
+	// 値の返却
+	return vectorWind_.x;
+}
+
+//==============================================================================
+// Brief  : 風向きのY値の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetVectorWindY( void ) const
+{
+	// 値の返却
+	return vectorWind_.y;
+}
+
+//==============================================================================
+// Brief  : 風向きのZ値の取得
+// Return : float								: 返却する値
+// Arg    : void								: なし
+//==============================================================================
+float EffectParameter::GetVectorWindZ( void ) const
+{
+	// 値の返却
+	return vectorWind_.z;
+}
+
+//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -560,4 +840,6 @@ void EffectParameter::InitializeSelf( void )
 	heightScreen_ = 0.0f;
 	forcus_ = 0.0f;
 	heightReflect_ = 0.0f;
+	positionBaseLight_ = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+	vectorWind_ = D3DXVECTOR3( 0.5f, 0.0f, 0.0f );
 }

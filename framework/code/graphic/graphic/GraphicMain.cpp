@@ -26,6 +26,7 @@
 Polygon2D*			GraphicMain::pPolygon2D_ = nullptr;				// 2Dポリゴンクラス
 Polygon3D*			GraphicMain::pPolygon3D_ = nullptr;				// 3Dポリゴンクラス
 PolygonBillboard*	GraphicMain::pPolygonBillboard_ = nullptr;		// ビルボードポリゴンクラス
+PolygonSignboard*	GraphicMain::pPolygonSignboard_ = nullptr;		// 足元基準ビルボードポリゴンクラス
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -171,6 +172,17 @@ void GraphicMain::SetPolygonBillboard( PolygonBillboard* pValue )
 {
 	// 値の設定
 	pPolygonBillboard_ = pValue;
+}
+
+//==============================================================================
+// Brief  : 足元基準ビルボードポリゴンクラスの設定
+// Return : void								: なし
+// Arg    : PolygonSignboard* pValue			: 設定する値
+//==============================================================================
+void GraphicMain::SetPolygonSignboard( PolygonSignboard* pValue )
+{
+	// 値の設定
+	pPolygonSignboard_ = pValue;
 }
 
 //==============================================================================

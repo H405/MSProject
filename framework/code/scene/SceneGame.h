@@ -55,6 +55,7 @@ typedef enum
 class CameraObject;
 class CameraStateSpline;
 class Gage;
+class Combo;
 class LightDirection;
 class ManagerPoint;
 class ManagerFireworks;
@@ -62,6 +63,7 @@ class ManagerTarget;
 class Object2D;
 class ObjectScore;
 class Object3D;
+class ObjectGrass;
 class Material;
 class ObjectModel;
 class ObjectModelMaterial;
@@ -145,7 +147,7 @@ private:
 	CameraObject*	pCamera_;					// カメラ
 	CameraObject*	pCameraShadowNear_;			// 影用カメラ近
 	CameraObject*	pCameraShadowFar_;			// 影用カメラ遠
-	CameraObject*	pCameraShadowPoint_;		// 影用カメラ点
+	CameraObject**	ppCameraShadowPoint_;		// 影用カメラ点
 	LightDirection*	pLight_;					// ライト
 
 
@@ -159,6 +161,9 @@ private:
 
 	//	ゲージオブジェクト
 	Gage* gage;
+
+	//	コンボ数オブジェクト
+	Combo* combo;
 
 	//	ポーズ時用背景
 	Object2D* pauseFrame;
@@ -213,7 +218,7 @@ private:
 	ObjectModelMaterial*	houses;			// 家
 	ObjectModelMaterial*	gate;			// 鳥居
 
-	ObjectBillboard*		grasses;		// 草
+	ObjectGrass*			grasses;		// 草
 
 	ObjectSkinMesh*			markers;		// 場所の目印
 

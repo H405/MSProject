@@ -12,7 +12,9 @@
 //******************************************************************************
 #include "GraphicSkinMesh.h"
 #include "../drawer/DrawerSkinMesh.h"
+#include "../drawer/DrawerSkinMeshParaboloid.h"
 #include "../drawer/DrawerSkinMeshReflect.h"
+#include "../drawer/DrawerSkinMeshShadow.h"
 
 //******************************************************************************
 // ライブラリ
@@ -55,13 +57,15 @@ GraphicSkinMesh::~GraphicSkinMesh( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 // Arg    : Model* pModel						: モデル
 // Arg    : int countBone						: ボーン数
 // Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
-	Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
+int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid,
+	Model* pModel, int countBone, D3DXMATRIX* pMatrixBone )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -78,7 +82,7 @@ int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter
 	{
 		return 1;
 	}
-	result = pDrawerSkinMesh->Initialize( pParameter, pEffectGeneral, pModel, countBone, pMatrixBone, pIndexFrame );
+	result = pDrawerSkinMesh->Initialize( pParameter, pEffectGeneral, pModel, countBone, pMatrixBone );
 	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerSkinMesh;
 
 	// 反射描画クラスの生成
@@ -88,8 +92,48 @@ int GraphicSkinMesh::Initialize( int priority, const EffectParameter* pParameter
 	{
 		return 1;
 	}
-	result = pDrawerSkinMeshReflect->Initialize( pParameter, pEffectReflect, pModel, countBone, pMatrixBone, pIndexFrame );
+	result = pDrawerSkinMeshReflect->Initialize( pParameter, pEffectReflect, pModel, countBone, pMatrixBone );
 	ppDraw_[ GraphicMain::PASS_REFLECT ] = pDrawerSkinMeshReflect;
+
+	// 影(近)描画クラスの生成
+	DrawerSkinMeshShadow*	pDrawerSkinMeshShadowNear = nullptr;		// 描画クラス
+	pDrawerSkinMeshShadowNear = new DrawerSkinMeshShadow();
+	if( pDrawerSkinMeshShadowNear == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkinMeshShadowNear->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_NEAR, countBone, pMatrixBone );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ] = pDrawerSkinMeshShadowNear;
+
+	// 影(遠)描画クラスの生成
+	DrawerSkinMeshShadow*	pDrawerSkinMeshShadowFar = nullptr;		// 描画クラス
+	pDrawerSkinMeshShadowFar = new DrawerSkinMeshShadow();
+	if( pDrawerSkinMeshShadowFar == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkinMeshShadowFar->Initialize( pModel, pParameter, pEffectShadow, GraphicMain::CAMERA_SHADOW_FAR, countBone, pMatrixBone );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ] = pDrawerSkinMeshShadowFar;
+
+	// 影(点0)描画クラスの生成
+	DrawerSkinMeshParaboloid*	pDrawerSkinMeshParaboloid0 = nullptr;		// 描画クラス
+	pDrawerSkinMeshParaboloid0 = new DrawerSkinMeshParaboloid();
+	if( pDrawerSkinMeshParaboloid0 == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkinMeshParaboloid0->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT_0, countBone, pMatrixBone );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ] = pDrawerSkinMeshParaboloid0;
+
+	// 影(点1)描画クラスの生成
+	DrawerSkinMeshParaboloid*	pDrawerSkinMeshParaboloid1 = nullptr;		// 描画クラス
+	pDrawerSkinMeshParaboloid1 = new DrawerSkinMeshParaboloid();
+	if( pDrawerSkinMeshParaboloid1 == nullptr )
+	{
+		return 1;
+	}
+	result = pDrawerSkinMeshParaboloid1->Initialize( pModel, pParameter, pEffectParaboloid, GraphicMain::CAMERA_SHADOW_POINT_1, countBone, pMatrixBone );
+	ppDraw_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ] = pDrawerSkinMeshParaboloid1;
 
 	// 正常終了
 	return 0;
@@ -124,13 +168,15 @@ int GraphicSkinMesh::Finalize( void )
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : Effect* pEffectReflect				: 反射描画エフェクト
+// Arg    : Effect* pEffectShadow				: 影描画エフェクト
+// Arg    : Effect* pEffectParaboloid			: 放物変換描画エフェクト
 // Arg    : Model* pModel						: モデル
 // Arg    : int countBone						: ボーン数
 // Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 //==============================================================================
-int GraphicSkinMesh::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Effect* pEffectReflect,
-	Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame )
+int GraphicSkinMesh::Reinitialize( int priority, const EffectParameter* pParameter,
+	Effect* pEffectGeneral, Effect* pEffectReflect, Effect* pEffectShadow, Effect* pEffectParaboloid,
+	Model* pModel, int countBone, D3DXMATRIX* pMatrixBone )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -141,7 +187,7 @@ int GraphicSkinMesh::Reinitialize( int priority, const EffectParameter* pParamet
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral, pEffectReflect, pModel, countBone, pMatrixBone, pIndexFrame );
+	return Initialize( priority, pParameter, pEffectGeneral, pEffectReflect, pEffectShadow, pEffectParaboloid, pModel, countBone, pMatrixBone );
 }
 
 //==============================================================================

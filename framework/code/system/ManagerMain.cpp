@@ -33,6 +33,7 @@
 #include "../framework/polygon/Polygon2D.h"
 #include "../framework/polygon/Polygon3D.h"
 #include "../framework/polygon/PolygonBillboard.h"
+#include "../framework/polygon/PolygonSignboard.h"
 #include "../framework/render/DirectDevice.h"
 #include "../framework/render/RenderPass.h"
 #include "../framework/render/RenderPassParameter.h"
@@ -310,8 +311,14 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
-	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ] = D3DFMT_R32F;
-	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_MAX, &parameterPassDepthShadowPoint );
+	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_0_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_0_MAX, &parameterPassDepthShadowPoint );
+	if( result != 0 )
+	{
+		return result;
+	}
+	parameterPassDepthShadowPoint.pFormat_[ GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_1_DEPTH ] = D3DFMT_R32F;
+	result = pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ].Initialize( pDevice, GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_1_MAX, &parameterPassDepthShadowPoint );
 	if( result != 0 )
 	{
 		return result;
@@ -561,6 +568,19 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	}
 	GraphicMain::SetPolygonBillboard( pPolygonBillboard_ );
 
+	// 足元基準ビルボードポリゴンの生成
+	pPolygonSignboard_ = new PolygonSignboard();
+	if( pPolygonSignboard_ == nullptr )
+	{
+		return 1;
+	}
+	result = pPolygonSignboard_->Initialize( pDevice );
+	if( result != 0 )
+	{
+		return result;
+	}
+	GraphicMain::SetPolygonSignboard( pPolygonSignboard_ );
+
 	// 波情報描画オブジェクトの生成
 	Effect*	pEffectWaveData = nullptr;		// 波情報描画エフェクト
 	pObjectWaveData_ = new ObjectWaveData();
@@ -620,7 +640,8 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		pRenderPass_[ GraphicMain::PASS_3D ].GetTexture( GraphicMain::RENDER_PASS_3D_DEPTH ),
 		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_NEAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_NEAR_DEPTH ),
 		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_FAR ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_FAR_DEPTH ),
-		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_DEPTH ) );
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_0 ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_0_DEPTH ),
+		pRenderPass_[ GraphicMain::PASS_DEPTH_SHADOW_POINT_1 ].GetTexture( GraphicMain::RENDER_PASS_DEPTH_SHADOW_POINT_1_DEPTH ) );
 	if( result != 0 )
 	{
 		return result;
@@ -938,6 +959,10 @@ int ManagerMain::Finalize( void )
 	delete pObjectLightReflect_;
 	pObjectLightReflect_ = nullptr;
 
+	// 足元基準ビルボードポリゴンの開放
+	delete pPolygonSignboard_;
+	pPolygonSignboard_ = nullptr;
+
 	// ビルボードポリゴンの開放
 	delete pPolygonBillboard_;
 	pPolygonBillboard_ = nullptr;
@@ -1243,6 +1268,7 @@ void ManagerMain::InitializeSelf( void )
 	pPolygon2D_ = nullptr;
 	pPolygon3D_ = nullptr;
 	pPolygonBillboard_ = nullptr;
+	pPolygonSignboard_ = nullptr;
 
 #ifdef _DEVELOP
 	isPausing_ = false;

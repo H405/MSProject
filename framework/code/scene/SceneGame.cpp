@@ -20,6 +20,7 @@
 #include "../framework/input/VirtualController.h"
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/light/LightDirection.h"
+#include "../framework/light/LightPoint.h"
 #include "../framework/light/ManagerLight.h"
 #include "../framework/object/Object.h"
 #include "../framework/resource/Effect.h"
@@ -51,6 +52,7 @@
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectWaterwheel.h"
 #include "../system/gage/gage.h"
+#include "../system/combo/combo.h"
 #include "../system/player/Player.h"
 
 #include "../framework/system/ManagerDraw.h"
@@ -69,6 +71,9 @@
 #define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
 #define RANDOM(value) (float)((rand() % value) - (rand() % value))
 #define SQUARE(_value) (_value * _value)
+
+
+//#define _WIIBOARD
 
 //******************************************************************************
 // 静的変数
@@ -186,6 +191,23 @@ void SceneGame::Update( void )
 	pCameraShadowFar_->SetPositionCamera( positionLookAt + vectorLight );
 	pCameraShadowFar_->SetPositionLookAt( positionLookAt );
 
+	// 影用カメラ点の更新
+	const LightPoint*	pLightPoint = nullptr;		// 点光源
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterLightPoint )
+	{
+		pLightPoint = pArgument_->pEffectParameter_->GetLightPointLightness( counterLightPoint );
+		if( pLightPoint != nullptr )
+		{
+			D3DXVECTOR3	positionLightPointCamera;		// 点光源の視点座標
+			D3DXVECTOR3	positionLightPointLookAt;		// 点光源の注視点座標
+			pLightPoint->GetPosition( &positionLightPointCamera );
+			positionLightPointLookAt = positionLightPointCamera;
+			positionLightPointLookAt.y -= 1000.0f;
+			ppCameraShadowPoint_[ counterLightPoint ]->SetPositionCamera( positionLightPointCamera );
+			ppCameraShadowPoint_[ counterLightPoint ]->SetPositionLookAt( positionLightPointLookAt );
+		}
+	}
+
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
 }
@@ -222,23 +244,20 @@ void SceneGame::MovePlayer()
 	//	wiiボードを利用した、プレイヤーの移動処理1
 	//---------------------------------------------------------------------------------------------------------
 #ifdef _WIIBOARD
-	if(pArgument_->pWiiController_->getIsConnectWiiboard())
+	float totalCalibKg = pArgument_->pWiiController_->getCalibKg().Total * 0.7f;
+	float totalKgR = pArgument_->pWiiController_->getKg().BottomR + pArgument_->pWiiController_->getKg().TopR;
+	float totalKgL = pArgument_->pWiiController_->getKg().BottomL + pArgument_->pWiiController_->getKg().TopL;
+	if(totalKgL
+		>=
+		totalCalibKg)
 	{
-		float totalCalibKg = pArgument_->pWiiController_->getCalibKg().Total * 0.7f;
-		float totalKgR = pArgument_->pWiiController_->getKg().BottomR + pArgument_->pWiiController_->getKg().TopR;
-		float totalKgL = pArgument_->pWiiController_->getKg().BottomL + pArgument_->pWiiController_->getKg().TopL;
-		if(totalKgL
-			>=
-			totalCalibKg)
-		{
-			player->addSpeed((-((totalKgL - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
-		}
-		if(totalKgR
-			>=
-			totalCalibKg)
-		{
-			player->addSpeed((((totalKgR - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
-		}
+		player->addSpeed((-((totalKgL - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
+	}
+	if(totalKgR
+		>=
+		totalCalibKg)
+	{
+		player->addSpeed((((totalKgR - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
 	}
 #endif
 
@@ -933,7 +952,15 @@ void SceneGame::collision_fireworks_target()
 				//	破裂
 				int returnValue = buffFireworks->burn(buffTargetSize * buffTargetSize, hitPosLength);
 
+				//	ゲージ加算
 				AddGage((ADD_SCORE_STATE)returnValue);
+
+				//	コンボ数加算
+				combo->addScore();
+
+				//	スコア値加算
+				score->setAddScore((gage->getPercent() + 10));
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
 
 				//	ターゲット消去
 				buffTarget->Dissappear();
@@ -950,6 +977,13 @@ void SceneGame::collision_fireworks_target()
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
 		if(buffFireworks->IsBurnFlag())
 			continue;
+
+		//	コンボ数加算
+		combo->addScore();
+
+		//	スコア値加算
+		score->setAddScore((gage->getPercent() + 10));
+		score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
 
 		//	破裂
 		buffFireworks->burn(0.0f, 0.0f);
@@ -992,7 +1026,16 @@ void SceneGame::collision_fireworks_fireworks()
 				buffFireworks->burn2();
 				buffFireworks2->burn2();
 
+				//	ゲージ加算
 				AddGage(ADD_20);
+
+				//	コンボ数加算
+				combo->addScore();
+				combo->addScore();
+
+				//	スコア値加算
+				score->setAddScore((gage->getPercent() + 10));
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
 
 				//	次の花火との当たり判定へ移行
 				break;
