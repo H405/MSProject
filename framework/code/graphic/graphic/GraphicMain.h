@@ -32,6 +32,7 @@
 class Polygon2D;
 class Polygon3D;
 class PolygonBillboard;
+class PolygonSignboard;
 
 //******************************************************************************
 // クラス定義
@@ -300,6 +301,13 @@ public:
 	// Arg    : PolygonBillboard* pValue			: 設定する値
 	//==============================================================================
 	static void SetPolygonBillboard( PolygonBillboard* pValue );
+	
+	//==============================================================================
+	// Brief  : 足元基準ビルボードポリゴンクラスの設定
+	// Return : void								: なし
+	// Arg    : PolygonSignboard* pValue			: 設定する値
+	//==============================================================================
+	static void SetPolygonSignboard( PolygonSignboard* pValue );
 
 	static const int	MAXIMUM_LIGHT_POINT_SHADOW = 2;		// 影を落とす点光源最大数
 
@@ -307,6 +315,7 @@ protected:
 	static Polygon2D*			pPolygon2D_;			// 2Dポリゴン
 	static Polygon3D*			pPolygon3D_;			// 3Dポリゴン
 	static PolygonBillboard*	pPolygonBillboard_;		// ビルボードポリゴン
+	static PolygonSignboard*	pPolygonSignboard_;		// 足元基準ビルボードポリゴン
 
 private:
 	void InitializeSelf( void );

@@ -46,6 +46,7 @@
 #include "../object/Object2D.h"
 #include "../object/Object3D.h"
 #include "../object/ObjectBillboard.h"
+#include "../object/ObjectGrass.h"
 #include "../object/ObjectModel.h"
 #include "../object/ObjectModelMaterial.h"
 #include "../object/ObjectMesh.h"
@@ -414,8 +415,8 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Texture*	pTextureGrass = nullptr;		// テクスチャ
 	Effect*		pEffectGrass = nullptr;			// エフェクト
 	pTextureGrass = pArgument->pTexture_->Get( _T( "common/grass.png" ) );
-	pEffectGrass = pArgument->pEffect_->Get( "Billboard.fx" );
-	grasses = new ObjectBillboard[ COUNT_GRASS ];
+	pEffectGrass = pArgument->pEffect_->Get( "Grass.fx" );
+	grasses = new ObjectGrass[ COUNT_GRASS ];
 	for( int counterGrass = 0; counterGrass < COUNT_GRASS; ++counterGrass )
 	{
 		float	positionX;		// X座標
@@ -423,8 +424,8 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		positionX = -2300.0f + 2000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
 		positionZ = 6800.0f + 1000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
 		grasses[ counterGrass ].Initialize( 0 );
-		grasses[ counterGrass ].CreateGraphic( 0, pArgument->pEffectParameter_, pEffectGrass, pTextureGrass );
-		grasses[ counterGrass ].SetPosition( positionX, 0.5f * pTextureGrass->height_, positionZ );
+		grasses[ counterGrass ].CreateGraphic( -1, pArgument->pEffectParameter_, pEffectGrass, pTextureGrass );
+		grasses[ counterGrass ].SetPosition( positionX, 0.0f, positionZ );
 	}
 
 	// 場所の目印オブジェクトの生成

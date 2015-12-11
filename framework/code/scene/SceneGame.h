@@ -62,6 +62,7 @@ class ManagerTarget;
 class Object2D;
 class ObjectScore;
 class Object3D;
+class ObjectGrass;
 class Material;
 class ObjectModel;
 class ObjectModelMaterial;
@@ -213,7 +214,7 @@ private:
 	ObjectModelMaterial*	houses;			// ‰Æ
 	ObjectModelMaterial*	gate;			// ’¹‹
 
-	ObjectBillboard*		grasses;		// ‘
+	ObjectGrass*			grasses;		// ‘
 
 	ObjectSkinMesh*			markers;		// êŠ‚Ì–Úˆó
 

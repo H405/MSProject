@@ -1,16 +1,17 @@
 //==============================================================================
 //
-// File   : GraphicMain.cpp
-// Brief  : 描画処理の管理クラス
+// File   : GraphicGrass.cpp
+// Brief  : 草描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/12/11 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicMain.h"
+#include "GraphicGrass.h"
+#include "../drawer/DrawerGrass.h"
 
 //******************************************************************************
 // ライブラリ
@@ -23,17 +24,13 @@
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-Polygon2D*			GraphicMain::pPolygon2D_ = nullptr;				// 2Dポリゴンクラス
-Polygon3D*			GraphicMain::pPolygon3D_ = nullptr;				// 3Dポリゴンクラス
-PolygonBillboard*	GraphicMain::pPolygonBillboard_ = nullptr;		// ビルボードポリゴンクラス
-PolygonSignboard*	GraphicMain::pPolygonSignboard_ = nullptr;		// 足元基準ビルボードポリゴンクラス
 
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicMain::GraphicMain( void ) : Graphic()
+GraphicGrass::GraphicGrass( void ) : GraphicMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +41,7 @@ GraphicMain::GraphicMain( void ) : Graphic()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicMain::~GraphicMain( void )
+GraphicGrass::~GraphicGrass( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,28 +51,31 @@ GraphicMain::~GraphicMain( void )
 // Brief  : 初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 描画優先度
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : float hardness						: 硬さ
 //==============================================================================
-int GraphicMain::Initialize( int priority )
+int GraphicGrass::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTexture, float hardness )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Graphic::Initialize( priority );
+	result = GraphicMain::Initialize( priority );
 	if( result != 0 )
 	{
 		return result;
 	}
 
-	// 描画クラス格納領域の確保
-	countDraw_ = GraphicMain::PASS_MAX;
-	ppDraw_ = new Drawer*[ GraphicMain::PASS_MAX ];
-	if( ppDraw_ == nullptr )
+	// 描画クラスの生成
+	DrawerGrass*	pDrawerGrass = nullptr;		// 描画クラス
+	pDrawerGrass = new DrawerGrass();
+	if( pDrawerGrass == nullptr )
 	{
 		return 1;
 	}
-	for( int counterDrawer = 0; counterDrawer < GraphicMain::PASS_MAX; ++counterDrawer )
-	{
-		ppDraw_[ counterDrawer ] = nullptr;
-	}
+	result = pDrawerGrass->Initialize( pParameter, pEffectGeneral, pPolygonSignboard_, pTexture, hardness );
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerGrass;
 
 	// 正常終了
 	return 0;
@@ -86,11 +86,11 @@ int GraphicMain::Initialize( int priority )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicMain::Finalize( void )
+int GraphicGrass::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Graphic::Finalize();
+	result = GraphicMain::Finalize();
 	if( result != 0 )
 	{
 		return result;
@@ -107,8 +107,13 @@ int GraphicMain::Finalize( void )
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
 // Arg    : int priority						: 描画優先度
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : float hardness						: 硬さ
 //==============================================================================
-int GraphicMain::Reinitialize( int priority )
+int GraphicGrass::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTexture, float hardness )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -119,19 +124,19 @@ int GraphicMain::Reinitialize( int priority )
 	}
 
 	// 初期化処理
-	return Initialize( priority );
+	return Initialize( priority, pParameter, pEffectGeneral, pTexture, hardness );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicMain* pOut					: コピー先アドレス
+// Arg    : GraphicGrass* pOut				: コピー先アドレス
 //==============================================================================
-int GraphicMain::Copy( GraphicMain* pOut ) const
+int GraphicGrass::Copy( GraphicGrass* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Graphic::Copy( pOut );
+	result = GraphicMain::Copy( pOut );
 	if( result != 0 )
 	{
 		return result;
@@ -142,55 +147,11 @@ int GraphicMain::Copy( GraphicMain* pOut ) const
 }
 
 //==============================================================================
-// Brief  : 2Dポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : Polygon2D* pValue					: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygon2D( Polygon2D* pValue )
-{
-	// 値の設定
-	pPolygon2D_ = pValue;
-}
-
-//==============================================================================
-// Brief  : 3Dポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : Polygon3D* pValue					: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygon3D( Polygon3D* pValue )
-{
-	// 値の設定
-	pPolygon3D_ = pValue;
-}
-
-//==============================================================================
-// Brief  : ビルボードポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : PolygonBillboard* pValue			: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygonBillboard( PolygonBillboard* pValue )
-{
-	// 値の設定
-	pPolygonBillboard_ = pValue;
-}
-
-//==============================================================================
-// Brief  : 足元基準ビルボードポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : PolygonSignboard* pValue			: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygonSignboard( PolygonSignboard* pValue )
-{
-	// 値の設定
-	pPolygonSignboard_ = pValue;
-}
-
-//==============================================================================
 // Brief  : クラス内の初期化処理
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicMain::InitializeSelf( void )
+void GraphicGrass::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 }

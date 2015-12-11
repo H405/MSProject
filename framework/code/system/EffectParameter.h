@@ -128,6 +128,24 @@ public:
 	float GetForcus( void ) const;
 	void SetHeightReflect( float value );
 	float GetHeightReflect( void ) const;
+	void SetPositionBaseLight( const D3DXVECTOR3& value );
+	void SetPositionBaseLight( float x, float y, float z );
+	void SetPositionBaseLightX( float x );
+	void SetPositionBaseLightY( float y );
+	void SetPositionBaseLightZ( float z );
+	void GetPositionBaseLight( D3DXVECTOR3* pOut ) const;
+	float GetPositionBaseLightX( void ) const;
+	float GetPositionBaseLightY( void ) const;
+	float GetPositionBaseLightZ( void ) const;
+	void SetVectorWind( const D3DXVECTOR3& value );
+	void SetVectorWind( float x, float y, float z );
+	void SetVectorWindX( float x );
+	void SetVectorWindY( float y );
+	void SetVectorWindZ( float z );
+	void GetVectorWind( D3DXVECTOR3* pOut ) const;
+	float GetVectorWindX( void ) const;
+	float GetVectorWindY( void ) const;
+	float GetVectorWindZ( void ) const;
 
 protected:
 
@@ -151,6 +169,7 @@ private:
 	float					forcus_;					// 焦点距離
 	float					heightReflect_;				// 反射面の高さ
 	D3DXVECTOR3				positionBaseLight_;			// ライト優先基準座標
+	D3DXVECTOR3				vectorWind_;				// 風向き
 };
 
 #endif	// MY_EFFECT_PARAMETER_H
