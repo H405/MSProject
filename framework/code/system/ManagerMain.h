@@ -58,6 +58,7 @@ class ObjectWaveDataInitialize;
 class Polygon2D;
 class Polygon3D;
 class PolygonBillboard;
+class PolygonSignboard;
 class RenderPass;
 class SceneArgumentMain;
 class Sound;
@@ -190,6 +191,7 @@ private:
 	Polygon2D*					pPolygon2D_;					// 2Dポリゴン
 	Polygon3D*					pPolygon3D_;					// 3Dポリゴン
 	PolygonBillboard*			pPolygonBillboard_;				// ビルボードポリゴン
+	PolygonSignboard*			pPolygonSignboard_;				// 足元基準ビルボードポリゴン
 
 #ifdef _DEVELOP
 	bool						isPausing_;						// ポーズフラグ

@@ -1,18 +1,17 @@
 //==============================================================================
 //
-// File   : GraphicShadow.cpp
-// Brief  : ライト描画処理の管理クラス
+// File   : GraphicGrass.cpp
+// Brief  : 草描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/31 sat : Taiga Shirakawa : create
+// Date   : 2015/12/11 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicShadow.h"
-#include "../drawer/DrawerShadow.h"
-#include "../../system/EffectParameter.h"
+#include "GraphicGrass.h"
+#include "../drawer/DrawerGrass.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,7 +30,7 @@
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicShadow::GraphicShadow( void ) : GraphicMain()
+GraphicGrass::GraphicGrass( void ) : GraphicMain()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -42,7 +41,7 @@ GraphicShadow::GraphicShadow( void ) : GraphicMain()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicShadow::~GraphicShadow( void )
+GraphicGrass::~GraphicGrass( void )
 {
 	// 終了処理
 	Finalize();
@@ -54,15 +53,11 @@ GraphicShadow::~GraphicShadow( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : float hardness						: 硬さ
 //==============================================================================
-int GraphicShadow::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
-	IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 )
+int GraphicGrass::Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTexture, float hardness )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -72,19 +67,15 @@ int GraphicShadow::Initialize( int priority, const EffectParameter* pParameter, 
 		return result;
 	}
 
-	// メンバ変数の設定
-	pParameter_ = pParameter;
-
 	// 描画クラスの生成
-	DrawerShadow*	pDrawerShadow = nullptr;		// 描画クラス
-	pDrawerShadow = new DrawerShadow();
-	if( pDrawerShadow == nullptr )
+	DrawerGrass*	pDrawerGrass = nullptr;		// 描画クラス
+	pDrawerGrass = new DrawerGrass();
+	if( pDrawerGrass == nullptr )
 	{
 		return 1;
 	}
-	result = pDrawerShadow->Initialize( pParameter, pEffectGeneral, pPolygon2D_,
-		pTextureDepth, pTextureLightNear, pTextureLightFar, pTextureLightPoint0, pTextureLightPoint1 );
-	ppDraw_[ GraphicMain::PASS_SHADOW ] = pDrawerShadow;
+	result = pDrawerGrass->Initialize( pParameter, pEffectGeneral, pPolygonSignboard_, pTexture, hardness );
+	ppDraw_[ GraphicMain::PASS_3D ] = pDrawerGrass;
 
 	// 正常終了
 	return 0;
@@ -95,7 +86,7 @@ int GraphicShadow::Initialize( int priority, const EffectParameter* pParameter, 
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicShadow::Finalize( void )
+int GraphicGrass::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -118,15 +109,11 @@ int GraphicShadow::Finalize( void )
 // Arg    : int priority						: 描画優先度
 // Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
-// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
+// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+// Arg    : float hardness						: 硬さ
 //==============================================================================
-int GraphicShadow::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-	IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
-	IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 )
+int GraphicGrass::Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+	IDirect3DTexture9* pTexture, float hardness )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -137,16 +124,15 @@ int GraphicShadow::Reinitialize( int priority, const EffectParameter* pParameter
 	}
 
 	// 初期化処理
-	return Initialize( priority, pParameter, pEffectGeneral,
-		pTextureDepth, pTextureLightNear, pTextureLightFar, pTextureLightPoint0, pTextureLightPoint1 );
+	return Initialize( priority, pParameter, pEffectGeneral, pTexture, hardness );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicShadow* pOut					: コピー先アドレス
+// Arg    : GraphicGrass* pOut				: コピー先アドレス
 //==============================================================================
-int GraphicShadow::Copy( GraphicShadow* pOut ) const
+int GraphicGrass::Copy( GraphicGrass* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -165,9 +151,7 @@ int GraphicShadow::Copy( GraphicShadow* pOut ) const
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicShadow::InitializeSelf( void )
+void GraphicGrass::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	pParameter_ = nullptr;
-	pDrawerLight_ = nullptr;
 }

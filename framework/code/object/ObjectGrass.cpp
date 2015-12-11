@@ -1,16 +1,20 @@
 //==============================================================================
 //
-// File   : GraphicMain.cpp
-// Brief  : 描画処理の管理クラス
+// File   : ObjectGrass.cpp
+// Brief  : 草オブジェクトクラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/12/11 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicMain.h"
+#include "ObjectGrass.h"
+#include "../framework/resource/Effect.h"
+#include "../framework/resource/Texture.h"
+#include "../graphic/graphic/GraphicGrass.h"
+#include "../system/EffectParameter.h"
 
 //******************************************************************************
 // ライブラリ
@@ -23,17 +27,13 @@
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-Polygon2D*			GraphicMain::pPolygon2D_ = nullptr;				// 2Dポリゴンクラス
-Polygon3D*			GraphicMain::pPolygon3D_ = nullptr;				// 3Dポリゴンクラス
-PolygonBillboard*	GraphicMain::pPolygonBillboard_ = nullptr;		// ビルボードポリゴンクラス
-PolygonSignboard*	GraphicMain::pPolygonSignboard_ = nullptr;		// 足元基準ビルボードポリゴンクラス
 
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicMain::GraphicMain( void ) : Graphic()
+ObjectGrass::ObjectGrass( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +44,7 @@ GraphicMain::GraphicMain( void ) : Graphic()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicMain::~GraphicMain( void )
+ObjectGrass::~ObjectGrass( void )
 {
 	// 終了処理
 	Finalize();
@@ -53,28 +53,16 @@ GraphicMain::~GraphicMain( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : int priority						: 描画優先度
+// Arg    : int priority						: 更新優先度
 //==============================================================================
-int GraphicMain::Initialize( int priority )
+int ObjectGrass::Initialize( int priority )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Graphic::Initialize( priority );
+	result = Object::Initialize( priority );
 	if( result != 0 )
 	{
 		return result;
-	}
-
-	// 描画クラス格納領域の確保
-	countDraw_ = GraphicMain::PASS_MAX;
-	ppDraw_ = new Drawer*[ GraphicMain::PASS_MAX ];
-	if( ppDraw_ == nullptr )
-	{
-		return 1;
-	}
-	for( int counterDrawer = 0; counterDrawer < GraphicMain::PASS_MAX; ++counterDrawer )
-	{
-		ppDraw_[ counterDrawer ] = nullptr;
 	}
 
 	// 正常終了
@@ -86,11 +74,11 @@ int GraphicMain::Initialize( int priority )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicMain::Finalize( void )
+int ObjectGrass::Finalize( void )
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Graphic::Finalize();
+	result = Object::Finalize();
 	if( result != 0 )
 	{
 		return result;
@@ -106,9 +94,9 @@ int GraphicMain::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : int priority						: 描画優先度
+// Arg    : int priority						: 更新優先度
 //==============================================================================
-int GraphicMain::Reinitialize( int priority )
+int ObjectGrass::Reinitialize( int priority )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -125,13 +113,13 @@ int GraphicMain::Reinitialize( int priority )
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicMain* pOut					: コピー先アドレス
+// Arg    : ObjectGrass* pOut				: コピー先アドレス
 //==============================================================================
-int GraphicMain::Copy( GraphicMain* pOut ) const
+int ObjectGrass::Copy( ObjectGrass* pOut ) const
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
-	result = Graphic::Copy( pOut );
+	result = Object::Copy( pOut );
 	if( result != 0 )
 	{
 		return result;
@@ -142,47 +130,78 @@ int GraphicMain::Copy( GraphicMain* pOut ) const
 }
 
 //==============================================================================
-// Brief  : 2Dポリゴンクラスの設定
+// Brief  : 更新処理
 // Return : void								: なし
-// Arg    : Polygon2D* pValue					: 設定する値
+// Arg    : void								: なし
 //==============================================================================
-void GraphicMain::SetPolygon2D( Polygon2D* pValue )
+void ObjectGrass::Update( void )
 {
-	// 値の設定
-	pPolygon2D_ = pValue;
+	// 基本クラスの処理
+	ObjectMovement::Update();
 }
 
 //==============================================================================
-// Brief  : 3Dポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : Polygon3D* pValue					: 設定する値
+// Brief  : 描画クラスの生成
+// Return : int									: 実行結果
+// Arg    : int priority						: 描画優先度
+// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+// Arg    : Texture* pTexture					: テクスチャ
 //==============================================================================
-void GraphicMain::SetPolygon3D( Polygon3D* pValue )
+int ObjectGrass::CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral, Texture* pTexture )
 {
-	// 値の設定
-	pPolygon3D_ = pValue;
+	// グラフィックの生成
+	int					result;				// 実行結果
+	IDirect3DTexture9*	pTextureSet;		// 設定するテクスチャ
+	pTextureSet = nullptr;
+	if( pTexture != nullptr )
+	{
+		pTextureSet = pTexture->pTexture_;
+	}
+	pGraphic_ = new GraphicGrass();
+	if( pGraphic_ == nullptr )
+	{
+		return 1;
+	}
+	result = pGraphic_->Initialize( priority, pParameter, pEffectGeneral, pTextureSet, 0.2f * static_cast< float >( rand() ) / RAND_MAX + 0.1f );
+	if( result != 0 )
+	{
+		return result;
+	}
+	Object::pGraphic_ = pGraphic_;
+
+	// 拡縮の設定
+	if( pTexture != nullptr )
+	{
+		scale_.x = static_cast< float >( pTexture->width_ );
+		scale_.y = static_cast< float >( pTexture->height_ );
+	}
+
+	// 正常終了
+	return 0;
 }
 
 //==============================================================================
-// Brief  : ビルボードポリゴンクラスの設定
+// Brief  : 描画クラスの設定
 // Return : void								: なし
-// Arg    : PolygonBillboard* pValue			: 設定する値
+// Arg    : GraphicGrass* pValue						: 設定する値
 //==============================================================================
-void GraphicMain::SetPolygonBillboard( PolygonBillboard* pValue )
+void ObjectGrass::SetGraphic( GraphicGrass* pValue )
 {
 	// 値の設定
-	pPolygonBillboard_ = pValue;
+	pGraphic_ = pValue;
+	Object::pGraphic_ = pValue;
 }
 
 //==============================================================================
-// Brief  : 足元基準ビルボードポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : PolygonSignboard* pValue			: 設定する値
+// Brief  : 描画クラスの取得
+// Return : GraphicGrass*							: 返却する値
+// Arg    : void								: なし
 //==============================================================================
-void GraphicMain::SetPolygonSignboard( PolygonSignboard* pValue )
+GraphicGrass* ObjectGrass::GetGraphic( void ) const
 {
-	// 値の設定
-	pPolygonSignboard_ = pValue;
+	// 値の返却
+	return pGraphic_;
 }
 
 //==============================================================================
@@ -190,7 +209,8 @@ void GraphicMain::SetPolygonSignboard( PolygonSignboard* pValue )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicMain::InitializeSelf( void )
+void ObjectGrass::InitializeSelf( void )
 {
 	// メンバ変数の初期化
+	pGraphic_ = nullptr;
 }

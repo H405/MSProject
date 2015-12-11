@@ -1,16 +1,18 @@
 //==============================================================================
 //
-// File   : GraphicMain.cpp
-// Brief  : 描画処理の管理クラス
+// File   : PolygonSignboard.cpp
+// Brief  : 足元基準ビルボードポリゴン
 // Author : Taiga Shirakawa
-// Date   : 2015/10/17 sat : Taiga Shirakawa : create
+// Date   : 2015/12/10 thu : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "GraphicMain.h"
+#include "PolygonSignboard.h"
+#include "../vertex/Vertex.h"
+#include "../vertex/VertexBuffer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -23,17 +25,13 @@
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-Polygon2D*			GraphicMain::pPolygon2D_ = nullptr;				// 2Dポリゴンクラス
-Polygon3D*			GraphicMain::pPolygon3D_ = nullptr;				// 3Dポリゴンクラス
-PolygonBillboard*	GraphicMain::pPolygonBillboard_ = nullptr;		// ビルボードポリゴンクラス
-PolygonSignboard*	GraphicMain::pPolygonSignboard_ = nullptr;		// 足元基準ビルボードポリゴンクラス
 
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicMain::GraphicMain( void ) : Graphic()
+PolygonSignboard::PolygonSignboard( void )
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -44,7 +42,7 @@ GraphicMain::GraphicMain( void ) : Graphic()
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-GraphicMain::~GraphicMain( void )
+PolygonSignboard::~PolygonSignboard( void )
 {
 	// 終了処理
 	Finalize();
@@ -53,29 +51,51 @@ GraphicMain::~GraphicMain( void )
 //==============================================================================
 // Brief  : 初期化処理
 // Return : int									: 実行結果
-// Arg    : int priority						: 描画優先度
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 //==============================================================================
-int GraphicMain::Initialize( int priority )
+int PolygonSignboard::Initialize( IDirect3DDevice9* pDevice )
 {
-	// 基本クラスの処理
+	// メンバ変数の設定
+	pDevice_ = pDevice;
+
+	// 頂点情報の生成
 	int		result;		// 実行結果
-	result = Graphic::Initialize( priority );
+	pVertex_ = new Vertex();
+	if( pVertex_ == nullptr )
+	{
+		return 1;
+	}
+	result = pVertex_->Initialize( pDevice, Vertex::ELEMENT_SET_SIMPLE );
 	if( result != 0 )
 	{
 		return result;
 	}
 
-	// 描画クラス格納領域の確保
-	countDraw_ = GraphicMain::PASS_MAX;
-	ppDraw_ = new Drawer*[ GraphicMain::PASS_MAX ];
-	if( ppDraw_ == nullptr )
+	// 頂点バッファ情報を作成
+	VertexBuffer	buffer;		// 頂点バッファ情報
+	buffer.Initialize( COUNT_VERTEX, pVertex_ );
+	for( int counterVertex = 0; counterVertex < COUNT_VERTEX; ++counterVertex )
 	{
-		return 1;
+		buffer.SetPosition( counterVertex, 1.0f * (counterVertex % COUNT_VERTEX_LINE) - 0.5f, -1.0f * (counterVertex / COUNT_VERTEX_LINE) + 1.0f, 0.0f );
+		buffer.SetNormal( counterVertex, 0.0f, 0.0f, -1.0f );
+		buffer.SetTextureCoord0( counterVertex, 1.0f * (counterVertex % COUNT_VERTEX_LINE), 1.0f * (counterVertex / COUNT_VERTEX_LINE) );
+		buffer.SetColorDiffuse( counterVertex, 1.0f, 1.0f, 1.0f, 1.0f );
 	}
-	for( int counterDrawer = 0; counterDrawer < GraphicMain::PASS_MAX; ++counterDrawer )
+
+	// 頂点バッファの生成
+	int		sizeVertex;		// 頂点のサイズ
+	sizeVertex = pVertex_->GetSize();
+	result = pDevice->CreateVertexBuffer( sizeVertex * COUNT_VERTEX, D3DUSAGE_WRITEONLY, 0, D3DPOOL_MANAGED, &pVertexBuffer_, nullptr );
+	if( result != 0 )
 	{
-		ppDraw_[ counterDrawer ] = nullptr;
+		return result;
 	}
+
+	// 頂点バッファに値を設定
+	void*	pBufferAddress = nullptr;		// バッファのアドレス
+	pVertexBuffer_->Lock( 0, 0, &pBufferAddress, 0 );
+	memcpy_s( pBufferAddress, sizeVertex * COUNT_VERTEX, buffer.GetBuffer(), sizeVertex * COUNT_VERTEX );
+	pVertexBuffer_->Unlock();
 
 	// 正常終了
 	return 0;
@@ -86,15 +106,18 @@ int GraphicMain::Initialize( int priority )
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int GraphicMain::Finalize( void )
+int PolygonSignboard::Finalize( void )
 {
-	// 基本クラスの処理
-	int		result;		// 実行結果
-	result = Graphic::Finalize();
-	if( result != 0 )
+	// 頂点バッファの開放
+	if( pVertexBuffer_ != nullptr )
 	{
-		return result;
+		pVertexBuffer_->Release();
+		pVertexBuffer_ = nullptr;
 	}
+
+	// 頂点情報の開放
+	delete pVertex_;
+	pVertex_ = nullptr;
 
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -106,9 +129,9 @@ int GraphicMain::Finalize( void )
 //==============================================================================
 // Brief  : 再初期化処理
 // Return : int									: 実行結果
-// Arg    : int priority						: 描画優先度
+// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 //==============================================================================
-int GraphicMain::Reinitialize( int priority )
+int PolygonSignboard::Reinitialize( IDirect3DDevice9* pDevice )
 {
 	// 終了処理
 	int		result;		// 実行結果
@@ -119,70 +142,31 @@ int GraphicMain::Reinitialize( int priority )
 	}
 
 	// 初期化処理
-	return Initialize( priority );
+	return Initialize( pDevice );
 }
 
 //==============================================================================
 // Brief  : クラスのコピー
 // Return : int									: 実行結果
-// Arg    : GraphicMain* pOut					: コピー先アドレス
+// Arg    : PolygonSignboard* pOut						: コピー先アドレス
 //==============================================================================
-int GraphicMain::Copy( GraphicMain* pOut ) const
+int PolygonSignboard::Copy( PolygonSignboard* pOut ) const
 {
-	// 基本クラスの処理
-	int		result;		// 実行結果
-	result = Graphic::Copy( pOut );
-	if( result != 0 )
-	{
-		return result;
-	}
-
 	// 正常終了
 	return 0;
 }
 
 //==============================================================================
-// Brief  : 2Dポリゴンクラスの設定
+// Brief  : 描画処理
 // Return : void								: なし
-// Arg    : Polygon2D* pValue					: 設定する値
+// Arg    : void								: なし
 //==============================================================================
-void GraphicMain::SetPolygon2D( Polygon2D* pValue )
+void PolygonSignboard::Draw( void )
 {
-	// 値の設定
-	pPolygon2D_ = pValue;
-}
-
-//==============================================================================
-// Brief  : 3Dポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : Polygon3D* pValue					: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygon3D( Polygon3D* pValue )
-{
-	// 値の設定
-	pPolygon3D_ = pValue;
-}
-
-//==============================================================================
-// Brief  : ビルボードポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : PolygonBillboard* pValue			: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygonBillboard( PolygonBillboard* pValue )
-{
-	// 値の設定
-	pPolygonBillboard_ = pValue;
-}
-
-//==============================================================================
-// Brief  : 足元基準ビルボードポリゴンクラスの設定
-// Return : void								: なし
-// Arg    : PolygonSignboard* pValue			: 設定する値
-//==============================================================================
-void GraphicMain::SetPolygonSignboard( PolygonSignboard* pValue )
-{
-	// 値の設定
-	pPolygonSignboard_ = pValue;
+	// 描画
+	pDevice_->SetStreamSource( 0, pVertexBuffer_, 0, pVertex_->GetSize() );
+	pDevice_->SetVertexDeclaration( pVertex_->GetDeclaration() );
+	pDevice_->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, COUNT_VERTEX - 2 );
 }
 
 //==============================================================================
@@ -190,7 +174,10 @@ void GraphicMain::SetPolygonSignboard( PolygonSignboard* pValue )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void GraphicMain::InitializeSelf( void )
+void PolygonSignboard::InitializeSelf( void )
 {
 	// メンバ変数の初期化
+	pDevice_ = nullptr;
+	pVertexBuffer_ = nullptr;
+	pVertex_ = nullptr;
 }

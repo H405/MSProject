@@ -77,9 +77,8 @@ public:
 	// Arg    : Model* pModel						: モデル
 	// Arg    : int countBone						: ボーン数
 	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -96,9 +95,8 @@ public:
 	// Arg    : Model* pModel						: モデル
 	// Arg    : int countBone						: ボーン数
 	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
-	// Arg    : int* pIndexFrame					: フレーム番号参照アドレス
 	//==============================================================================
-	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone, int* pIndexFrame );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, Model* pModel, int countBone, D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -126,7 +124,6 @@ protected:
 	Model*					pModel_;				// モデル
 	int						countBone_;				// ボーン数
 	D3DXMATRIX*				pMatrixBone_;			// ボーン変換行列参照アドレス
-	int*					pIndexFrame_;			// フレーム番号参照アドレス
 
 private:
 	void InitializeSelf( void );

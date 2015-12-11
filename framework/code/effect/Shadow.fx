@@ -28,10 +28,15 @@ float4x4	matrixViewLightFar_;			// 平行光源(遠)のビュー変換行列
 texture		textureDepthLightFar_;			// 平行光源(遠)の深度テクスチャ
 float		clipFarLightFar_;				// 平行光源(遠)のファークリップ面
 
-float4x4	matrixViewLightPoint_;			// 点光源のビュー変換行列
-texture		textureDepthLightPoint_;		// 点光源の深度テクスチャ
-float		clipFarLightPoint_;				// 点光源のファークリップ面
-float3		attenuationLightPoint_;			// 点光源の減衰率
+float4x4	matrixViewLightPoint0_;			// 点光源0のビュー変換行列
+texture		textureDepthLightPoint0_;		// 点光源0の深度テクスチャ
+float		clipFarLightPoint0_;			// 点光源0のファークリップ面
+float3		attenuationLightPoint0_;		// 点光源0の減衰率
+
+float4x4	matrixViewLightPoint1_;			// 点光源1のビュー変換行列
+texture		textureDepthLightPoint1_;		// 点光源1の深度テクスチャ
+float		clipFarLightPoint1_;			// 点光源1のファークリップ面
+float3		attenuationLightPoint1_;		// 点光源1の減衰率
 
 //******************************************************************************
 // サンプリング
@@ -66,9 +71,19 @@ sampler samplerTextureDepthLightFar = sampler_state
 	AddressV  = Clamp;
 };
 
-sampler samplerTextureDepthLightPoint = sampler_state
+sampler samplerTextureDepthLightPoint0 = sampler_state
 {
-	Texture = < textureDepthLightPoint_ >;
+	Texture = < textureDepthLightPoint0_ >;
+	MinFilter = Point;
+	MagFilter = Linear;
+	MipFilter = None;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+sampler samplerTextureDepthLightPoint1 = sampler_state
+{
+	Texture = < textureDepthLightPoint1_ >;
 	MinFilter = Point;
 	MagFilter = Linear;
 	MipFilter = None;
@@ -147,33 +162,72 @@ float CalculateShadowFar( float3 positionWorld )
 }
 
 //==============================================================================
-// Brief  : 点光源の影を計算
+// Brief  : 点光源0の影を計算
 // Return : float							: 影の濃さ
 // Arg    : float3 positionWorld			: ワールド座標
 //==============================================================================
-float CalculateShadowPoint( float3 positionWorld )
+float CalculateShadowPoint0( float3 positionWorld )
 {
 	// 必要な情報を求める
-	float4	positionView = mul( float4( positionWorld, 1.0f ), matrixViewLightPoint_ );
+	float4	positionView = mul( float4( positionWorld, 1.0f ), matrixViewLightPoint0_ );
 	float	distanceProjection = positionView.x * positionView.x + positionView.y * positionView.y;
 	float	distanceToVertex = length( positionView );
 
 	// テクスチャの座標を求める
-	float2	positionTextureLightPoint = positionView * (distanceToVertex - positionView.z) / distanceProjection;
-	positionTextureLightPoint = float2( 1.0f + positionTextureLightPoint.x, 1.0f - positionTextureLightPoint.y );
-	positionTextureLightPoint *= 0.5f;
+	float2	positionTextureLightPoint0 = positionView * (distanceToVertex - positionView.z) / distanceProjection;
+	positionTextureLightPoint0 = float2( 1.0f + positionTextureLightPoint0.x, 1.0f - positionTextureLightPoint0.y );
+	positionTextureLightPoint0 *= 0.5f;
 
 	// 深度を取得
-	float	depthLightPoint = clipFarLightPoint_ - tex2D( samplerTextureDepthLightPoint, positionTextureLightPoint ).r;
+	float	depthLightPoint0 = clipFarLightPoint0_ - tex2D( samplerTextureDepthLightPoint0, positionTextureLightPoint0 ).r;
 
 	// 色を返す
 	float	shadow;
-	if( distanceToVertex - depthLightPoint > 25.0f )
+	if( distanceToVertex - depthLightPoint0 > 25.0f )
 	{
 		// 減衰率を求める
-		float	attenuation = attenuationLightPoint_.x
-			+ attenuationLightPoint_.y * distanceToVertex
-			+ attenuationLightPoint_.z * distanceToVertex * distanceToVertex;
+		float	attenuation = attenuationLightPoint0_.x
+			+ attenuationLightPoint0_.y * distanceToVertex
+			+ attenuationLightPoint0_.z * distanceToVertex * distanceToVertex;
+
+		// 影の濃さを決定
+		shadow = 1.0f - 0.7f / (1.0f + attenuation);
+	}
+	else
+	{
+		shadow = 1.0f;
+	}
+	return shadow;
+}
+
+//==============================================================================
+// Brief  : 点光源1の影を計算
+// Return : float							: 影の濃さ
+// Arg    : float3 positionWorld			: ワールド座標
+//==============================================================================
+float CalculateShadowPoint1( float3 positionWorld )
+{
+	// 必要な情報を求める
+	float4	positionView = mul( float4( positionWorld, 1.0f ), matrixViewLightPoint1_ );
+	float	distanceProjection = positionView.x * positionView.x + positionView.y * positionView.y;
+	float	distanceToVertex = length( positionView );
+
+	// テクスチャの座標を求める
+	float2	positionTextureLightPoint1 = positionView * (distanceToVertex - positionView.z) / distanceProjection;
+	positionTextureLightPoint1 = float2( 1.0f + positionTextureLightPoint1.x, 1.0f - positionTextureLightPoint1.y );
+	positionTextureLightPoint1 *= 0.5f;
+
+	// 深度を取得
+	float	depthLightPoint1 = clipFarLightPoint1_ - tex2D( samplerTextureDepthLightPoint1, positionTextureLightPoint1 ).r;
+
+	// 色を返す
+	float	shadow;
+	if( distanceToVertex - depthLightPoint1 > 25.0f )
+	{
+		// 減衰率を求める
+		float	attenuation = attenuationLightPoint1_.x
+			+ attenuationLightPoint1_.y * distanceToVertex
+			+ attenuationLightPoint1_.z * distanceToVertex * distanceToVertex;
 
 		// 影の濃さを決定
 		shadow = 1.0f - 0.7f / (1.0f + attenuation);
@@ -231,7 +285,8 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	}
 
 	// 点光源の影を決定
-	shadow *= CalculateShadowPoint( positionWorld );
+	shadow *= CalculateShadowPoint0( positionWorld );
+	shadow *= CalculateShadowPoint1( positionWorld );
 
 	// 色を返す
 	float4	color;

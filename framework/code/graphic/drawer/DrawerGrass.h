@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectShadow.h
-// Brief  : ライト描画オブジェクトクラス
+// File   : DrawerGrass.h
+// Brief  : 草描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/31 sat : Taiga Shirakawa : create
+// Date   : 2015/12/11 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SHADOW_H
-#define MY_OBJECT_SHADOW_H
+#ifndef MY_DRAWER_GRASS_H
+#define MY_DRAWER_GRASS_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/object.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,34 +31,48 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class GraphicShadow;
+class PolygonSignboard;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectShadow : public Object
+class DrawerGrass : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_TEXTURE,					// テクスチャ
+		PARAMETER_VECTOR_WIND,				// 風向き
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectShadow( void );
+	DrawerGrass( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectShadow( void );
+	~DrawerGrass( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonSignboard* pPolygon			: ビルボードポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : float hardness						: 硬さ
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( const EffectParameter* pParameter, Effect* pEffect, PolygonSignboard* pPolygon,
+		IDirect3DTexture9* pTexture, float hardness );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -70,54 +84,49 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : PolygonSignboard* pPolygon			: ビルボードポリゴン
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : float hardness						: 硬さ
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( const EffectParameter* pParameter, Effect* pEffect, PolygonSignboard* pPolygon,
+		IDirect3DTexture9* pTexture, float hardness );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectShadow* pOut					: コピー先アドレス
+	// Arg    : DrawerGrass* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectShadow* pOut ) const;
+	int Copy( DrawerGrass* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
-		IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 );
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicShadow* pValue );
-	GraphicShadow* GetGraphic( void ) const;
+	void SetTexture( IDirect3DTexture9* pValue );
+	IDirect3DTexture9* GetTexture( void ) const;
 
 protected:
-	GraphicShadow*	pGraphic_;		// 描画クラス
+	const EffectParameter*	pEffectParameter_;			// エフェクトパラメータ
+	Effect*					pEffect_;					// エフェクト
+	IDirect3DTexture9*		pTexture_;					// テクスチャ
+	PolygonSignboard*		pPolygon_;					// ポリゴン
+	float					hardness_;					// 硬さ
+	D3DXVECTOR3				vectorTransform_;			// 変形のベクトル
+	D3DXVECTOR3				velocityTransform_;			// 変形の速度
 
 private:
 	void InitializeSelf( void );
-	ObjectShadow( const ObjectShadow& );
-	ObjectShadow operator=( const ObjectShadow& );
+	DrawerGrass( const DrawerGrass& );
+	DrawerGrass operator=( const DrawerGrass& );
 
 };
 
-#endif	// MY_OBJECT_SHADOW_H
+#endif	// MY_DRAWER_GRASS_H

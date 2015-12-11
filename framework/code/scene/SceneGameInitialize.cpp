@@ -46,6 +46,7 @@
 #include "../object/Object2D.h"
 #include "../object/Object3D.h"
 #include "../object/ObjectBillboard.h"
+#include "../object/ObjectGrass.h"
 #include "../object/ObjectModel.h"
 #include "../object/ObjectModelMaterial.h"
 #include "../object/ObjectMesh.h"
@@ -93,7 +94,7 @@ void SceneGame::InitializeSelf( void )
 	pCamera_ = nullptr;
 	pCameraShadowNear_ = nullptr;
 	pCameraShadowFar_ = nullptr;
-	pCameraShadowPoint_ = nullptr;
+	ppCameraShadowPoint_ = nullptr;
 	pLight_ = nullptr;
 
 	//	ゲームUI関係
@@ -229,9 +230,17 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
 
 	// 影用カメラ点の設定
-	pCameraShadowPoint_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT );
-	pCameraShadowPoint_->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 10000.0f,
-		D3DXVECTOR3( 260.0f, 1000.0f, 3540.0f ), D3DXVECTOR3( 260.0f, 0.0f, 3540.0f ), D3DXVECTOR3( 0.0f, 0.0f, 1.0f ), false );
+	ppCameraShadowPoint_ = new CameraObject*[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];
+	if( ppCameraShadowPoint_ == nullptr )
+	{
+		return 1;
+	}
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++ counterLightPoint )
+	{
+		ppCameraShadowPoint_[ counterLightPoint ] = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT_0 + counterLightPoint );
+		ppCameraShadowPoint_[ counterLightPoint ]->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 10000.0f,
+			D3DXVECTOR3( 0.0f, 1000.0f, 0.0f ), D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 0.0f, 1.0f ), false );
+	}
 
 	// 環境光の設定
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
@@ -411,8 +420,8 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Texture*	pTextureGrass = nullptr;		// テクスチャ
 	Effect*		pEffectGrass = nullptr;			// エフェクト
 	pTextureGrass = pArgument->pTexture_->Get( _T( "common/grass.png" ) );
-	pEffectGrass = pArgument->pEffect_->Get( "Billboard.fx" );
-	grasses = new ObjectBillboard[ COUNT_GRASS ];
+	pEffectGrass = pArgument->pEffect_->Get( "Grass.fx" );
+	grasses = new ObjectGrass[ COUNT_GRASS ];
 	for( int counterGrass = 0; counterGrass < COUNT_GRASS; ++counterGrass )
 	{
 		float	positionX;		// X座標
@@ -420,22 +429,27 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		positionX = -2300.0f + 2000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
 		positionZ = 6800.0f + 1000.0f * (static_cast< float >( rand() ) / RAND_MAX - 0.5f);
 		grasses[ counterGrass ].Initialize( 0 );
-		grasses[ counterGrass ].CreateGraphic( 0, pArgument->pEffectParameter_, pEffectGrass, pTextureGrass );
-		grasses[ counterGrass ].SetPosition( positionX, 0.5f * pTextureGrass->height_, positionZ );
+		grasses[ counterGrass ].CreateGraphic( -1, pArgument->pEffectParameter_, pEffectGrass, pTextureGrass );
+		grasses[ counterGrass ].SetPosition( positionX, 0.0f, positionZ );
 	}
 
 	// 場所の目印オブジェクトの生成
-	Model*	pModelMarker = nullptr;				// モデル
-	Effect*	pEffectMarkerGeneral = nullptr;		// 通常描画エフェクト
-	Effect*	pEffectMarkerReflect = nullptr;		// 反射エフェクト
+	Model*	pModelMarker = nullptr;					// モデル
+	Effect*	pEffectMarkerGeneral = nullptr;			// 通常描画エフェクト
+	Effect*	pEffectMarkerReflect = nullptr;			// 反射エフェクト
+	Effect*	pEffectMarkerShadow = nullptr;			// 影エフェクト
+	Effect*	pEffectMarkerParaboloid = nullptr;		// 放物変換エフェクト
 	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
 	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	pEffectMarkerShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
+	pEffectMarkerParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
 	markers = new ObjectSkinMesh[ 4 ];
 	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
 	{
 		markers[ counterMarker ].Initialize( 0, 0 );
-		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_, pEffectMarkerGeneral, pEffectMarkerReflect );
+		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
+			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );
@@ -515,27 +529,34 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 
 
 	// スキンメッシュの生成
-	Effect*	pEffectSkinMesh = nullptr;				// エフェクト
-	Effect*	pEffectSkinMeshReflect = nullptr;		// エフェクト
-	Model*	pModelSkinMesh = nullptr;				// モデル
+	Effect*	pEffectSkinMesh = nullptr;					// エフェクト
+	Effect*	pEffectSkinMeshReflect = nullptr;			// エフェクト
+	Effect*	pEffectSkinMeshShadow = nullptr;			// エフェクト
+	Effect*	pEffectSkinMeshParaboloid = nullptr;		// エフェクト
+	Model*	pModelSkinMesh = nullptr;					// モデル
 	pEffectSkinMesh = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectSkinMeshReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	pEffectSkinMeshShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
+	pEffectSkinMeshParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
 	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
 	pObjectSkinMesh_[0] = new ObjectSkinMesh();
 	pObjectSkinMesh_[0]->Initialize( 0, 1 );
-	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_[0]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[0]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[0]->SetPosition( 300.0f, 100.0f, 0.0f );
 
 	pObjectSkinMesh_[1] = new ObjectSkinMesh();
 	pObjectSkinMesh_[1]->Initialize( 0, 1 );
-	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_[1]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[1]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[1]->SetPosition( 0.0f, 100.0f, 0.0f );
 
 	pObjectSkinMesh_[2] = new ObjectSkinMesh();
 	pObjectSkinMesh_[2]->Initialize( 0, 1 );
-	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_, pEffectSkinMesh, pEffectSkinMeshReflect );
+	pObjectSkinMesh_[2]->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
+		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[2]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[2]->SetPosition( -300.0f, 100.0f, 0.0f );
 }
@@ -888,11 +909,16 @@ int SceneGame::Finalize( void )
 	}
 
 	// 影用カメラ点の開放
-	if( pCameraShadowPoint_ != nullptr )
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterLightPoint )
 	{
-		pCameraShadowPoint_->SetState( nullptr );
-		pCameraShadowPoint_ = nullptr;
+		if( ppCameraShadowPoint_[ counterLightPoint ] != nullptr )
+		{
+			ppCameraShadowPoint_[ counterLightPoint ]->SetState( nullptr );
+			ppCameraShadowPoint_[ counterLightPoint ] = nullptr;
+		}
 	}
+	delete[] ppCameraShadowPoint_;
+	ppCameraShadowPoint_ = nullptr;
 
 	// 影用カメラ遠の開放
 	if( pCameraShadowFar_ != nullptr )

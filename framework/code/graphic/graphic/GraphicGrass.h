@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectShadow.h
-// Brief  : ライト描画オブジェクトクラス
+// File   : GraphicGrass.h
+// Brief  : 草描画処理の管理クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/31 sat : Taiga Shirakawa : create
+// Date   : 2015/12/11 fri : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SHADOW_H
-#define MY_OBJECT_SHADOW_H
+#ifndef MY_GRAPHIC_GRASS_H
+#define MY_GRAPHIC_GRASS_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/object.h"
+#include "GraphicMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,14 +29,13 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
 class EffectParameter;
-class GraphicShadow;
+class Effect;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectShadow : public Object
+class GraphicGrass : public GraphicMain
 {
 public:
 	//==============================================================================
@@ -44,21 +43,26 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectShadow( void );
+	GraphicGrass( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectShadow( void );
+	~GraphicGrass( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : float hardness						: 硬さ
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTexture, float hardness );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -70,54 +74,29 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : int priority						: 描画優先度
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
+	// Arg    : IDirect3DTexture9* pTexture			: テクスチャ
+	// Arg    : float hardness						: 硬さ
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
+		IDirect3DTexture9* pTexture, float hardness );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectShadow* pOut					: コピー先アドレス
+	// Arg    : GraphicGrass* pOut				: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectShadow* pOut ) const;
-
-	//==============================================================================
-	// Brief  : 更新処理
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
-		IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	void SetGraphic( GraphicShadow* pValue );
-	GraphicShadow* GetGraphic( void ) const;
+	int Copy( GraphicGrass* pOut ) const;
 
 protected:
-	GraphicShadow*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	ObjectShadow( const ObjectShadow& );
-	ObjectShadow operator=( const ObjectShadow& );
+	GraphicGrass( const GraphicGrass& );
+	GraphicGrass operator=( const GraphicGrass& );
 
 };
 
-#endif	// MY_OBJECT_SHADOW_H
+#endif	// MY_GRAPHIC_GRASS_H

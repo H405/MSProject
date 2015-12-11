@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectShadow.h
-// Brief  : ライト描画オブジェクトクラス
+// File   : DrawerSkinMeshShadow.h
+// Brief  : モデル影描画クラス
 // Author : Taiga Shirakawa
-// Date   : 2015/10/31 sat : Taiga Shirakawa : create
+// Date   : 2015/11/24 sun : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SHADOW_H
-#define MY_OBJECT_SHADOW_H
+#ifndef MY_DRAWER_SKIN_MESH_SHADOW_H
+#define MY_DRAWER_SKIN_MESH_SHADOW_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/object.h"
+#include "../../framework/graphic/drawer.h"
 
 //******************************************************************************
 // ライブラリ
@@ -31,34 +31,50 @@
 //******************************************************************************
 class Effect;
 class EffectParameter;
-class GraphicShadow;
+class Model;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectShadow : public Object
+class DrawerSkinMeshShadow : public Drawer
 {
 public:
+	// パラメータ
+	enum
+	{
+		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
+		PARAMETER_MATRIX_BONE,				// ボーン変換行列
+		PARAMETER_CLIP_FAR,					// ファークリップ面
+		PARAMETER_MAX						// 最大値
+	};
+
 	//==============================================================================
 	// Brief  : コンストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectShadow( void );
+	DrawerSkinMeshShadow( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectShadow( void );
+	~DrawerSkinMeshShadow( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : int indexCamera						: カメラ番号
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera,
+		int countBone, D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -70,54 +86,48 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : Model* pModel						: モデル
+	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
+	// Arg    : Effect* pEffect						: 描画エフェクト
+	// Arg    : int indexCamera						: カメラ番号
+	// Arg    : int countBone						: ボーン数
+	// Arg    : D3DXMATRIX* pMatrixBone				: ボーン変換行列参照アドレス
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( Model* pModel, const EffectParameter* pParameter, Effect* pEffect, int indexCamera,
+		int countBone, D3DXMATRIX* pMatrixBone );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectShadow* pOut					: コピー先アドレス
+	// Arg    : DrawerSkinMeshShadow* pOut			: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectShadow* pOut ) const;
+	int Copy( DrawerSkinMeshShadow* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
-	// Arg    : void								: なし
+	// Arg    : const D3DXMATRIX& matrixWorld		: ワールドマトリクス
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
-		IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 );
+	void Draw( const D3DXMATRIX& matrixWorld );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetGraphic( GraphicShadow* pValue );
-	GraphicShadow* GetGraphic( void ) const;
+	void SetModel( Model* pValue );
+	Model* GetModel( void ) const;
 
 protected:
-	GraphicShadow*	pGraphic_;		// 描画クラス
+	const EffectParameter*	pEffectParameter_;		// エフェクトパラメータ
+	Effect*					pEffect_;				// エフェクト
+	Model*					pModel_;				// モデル
+	int						indexCamera_;			// カメラ番号
+	int						countBone_;				// ボーン数
+	D3DXMATRIX*				pMatrixBone_;			// ボーン変換行列参照アドレス
 
 private:
 	void InitializeSelf( void );
-	ObjectShadow( const ObjectShadow& );
-	ObjectShadow operator=( const ObjectShadow& );
-
+	DrawerSkinMeshShadow( const DrawerSkinMeshShadow& );
+	DrawerSkinMeshShadow operator=( const DrawerSkinMeshShadow& );
 };
 
-#endif	// MY_OBJECT_SHADOW_H
+#endif	// MY_DRAWER_SKIN_MESH_SHADOW_H

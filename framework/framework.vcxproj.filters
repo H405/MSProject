@@ -612,6 +612,24 @@
     <ClInclude Include="code\system\combo\combo.h">
       <Filter>ソース ファイル\system\combo</Filter>
     </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshShadow.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerSkinMeshParaboloid.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\framework\polygon\PolygonSignboard.h">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\drawer\DrawerGrass.h">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClInclude>
+    <ClInclude Include="code\graphic\graphic\GraphicGrass.h">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="code\object\ObjectGrass.h">
+      <Filter>ソース ファイル\object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1112,6 +1130,24 @@
     <ClCompile Include="code\system\combo\combo.cpp">
       <Filter>ソース ファイル\system\combo</Filter>
     </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshShadow.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerSkinMeshParaboloid.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\framework\polygon\PolygonSignboard.cpp">
+      <Filter>ソース ファイル\framework\polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\drawer\DrawerGrass.cpp">
+      <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\graphic\graphic\GraphicGrass.cpp">
+      <Filter>ソース ファイル\graphic\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="code\object\ObjectGrass.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\effect\Polygon3D.fx">
@@ -1214,6 +1250,9 @@
       <Filter>ソース ファイル\effect</Filter>
     </None>
     <None Include="code\effect\SkinMeshParaboloid.fx">
+      <Filter>ソース ファイル\effect</Filter>
+    </None>
+    <None Include="code\effect\Grass.fx">
       <Filter>ソース ファイル\effect</Filter>
     </None>
   </ItemGroup>

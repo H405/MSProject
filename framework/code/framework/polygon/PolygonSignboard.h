@@ -1,22 +1,22 @@
 //==============================================================================
 //
-// File   : ObjectShadow.h
-// Brief  : ライト描画オブジェクトクラス
+// File   : PolygonSignboard.h
+// Brief  : 足元基準ビルボードポリゴン
 // Author : Taiga Shirakawa
-// Date   : 2015/10/31 sat : Taiga Shirakawa : create
+// Date   : 2015/12/10 thu : Taiga Shirakawa : create
 //
 //==============================================================================
 
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_OBJECT_SHADOW_H
-#define MY_OBJECT_SHADOW_H
+#ifndef MY_POLYGON_SIGNBOARD_H
+#define MY_POLYGON_SIGNBOARD_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "../framework/object/object.h"
+#include "d3dx9.h"
 
 //******************************************************************************
 // ライブラリ
@@ -29,14 +29,12 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class Effect;
-class EffectParameter;
-class GraphicShadow;
+class Vertex;
 
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class ObjectShadow : public Object
+class PolygonSignboard
 {
 public:
 	//==============================================================================
@@ -44,21 +42,21 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	ObjectShadow( void );
+	PolygonSignboard( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~ObjectShadow( void );
+	~PolygonSignboard( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	//==============================================================================
-	int Initialize( int priority );
+	int Initialize( IDirect3DDevice9* pDevice );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -70,54 +68,37 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : int priority						: 更新優先度
+	// Arg    : IDirect3DDevice9* pDevice			: Direct3Dデバイス
 	//==============================================================================
-	int Reinitialize( int priority );
+	int Reinitialize( IDirect3DDevice9* pDevice );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
 	// Return : int									: 実行結果
-	// Arg    : ObjectShadow* pOut					: コピー先アドレス
+	// Arg    : PolygonSignboard* pOut						: コピー先アドレス
 	//==============================================================================
-	int Copy( ObjectShadow* pOut ) const;
+	int Copy( PolygonSignboard* pOut ) const;
 
 	//==============================================================================
-	// Brief  : 更新処理
+	// Brief  : 描画処理
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void Update( void );
-
-	//==============================================================================
-	// Brief  : 描画クラスの生成
-	// Return : int									: 実行結果
-	// Arg    : int priority						: 描画優先度
-	// Arg    : const EffectParameter* pParameter	: エフェクトパラメータ
-	// Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
-	// Arg    : IDirect3DTexture9* pTextureDepth	: 深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightNear	: 平行光源(近)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightFar		: 平行光源(遠)の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint0	: 点光源0の深度情報テクスチャ
-	// Arg    : IDirect3DTexture9* pTextureLightPoint1	: 点光源1の深度情報テクスチャ
-	//==============================================================================
-	int CreateGraphic( int priority, const EffectParameter* pParameter, Effect* pEffectGeneral,
-		IDirect3DTexture9* pTextureDepth, IDirect3DTexture9* pTextureLightNear, IDirect3DTexture9* pTextureLightFar,
-		IDirect3DTexture9* pTextureLightPoint0, IDirect3DTexture9* pTextureLightPoint1 );
-
-	//==============================================================================
-	// アクセサ
-	//==============================================================================
-	void SetGraphic( GraphicShadow* pValue );
-	GraphicShadow* GetGraphic( void ) const;
+	void Draw( void );
 
 protected:
-	GraphicShadow*	pGraphic_;		// 描画クラス
 
 private:
 	void InitializeSelf( void );
-	ObjectShadow( const ObjectShadow& );
-	ObjectShadow operator=( const ObjectShadow& );
+	PolygonSignboard( const PolygonSignboard& );
+	PolygonSignboard operator=( const PolygonSignboard& );
 
+	static const int	COUNT_VERTEX = 4;			// 頂点数
+	static const int	COUNT_VERTEX_LINE = 2;		// 一列の頂点数
+
+	IDirect3DDevice9*		pDevice_;			// Direct3Dデバイス
+	IDirect3DVertexBuffer9*	pVertexBuffer_;		// 頂点バッファ
+	Vertex*					pVertex_;			// 頂点情報
 };
 
-#endif	// MY_OBJECT_SHADOW_H
+#endif	// MY_POLYGON_SIGNBOARD_H

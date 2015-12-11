@@ -107,7 +107,9 @@ private:
 	SceneSplash operator=( const SceneSplash& );
 
 	CameraObject*				pCamera_;						// 通常カメラ
-	CameraObject*				pCameraShadow_;					// 影用カメラ
+	CameraObject*				pCameraShadowNear_;				// 影用カメラ近
+	CameraObject*				pCameraShadowFar_;				// 影用カメラ遠
+	CameraObject**				ppCameraShadowPoint_;			// 影用カメラ点
 	LightDirection*				pLight_;						// ライト
 	LightPoint**				ppPointLight_;					// ポイントライト
 
