@@ -117,6 +117,8 @@ typedef struct
 	D3DXVECTOR3 accel;
 
 	D3DXVECTOR2 IRScreen;
+
+	float kg[4];
 }WIIMOTE_SAVE_DATA;
 
 //	長いから省略（WiiBoardSencer）
@@ -132,6 +134,8 @@ public:
 	CWiiController();
 	~CWiiController();
 	void update();
+	void startGame();
+	void endGame();
 
 	//	接続状態の取得
 	bool getConnectFlag(){ return wiiRemote->IsConnected(); }
@@ -286,7 +290,7 @@ public:
 	void reConnectWiimote();
 
 	//	wiiボードのキャリブレーション
-	void calibrationWiiboard(){if(wiiBoard != nullptr){wiiBoard->CalibrateAtRest();calibKg = wiiBoard->BalanceBoard.AtRestKg;}}
+	void calibrationWiiboard();
 
 	//	wiiBoardが取得した重さの取得
 	WBS getKg(){return kg;}

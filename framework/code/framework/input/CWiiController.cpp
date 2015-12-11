@@ -130,43 +130,16 @@ CWiiController::CWiiController()
 					for (int count = 0; count < WC_ALL; count++)
 						repeatCount[count] = 0;
 
+					//	更新関数セット
+					fpUpdate = &CWiiController::NormalUpdate;
+					fpCommonUpdate = &CWiiController::CommonUpdate;
+
+
 					//wiimote_sample sample;
 					//bool b = wiiRemote->Load16bitMonoSampleWAV("Produce__.wav", sample);
 
 					//wiiRemote->PlaySample(sample,0x10, FREQ_4200HZ);
 					//playSound(FREQ_2760HZ, 0x10);
-
-					//	更新関数セット
-					fpUpdate = &CWiiController::NormalUpdate;
-
-
-
-
-
-
-					//	通常の更新関数
-					//--------------------------------------------------
-#ifdef UPDATE_NORMAL
-					fpCommonUpdate = &CWiiController::CommonUpdate;
-#endif
-					//--------------------------------------------------
-
-					//	セーブ用の更新関数
-					//--------------------------------------------------
-#ifdef UPDATE_SAVE
-					fpCommonUpdate = &CWiiController::SaveUpdate;
-					saveDataNumMax = WIIMOTE_SAVE_DATA_MAX;
-#endif
-					//--------------------------------------------------
-
-					//	読み込み用の更新関数
-					//--------------------------------------------------
-#ifdef UPDATE_READ
-					saveDataNumMax = 0;
-					Read();
-					fpCommonUpdate = &CWiiController::ReadUpdate;
-#endif
-					//--------------------------------------------------
 
 					return;
 				}
@@ -222,6 +195,58 @@ CWiiController::CWiiController()
 	fpUpdate = &CWiiController::NormalUpdate;
 	fpCommonUpdate = &CWiiController::CommonUpdate;
 }
+void CWiiController::startGame()
+{
+	//	通常の更新関数
+	//--------------------------------------------------
+#ifdef UPDATE_NORMAL
+	fpCommonUpdate = &CWiiController::CommonUpdate;
+#endif
+	//--------------------------------------------------
+
+	//	セーブ用の更新関数
+	//--------------------------------------------------
+#ifdef UPDATE_SAVE
+	fpCommonUpdate = &CWiiController::SaveUpdate;
+	saveDataNumMax = WIIMOTE_SAVE_DATA_MAX;
+#endif
+	//--------------------------------------------------
+
+	//	読み込み用の更新関数
+	//--------------------------------------------------
+#ifdef UPDATE_READ
+	saveDataNumMax = 0;
+	Read();
+	fpCommonUpdate = &CWiiController::ReadUpdate;
+#endif
+	//--------------------------------------------------
+}
+void CWiiController::endGame()
+{
+	//	通常の更新関数
+	//--------------------------------------------------
+#ifdef UPDATE_NORMAL
+	fpCommonUpdate = &CWiiController::CommonUpdate;
+#endif
+	//--------------------------------------------------
+
+	//	セーブ用の更新関数
+	//--------------------------------------------------
+#ifdef UPDATE_SAVE
+	//	書き込み
+	Save();
+	fpCommonUpdate = &CWiiController::CommonUpdate;
+#endif
+	//--------------------------------------------------
+
+	//	読み込み用の更新関数
+	//--------------------------------------------------
+#ifdef UPDATE_READ
+	fpCommonUpdate = &CWiiController::CommonUpdate;
+#endif
+	//--------------------------------------------------
+}
+
 //=============================================================================
 //	変数初期化
 //=============================================================================
@@ -818,7 +843,7 @@ void CWiiController::CommonUpdate()
 		//PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
 		//PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
 		//PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
-		//
+
 		//PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
 		//PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
 		//PrintDebug( _T( "Kg.TopL = %f\n" ),		kg.TopL);
@@ -844,6 +869,11 @@ void CWiiController::SaveUpdate()
 		saveData[saveDataNum].accel = accel;
 
 		saveData[saveDataNum].IRScreen = IRScreen;
+
+		saveData[saveDataNum].kg[0] = kg.BottomL;
+		saveData[saveDataNum].kg[1] = kg.BottomR;
+		saveData[saveDataNum].kg[2] = kg.TopL;
+		saveData[saveDataNum].kg[3] = kg.TopR;
 
 		//	書き込み位置修正
 		saveDataNum++;
@@ -939,7 +969,16 @@ void CWiiController::Save()
 		//fprintf(fp, "%f %f ", saveData[count].IRScreen.x,		saveData[count].IRScreen.y);
 		fwrite(&saveData[count].IRScreen.x, sizeof(float), 1, fp);
 		fwrite(&saveData[count].IRScreen.y, sizeof(float), 1, fp);
+
+		//	wiiboard情報書き込み
+		fwrite(&saveData[count].kg[0], sizeof(float), 1, fp);
+		fwrite(&saveData[count].kg[1], sizeof(float), 1, fp);
+		fwrite(&saveData[count].kg[2], sizeof(float), 1, fp);
+		fwrite(&saveData[count].kg[3], sizeof(float), 1, fp);
 	}
+
+	//	キャリブレーション値を格納
+	fwrite(&calibKg.Total, sizeof(float), 1, fp);
 
 	fclose(fp);
 	//-------------------------------------------------------------------------------
@@ -1005,51 +1044,26 @@ void CWiiController::ReadUpdate()
 		PrintDebug( _T( "rot.y = %f\n" ), rot.y);
 		PrintDebug( _T( "rot.z = %f\n" ), rot.z);
 
-		//	バランスwiiボード(以下、wiiボード)が接続されていれば
-		if(wiiBoard != nullptr)
-		{
-			//	wiiボードの接続が切れたら
-			if(wiiBoard->IsConnected() == false || isConnectWiiboard == false)
-			{
-				//	接続切れ
-				isConnectWiiboard = false;
+		//	前フレームの値取得
+		kgPrev = kg;
 
-				//	再接続要求
-				isReConnectWiiboard = true;
-
-				//	オブジェクト破棄
-				delete wiiBoard;
-				wiiBoard = nullptr;
-
-				//	関数終了
-				return;
-			}
-
-			//	前フレームの値取得
-			kgPrev = kg;
-
-			//	wiiボードの状態を取得...というかリセット
-			//	これやらないとステータスが更新されない
-			wiiBoard->RefreshState();
-
-			//	値の格納
-			kg = wiiBoard->BalanceBoard.Kg;
-
-			//PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
-			//PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
-			//PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
-			//PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
-			//PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
-
-			//PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
-			//PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
-			//PrintDebug( _T( "Kg.TopL = %f\n" ),		kg.TopL);
-			//PrintDebug( _T( "Kg.TopR = %f\n" ),		kg.TopR);
-			//PrintDebug( _T( "Kg.Total = %f\n" ),	kg.Total);
-		}
+		//	値の格納
+		kg.BottomL = saveData[saveDataNum].kg[0];
+		kg.BottomR = saveData[saveDataNum].kg[1];
+		kg.TopL = saveData[saveDataNum].kg[2];
+		kg.TopR = saveData[saveDataNum].kg[3];
+		kg.Total = kg.BottomL + kg.BottomR + kg.TopL + kg.TopR;
 	}
 	else
 	{
+		if(wiiBoard != nullptr)
+		{
+			//	wiiボードの状態を取得...というかリセット
+			//	これやらないとステータスが更新されない
+			wiiBoard->RefreshState();
+			wiiBoard->CalibrateAtRest();calibKg = wiiBoard->BalanceBoard.AtRestKg;
+		}
+
 		fpCommonUpdate = &CWiiController::CommonUpdate;
 		CommonUpdate();
 	}
@@ -1100,7 +1114,16 @@ void CWiiController::Read()
 		//fscanf_s(fp, "%f %f", &saveData[count].IRScreen.x,		&saveData[count].IRScreen.y);
 		fread_s(&saveData[count].IRScreen.x, sizeof(float), sizeof(float), 1, fp);
 		fread_s(&saveData[count].IRScreen.y, sizeof(float), sizeof(float), 1, fp);
+
+		//	wiiboard情報読み込み
+		fread_s(&saveData[count].kg[0], sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].kg[1], sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].kg[2], sizeof(float), sizeof(float), 1, fp);
+		fread_s(&saveData[count].kg[3], sizeof(float), sizeof(float), 1, fp);
 	}
+
+	//	キャリブレーション値の読み込み
+	fread_s(&calibKg.Total, sizeof(int), sizeof(int), 1, fp);
 
 
 	fclose(fp);
@@ -1342,5 +1365,14 @@ void CWiiController::updateMode5()
 		rumble(false);
 		mode5Count = 0;
 	}
+}
+void CWiiController::calibrationWiiboard()
+{
+#ifndef UPDATE_READ
+	if(wiiBoard != nullptr)
+	{
+		wiiBoard->CalibrateAtRest();calibKg = wiiBoard->BalanceBoard.AtRestKg;
+	}
+#endif
 }
 //-----------------------------------EOF---------------------------------------

@@ -164,6 +164,8 @@ public:
 	float GetSizeY();
 	float GetSizeZ();
 
+	void setAddScore(int _value){addScore = _value;}
+
 protected:
 	D3DXCOLOR	color_;					// 色
 
@@ -179,6 +181,9 @@ protected:
 
 	//	スコア現在値
 	int score;
+
+	//	スコア加算値
+	int addScore;
 
 	//	スコア最大値
 	int scoreMax;

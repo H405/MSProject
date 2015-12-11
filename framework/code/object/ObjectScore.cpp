@@ -49,6 +49,7 @@ void ObjectScore::InitializeSelf( void )
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	score = 0;
+	addScore = 1;
 	scoreMax = 0;
 	scoreFuture = 0;
 	figure = 0;
@@ -181,12 +182,12 @@ void ObjectScore::Update( void )
 	//	スコア値加算
 	if(score < scoreFuture)
 	{
-		score++;
+		score += addScore;
 		tempFlag = true;
 	}
 	else if(score > scoreFuture)
 	{
-		score--;
+		score -= addScore;
 		tempFlag = true;
 	}
 

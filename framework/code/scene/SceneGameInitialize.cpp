@@ -53,6 +53,7 @@
 #include "../object/ObjectBillboard.h"
 #include "../object/ObjectScore.h"
 #include "../system/gage/gage.h"
+#include "../system/combo/combo.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../object/ObjectWaterwheel.h"
 #include "../system/player/Player.h"
@@ -100,6 +101,7 @@ void SceneGame::InitializeSelf( void )
 	stringScore = nullptr;
 	score = nullptr;
 	gage = nullptr;
+	combo = nullptr;
 	pauseFrame = nullptr;
 	stringReturn = nullptr;
 	stringStop = nullptr;
@@ -253,7 +255,10 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 	//	wiiリモコンが登録されてる場合は登録しない
 	if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
+	{
 		chooseObject = nullptr;
+		pArgument_->pWiiController_->startGame();
+	}
 
 	// SceneGame2の初期化
 	result = Initialize2();
@@ -562,7 +567,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pTexture);
 
 	stringScore->SetScale(150.0f, 80.0f, 0.0f);
-	stringScore->SetPosition(-550.0f, 300.0f, 0.0f);
+	stringScore->SetPosition(-380.0f, -300.0f, 0.0f);
 
 
 
@@ -580,11 +585,22 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 	score->SetSizeX(32.0f);
 	score->SetSizeY(32.0f);
-	score->SetPosX(-470.0f);
-	score->SetPosY(300.0f);
+	score->SetPosX(-300.0f);
+	score->SetPosY(-300.0f);
 
-	score->SetScoreFuture(123456789);
+	score->SetScoreFuture(0);
+	score->setAddScore(10);
 
+
+	//	コンボオブジェクト生成
+	combo = new Combo;
+	combo->Initialize(
+		pArgument_->pDevice_,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pArgument_->pTexture_->Get( _T( "game/stringScore.png" )),
+		pArgument_->pTexture_->Get( _T( "common/number_white.png" )));
+	combo->setPosition(200.0f, -300.0f, 0.0f);
 
 
 	//	ゲージオブジェクト生成
@@ -777,6 +793,9 @@ int SceneGame::Finalize( void )
 	delete score;
 	score = nullptr;
 
+	delete combo;
+	combo = nullptr;
+
 	delete gage;
 	gage = nullptr;
 
@@ -895,6 +914,9 @@ int SceneGame::Finalize( void )
 		pCamera_->SetState( nullptr );
 		pCamera_ = nullptr;
 	}
+
+	if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
+		pArgument_->pWiiController_->endGame();
 
 	// 基本クラスの処理
 	result = SceneMain::Finalize();

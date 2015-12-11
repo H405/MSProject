@@ -109,6 +109,9 @@
     <Filter Include="ソース ファイル\system\point">
       <UniqueIdentifier>{14cb9c72-a1d5-4e23-b6ca-7f70e1236c5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\combo">
+      <UniqueIdentifier>{90546cd6-45a2-4355-ad43-2e2bd535dd7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -606,6 +609,9 @@
     <ClInclude Include="code\graphic\drawer\DrawerModelParaboloid.h">
       <Filter>ソース ファイル\graphic\drawer</Filter>
     </ClInclude>
+    <ClInclude Include="code\system\combo\combo.h">
+      <Filter>ソース ファイル\system\combo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1102,6 +1108,9 @@
     </ClCompile>
     <ClCompile Include="code\graphic\drawer\DrawerModelParaboloid.cpp">
       <Filter>ソース ファイル\graphic\drawer</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\combo\combo.cpp">
+      <Filter>ソース ファイル\system\combo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

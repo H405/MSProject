@@ -55,6 +55,7 @@ typedef enum
 class CameraObject;
 class CameraStateSpline;
 class Gage;
+class Combo;
 class LightDirection;
 class ManagerPoint;
 class ManagerFireworks;
@@ -159,6 +160,9 @@ private:
 
 	//	ゲージオブジェクト
 	Gage* gage;
+
+	//	コンボ数オブジェクト
+	Combo* combo;
 
 	//	ポーズ時用背景
 	Object2D* pauseFrame;
