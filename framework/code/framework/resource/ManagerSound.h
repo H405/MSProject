@@ -85,6 +85,22 @@ public:
 	int Copy( ManagerSound* pOut ) const;
 
 	//==============================================================================
+	// Brief  : リソースの読み込み
+	// Return : int									: リソースID
+	// Arg    : TCHAR* pNameFile					: ファイル名
+	// Arg    : int maximumStack					: 最大同時再生数
+	//==============================================================================
+	int Load( TCHAR* pNameFile, int maximumStack = 1 );
+
+	//==============================================================================
+	// Brief  : リソースの取得
+	// Return : TypeItem*							: リソース
+	// Arg    : TCHAR* pNameFile					: ファイル名
+	// Arg    : int maximumStack					: 最大同時再生数
+	//==============================================================================
+	TypeItem* Get( TCHAR* pNameFile, int maximumStack = 1 );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	IXAudio2* GetXAudio( void ) const;
@@ -96,7 +112,7 @@ private:
 	ManagerSound operator=( const ManagerSound& );
 
 	void InitializeSelf( void );
-	int LoadResource( TCHAR* pPath, int index );
+	int LoadResource( TCHAR* pPath, int index, int maximumStack );
 	void ReleaseResource( int index );
 
 	static HRESULT CheckChunk( HANDLE handle, DWORD format, DWORD* pSize, DWORD* pPosition );
