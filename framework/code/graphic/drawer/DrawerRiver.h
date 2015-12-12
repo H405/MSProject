@@ -46,6 +46,7 @@ public:
 		PARAMETER_MATRIX_WORLD,							// ワールド変換行列
 		PARAMETER_MATRIX_WORLD_VIEW,					// ワールドビュー変換行列
 		PARAMETER_MATRIX_TRANSFORM_TEXTURE,				// テクスチャ座標変換行列
+		PARAMETER_OFFET_TEXEL,							// テクセルオフセット
 
 		PARAMETER_MATRIX_WORLD_INVERSE_TRANSPOSE,		// ワールド逆転置行列
 		PARAMETER_TEXTURE_NORMAL,						// 法線テクスチャ
