@@ -506,7 +506,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return 1;
 	}
-	result = pSound_->Initialize( _T( "data/sound/" ), 32, pXAudio );
+	result = pSound_->Initialize( _T( "data/sound/" ), 64, pXAudio );
 	if( result != 0 )
 	{
 		return result;
@@ -889,7 +889,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_GAME, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif

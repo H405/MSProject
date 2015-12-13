@@ -24,6 +24,12 @@
 #include "../../scene/SceneGame.h"
 #include "../../framework/system/Utility.h"
 
+#include "../SceneArgumentMain.h"
+#include "../../framework/resource/ManagerSound.h"
+#include "../../framework/resource/Sound.h"
+
+#include <stdio.h>
+
 //******************************************************************************
 // ライブラリ
 //******************************************************************************
@@ -45,6 +51,13 @@ static const float fireBGAddSize = 5.0f;
 static int createFireNum = 0;
 
 static const D3DXVECTOR3 attenuationValue = D3DXVECTOR3(0.0f, 0.0028f, 0.0000005f);
+
+static const TIME compAppear = (int)(DELETECOUNT_MAX * 0.9f);
+static const TIME compDisppear = (int)(DELETECOUNT_MAX);
+
+
+static const TIME compLaunchAppear = (int)(DELETECOUNT_MAX * 0.5f);
+static const TIME compLaunchDisppear = (int)(DELETECOUNT_MAX);
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -85,7 +98,7 @@ void Fireworks::InitializeSelf( void )
 	param.setSmallFireIndex = 0;
 	param.setPosOld = 0;
 
-	lightPoint = nullptr;
+	param.lightPoint = nullptr;
 
 	indexState = 0;
 	D3DXMatrixIdentity(&param.matrix);
@@ -141,14 +154,19 @@ int Fireworks::Set(
 
 	indexState = _indexState;
 
-	if(lightPoint == nullptr)
+	if(param.lightPoint == nullptr)
 	{
-		lightPoint = managerLight->GetLightPoint();
-		lightPoint->SetDiffuse(1.0f, 1.0f, 0.5f);
-		lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
-		lightPoint->SetAttenuation(0.0f, 0.0028f, 0.00005f);
+		param.lightPoint = managerLight->GetLightPoint();
+		param.lightPoint->SetDiffuse(1.0f, 1.0f, 0.5f);
+		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
-	lightPoint->SetIsEnable(true);
+	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.00005f);
+	param.lightPoint->SetIsEnable(true);
+
+
+	//	音再生
+	param.launchSound->Play();
+
 
 	//	更新関数設定
 	fpUpdate = &Fireworks::NormalUpdate;
@@ -164,10 +182,14 @@ int Fireworks::Set(
 //==============================================================================
 int Fireworks::Finalize( void )
 {
-	if(lightPoint != nullptr)
-		lightPoint->Release();
+	//	音
+	param.launchSound->Stop();
+	param.burnSound->Stop();
 
-	lightPoint = nullptr;
+	if(param.lightPoint != nullptr)
+		param.lightPoint->Release();
+
+	param.lightPoint = nullptr;
 
 	delete[] param.smallFire;
 	delete[] param.fire;
@@ -185,12 +207,12 @@ int Fireworks::Finalize( void )
 //==============================================================================
 void Fireworks::Update( void )
 {
-	MeasureTime("fireworksUpdate");
+	//MeasureTime("fireworksUpdate");
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
 
-	lightPoint->SetPosition(param.setPos.x, param.setPos.y, param.setPos.z);
+	param.lightPoint->SetPosition(param.setPos.x, param.setPos.y, param.setPos.z);
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -226,36 +248,32 @@ void Fireworks::BurnUpdate( void )
 		param.smallFire[count].Update();
 	}
 
-	PrintDebug( _T( "\ncountFire:Burn1 = %d\n"), param.fireMax - buffCount );
+	//PrintDebug( _T( "\ncountFire:Burn1 = %d\n"), param.fireMax - buffCount );
 
 	if(buffCount == param.fireMax)
 	{
 		param.enable = false;
-		lightPoint->SetIsEnable(false);
+		param.lightPoint->SetIsEnable(false);
 	}
 
 
 	// 割合の決定
 	float	proportion;		// 割合
 	int counter = param.fire[0].getDeleteCount();
-	if( counter < 20 )
+
+	if( counter < compAppear )
 	{
-		proportion = Utility::Easing( 1.0f, 0.0f, static_cast< float >( counter ) / 20.0f );
-	}
-	else if( counter < 60 )
-	{
-		proportion = 0.0f;
+		proportion = Utility::Easing( 0.0f, 1.0f, (float)counter / (float)compAppear);
 	}
 	else
 	{
-		proportion = Utility::Easing( 0.0f, 1.0f, static_cast< float >( counter - 60.0f ) / 80.0f );
+		proportion = Utility::Easing( 1.0f, 0.0f, (float)(counter - compAppear) / (float)compDisppear);
 	}
 
 	// 減衰率の設定
 	D3DXVECTOR3	attenuation;		// 減衰率
 	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
-	lightPoint->SetAttenuation( attenuation );
-
+	param.lightPoint->SetAttenuation( attenuation );
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -280,36 +298,32 @@ void Fireworks::Burn2Update( void )
 		param.smallFire[count].Update();
 	}
 
-	PrintDebug( _T( "\ncountFire:Burn2 = %d\n"), param.fireMax * SMALL_FIREWORKS_MAX - buffCount );
+	//PrintDebug( _T( "\ncountFire:Burn2 = %d\n"), param.fireMax * SMALL_FIREWORKS_MAX - buffCount );
 
-	if(buffCount == param.fireMax * SMALL_FIREWORKS_MAX)
+	if(buffCount == param.fireMax * param.setSmallFireIndex)
 	{
 		param.enable = false;
-		lightPoint->SetIsEnable(false);
+		param.lightPoint->SetIsEnable(false);
 	}
 
 
 	// 割合の決定
 	float	proportion;		// 割合
 	int counter = param.fire[0].getDeleteCount();
-	if( counter < 20 )
+
+	if( counter < compAppear )
 	{
-		//	３番目の引数は、それぞれ最小値と最大値が0.0～1.0になるように調整する
-		proportion = Utility::Easing( 1.0f, 0.0f, static_cast< float >( counter ) / 20.0f );
-	}
-	else if( counter < 60 )
-	{
-		proportion = 0.0f;
+		proportion = Utility::Easing( 0.0f, 1.0f, (float)counter / (float)compAppear);
 	}
 	else
 	{
-		proportion = Utility::Easing( 0.0f, 1.0f, static_cast< float >( counter - 60.0f ) / 20.0f );
+		proportion = Utility::Easing( 1.0f, 0.0f, (float)(counter - compAppear) / (float)compDisppear);
 	}
 
 	// 減衰率の設定
 	D3DXVECTOR3	attenuation;		// 減衰率
 	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
-	lightPoint->SetAttenuation( attenuation );
+	param.lightPoint->SetAttenuation( attenuation );
 
 }
 
@@ -423,6 +437,10 @@ int Fireworks::burn(
 	//	点光源色設定
 	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
 
+	//	音再生
+	param.launchSound->Stop();
+	param.burnSound->Play();
+
 	return returnValue;
 }
 
@@ -511,6 +529,26 @@ void Fireworks::burn2()
 
 	//	点光源色設定
 	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
+
+	//	音再生
+	param.launchSound->Stop();
+	param.burnSound->Play();
+}
+
+//==============================================================================
+// Brief  : 花火の音生成処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void Fireworks::loadSound(SceneArgumentMain* pArgument, int _count)
+{
+	char buff[256];
+
+	sprintf_s(buff, "se/burn1_%d.wav", _count);
+	param.burnSound = pArgument->pSound_->Get(buff);
+
+	sprintf_s(buff, "se/launch_%d.wav", _count);
+	param.launchSound = pArgument->pSound_->Get(buff);
 }
 
 void Fireworks::setManagerLight(ManagerLight* _managerLight)

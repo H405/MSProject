@@ -75,7 +75,7 @@ class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectWaterwheel;
 class Player;
-
+class Sound;
 class GraphicPoint;
 class PolygonPoint;
 
@@ -245,6 +245,15 @@ private:
 	int targetTable[TARGET_MAX];
 	int fireworksTableIndex;
 	int targetTableIndex;
+
+	//----------------------------------------------------------
+
+	//	‰¹ŠÖ˜A
+	//----------------------------------------------------------
+	Sound* bgmSound;
+	Sound* desideSound;
+	Sound* selectSound;
+	Sound* cancelSound;
 	//----------------------------------------------------------
 
 	//	ƒJƒƒ‰‚Ì•ûŒü

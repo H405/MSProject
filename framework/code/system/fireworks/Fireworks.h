@@ -27,6 +27,7 @@
 //******************************************************************************
 #define FIRE_MAX (24)	//	１つの花火から生成される火花の数
 #define SMALL_FIREWORKS_MAX (5)
+#define DELETECOUNT_MAX (100)
 typedef int TIME;
 
 //******************************************************************************
@@ -38,6 +39,8 @@ class Fire;
 class ManagerLight;
 class LightPoint;
 class LightDirection;
+class Sound;
+class SceneArgumentMain;
 
 //******************************************************************************
 // 構造体定義
@@ -93,6 +96,13 @@ typedef struct
 
 	//	カメラの逆行列
 	D3DXMATRIX invViewMatrix;
+
+	//	光源
+	LightPoint* lightPoint;
+
+	//	音
+	Sound* launchSound;
+	Sound* burnSound;
 
 }FIREWORKS_PARAM;
 
@@ -168,6 +178,13 @@ public:
 	static void SetState( FireworksState** ppState );
 
 	//==============================================================================
+	// Brief  : 花火の音生成処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void loadSound(SceneArgumentMain* pArgument, int _count);
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	D3DXVECTOR3 getSpeed(){return param.speed;}
@@ -208,7 +225,6 @@ protected:
 	FIREWORKS_PARAM param;
 
 	ManagerLight* managerLight;
-	LightPoint* lightPoint;
 
 	//==============================================================================
 	// Brief  : 更新処理

@@ -15,6 +15,7 @@
 #include "../../system/point/ManagerPoint.h"
 #include "../../system/point/PointMain.h"
 #include "../../framework/radianTable/radianTable.h"
+#include "../../framework/light/LightPoint.h"
 
 //******************************************************************************
 // ライブラリ
@@ -24,7 +25,6 @@
 // マクロ定義
 //******************************************************************************
 #define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
-#define DELETECOUNT_MAX (200)
 #define RANDAM(value) (float)((rand() % value) - (rand() % value))
 #define FIRE_APPEAR_RANDAM (RANDAM(100) * 0.01f)
 
@@ -53,10 +53,16 @@ static const TIME effectDisappear = 30;
 static const TIME effectAppear = 3;
 
 //	生成する花火エフェクトの大きさの差異
-static const float effectDifferenceSize = -0.2f;
+static const float effectDifferenceSize = effectSize / DELETECOUNT_MAX;
+
+//	生成する花火エフェクトの大きさの差異
+static const float effectDifferenceBigSize = (effectBigSize / DELETECOUNT_MAX) * 0.5f;
 
 //	前の位置を取得する時間
 static const int setPosOldMax = 20;
+
+//	透明値の変化量
+static const float differensAlpha = -1.0f / DELETECOUNT_MAX;
 
 //==============================================================================
 // Brief  : 更新処理
@@ -65,11 +71,6 @@ static const int setPosOldMax = 20;
 //==============================================================================
 void FireworksState::Update( Fireworks* _fireworks )
 {
-	// 消滅
-	//if( pFireworks->GetTime() >= pFireworks->GetTimeExist() )
-	//{
-	//	pFireworks->SetIsEnable( false );
-	//}
 }
 
 //==============================================================================
@@ -97,13 +98,6 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 	//	正の向きとしたときの移動方向修正処理
 	param->rot += param->rotSpeed;
 
-	//	回転量加算
-	/*if(param->rot < 0)
-		param->rot = 0.0f;
-	else if(param->rot > 90)
-		param->rot = 90.0f;*/
-
-	param->rotSpeed *= 0.99f;
 
 	//	位置情報加算(90度が真っ直ぐ上がるとする)
 	param->pos.x += CRadianTable::myCosf((double)param->rot) * param->speed.x;
@@ -169,7 +163,7 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		effectSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
+		D3DXCOLOR( 0.0f, 0.0f, 0.0f, differensAlpha),
 		effectDifferenceSize,
 		PointMain::STATE_ADD
 		);
@@ -179,6 +173,8 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 	if(param->disappear >= DELETECOUNT_MAX)
 	{
 		param->enable = false;
+		param->burnFlag = true;
+		param->lightPoint->SetIsEnable(false);
 	}
 
 	//	生成カウンタ更新
@@ -192,8 +188,8 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 			D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 			effectBigSize,
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
-			effectDifferenceSize,
+			D3DXCOLOR( 0.0f, 0.0f, 0.0f, differensAlpha ),
+			effectDifferenceBigSize,
 			PointMain::STATE_ADD
 			);
 	}
@@ -207,58 +203,6 @@ void FireworksStateRight::Update( Fireworks* _fireworks )
 //==============================================================================
 void FireworksStateLeft::Update( Fireworks* _fireworks )
 {
-	/*//	パラメータへアクセス
-	FIREWORKS_PARAM* param = _fireworks->getParam();
-
-	//	回転量加算
-	param->rot += param->rotSpeed;
-	if(param->rot > 0)
-		param->rot = 0.0f;
-	else if(param->rot < -90)
-		param->rot = -90.0f;
-
-	//	位置情報加算
-	param->pos.x += (CRadianTable::mySinf((double)param->rot) * param->speed.x);
-	param->pos.y += (CRadianTable::myCosf((double)param->rot) * param->speed.y) + 1.0f;
-	param->pos.z += param->speed.z;
-
-	//	エフェクト生成
-	_fireworks->getManagerPoint()->Add(
-		effectDisappear,
-		D3DXVECTOR3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM),
-		D3DXCOLOR( 1.0f, 0.25f, 0.25f, 1.0f ),
-		effectSize - ((effectSize / DELETECOUNT_MAX) * param->disappear),
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
-		effectDifferenceSize,
-		PointMain::STATE_ADD
-		);
-
-	//	カウンタ更新
-	param->disappear++;
-	if(param->disappear >= DELETECOUNT_MAX)
-	{
-		param->enable = false;
-	}
-
-	//	生成カウンタ更新
-	param->appear++;
-	if(param->appear <= effectAppear)
-	{
-		//	エフェクト生成
-		param->managerPoint->Add(
-			1,
-			D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
-			D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
-			effectBigSize,
-			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
-			effectDifferenceSize,
-			PointMain::STATE_ADD
-			);
-	}
-	else
-		param->appear = 0;*/
 	//	パラメータへアクセス
 	FIREWORKS_PARAM* param = _fireworks->getParam();
 
@@ -277,14 +221,6 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 	//	正の向きとしたときの移動方向修正処理
 	param->rot += param->rotSpeed;
 
-	//	回転量加算
-	/*if(param->rot < 0)
-		param->rot = 0.0f;
-	else if(param->rot > 90)
-		param->rot = 90.0f;*/
-
-	param->rotSpeed *= 0.99f;
-
 	//	位置情報加算(90度が真っ直ぐ上がるとする)
 	param->pos.x += CRadianTable::myCosf((double)param->rot) * param->speed.x;
 	param->pos.y += CRadianTable::mySinf((double)param->rot) * param->speed.y + 1.0f;
@@ -352,7 +288,7 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 		effectSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
+		D3DXCOLOR( 0.0f, 0.0f, 0.0f, differensAlpha ),
 		effectDifferenceSize,
 		PointMain::STATE_ADD
 		);
@@ -362,6 +298,8 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 	if(param->disappear >= DELETECOUNT_MAX)
 	{
 		param->enable = false;
+		param->burnFlag = true;
+		param->lightPoint->SetIsEnable(false);
 	}
 
 	//	生成カウンタ更新
@@ -375,8 +313,8 @@ void FireworksStateLeft::Update( Fireworks* _fireworks )
 			D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 			effectBigSize,
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.01f ),
-			effectDifferenceSize,
+			D3DXCOLOR( 0.0f, 0.0f, 0.0f, differensAlpha ),
+			effectDifferenceBigSize,
 			PointMain::STATE_ADD
 			);
 	}

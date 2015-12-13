@@ -50,6 +50,8 @@
 #include "../system/fire/Fire.h"
 #include "../object/ObjectWaterwheel.h"
 #include "../system/player/Player.h"
+#include "../framework/resource/ManagerSound.h"
+#include "../framework/resource/Sound.h"
 
 //******************************************************************************
 // ライブラリ
@@ -152,6 +154,13 @@ void SceneTitle::InitializeSelf( void )
 	fireworksTableIndex = 0;
 	//----------------------------------------------------------
 
+	//	音関連
+	//----------------------------------------------------------
+	bgmSound = nullptr;
+	desideSound = nullptr;
+	selectSound = nullptr;
+	cancelSound = nullptr;
+	//----------------------------------------------------------
 
 
 
@@ -387,6 +396,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	//	花火管理オブジェクト生成
 	managerFireworks = new ManagerFireworks;
 	managerFireworks->Initialize(managerPoint);
+	managerFireworks->loadSound(pArgument_);
 
 	// ライトの生成
 	managerFireworks->setManagerLight(pArgument->pLight_);
@@ -556,6 +566,23 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 
 
+
+
+
+	//	音関連の読み込み
+	bgmSound = pArgument_->pSound_->Get("bgm/title.wav");
+	bgmSound->Play(-1);
+
+	desideSound = pArgument_->pSound_->Get("se/deside.wav");
+	selectSound = pArgument_->pSound_->Get("se/select.wav");
+	cancelSound = pArgument_->pSound_->Get("se/cancel.wav");
+
+
+
+
+
+
+
 	//	更新関数セット
 	fpUpdate = &SceneTitle::firstUpdate;
 
@@ -573,6 +600,11 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneTitle::Finalize( void )
 {
+	bgmSound->Stop();
+	desideSound->Stop();
+	selectSound->Stop();
+	cancelSound->Stop();
+
 	delete reConnectWiiboard;
 	reConnectWiiboard = nullptr;
 
@@ -772,6 +804,9 @@ void SceneTitle::firstUpdate( void )
 		//	点滅カウント初期化
 		pushAKeyFlashingCount = 0;
 
+		//	音再生
+		desideSound->Play();
+
 		//	次の更新関数へ
 		fpUpdate = &SceneTitle::secondUpdate;
 	}
@@ -819,6 +854,9 @@ void SceneTitle::secondUpdate( void )
 			//	現在のオブジェクトをA1.0fで表示
 			chooseObject->SetColorA(1.0f);
 
+			//	音再生
+			desideSound->Play();
+
 			//	次の更新関数へ
 			fpUpdate = &SceneTitle::fadeUpdate;
 
@@ -834,6 +872,9 @@ void SceneTitle::secondUpdate( void )
 	{
 		//	点滅カウント初期化
 		pushAKeyFlashingCount = 0;
+
+		//	音再生
+		selectSound->Play();
 
 		//	wiiリモコン接続時は違う処理
 		if(chooseObject == nullptr)
@@ -857,6 +898,9 @@ void SceneTitle::secondUpdate( void )
 	{
 		//	点滅カウント初期化
 		pushAKeyFlashingCount = 0;
+
+		//	音再生
+		selectSound->Play();
 
 		//	wiiリモコン接続時は違う処理
 		if(chooseObject == nullptr)
@@ -1004,6 +1048,9 @@ void SceneTitle::reConnectWiimoteUpdate(void)
 		//	描画やめる
 		reConnectWiimote->SetEnableGraphic(false);
 
+		//	音再生
+		desideSound->Play();
+
 		//	描画再開
 		if(fpUpdate == &SceneTitle::secondUpdate)
 			finger->SetEnableGraphic(true);
@@ -1036,6 +1083,9 @@ void SceneTitle::reConnectWiiboardUpdate(void)
 		//	描画やめる
 		reConnectWiiboard->SetEnableGraphic(false);
 
+		//	音再生
+		desideSound->Play();
+
 		//	描画再開
 		if(fpUpdate == &SceneTitle::secondUpdate)
 			finger->SetEnableGraphic(true);
@@ -1064,6 +1114,9 @@ bool SceneTitle::wiiLostCheck(void)
 		//	Objectの更新を止める
 		pArgument_->pUpdate_->SetIsEnable( false );
 
+		//	音再生
+		cancelSound->Play();
+
 		return false;
 	}
 
@@ -1079,6 +1132,9 @@ bool SceneTitle::wiiLostCheck(void)
 
 		//	Objectの更新を止める
 		pArgument_->pUpdate_->SetIsEnable( false );
+
+		//	音再生
+		cancelSound->Play();
 
 		return false;
 	}
