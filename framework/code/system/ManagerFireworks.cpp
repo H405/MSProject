@@ -80,6 +80,8 @@ int ManagerFireworks::Initialize(ManagerPoint* _managerPoint)
 	//	ここにテーブルを追加すること！
 	ppState_[ STATE_RIGHT ] = new FireworksStateRight();
 	ppState_[ STATE_LEFT ] = new FireworksStateLeft();
+	ppState_[ STATE_RIGHTSP ] = new FireworksStateRightSP();
+	ppState_[ STATE_LEFTSP ] = new FireworksStateLeftSP();
 	Fireworks::SetState( ppState_ );
 
 	// 正常終了
@@ -218,6 +220,36 @@ int ManagerFireworks::Add(
 
 	return index;
 }
+
+
+
+
+int ManagerFireworks::Add(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
+
+	//	花火のセット
+	fireworks[index].Set(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot);
+
+	return index;
+}
+
+
+
+
 //==============================================================================
 // Brief  : インデックス取得処理
 // Return : int									: 使用可能なオブジェクトの番号（全部使用中の場合は負の値が返る）

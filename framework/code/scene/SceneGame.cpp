@@ -106,6 +106,13 @@ static const float targetAppearPosZ = 400.0f;
 //==============================================================================
 SceneGame::SceneGame( void ) : SceneMain()
 {
+	diff = 0;
+	diffBuff = false;
+	spDiffBuff = false;
+	diffBuffCount = 0;
+	buffDiffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	buffDiffWiiRot   = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
 	// クラス内の初期化処理
 	InitializeSelf();
 }
@@ -285,7 +292,7 @@ void SceneGame::MovePlayer()
 //==============================================================================
 void SceneGame::LaunchFireworks()
 {
-	if(launchFlag == false)
+	/*if(launchFlag == false)
 	{
 		//	Bボタンを離した時の
 		if(pArgument_->pWiiController_->getAccelerationY() >= 1.0f &&
@@ -341,100 +348,100 @@ void SceneGame::LaunchFireworks()
 			launchCount = 0;
 			launchFlag = false;
 		}
-	}
+	}*/
 
-//#ifdef _DEBUG
+
 	if(launchFlag == false)
 	{
-		if(pArgument_->pKeyboard_->IsTrigger(DIK_RIGHT))
+		if(pArgument_->pWiiController_->getPress(WC_B))
 		{
-			int buff;
-			D3DXVECTOR3 buffPos = player->getPosition();
-
-			buff = managerFireworks->Add(
-						ManagerFireworks::STATE_RIGHT,
-						managerPoint,
-						buffPos,
-						D3DXVECTOR3(3.0, 1.0f, 0.0f),
-						90.0f,
-						-0.5f
-						);
-
-			if(buff != -1)
+			if(diffBuff == false)
 			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
+				buffWiiAccel = pArgument_->pWiiController_->getAcceleration();
+				buffWiiRot = pArgument_->pWiiController_->getRot();
+				diffBuff = true;
+			}
+
+			if(fabsf(pArgument_->pWiiController_->getAccelerationY()) >= 1.0f || pArgument_->pWiiController_->getRelease(WC_B))
+			{
+				Launch();
 			}
 		}
-
-		if(pArgument_->pKeyboard_->IsTrigger(DIK_LEFT))
+		else if(spDiffBuff == true)
 		{
-			int buff;
-			D3DXVECTOR3 buffPos = player->getPosition();
-
-			buff = managerFireworks->Add(
-						ManagerFireworks::STATE_LEFT,
-						managerPoint,
-						buffPos,
-						D3DXVECTOR3(3.0, 1.0f, 0.0f),
-						90.0f,
-						0.5f
-						);
-
-			if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
-		}
-
-		if(pArgument_->pKeyboard_->IsTrigger(DIK_UP) ||
-			pArgument_->pWiiController_->getTrigger(WC_ONE))
-		{
-			int buff;
-			D3DXVECTOR3 buffPos = player->getPosition();
-			buffPos.x += 250.0f;
-			buffPos.y += 30.0f;
-
-			buff = managerFireworks->Add(
-						ManagerFireworks::STATE_LEFT,
-						managerPoint,
-						buffPos,
-						D3DXVECTOR3(4.0, 1.0f, 0.0f),
-						90.0f,
-						1.5f
-						);
-
-			if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
-
-
-
-			buffPos = player->getPosition();
-			buffPos.x -= 250.0f;
-			buffPos.y += 30.0f;
-
-			buff = managerFireworks->Add(
-						ManagerFireworks::STATE_RIGHT,
-						managerPoint,
-						buffPos,
-						D3DXVECTOR3(4.0, 1.0f, 0.0f),
-						90.0f,
-						-1.5f
-						);
-
-			if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
+			Launch();
 		}
 	}
-//#endif
+	else
+	{
+		launchCount++;
+		if(launchCount >= launchCountMax)
+		{
+			launchCount = 0;
+			launchFlag = false;
+		}
+	}
+
+	if(diffBuff == true)
+	{
+		diffBuffCount++;
+		if(diffBuffCount == 2)
+		{
+			diffBuff = false;
+			diffBuffCount = 0;
+		}
+	}
 }
+void SceneGame::Launch()
+{
+	buffDiffWiiAccel = pArgument_->pWiiController_->getAcceleration() - buffWiiAccel;
+	buffDiffWiiRot = pArgument_->pWiiController_->getRot() - buffWiiRot;
+
+	if(buffDiffWiiAccel.x == 0.0f && buffDiffWiiAccel.y == 0.0f && buffDiffWiiAccel.z == 0.0f)
+	{
+		spDiffBuff = true;
+		return;
+	}
+	diffBuff = false;
+	spDiffBuff = false;
+
+	int buff = -1;
+	D3DXVECTOR3 buffPos = player->getPosition();
+
+	if(buffDiffWiiRot.z > 5.0f)
+	{
+		buff = managerFireworks->Add(
+			ManagerFireworks::STATE_LEFTSP,
+			managerPoint,
+			buffPos,
+			buffDiffWiiRot);
+	}
+	else if(buffDiffWiiRot.z < -5.0f)
+	{
+		buff = managerFireworks->Add(
+			ManagerFireworks::STATE_RIGHTSP,
+			managerPoint,
+			buffPos,
+			buffDiffWiiRot);
+	}
+	else
+	{
+		buff = managerFireworks->Add(
+			ManagerFireworks::STATE_LEFTSP,
+			managerPoint,
+			buffPos,
+			buffDiffWiiRot);
+	}
+
+	if(buff != -1)
+	{
+		fireworksTable[fireworksTableIndex] = buff;
+		fireworksTableIndex++;
+	}
+
+	launchFlag = true;
+}
+
 //==============================================================================
 // Brief  : 通常更新処理
 // Return : void								: なし
@@ -481,20 +488,27 @@ void SceneGame::normalUpdate(void)
 
 
 
-	PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
-	for(int count = 0;count < FIREWORKS_MAX;count++)
-		PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
+	//PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
+	//for(int count = 0;count < FIREWORKS_MAX;count++)
+	//	PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
 
 
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
-	PrintDebug( _T( "\nbuffWiiAccel.x = %f\n"), buffWiiAccel.x );
-	PrintDebug( _T( "\nbuffWiiAccel.y = %f\n"), buffWiiAccel.y );
-	PrintDebug( _T( "\nbuffWiiAccel.z = %f\n"), buffWiiAccel.z );
-	PrintDebug( _T( "\nbuffWiiRot.x = %f\n"), buffWiiRot.x );
-	PrintDebug( _T( "\nbuffWiiRot.y = %f\n"), buffWiiRot.y );
-	PrintDebug( _T( "\nbuffWiiRot.z = %f\n"), buffWiiRot.z );
+	PrintDebug( _T( "\nbuffWiiAccel.x = %f"), buffWiiAccel.x );
+	PrintDebug( _T( "\nbuffWiiAccel.y = %f"), buffWiiAccel.y );
+	PrintDebug( _T( "\nbuffWiiAccel.z = %f"), buffWiiAccel.z );
+	PrintDebug( _T( "\nbuffWiiRot.x = %f"), buffWiiRot.x );
+	PrintDebug( _T( "\nbuffWiiRot.y = %f"), buffWiiRot.y );
+	PrintDebug( _T( "\nbuffWiiRot.z = %f"), buffWiiRot.z );
+	PrintDebug( _T( "\nbuffDiffWiiAccel.x = %f"), buffDiffWiiAccel.x );
+	PrintDebug( _T( "\nbuffDiffWiiAccel.y = %f"), buffDiffWiiAccel.y );
+	PrintDebug( _T( "\nbuffDiffWiiAccel.z = %f"), buffDiffWiiAccel.z );
+	PrintDebug( _T( "\nbuffDiffWiiRot.x = %f"), buffDiffWiiRot.x );
+	PrintDebug( _T( "\nbuffDiffWiiRot.y = %f"), buffDiffWiiRot.y );
+	PrintDebug( _T( "\nbuffDiffWiiRot.z = %f"), buffDiffWiiRot.z );
+	PrintDebug( _T( "\ndiff = %d\n"), diff );
 
 	//	ターゲット出現
 	targetAppearCount++;

@@ -47,6 +47,13 @@ class SceneArgumentMain;
 //******************************************************************************
 typedef struct
 {
+	D3DXVECTOR3 startPos;
+	D3DXVECTOR3 buffPos1;
+	D3DXVECTOR3 buffPos2;
+	D3DXVECTOR3 endPos;
+	int count;
+
+
 	//	à íuèÓïÒ
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 setPos;
@@ -139,6 +146,16 @@ public:
 		D3DXVECTOR3 _speed,
 		float _rot,
 		float _rotSpeed);
+
+	//==============================================================================
+	// Brief  : èâä˙âªèàóù
+	// Return : int									: é¿çsåãâ 
+	//==============================================================================
+	int Set(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot);
 
 	//==============================================================================
 	// Brief  : èIóπèàóù

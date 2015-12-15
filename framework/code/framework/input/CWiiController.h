@@ -306,6 +306,8 @@ public:
 	//	再接続要求
 	void reConnectWiiboard();
 
+	void refreshWiiRemote();
+
 private:
 
 	//	バッテリーの充電量に応じてLEDを点灯させる

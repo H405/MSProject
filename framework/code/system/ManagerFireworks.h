@@ -48,6 +48,8 @@ public:
 	{
 		STATE_RIGHT = 0,
 		STATE_LEFT,
+		STATE_RIGHTSP,
+		STATE_LEFTSP,
 		STATE_MAX
 	}STATE;
 
@@ -102,6 +104,14 @@ public:
 		D3DXVECTOR3 _speed,
 		float _rot,
 		float _rotSpeed);
+	//==============================================================================
+	// Brief  : 花火発射処理
+	//==============================================================================
+	int Add(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot);
 
 	//==============================================================================
 	// Brief  : インデックス取得処理

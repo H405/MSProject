@@ -174,6 +174,61 @@ int Fireworks::Set(
 	// 正常終了
 	return 0;
 }
+//==============================================================================
+// Brief  : 初期化処理
+// Return : int									: 実行結果
+//==============================================================================
+int Fireworks::Set(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot)
+{
+	//	変数の保存と初期化
+	param.managerPoint = _managerPoint;
+	param.pos = _pos;
+	param.matRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.enable = true;
+	param.burnFlag = false;
+	param.disappear = 0;
+	param.fireMax = 0;
+	param.smallFireMax = 0;
+	param.setSmallFireIndex = 0;
+	param.setPosOld = 0;
+
+	indexState = _indexState;
+
+	if(param.lightPoint == nullptr)
+	{
+		param.lightPoint = managerLight->GetLightPoint();
+		param.lightPoint->SetDiffuse(1.0f, 1.0f, 0.5f);
+		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
+	}
+	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.00005f);
+	param.lightPoint->SetIsEnable(true);
+
+	//	音再生
+	param.launchSound->Play();
+
+	//	更新関数設定
+	fpUpdate = &Fireworks::NormalUpdate;
+
+
+
+	param.startPos = _pos;
+	param.endPos = _pos;
+	param.buffPos1 =_pos;
+	param.buffPos2 =_pos;
+	//param.endPos = D3DXVECTOR3(_pos.x + (_diffRot.z * 10.0f), 2.0f, _pos.z);
+	//param.buffPos1 = D3DXVECTOR3(_pos.x + (_diffRot.z * 3.0f), 1.0f, _pos.z);
+	//param.buffPos2 = D3DXVECTOR3(_pos.x + (_diffRot.z * 5.0f), 1.5f, _pos.z);
+	param.count = 0;
+
+
+
+	// 正常終了
+	return 0;
+}
 
 //==============================================================================
 // Brief  : 終了処理
