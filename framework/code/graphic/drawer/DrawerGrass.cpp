@@ -201,6 +201,17 @@ void DrawerGrass::Draw( const D3DXMATRIX& matrixWorld )
 	D3DXMatrixMultiply( &matrixTransform, &matrixTransform, &matrixViewProjection );
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM, matrixTransform );
 
+	// ワールドビュー変換行列
+	D3DXMATRIX	matrixWorldView;		// ワールドビュー変換行列
+	matrixWorldView = matrixWorld;
+	matrixWorldView._41 = matrixWorldView._42 = matrixWorldView._43 = 0.0f;
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorldView, &matrixViewInverse );
+	matrixWorldView._41 = translate.x;
+	matrixWorldView._42 = translate.y;
+	matrixWorldView._43 = translate.z;
+	D3DXMatrixMultiply( &matrixWorldView, &matrixWorldView, &matrixView );
+	pEffect_->SetMatrix( PARAMETER_MATRIX_WORLD_VIEW, matrixWorldView );
+
 	// テクスチャ
 	pEffect_->SetTexture( PARAMETER_TEXTURE, pTexture_ );
 

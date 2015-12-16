@@ -155,7 +155,14 @@ void ObjectSkinMesh::Update( void )
 	// ボーン変換行列の更新
 	unsigned long	countBone;				// ボーン数
 	D3DXMATRIX		matrixBoneMotion;		// モーションのボーン変換行列
-	countBone = pModel_->GetCountBone();
+	if( pModel_ != nullptr )
+	{
+		countBone = pModel_->GetCountBone();
+	}
+	else
+	{
+		countBone = 0;
+	}
 	for( unsigned int counterBone = 0; counterBone < countBone; ++counterBone )
 	{
 		pModel_->GetMatrixBone( counterBone, &pMatrixBoneCurrent_[ counterBone ] );

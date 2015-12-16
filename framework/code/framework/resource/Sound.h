@@ -53,11 +53,12 @@ public:
 	//==============================================================================
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
-	// Arg    : IXAudio2SourceVoice* pSourceVoice	: ソースボイス
+	// Arg    : int countSourceVoice				: ソースボイス数
+	// Arg    : IXAudio2SourceVoice** ppSourceVoice	: ソースボイス
 	// Arg    : BYTE* pData							: データ
 	// Arg    : DWORD size							: データサイズ
 	//==============================================================================
-	int Initialize( IXAudio2SourceVoice* pSourceVoice, BYTE* pData, DWORD size );
+	int Initialize( int countSourceVoice, IXAudio2SourceVoice** ppSourceVoice, BYTE* pData, DWORD size );
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -69,11 +70,12 @@ public:
 	//==============================================================================
 	// Brief  : 再初期化処理
 	// Return : int									: 実行結果
-	// Arg    : IXAudio2SourceVoice* pSourceVoice	: ソースボイス
+	// Arg    : int countSourceVoice				: ソースボイス数
+	// Arg    : IXAudio2SourceVoice** ppSourceVoice	: ソースボイス
 	// Arg    : BYTE* pData							: データ
 	// Arg    : DWORD size							: データサイズ
 	//==============================================================================
-	int Reinitialize( IXAudio2SourceVoice* pSourceVoice, BYTE* pData, DWORD size );
+	int Reinitialize( int countSourceVoice, IXAudio2SourceVoice** ppSourceVoice, BYTE* pData, DWORD size );
 
 	//==============================================================================
 	// Brief  : クラスのコピー
@@ -84,37 +86,38 @@ public:
 
 	//==============================================================================
 	// Brief  : 再生
-	// Return : void								: なし
+	// Return : int									: ソースボイス番号
 	// Arg    : int countLoop						: ループ回数
+	// Arg    : int indexSourceVoice				: ソースボイス番号
 	//==============================================================================
-	void Play( int countLoop = 0 );
+	int Play( int countLoop = 0, int indexSourceVoice = -1 );
 
 	//==============================================================================
 	// Brief  : 一時停止
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Return : int									: ソースボイス番号
+	// Arg    : int indexSourceVoice				: ソースボイス番号
 	//==============================================================================
-	void Pause( void );
+	int Pause( int indexSourceVoice = -1 );
 
 	//==============================================================================
 	// Brief  : 一時停止解除
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Return : int									: ソースボイス番号
+	// Arg    : int indexSourceVoice				: ソースボイス番号
 	//==============================================================================
-	void Unpause( void );
+	int Unpause( int indexSourceVoice = -1 );
 
 	//==============================================================================
 	// Brief  : 停止
-	// Return : void								: なし
-	// Arg    : void								: なし
+	// Return : int									: ソースボイス番号
+	// Arg    : int indexSourceVoice				: ソースボイス番号
 	//==============================================================================
-	void Stop( void );
+	int Stop( int indexSourceVoice = -1 );
 
 	//==============================================================================
 	// アクセサ
 	//==============================================================================
-	void SetVolume( float value );
-	float GetVolume( void ) const;
+	int SetVolume( float value, int indexSourceVoice = -1 );
+	float GetVolume( int indexSourceVoice = -1 ) const;
 
 protected:
 
@@ -123,10 +126,12 @@ private:
 	Sound( const Sound& );
 	Sound operator=( const Sound& );
 
-	IXAudio2SourceVoice*	pSourceVoice_;		// ソースボイス
-	BYTE*					pData_;				// データ
-	DWORD					size_;				// データサイズ
-	XAUDIO2_BUFFER			audioBuffer_;		// オーディオバッファ情報
+	int						countSourceVoice_;		// ソースボイス数
+	int						indexSource_;			// ソースボイス番号
+	IXAudio2SourceVoice**	ppSourceVoice_;			// ソースボイス
+	BYTE*					pData_;					// データ
+	DWORD					size_;					// データサイズ
+	XAUDIO2_BUFFER			audioBuffer_;			// オーディオバッファ情報
 };
 
 #endif	// MY_SOUND_H

@@ -43,6 +43,7 @@ public:
 	enum
 	{
 		PARAMETER_MATRIX_TRANSFORM = 0,		// 変換行列
+		PARAMETER_MATRIX_WORLD_VIEW,		// ワールドビュー変換行列
 		PARAMETER_TEXTURE,					// テクスチャ
 		PARAMETER_VECTOR_WIND,				// 風向き
 		PARAMETER_MAX						// 最大値

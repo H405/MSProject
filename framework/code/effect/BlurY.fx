@@ -96,7 +96,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	color.rgb += 0.01010416138f * (tex2D( samplerTexture, vertex.textureCoord6_ ).rgb + tex2D( samplerTexture, vertex.textureCoord1_ + offsetBlur_).rgb);
 	color.rgb += 0.00421204112f * (tex2D( samplerTexture, vertex.textureCoord7_ ).rgb + tex2D( samplerTexture, vertex.textureCoord0_ + offsetBlur_).rgb);
 	output.color_ = color;
-	output.luminance_ = color * pow( (0.298912f * color.r + 0.586611f * color.g + 0.114478f * color.b), 2.0f );
+	output.luminance_ = color * (0.298912f * color.r + 0.586611f * color.g + 0.114478f * color.b);
 	return output;
 }
 

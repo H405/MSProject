@@ -14,6 +14,7 @@ float4x4	matrixTransform_;					// 変換行列
 float4x4	matrixWorld_;						// ワールド変換行列
 float4x4	matrixWorldView_;					// ワールドビュー変換行列
 float4x4	matrixTransformTexture_;			// テクスチャ座標変換行列
+float2		offsetTexel_;						// テクセルオフセット
 
 float4x4	matrixWorldInverseTranspose_;		// ワールド逆転置行列
 texture		textureNormal_;						// 法線テクスチャ
@@ -134,6 +135,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 vectorNorm
 	output.position_ = mul( float4( positionLocal, 1.0f ), matrixTransform_ );
 	output.positionWorld_ = mul( float4( positionLocal, 1.0f ), matrixWorld_ );
 	output.positionTexture_ = mul( float4( positionLocal, 1.0f ), matrixTransformTexture_ );
+	output.positionTexture_.xy += offsetTexel_ * output.positionTexture_.w;
 
 	// 法線の変換
 	output.vectorNormalWorld_ = normalize( mul( float4( vectorNormalLocal, 0.0f ), matrixWorld_ ) ).xyz;

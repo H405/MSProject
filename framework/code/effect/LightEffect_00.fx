@@ -210,7 +210,7 @@ PixelOutput DrawPixel( VertexOutput vertex )
 	float3	specularDirection = CalculateSpecular( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye, dataDiffuse.a, power );
 
 	// ディレクショナルライトのリム色を計算
-	float3	rimDirection = CalculateRim( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye );
+	float3	rimDirection = 0.25f * CalculateRim( colorLightDirection_, vectorLightDirection_, vectorNormal, vectorVertexToEye );
 
 	// 環境光とディレクショナルライトの色を計算
 	float3	color = colorDiffuse * (diffuseDirection + colorAmbient_) + colorSpecular * (specularDirection + specularAmbient) + rimDirection;

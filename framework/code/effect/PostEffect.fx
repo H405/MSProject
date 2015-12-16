@@ -136,19 +136,17 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 float4 DrawPixel( VertexOutput vertex ) : COLOR0
 {
 	// フォーカスの算出
-	float	proportion = forcus_ - tex2D( samplerTextureDepth, vertex.textureCoord_ ).r;
+	float	proportion = tex2D( samplerTextureDepth, vertex.textureCoord_ ).r - forcus_;
 	if( proportion < 0.0f )
 	{
-		proportion += (1.0f - forcus_) * 0.2f;
-		proportion = max( -proportion, 0.0f );
-		proportion /= (1.0f - forcus_) * 0.9f + 0.00001f;
+		proportion /= -0.8f * forcus_;
 	}
 	else
 	{
-		proportion -= forcus_ * 0.2f;
-		proportion = max( proportion, 0.0f );
-		proportion /= forcus_ * 0.9f + 0.00001f;
+		proportion /= max( 0.8f - 1.8f * forcus_, 0.004f );
 	}
+	proportion = min( proportion, 1.0f );
+	proportion *= proportion;
 //	proportion *= proportion;
 //	proportion = min( 4.0f * proportion, 1.0f );
 //	return float4( proportion, proportion, proportion, 1.0f );
