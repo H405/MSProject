@@ -315,7 +315,6 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
 	river->SetPositionY( -100.0f );
 	pArgument->pEffectParameter_->SetHeightReflect( -100.0f );
-	//pRiver_->SetIsEnable(false);
 
 	// ’nŒ`‚Ì¶¬
 	Model*	pModelField = nullptr;					// ƒ‚ƒfƒ‹
