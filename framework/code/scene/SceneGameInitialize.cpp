@@ -187,8 +187,8 @@ void SceneGame::InitializeSelf( void )
 
 
 	targetAppearCount = 0;
-	buffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	buffWiiRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	buffDiffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	buffDiffWiiRot   = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //==============================================================================

@@ -163,6 +163,12 @@ public:
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		COLOR_STATE _colorState = COLOR_STATE_W);
+	int SetSP(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState = COLOR_STATE_W);
 
 	//==============================================================================
 	// Brief  : èIóπèàóù

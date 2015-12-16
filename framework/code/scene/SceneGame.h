@@ -336,6 +336,7 @@ private:
 	//==============================================================================
 	void LaunchFireworks();
 	void Launch();
+	void LaunchSP();
 
 	//==============================================================================
 	// Brief  : シンクロゲージの加算処理処理
@@ -511,13 +512,6 @@ private:
 
 	//	一時変数
 	int targetAppearCount;
-	D3DXVECTOR3 buffWiiAccel;
-	D3DXVECTOR3 buffWiiRot;
-
-	int diff;
-	bool diffBuff;
-	bool spDiffBuff;
-	int diffBuffCount;
 	D3DXVECTOR3 buffDiffWiiAccel;
 	D3DXVECTOR3 buffDiffWiiRot;
 };

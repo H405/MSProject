@@ -192,6 +192,11 @@ public:
 	float getRotY(){ return rot.y; }
 	float getRotZ(){ return rot.z; }
 
+	D3DXVECTOR3 getRotPrev(){ return rotPrev; }
+	float getRotPrevX(){ return rotPrev.x; }
+	float getRotPrevY(){ return rotPrev.y; }
+	float getRotPrevZ(){ return rotPrev.z; }
+
 	//	ä¥ìxé„(åÎç∑ëÂ)
 	D3DXVECTOR3 getRotRaw(){ return rotRaw; }
 	float getRotRawX(){ return rotRaw.x; }

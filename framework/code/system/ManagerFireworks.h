@@ -113,6 +113,12 @@ public:
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		COLOR_STATE _colorState = COLOR_STATE_W);
+	int AddSP(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState = COLOR_STATE_W);
 
 	//==============================================================================
 	// Brief  : インデックス取得処理
