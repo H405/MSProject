@@ -199,7 +199,8 @@ public:
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	void loadSound(SceneArgumentMain* pArgument, int _count);
+	//void loadSound(SceneArgumentMain* pArgument, int _count);
+	void setSound(Sound* _burnSound, Sound* _launchSound);
 
 	//==============================================================================
 	// アクセサ
@@ -242,6 +243,9 @@ protected:
 	FIREWORKS_PARAM param;
 
 	ManagerLight* managerLight;
+
+	int burnSoundIndex;
+	int launchSoundIndex;
 
 	//==============================================================================
 	// Brief  : 更新処理

@@ -16,6 +16,9 @@
 #include "fireworks/FireworksState.h"
 #include "SceneArgumentMain.h"
 
+#include "../framework/resource/ManagerSound.h"
+#include "../framework/resource/Sound.h"
+
 //******************************************************************************
 // ƒ‰ƒCƒuƒ‰ƒŠ
 //******************************************************************************
@@ -285,10 +288,11 @@ void ManagerFireworks::Burn()
 	//==============================================================================
 void ManagerFireworks::loadSound(SceneArgumentMain* pArgument)
 {
+	Sound* burnSound = pArgument->pSound_->Get("se/burn1.wav", 16);
+	Sound* launchSound = pArgument->pSound_->Get("se/launch.wav", 16);
+
 	for(int count = 0;count < FIREWORKS_MAX;count++)
-	{
-		fireworks[count].loadSound(pArgument, count);
-	}
+		fireworks[count].setSound(burnSound, launchSound);
 }
 
 void ManagerFireworks::setManagerLight(ManagerLight* _managerLight)
