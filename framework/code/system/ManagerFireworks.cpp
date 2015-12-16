@@ -14,6 +14,7 @@
 #include "../framework/develop/DebugProc.h"
 #include "../framework/develop/DebugMeasure.h"
 #include "fireworks/FireworksState.h"
+#include "SceneArgumentMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -79,6 +80,8 @@ int ManagerFireworks::Initialize(ManagerPoint* _managerPoint)
 	//	ここにテーブルを追加すること！
 	ppState_[ STATE_RIGHT ] = new FireworksStateRight();
 	ppState_[ STATE_LEFT ] = new FireworksStateLeft();
+	ppState_[ STATE_RIGHTSP ] = new FireworksStateRightSP();
+	ppState_[ STATE_LEFTSP ] = new FireworksStateLeftSP();
 	Fireworks::SetState( ppState_ );
 
 	// 正常終了
@@ -133,17 +136,13 @@ void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 
 		// 使用されていないとき次へ
 		if( !fireworks[ count ].IsEnable() )
-		{
 			continue;
-		}
 
 		fireworks[count].setInvViewMatrix(invViewMatrix);
 		fireworks[count].Update();
 
 		countFireworks++;
 	}
-
-	PrintDebug( _T( "\ncountFireworks = %d\n"), countFireworks );
 }
 //==============================================================================
 // Brief  : テーブルのソート処理
@@ -203,7 +202,7 @@ int ManagerFireworks::Add(
 	float _rotSpeed)
 {
 	int index = GetIndex();
-	if(index < 0)
+	if(index < 0 || index >= FIREWORKS_MAX)
 	{
 		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
 		return -1;
@@ -221,6 +220,36 @@ int ManagerFireworks::Add(
 
 	return index;
 }
+
+
+
+
+int ManagerFireworks::Add(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
+
+	//	花火のセット
+	fireworks[index].Set(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot);
+
+	return index;
+}
+
+
+
+
 //==============================================================================
 // Brief  : インデックス取得処理
 // Return : int									: 使用可能なオブジェクトの番号（全部使用中の場合は負の値が返る）
@@ -231,7 +260,7 @@ int ManagerFireworks::GetIndex()
 	// 空き番号を探す
 	for( int count = 0; count < FIREWORKS_MAX; ++count )
 	{
-		if( !fireworks[ count ].IsEnable() )
+		if( !fireworks[count].IsEnable() )
 		{
 			return count;
 		}
@@ -247,6 +276,19 @@ int ManagerFireworks::GetIndex()
 //==============================================================================
 void ManagerFireworks::Burn()
 {
+}
+
+//==============================================================================
+	// Brief  : 花火の音生成処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+void ManagerFireworks::loadSound(SceneArgumentMain* pArgument)
+{
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+	{
+		fireworks[count].loadSound(pArgument, count);
+	}
 }
 
 void ManagerFireworks::setManagerLight(ManagerLight* _managerLight)

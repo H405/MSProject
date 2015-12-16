@@ -2797,7 +2797,7 @@ bool wiimote::PlaySquareWave (speaker_freq freq, BYTE volume)
 	WriteData(0x04a20009, 0x01);
 	// write 0x08 to register 0xa20001 
 	WriteData(0x04a20001, 0x08);
-	// write default sound mode (4bit ADPCM, we assume) 7-byte configuration
+	// write default bgmSound mode (4bit ADPCM, we assume) 7-byte configuration
 	//  to registers 0xa20001-0xa20008 
 	BYTE bytes[7] = { 0x00, 0x00, 0x00, 10+(BYTE)freq, volume, 0x00, 0x00 };
 	WriteData(0x04a20001, sizeof(bytes), bytes);

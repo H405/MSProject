@@ -27,6 +27,7 @@
 //******************************************************************************
 #define FIRE_MAX (24)	//	１つの花火から生成される火花の数
 #define SMALL_FIREWORKS_MAX (5)
+#define DELETECOUNT_MAX (100)
 typedef int TIME;
 
 //******************************************************************************
@@ -38,12 +39,21 @@ class Fire;
 class ManagerLight;
 class LightPoint;
 class LightDirection;
+class Sound;
+class SceneArgumentMain;
 
 //******************************************************************************
 // 構造体定義
 //******************************************************************************
 typedef struct
 {
+	D3DXVECTOR3 startPos;
+	D3DXVECTOR3 buffPos1;
+	D3DXVECTOR3 buffPos2;
+	D3DXVECTOR3 endPos;
+	int count;
+
+
 	//	位置情報
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 setPos;
@@ -94,6 +104,13 @@ typedef struct
 	//	カメラの逆行列
 	D3DXMATRIX invViewMatrix;
 
+	//	光源
+	LightPoint* lightPoint;
+
+	//	音
+	Sound* launchSound;
+	Sound* burnSound;
+
 }FIREWORKS_PARAM;
 
 //******************************************************************************
@@ -131,6 +148,16 @@ public:
 		float _rotSpeed);
 
 	//==============================================================================
+	// Brief  : 初期化処理
+	// Return : int									: 実行結果
+	//==============================================================================
+	int Set(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot);
+
+	//==============================================================================
 	// Brief  : 終了処理
 	// Return : int									: 実行結果
 	// Arg    : void								: なし
@@ -166,6 +193,13 @@ public:
 	// Arg    : FireworksState** ppState				: ステートテーブル
 	//==============================================================================
 	static void SetState( FireworksState** ppState );
+
+	//==============================================================================
+	// Brief  : 花火の音生成処理
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void loadSound(SceneArgumentMain* pArgument, int _count);
 
 	//==============================================================================
 	// アクセサ
@@ -208,7 +242,6 @@ protected:
 	FIREWORKS_PARAM param;
 
 	ManagerLight* managerLight;
-	LightPoint* lightPoint;
 
 	//==============================================================================
 	// Brief  : 更新処理

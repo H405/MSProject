@@ -205,6 +205,12 @@ void DrawerRiver::Draw( const D3DXMATRIX& matrixWorld )
 	matrixTransformTexture *= matrixSaclingTexture * matrixTranslationTexture;
 	pEffect_->SetMatrix( PARAMETER_MATRIX_TRANSFORM_TEXTURE, matrixTransformTexture );
 
+	// テクセルオフセット
+	float	pOffset[ 2 ];		// オフセット
+	pOffset[ 0 ] = 0.5f / pEffectParameter_->GetWidthScreen();
+	pOffset[ 1 ] = 0.5f / pEffectParameter_->GetHeightScreen();
+	pEffect_->SetFloatArray( PARAMETER_OFFET_TEXEL, pOffset, 2 );
+
 	// ワールド逆転置行列
 	D3DXMATRIX	matrixWorldInverse;					// ワールド逆行列
 	D3DXMATRIX	matrixWorldInverseTranspose;		// ワールド逆転置行列

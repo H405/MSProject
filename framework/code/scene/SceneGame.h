@@ -75,7 +75,7 @@ class ObjectRiver;
 class ObjectSkinMesh;
 class ObjectWaterwheel;
 class Player;
-
+class Sound;
 class GraphicPoint;
 class PolygonPoint;
 
@@ -245,6 +245,15 @@ private:
 	int targetTable[TARGET_MAX];
 	int fireworksTableIndex;
 	int targetTableIndex;
+
+	//----------------------------------------------------------
+
+	//	音関連
+	//----------------------------------------------------------
+	Sound* bgmSound;
+	Sound* desideSound;
+	Sound* selectSound;
+	Sound* cancelSound;
 	//----------------------------------------------------------
 
 	//	カメラの方向
@@ -319,6 +328,7 @@ private:
 	// Brief  : 花火打ち上げ処理
 	//==============================================================================
 	void LaunchFireworks();
+	void Launch();
 
 	//==============================================================================
 	// Brief  : シンクロゲージの加算処理処理
@@ -495,6 +505,13 @@ private:
 	int targetAppearCount;
 	D3DXVECTOR3 buffWiiAccel;
 	D3DXVECTOR3 buffWiiRot;
+
+	int diff;
+	bool diffBuff;
+	bool spDiffBuff;
+	int diffBuffCount;
+	D3DXVECTOR3 buffDiffWiiAccel;
+	D3DXVECTOR3 buffDiffWiiRot;
 };
 
 #endif	// MY_SCENE_GAME_H

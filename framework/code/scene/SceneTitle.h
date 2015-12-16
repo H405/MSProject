@@ -47,6 +47,7 @@ class ObjectMesh;
 class ObjectRiver;
 class ObjectWaterwheel;
 class Player;
+class Sound;
 
 //******************************************************************************
 // クラス定義
@@ -188,6 +189,14 @@ private:
 	int fireworksTableIndex;
 
 	static const int	COUNT_HOUSE = 11;		// 家の数
+	//----------------------------------------------------------
+
+	//	音関連
+	//----------------------------------------------------------
+	Sound* bgmSound;
+	Sound* desideSound;
+	Sound* selectSound;
+	Sound* cancelSound;
 	//----------------------------------------------------------
 
 	//==============================================================================

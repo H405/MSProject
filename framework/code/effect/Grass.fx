@@ -11,6 +11,7 @@
 // 変数宣言
 //******************************************************************************
 float4x4	matrixTransform_;		// 変換行列
+float4x4	matrixWorldView_;		// ワールドビュー変換行列
 texture		texture_;				// テクスチャ
 float2		vectorWind_;			// 風向き
 
@@ -35,6 +36,7 @@ struct VertexOutput
 {
 	float4	position_		: POSITION;			// 座標
 	float2	textureCoord_	: TEXCOORD0;		// テクスチャ座標
+	float	depth_			: TEXCOORD1;		// 深度
 };
 
 // ピクセルシェーダ出力
@@ -62,6 +64,9 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 	// テクスチャ座標の変換
 	output.textureCoord_ = textureCoord;
 
+	// 深度の計算
+	output.depth_ = mul( float4( positionLocal, 1.0f ), matrixWorldView_ ).z;
+
 	// 頂点出力を返す
 	return output;
 }
@@ -73,12 +78,17 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float2 textureCoo
 //==============================================================================
 PixelOutput DrawPixel( VertexOutput vertex )
 {
+	// 描画するか判定
+	float4	color = tex2D( samplerTexture, vertex.textureCoord_ );
+	clip( color.a - 0.5f );
+
 	// 値の設定
 	PixelOutput	output;		// ピクセルシェーダ出力
-	output.diffuse_ = tex2D( samplerTexture, vertex.textureCoord_ );
-	output.specular_ = 0.0f;
-	output.normal_ = 0.0f;
+	output.diffuse_ = float4( color.rgb, 0.1f );
+	output.specular_ = float4( 0.02f, 0.05f, 0.04f, 0.078125f );
+	output.normal_ = float4( 0.0f, 1.0f, 0.0f, 0.5f );
 	output.depth_ = 0.0f;
+	output.depth_.r = vertex.depth_;
 
 	// ピクセルシェーダ出力を返す
 	return output;
@@ -92,14 +102,6 @@ technique ShadeNormal
 	// 通常変換
 	pass PassNormal
 	{
-		// レンダーステートの設定
-		AlphaBlendEnable = True;
-		SrcBlend = SrcAlpha;
-		DestBlend = InvSrcAlpha;
-		AlphaTestEnable = True;
-		AlphaRef = 0x00000000;
-		AlphaFunc = Greater;
-
 		// シェーダの設定
 		VertexShader = compile vs_3_0 TransformVertex();
 		PixelShader = compile ps_3_0 DrawPixel();

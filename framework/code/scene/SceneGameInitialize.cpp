@@ -39,6 +39,8 @@
 #include "../system/SceneArgumentMain.h"
 #include "../system/fire/Fire.h"
 #include "../object/ObjectRiver.h"
+#include "../framework/resource/ManagerSound.h"
+#include "../framework/resource/Sound.h"
 
 // テスト
 #include "../graphic/graphic/Graphic2D.h"
@@ -160,6 +162,15 @@ void SceneGame::InitializeSelf( void )
 	//----------------------------------------------------------
 
 
+	//	音関連
+	//----------------------------------------------------------
+	bgmSound = nullptr;
+	desideSound = nullptr;
+	selectSound = nullptr;
+	cancelSound = nullptr;
+	//----------------------------------------------------------
+
+
 	cameraState = CAMERA_STATE_FRONT;
 	fpUpdate = nullptr;
 
@@ -276,6 +287,20 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		return result;
 	}
 
+
+
+	//	音関連の読み込み
+	bgmSound = pArgument_->pSound_->Get("bgm/game.wav");
+	bgmSound->Play(-1);
+
+	desideSound = pArgument_->pSound_->Get("se/deside.wav");
+	selectSound = pArgument_->pSound_->Get("se/select.wav");
+	cancelSound = pArgument_->pSound_->Get("se/cancel.wav");
+
+
+
+
+
 	//	更新関数設定
 	fpUpdate = &SceneGame::calibrationUpdate;
 
@@ -315,7 +340,6 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		pArgument->pTextureReflect_, pArgument->pTextureReflectNotLight_, pArgument->pTextureReflectAdd_, pArgument->pTexture3D_, pArgument->pTextureDepth_ );
 	river->SetPositionY( -100.0f );
 	pArgument->pEffectParameter_->SetHeightReflect( -100.0f );
-	//pRiver_->SetIsEnable(false);
 
 	// 地形の生成
 	Model*	pModelField = nullptr;					// モデル
@@ -487,7 +511,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 25600, 17, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 51200, 17, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;
@@ -499,6 +523,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	//	花火管理オブジェクト生成
 	managerFireworks = new ManagerFireworks;
 	managerFireworks->Initialize(managerPoint);
+	managerFireworks->loadSound(pArgument_);
 
 	// ライトの生成
 	managerFireworks->setManagerLight(pArgument->pLight_);
@@ -639,6 +664,24 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	gage->setPosition(-540.0f, -270.0f, 0.0f);
 
 
+
+	//	「初めから」文字オブジェクトの生成
+	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringRetry.png" ) );
+
+	stringRetry = new Object2D;
+	stringRetry->Initialize(0);
+
+	stringRetry->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+	stringRetry->SetPosition(0.0f, -200.0f, 0.0f);
+	stringRetry->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
+	stringRetry->SetEnableGraphic(false);
+
+
 	//	ポーズ時用背景オブジェクト生成
 	pTexture = pArgument_->pTexture_->Get( _T( "common/fade.jpg" ) );
 
@@ -690,24 +733,6 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	stringStop->SetPosition(0.0f, 0.0f, 0.0f);
 	stringStop->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
 	stringStop->SetEnableGraphic(false);
-
-
-
-	//	「初めから」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringRetry.png" ) );
-
-	stringRetry = new Object2D;
-	stringRetry->Initialize(0);
-
-	stringRetry->CreateGraphic(
-		0,
-		pArgument_->pEffectParameter_,
-		pEffect,
-		pTexture);
-
-	stringRetry->SetPosition(0.0f, -200.0f, 0.0f);
-	stringRetry->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
-	stringRetry->SetEnableGraphic(false);
 
 
 	//	ゲーム開始前のキャリブレーションお願いオブジェクト
@@ -800,6 +825,11 @@ int SceneGame::Reinitialize( SceneArgumentMain* pArgument )
 //==============================================================================
 int SceneGame::Finalize( void )
 {
+	bgmSound->Stop();
+	desideSound->Stop();
+	selectSound->Stop();
+	cancelSound->Stop();
+
 	// SceneGame2の終了
 	int		result;		// 実行結果
 	result = Finalize2();

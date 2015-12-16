@@ -146,6 +146,98 @@ int ManagerSound< TypeItem >::Copy( ManagerSound* pOut ) const
 }
 
 //==============================================================================
+// Brief  : リソースの読み込み
+// Return : int									: リソースID
+// Arg    : TCHAR* pNameFile					: ファイル名
+// Arg    : int maximumStack					: 最大同時再生数
+//==============================================================================
+template< class TypeItem >
+int ManagerSound< TypeItem >::Load( TCHAR* pNameFile, int maximumStack )
+{
+	// エラーチェック
+	Assert( pNameFile != nullptr, _T( "ファイルパスが不正です。" ) );
+
+	// ファイルパスの作成
+	TCHAR	pPath[ _MAX_PATH ] = {};		// ファイルパス
+	_tcscpy_s( pPath, _MAX_PATH, pDirectory_ );
+	_tcscat_s( pPath, _MAX_PATH, pNameFile );
+
+	// 既に作られていないか検索
+	int		index;		// 要素番号
+	index = GetId( pPath );
+	if( index != -1 )
+	{
+		return index;
+	}
+
+	// 格納場所の決定
+	for( index = 0; index < maximumItem_; ++index )
+	{
+		if( !pBufferItem_[ index ].isEnable_ )
+		{
+			break;
+		}
+	}
+	if( index >= maximumItem_ )
+	{
+		PrintDebugWnd( _T( "リソースの格納領域に空きがありません。" ) );
+		return -1;
+	}
+
+	// リソースの読み込み
+	int		result;		// 実行結果
+	result = LoadResource( pPath, index, maximumStack );
+	if( result != 0 )
+	{
+		return -1;
+	}
+
+	// 要素に値を設定
+	pBufferItem_[ index ].id_ = index;
+	_tcscpy_s( pBufferItem_[ index ].pPath_, _MAX_PATH, pPath );
+	pBufferItem_[ index ].isEnable_ = true;
+
+	// リソースIDを返す
+	return index;
+}
+
+//==============================================================================
+// Brief  : リソースの取得
+// Return : TypeItem*							: リソース
+// Arg    : TCHAR* pNameFile					: ファイル名
+// Arg    : int maximumStack					: 最大同時再生数
+//==============================================================================
+template< class TypeItem >
+TypeItem* ManagerSound< TypeItem >::Get( TCHAR* pNameFile, int maximumStack )
+{
+	// エラーチェック
+	Assert( pNameFile != nullptr, _T( "ファイルパスが不正です。" ) );
+
+	// ファイルパスの作成
+	TCHAR	pPath[ _MAX_PATH ] = {};		// ファイルパス
+	_tcscpy_s( pPath, _MAX_PATH, pDirectory_ );
+	_tcscat_s( pPath, _MAX_PATH, pNameFile );
+
+	// 既に作られていないか検索
+	int		index;		// 要素番号
+	index = GetId( pPath );
+	if( index != -1 )
+	{
+		return pBufferItem_[ index ].pItem_;
+	}
+
+	// 作られていないとき読み込み
+	index = Load( pNameFile, maximumStack );
+	if( index == -1 )
+	{
+		return nullptr;
+	}
+
+	// リソースの返却
+	return pBufferItem_[ index ].pItem_;
+}
+
+//==============================================================================
 // Brief  : XAudio2インターフェースの取得
 // Return : IXAudio2*							: 返却する値
 // Arg    : void								: なし
@@ -174,9 +266,10 @@ void ManagerSound< TypeItem >::InitializeSelf( void )
 // Return : int									: 実行結果
 // Arg    : TCHAR* pPath						: ファイルパス
 // Arg    : int index							: 格納要素番号
+// Arg    : int maximumStack					: 最大同時再生数
 //==============================================================================
 template< class TypeItem >
-int ManagerSound< TypeItem >::LoadResource( TCHAR* pPath, int index )
+int ManagerSound< TypeItem >::LoadResource( TCHAR* pPath, int index, int maximumStack )
 {
 	// サウンドデータファイルの生成
 	HANDLE	handleFile;		// ファイルハンドル
@@ -283,22 +376,31 @@ int ManagerSound< TypeItem >::LoadResource( TCHAR* pPath, int index )
 	}
 
 	// ソースボイスの生成
-	IXAudio2SourceVoice*	pSourceVoice = nullptr;		// ソースボイス
-	result = pXAudio_->CreateSourceVoice( &pSourceVoice, &(formatWave.Format) );
-	if( result != S_OK )
+	IXAudio2SourceVoice**	ppSourceVoice = nullptr;		// ソースボイス
+	ppSourceVoice = new IXAudio2SourceVoice*[ maximumStack ];
+	if( ppSourceVoice == nullptr )
 	{
-		PrintMsgBox( _T( "ソースボイスの生成に失敗しました。" ) );
-		return result;
+		return 1;
 	}
+	for( int counterSourceVoice = 0; counterSourceVoice < maximumStack; ++counterSourceVoice )
+	{
+		// ソースボイスの生成
+		result = pXAudio_->CreateSourceVoice( &ppSourceVoice[ counterSourceVoice ], &(formatWave.Format) );
+		if( result != S_OK )
+		{
+			PrintMsgBox( _T( "ソースボイスの生成に失敗しました。" ) );
+			return result;
+		}
 
-	// オーディオバッファの登録
-	XAUDIO2_BUFFER	bufferAudio;		// 音声ファイル用バッファ
-	ZeroMemory( &bufferAudio, sizeof( XAUDIO2_BUFFER ) );
-	bufferAudio.AudioBytes = sizeData;
-	bufferAudio.pAudioData = pBufferData;
-	bufferAudio.Flags = XAUDIO2_END_OF_STREAM;
-	bufferAudio.LoopCount = 0;
-	pSourceVoice->SubmitSourceBuffer( &bufferAudio );
+		// オーディオバッファの登録
+		XAUDIO2_BUFFER	bufferAudio;		// 音声ファイル用バッファ
+		ZeroMemory( &bufferAudio, sizeof( XAUDIO2_BUFFER ) );
+		bufferAudio.AudioBytes = sizeData;
+		bufferAudio.pAudioData = pBufferData;
+		bufferAudio.Flags = XAUDIO2_END_OF_STREAM;
+		bufferAudio.LoopCount = 0;
+		ppSourceVoice[ counterSourceVoice ]->SubmitSourceBuffer( &bufferAudio );
+	}
 
 	// サウンドの生成
 	pBufferItem_[ index ].pItem_ = new Sound();
@@ -306,11 +408,15 @@ int ManagerSound< TypeItem >::LoadResource( TCHAR* pPath, int index )
 	{
 		return 1;
 	}
-	result = pBufferItem_[ index ].pItem_->Initialize( pSourceVoice, pBufferData, sizeData );
+	result = pBufferItem_[ index ].pItem_->Initialize( maximumStack, ppSourceVoice, pBufferData, sizeData );
 	if( result != 0 )
 	{
 		return result;
 	}
+
+	// ソースボイス格納領域の開放
+	delete[] ppSourceVoice;
+	ppSourceVoice = nullptr;
 
 	// 正常終了
 	return 0;

@@ -514,6 +514,11 @@ void CWiiController::batteryLightingLED()
 	}
 }
 
+void CWiiController::refreshWiiRemote()
+{
+	wiiRemote->RefreshState();
+}
+
 //=============================================================================
 //	ã§í ÇÃçXêVèàóù
 //=============================================================================
