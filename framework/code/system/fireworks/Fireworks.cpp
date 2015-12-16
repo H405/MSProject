@@ -72,6 +72,9 @@ Fireworks::Fireworks( void )
 	//	火花生成
 	param.fire = new Fire[FIRE_MAX * SMALL_FIREWORKS_MAX];
 	param.smallFire = new Fire[FIRE_MAX * SMALL_FIREWORKS_MAX];
+
+	burnSoundIndex = -1;
+	launchSoundIndex = -1;
 }
 //==============================================================================
 // Brief  : クラス内の初期化処理
@@ -165,7 +168,9 @@ int Fireworks::Set(
 
 
 	//	音再生
-	param.launchSound->Play();
+	burnSoundIndex = -1;
+	launchSoundIndex = -1;
+	launchSoundIndex = param.launchSound->Play();
 
 
 	//	更新関数設定
@@ -208,7 +213,9 @@ int Fireworks::Set(
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
-	param.launchSound->Play();
+	burnSoundIndex = -1;
+	launchSoundIndex = -1;
+	launchSoundIndex = param.launchSound->Play();
 
 	//	更新関数設定
 	fpUpdate = &Fireworks::NormalUpdate;
@@ -240,8 +247,8 @@ int Fireworks::Set(
 int Fireworks::Finalize( void )
 {
 	//	音
-	param.launchSound->Stop();
-	param.burnSound->Stop();
+	param.launchSound->Stop(launchSoundIndex);
+	param.burnSound->Stop(burnSoundIndex);
 
 	if(param.lightPoint != nullptr)
 		param.lightPoint->Release();
@@ -495,8 +502,8 @@ int Fireworks::burn(
 	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
 
 	//	音再生
-	param.launchSound->Stop();
-	param.burnSound->Play();
+	param.launchSound->Stop(launchSoundIndex);
+	burnSoundIndex = param.burnSound->Play();
 
 	return returnValue;
 }
@@ -588,8 +595,8 @@ void Fireworks::burn2()
 	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
 
 	//	音再生
-	param.launchSound->Stop();
-	param.burnSound->Play();
+	param.launchSound->Stop(launchSoundIndex);
+	burnSoundIndex = param.burnSound->Play();
 }
 
 //==============================================================================
@@ -597,15 +604,15 @@ void Fireworks::burn2()
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Fireworks::loadSound(SceneArgumentMain* pArgument, int _count)
+/*void Fireworks::loadSound(SceneArgumentMain* pArgument, int _count)
 {
-	char buff[256];
-
-	sprintf_s(buff, "se/burn1_%d.wav", _count);
-	param.burnSound = pArgument->pSound_->Get(buff);
-
-	sprintf_s(buff, "se/launch_%d.wav", _count);
-	param.launchSound = pArgument->pSound_->Get(buff);
+	param.burnSound = pArgument->pSound_->Get("se/burn1.wav", 16);
+	param.launchSound = pArgument->pSound_->Get("se/launch.wav", 16);
+}*/
+void Fireworks::setSound(Sound* _burnSound, Sound* _launchSound)
+{
+	param.burnSound = _burnSound;
+	param.launchSound = _launchSound;
 }
 
 void Fireworks::setManagerLight(ManagerLight* _managerLight)
