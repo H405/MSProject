@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "../system/SceneMain.h"
 #include "d3dx9.h"
+#include "../system/target/Target.h"
 
 //******************************************************************************
 // ライブラリ
@@ -78,6 +79,8 @@ class Player;
 class Sound;
 class GraphicPoint;
 class PolygonPoint;
+class CWiiController;
+class FireworksUI;
 
 //******************************************************************************
 // クラス定義
@@ -149,7 +152,7 @@ private:
 	CameraObject*	pCameraShadowFar_;			// 影用カメラ遠
 	CameraObject**	ppCameraShadowPoint_;		// 影用カメラ点
 	LightDirection*	pLight_;					// ライト
-
+	CWiiController* wiiContoroller;
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
@@ -164,6 +167,10 @@ private:
 
 	//	コンボ数オブジェクト
 	Combo* combo;
+
+	//	花火用UI
+	FireworksUI* fireworksUI;
+	COLOR_STATE colorState;
 
 	//	ポーズ時用背景
 	Object2D* pauseFrame;
@@ -334,6 +341,7 @@ private:
 	// Brief  : シンクロゲージの加算処理処理
 	//==============================================================================
 	void AddGage(ADD_SCORE_STATE _state);
+	void AddGage(float _value);
 
 	//==============================================================================
 	// Brief  : 点と円の当たり判定処理

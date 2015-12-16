@@ -66,6 +66,7 @@
 #include "../framework/polygon/PolygonPoint.h"
 
 #include "../framework/radianTable/radianTable.h"
+#include "../system/fireworksUI/fireworksUI.h"
 
 //******************************************************************************
 // ライブラリ
@@ -98,6 +99,7 @@ void SceneGame::InitializeSelf( void )
 	pCameraShadowFar_ = nullptr;
 	ppCameraShadowPoint_ = nullptr;
 	pLight_ = nullptr;
+	wiiContoroller = nullptr;
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
@@ -105,6 +107,7 @@ void SceneGame::InitializeSelf( void )
 	score = nullptr;
 	gage = nullptr;
 	combo = nullptr;
+	fireworksUI = nullptr;
 	pauseFrame = nullptr;
 	stringReturn = nullptr;
 	stringStop = nullptr;
@@ -119,6 +122,8 @@ void SceneGame::InitializeSelf( void )
 
 	pushChooseObjectFlashingCount = 0;
 	chooseFlag = false;
+
+	colorState = COLOR_STATE_R;
 	//----------------------------------------------------------
 
 
@@ -257,6 +262,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
 
+	//	アドレス保存
+	wiiContoroller = pArgument_->pWiiController_;
 
 
 	//	ステージオブジェクトの生成
@@ -274,7 +281,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	chooseObject = stringReturn;
 
 	//	wiiリモコンが登録されてる場合は登録しない
-	if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
+	if(wiiContoroller->getIsConnectWiimote() == true)
 	{
 		chooseObject = nullptr;
 		pArgument_->pWiiController_->startGame();
@@ -649,6 +656,16 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	combo->setPosition(200.0f, -300.0f, 0.0f);
 
 
+	//	花火用UI生成
+	fireworksUI = new FireworksUI;
+	fireworksUI->Initialize(
+		pArgument_->pDevice_,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pArgument_->pTexture_->Get( _T( "game/ui3.png" )));
+	fireworksUI->setPosition(450.0f, -300.0f, 0.0f);
+
+
 	//	ゲージオブジェクト生成
 	gage = new Gage();
 	gage->Initialize(
@@ -846,6 +863,9 @@ int SceneGame::Finalize( void )
 
 	delete combo;
 	combo = nullptr;
+
+	delete fireworksUI;
+	fireworksUI = nullptr;
 
 	delete gage;
 	gage = nullptr;

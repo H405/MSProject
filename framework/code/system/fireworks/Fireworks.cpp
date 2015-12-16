@@ -59,6 +59,8 @@ static const TIME compDisppear = (int)(DELETECOUNT_MAX);
 static const TIME compLaunchAppear = (int)(DELETECOUNT_MAX * 0.5f);
 static const TIME compLaunchDisppear = (int)(DELETECOUNT_MAX);
 
+static const float diffRotMul = 16.0f;
+
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
@@ -164,7 +166,7 @@ int Fireworks::Set(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.00005f);
-	param.lightPoint->SetIsEnable(true);
+	//param.lightPoint->SetIsEnable(true);
 
 
 	//	音再生
@@ -187,7 +189,8 @@ int Fireworks::Set(
 	int _indexState,
 	ManagerPoint* _managerPoint,
 	D3DXVECTOR3 _pos,
-	D3DXVECTOR3 _diffRot)
+	D3DXVECTOR3 _diffRot,
+	COLOR_STATE _colorState)
 {
 	//	変数の保存と初期化
 	param.managerPoint = _managerPoint;
@@ -201,15 +204,29 @@ int Fireworks::Set(
 	param.setSmallFireIndex = 0;
 	param.setPosOld = 0;
 
+	//	色情報
+	param.colorState = _colorState;
+	if(param.colorState == COLOR_STATE_R)
+		param.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_G)
+		param.color = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_B)
+		param.color = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_W)
+		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_S)
+		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+
 	indexState = _indexState;
 
 	if(param.lightPoint == nullptr)
 	{
 		param.lightPoint = managerLight->GetLightPoint();
-		param.lightPoint->SetDiffuse(1.0f, 1.0f, 0.5f);
+		param.lightPoint->SetDiffuse(param.color);
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
-	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.00005f);
+	param.lightPoint->SetDiffuse(param.color);
+	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -223,17 +240,11 @@ int Fireworks::Set(
 
 
 	//	endの上限値は、yが200くらい、xが-200～200くらい？
-	/*param.startPos = _pos;
-	param.buffPos1 = D3DXVECTOR3(_pos.x + (_diffRot.z * 3.0f), 0.0f, _pos.z);
-	param.buffPos2 = D3DXVECTOR3(_pos.x + (_diffRot.z * 9.0f), 100.0f, _pos.z);
-	param.endPos = D3DXVECTOR3(_pos.x + (_diffRot.z * 12.0f), 200.0f, _pos.z);*/
 	param.startPos = _pos;
-	param.buffPos1 = D3DXVECTOR3(_pos.x - (_diffRot.z * 3.0f), 110.0f, _pos.z);
-	param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * 12.0f), 200.0f, _pos.z);
+	param.buffPos1 = D3DXVECTOR3(_pos.x - (_diffRot.z * (diffRotMul * 0.25f)), 110.0f, _pos.z);
+	param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * diffRotMul), 200.0f, _pos.z);
 
 	param.count = 0;
-
-
 
 	// 正常終了
 	return 0;
@@ -271,7 +282,7 @@ int Fireworks::Finalize( void )
 //==============================================================================
 void Fireworks::Update( void )
 {
-	//MeasureTime("fireworksUpdate");
+	MeasureTime("fireworksUpdate");
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
@@ -335,8 +346,8 @@ void Fireworks::BurnUpdate( void )
 	}
 
 	// 減衰率の設定
-	D3DXVECTOR3	attenuation;		// 減衰率
-	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
+	D3DXVECTOR3	attenuation;		// 減衰率0.00028f, 0.00000005f     0.0005f, 0.00005f
+	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0028f * proportion, 0.0000005f * proportion );
 	param.lightPoint->SetAttenuation( attenuation );
 }
 //==============================================================================
@@ -385,10 +396,9 @@ void Fireworks::Burn2Update( void )
 	}
 
 	// 減衰率の設定
-	D3DXVECTOR3	attenuation;		// 減衰率
-	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0005f * proportion, 0.00005f * proportion );
+	D3DXVECTOR3	attenuation;		// 減衰率0.00028f, 0.00000005f     0.0005f, 0.00005f
+	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0028f * proportion, 0.0000005f * proportion );
 	param.lightPoint->SetAttenuation( attenuation );
-
 }
 
 //==============================================================================
@@ -443,14 +453,18 @@ int Fireworks::burn(
 
 		returnValue = ADD_1;
 	}
+	param.fireMax = FIRE_MAX;
+	buffValue = 360.0f / (float)(param.fireMax);
+	fireSize = 45.0f;
 
+	returnValue = ADD_10;
 
 
 	//	花火の背景用生成
 	param.managerPoint->Add(
 		fireBGExistTime,
 		param.setPos,
-		D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f),
+		param.color,
 		fireSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
@@ -476,7 +490,7 @@ int Fireworks::burn(
 			D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.1f),
 						(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
 						0.0f),
-			D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+			param.color);
 
 
 		//	小さい火花生成
@@ -487,7 +501,7 @@ int Fireworks::burn(
 			D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.13f),
 						(speedY * (float)(rand() % bigFireFirstSpeed) * 0.13f),
 						0.0f),
-			D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+			param.color);
 	}
 
 
@@ -497,9 +511,6 @@ int Fireworks::burn(
 
 	//	破裂フラグON
 	param.burnFlag = true;
-
-	//	点光源色設定
-	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
 
 	//	音再生
 	param.launchSound->Stop(launchSoundIndex);
@@ -542,7 +553,7 @@ void Fireworks::burn2()
 		param.managerPoint->Add(
 			fireBGExistTime,
 			param.setPos,
-			D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f),
+			param.color,
 			fireSize,
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
@@ -569,7 +580,7 @@ void Fireworks::burn2()
 				D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.1f),
 							(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
 							0.0f),
-				D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+				param.color);
 
 
 			//	小さい火花生成
@@ -580,7 +591,7 @@ void Fireworks::burn2()
 				D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.13f),
 							(speedY * (float)(rand() % bigFireFirstSpeed) * 0.13f),
 							0.0f),
-				D3DXCOLOR(1.0f, 0.25f, 0.0f, 1.0f));
+				param.color);
 		}
 	}
 
@@ -590,9 +601,6 @@ void Fireworks::burn2()
 
 	//	破裂フラグON
 	param.burnFlag = true;
-
-	//	点光源色設定
-	//lightPoint->SetAttenuation(0.0f, 0.00028f, 0.00000005f);
 
 	//	音再生
 	param.launchSound->Stop(launchSoundIndex);
@@ -604,11 +612,6 @@ void Fireworks::burn2()
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-/*void Fireworks::loadSound(SceneArgumentMain* pArgument, int _count)
-{
-	param.burnSound = pArgument->pSound_->Get("se/burn1.wav", 16);
-	param.launchSound = pArgument->pSound_->Get("se/launch.wav", 16);
-}*/
 void Fireworks::setSound(Sound* _burnSound, Sound* _launchSound)
 {
 	param.burnSound = _burnSound;

@@ -102,7 +102,14 @@ public:
 	int getPercent(){return (int)percent;}
 
 	void setPercentFuture(float _value){percentFuture = _value;if(percentFuture < 0.0f)percentFuture = 0.0f;if(percentFuture > 100.0f)percentFuture = 100.0f;}
-	void addPercentFuture(float _value){percentFuture += _value;if(percentFuture < 0.0f)percentFuture = 0.0f;if(percentFuture > 100.0f)percentFuture = 100.0f;}
+	void addPercentFuture(float _value)
+	{
+		percentFuture += _value;
+		if(percentFuture < 0.0f)
+			percentFuture = 0.0f;
+		if(percentFuture > 100.0f)
+			percentFuture = 100.0f;
+	}
 
 protected:
 

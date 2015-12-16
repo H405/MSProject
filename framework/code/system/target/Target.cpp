@@ -36,6 +36,7 @@
 // 静的メンバ変数
 //******************************************************************************
 static const float targetSize = 50.0f;
+static const float targetSizeBig = targetSize * 1.5f;
 static const float targetCrossDifferentPosition = -50.0f;
 
 //==============================================================================
@@ -67,6 +68,7 @@ void Target::InitializeSelf( void )
 	counter = 0;
 	fpUpdate = nullptr;
 	D3DXMatrixIdentity(&invViewMatrix);
+	colorState = COLOR_STATE_W;
 }
 //==============================================================================
 // Brief  : デストラクタ
@@ -136,14 +138,13 @@ int Target::Initialize(
 // Return : int									: 実行結果
 // Arg    : int priority						: 更新優先度
 //==============================================================================
-int Target::Set(D3DXVECTOR3 _pos)
+int Target::Set(D3DXVECTOR3 _pos, COLOR_STATE _colorState)
 {
 	//	位置セット
 	pos = _pos;
 	targetCrossLocalPos = pos;
 	targetArrowLocalPos = pos;
 	targetCircleLocalPos = D3DXVECTOR3(pos.x + targetCrossDifferentPosition, pos.y + targetCrossDifferentPosition, pos.z);
-
 
 	switch(0)
 	{
@@ -171,6 +172,26 @@ int Target::Set(D3DXVECTOR3 _pos)
 	targetCross->SetScale(targetSize, targetSize, targetSize);
 	targetArrow->SetScale(targetSize, targetSize, targetSize);
 	targetCircle->SetScale(0.0f, 0.0f, 0.0f);
+
+	//	色変更
+	colorState = _colorState;
+	if(colorState == COLOR_STATE_R)
+		targetCircle->SetColor(1.0f, 0.0f, 0.0f, 0.0f);
+	else if(colorState == COLOR_STATE_G)
+		targetCircle->SetColor(0.0f, 1.0f, 0.0f, 0.0f);
+	else if(colorState == COLOR_STATE_B)
+		targetCircle->SetColor(0.0f, 0.0f, 1.0f, 0.0f);
+	else if(colorState == COLOR_STATE_W)
+		targetCircle->SetColor(1.0f, 1.0f, 1.0f, 0.0f);
+	else if(colorState == COLOR_STATE_S)
+	{
+		targetCircle->SetColor(1.0f, 0.5f, 0.0f, 0.0f);
+
+		//	スケール変更
+		targetCross->SetScale(targetSizeBig, targetSizeBig, targetSizeBig);
+		targetArrow->SetScale(targetSizeBig, targetSizeBig, targetSizeBig);
+		targetCircle->SetScale(0.0f, 0.0f, 0.0f);
+	}
 
 	//	各種変数初期化
 	enable = true;
@@ -229,10 +250,6 @@ void Target::Update( void )
 void Target::updateAppearCross( void )
 {
 	//	位置変更
-	//targetCross->AddPosition(
-	//	-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
-	//	-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
-	//	0.0f);
 	targetCircleLocalPos +=
 		D3DXVECTOR3(-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
 						-targetCrossDifferentPosition / (float)APPEAR_COUNT_CROSS,
@@ -252,7 +269,10 @@ void Target::updateAppearCross( void )
 		targetArrow->SetEnableGraphic(true);
 
 		//	更新関数セット
-		fpUpdate = &Target::updateAppearArrow;
+		if(colorState == COLOR_STATE_S)
+			fpUpdate = &Target::updateAppearArrowBig;
+		else
+			fpUpdate = &Target::updateAppearArrow;
 	}
 }
 //==============================================================================
@@ -292,12 +312,66 @@ void Target::updateAppearArrow( void )
 		fpUpdate = &Target::updateDisAppear;
 	}
 }
+void Target::updateAppearArrowBig( void )
+{
+	if(counter < APPEAR_COUNT_ARROW2 / 2)
+	{
+		targetArrow->AddColorA(1.0f/ (float)(APPEAR_COUNT_ARROW2 / 2));
+		targetArrow->AddRotationZ(D3DX_PI / (float)(APPEAR_COUNT_ARROW2 / 2));
+	}
+	if(counter > 20)
+	{
+		//	だんだんと出現
+		targetCircle->AddColorA(1.0f / (float)(60));
+
+		//	だんだん大きく
+		float addSize = targetSizeBig / (float)(60);
+		targetCircle->AddScale(addSize, addSize, addSize);
+	}
+
+	counter++;
+	if(counter == APPEAR_COUNT_ARROW2 / 2)
+	{
+		//	可視化
+		targetCircle->SetEnableGraphic(true);
+	}
+
+	if(counter >= APPEAR_COUNT_ARROW2)
+	{
+		counter = 0;
+
+		//	更新関数セット
+		fpUpdate = &Target::updateDisAppear;
+	}
+}
 //==============================================================================
 // Brief  : Circle出現時の更新処理
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
 void Target::updateAppearCircle( void )
+{
+	if(counter < APPEAR_COUNT_CIRCLE / 2)
+	{
+		//	だんだんと出現
+		targetCircle->AddColorA(1.0f / (float)(APPEAR_COUNT_CIRCLE / 2));
+
+		//	だんだん大きく
+		float addSize = targetSize / (float)(APPEAR_COUNT_CIRCLE / 2);
+		targetCircle->AddScale(addSize, addSize, addSize);
+	}
+
+	//	カウンタで動き制御
+	counter++;
+	if(counter >= APPEAR_COUNT_CIRCLE)
+	{
+		counter = 0;
+
+		//	更新関数セット
+		fpUpdate = &Target::updateDisAppear;
+	}
+}
+void Target::updateAppearCircleBig( void )
 {
 	if(counter < APPEAR_COUNT_CIRCLE / 2)
 	{

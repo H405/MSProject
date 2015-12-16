@@ -109,8 +109,6 @@ int Fire::Set(
 	param.managerPoint = _managerPoint;
 	param.pos = _pos;
 	param.speed = _speed;
-	//param.rot = _rot;
-	//param.rotSpeed = _rotSpeed;
 	param.color = _color;
 
 	param.enable = true;

@@ -41,7 +41,7 @@ static const int fireNum[] =
 };
 
 //	生成する花火エフェクトの大きさ
-static const float effectSize = 10.0f;
+static const float effectSize = 20.0f;
 
 //	生成する大きな花火エフェクトの大きさ
 static const float effectBigSize = 30.0f;
@@ -53,16 +53,16 @@ static const TIME effectDisappear = 30;
 static const TIME effectAppear = 3;
 
 //	生成する花火エフェクトの大きさの差異
-static const float effectDifferenceSize = effectSize / DELETECOUNT_MAX;
+static const float effectDifferenceSize = -effectSize / effectDisappear;
 
 //	生成する花火エフェクトの大きさの差異
-static const float effectDifferenceBigSize = (effectBigSize / DELETECOUNT_MAX) * 0.5f;
+static const float effectDifferenceBigSize = (-effectBigSize / DELETECOUNT_MAX) * 0.5f;
 
 //	前の位置を取得する時間
 static const int setPosOldMax = 20;
 
 //	透明値の変化量
-static const float differensAlpha = -1.0f / DELETECOUNT_MAX;
+static const float differensAlpha = -1.0f / effectDisappear;
 
 //==============================================================================
 // Brief  : 更新処理
@@ -87,27 +87,11 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 	//	花火移動用行列初期化
 	D3DXMatrixIdentity(&param->matrix);
 
-	//	回転
-	/*D3DXMatrixRotationYawPitchRoll(
-		&param->matrix,
-		param->matRot.y,
-		param->matRot.x,
-		param->matRot.z);*/
-
-
-
-	//
+	//	ベジェ曲線の計算
 	float buffTime = (1.0f / (float)DELETECOUNT_MAX) * (float)param->disappear;
-	/*D3DXVECTOR3 f1 = (1.0f - buffTime) * (1.0f - buffTime) * (1.0f - buffTime) * param->startPos;
-	D3DXVECTOR3 f2 = (1.0f - buffTime) * (1.0f - buffTime) * buffTime * 3.0f * param->buffPos1;
-	D3DXVECTOR3 f3 = (1.0f - buffTime) * buffTime * buffTime * 3.0f * param->buffPos2;
-	D3DXVECTOR3 f4 = buffTime * buffTime * buffTime * param->endPos;
-
-	param->pos = f1 + f2 + f3 + f4;*/
 	D3DXVECTOR3 f1 = (1.0f - buffTime) * (1.0f - buffTime) * param->startPos;
 	D3DXVECTOR3 f2 = (1.0f - buffTime) * buffTime * 2.0f * param->buffPos1;
 	D3DXVECTOR3 f3 = buffTime * buffTime * param->endPos;
-
 	param->pos = f1 + f2 + f3;
 
 
@@ -168,7 +152,7 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 	param->managerPoint->Add(
 		effectDisappear,
 		D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
-		D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+		param->color,
 		effectSize,
 		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
 		D3DXCOLOR( 0.0f, 0.0f, 0.0f, differensAlpha ),
@@ -193,10 +177,10 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 		param->managerPoint->Add(
 			1,
 			D3DXVECTOR3(param->setPos.x, param->setPos.y, param->setPos.z),
-			D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
+			param->color,
 			effectBigSize,
 			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-			D3DXCOLOR( 0.0f, 0.0f, 0.0f, differensAlpha ),
+			D3DXCOLOR( 0.0f, 0.0f, 0.0f, 0.1f ),
 			effectDifferenceBigSize,
 			PointMain::STATE_ADD
 			);

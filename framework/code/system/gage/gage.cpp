@@ -201,8 +201,10 @@ int Gage::Finalize( void )
 //==============================================================================
 void Gage::Update( void )
 {
-	if(percentFuture != percent)
+	if(percentFuture > percent)
 		percent += 1.0f;
+	else if(percentFuture < percent)
+		percent -= 1;
 
 	barNum = (int)ceil((GAGEBAR_MAX * percent) / 100.0f);
 

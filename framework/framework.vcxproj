@@ -166,6 +166,7 @@
     <ClInclude Include="code\system\camera\CameraStateSpline.h" />
     <ClInclude Include="code\system\combo\combo.h" />
     <ClInclude Include="code\system\EffectParameter.h" />
+    <ClInclude Include="code\system\fireworksUI\fireworksUI.h" />
     <ClInclude Include="code\system\fireworks\Fireworks.h" />
     <ClInclude Include="code\system\fireworks\FireworksState.h" />
     <ClInclude Include="code\system\fire\Fire.h" />
@@ -340,6 +341,7 @@
     <ClCompile Include="code\system\camera\CameraStateSpline.cpp" />
     <ClCompile Include="code\system\combo\combo.cpp" />
     <ClCompile Include="code\system\EffectParameter.cpp" />
+    <ClCompile Include="code\system\fireworksUI\fireworksUI.cpp" />
     <ClCompile Include="code\system\fireworks\Fireworks.cpp" />
     <ClCompile Include="code\system\fireworks\FireworksState.cpp" />
     <ClCompile Include="code\system\fire\Fire.cpp" />

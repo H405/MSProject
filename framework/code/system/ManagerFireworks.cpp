@@ -231,7 +231,8 @@ int ManagerFireworks::Add(
 		int _indexState,
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _diffRot)
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState)
 {
 	int index = GetIndex();
 	if(index < 0 || index >= FIREWORKS_MAX)
@@ -245,7 +246,8 @@ int ManagerFireworks::Add(
 		_indexState,
 		_managerPoint,
 		_pos,
-		_diffRot);
+		_diffRot,
+		_colorState);
 
 	return index;
 }
