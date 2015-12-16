@@ -215,13 +215,15 @@ int Fireworks::Set(
 
 
 
+	//	endの上限値は、yが200くらい、xが-200～200くらい？
+	/*param.startPos = _pos;
+	param.buffPos1 = D3DXVECTOR3(_pos.x + (_diffRot.z * 3.0f), 0.0f, _pos.z);
+	param.buffPos2 = D3DXVECTOR3(_pos.x + (_diffRot.z * 9.0f), 100.0f, _pos.z);
+	param.endPos = D3DXVECTOR3(_pos.x + (_diffRot.z * 12.0f), 200.0f, _pos.z);*/
 	param.startPos = _pos;
-	param.endPos = _pos;
-	param.buffPos1 =_pos;
-	param.buffPos2 =_pos;
-	//param.endPos = D3DXVECTOR3(_pos.x + (_diffRot.z * 10.0f), 2.0f, _pos.z);
-	//param.buffPos1 = D3DXVECTOR3(_pos.x + (_diffRot.z * 3.0f), 1.0f, _pos.z);
-	//param.buffPos2 = D3DXVECTOR3(_pos.x + (_diffRot.z * 5.0f), 1.5f, _pos.z);
+	param.buffPos1 = D3DXVECTOR3(_pos.x - (_diffRot.z * 3.0f), 110.0f, _pos.z);
+	param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * 12.0f), 200.0f, _pos.z);
+
 	param.count = 0;
 
 

@@ -391,6 +391,48 @@ void SceneGame::LaunchFireworks()
 			diffBuffCount = 0;
 		}
 	}
+
+
+
+
+
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_LEFT))
+	{
+		int buff;
+		D3DXVECTOR3 buffPos = player->getPosition();
+
+		buff = managerFireworks->Add(
+					ManagerFireworks::STATE_LEFT,
+					managerPoint,
+					buffPos,
+					D3DXVECTOR3(3.0f, 1.0f, 0.0f),
+					90.0f,
+					0.5f
+					);
+
+		if(buff != -1)
+			{
+				fireworksTable[fireworksTableIndex] = buff;
+				fireworksTableIndex++;
+			}
+	}
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_RIGHT))
+	{
+		int buff;
+		D3DXVECTOR3 buffPos = player->getPosition();
+
+		buff = managerFireworks->Add(
+			ManagerFireworks::STATE_RIGHTSP,
+			managerPoint,
+			buffPos,
+			D3DXVECTOR3(0.0f, 0.0f, 10.0f));
+
+		if(buff != -1)
+			{
+				fireworksTable[fireworksTableIndex] = buff;
+				fireworksTableIndex++;
+			}
+	}
 }
 void SceneGame::Launch()
 {
@@ -408,15 +450,15 @@ void SceneGame::Launch()
 	int buff = -1;
 	D3DXVECTOR3 buffPos = player->getPosition();
 
-	if(buffDiffWiiRot.z > 5.0f)
+	if(buffDiffWiiRot.z > 2.0f)
 	{
 		buff = managerFireworks->Add(
-			ManagerFireworks::STATE_LEFTSP,
+			ManagerFireworks::STATE_RIGHTSP,
 			managerPoint,
 			buffPos,
 			buffDiffWiiRot);
 	}
-	else if(buffDiffWiiRot.z < -5.0f)
+	else if(buffDiffWiiRot.z < -2.0f)
 	{
 		buff = managerFireworks->Add(
 			ManagerFireworks::STATE_RIGHTSP,
@@ -427,10 +469,10 @@ void SceneGame::Launch()
 	else
 	{
 		buff = managerFireworks->Add(
-			ManagerFireworks::STATE_LEFTSP,
+			ManagerFireworks::STATE_RIGHTSP,
 			managerPoint,
 			buffPos,
-			buffDiffWiiRot);
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 
 	if(buff != -1)

@@ -98,29 +98,17 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 
 	//
 	float buffTime = (1.0f / (float)DELETECOUNT_MAX) * (float)param->disappear;
-	param->pos.x = BEJE2(
-		param->startPos.x,
-		param->buffPos1.x,
-		param->buffPos2.x,
-		param->endPos.x,
-		buffTime
-		);
-	param->pos.y = BEJE2(
-		param->startPos.y,
-		param->buffPos1.y,
-		param->buffPos2.y,
-		param->endPos.y,
-		buffTime
-		);
-	param->pos.z = BEJE2(
-		param->startPos.z,
-		param->buffPos1.z,
-		param->buffPos2.z,
-		param->endPos.z,
-		buffTime
-		);
-	//
+	/*D3DXVECTOR3 f1 = (1.0f - buffTime) * (1.0f - buffTime) * (1.0f - buffTime) * param->startPos;
+	D3DXVECTOR3 f2 = (1.0f - buffTime) * (1.0f - buffTime) * buffTime * 3.0f * param->buffPos1;
+	D3DXVECTOR3 f3 = (1.0f - buffTime) * buffTime * buffTime * 3.0f * param->buffPos2;
+	D3DXVECTOR3 f4 = buffTime * buffTime * buffTime * param->endPos;
 
+	param->pos = f1 + f2 + f3 + f4;*/
+	D3DXVECTOR3 f1 = (1.0f - buffTime) * (1.0f - buffTime) * param->startPos;
+	D3DXVECTOR3 f2 = (1.0f - buffTime) * buffTime * 2.0f * param->buffPos1;
+	D3DXVECTOR3 f3 = buffTime * buffTime * param->endPos;
+
+	param->pos = f1 + f2 + f3;
 
 
 	//	動いている時間を計測して、セットする時間になったら
@@ -160,7 +148,7 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 
 	//	行列で位置を３次元的に回転
 	D3DXVECTOR4 buffPos;
-	D3DXVECTOR3 buffPos3(param->pos.x, param->pos.y, param->pos.z);
+	D3DXVECTOR3 buffPos3(param->pos.x + FIRE_APPEAR_RANDAM, param->pos.y + FIRE_APPEAR_RANDAM, param->pos.z + FIRE_APPEAR_RANDAM);
 	D3DXVec3Transform(&buffPos, &buffPos3, &param->matrix);
 	buffPos3.x = buffPos.x;
 	buffPos3.y = buffPos.y;

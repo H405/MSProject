@@ -992,8 +992,13 @@ void SceneGame::UpdateTest( void )
 	// 点光源テスト
 	D3DXVECTOR3	pPositionPointTest[ 3 ] =
 	{
+		//	水車
 		D3DXVECTOR3( 260.0f, 1000.0f, 3540.0f ),
+
+		//	家
 		D3DXVECTOR3( -2700.0f, 1000.0f, 2570.0f ),
+
+		//	橋
 		D3DXVECTOR3( 1080.0f, 1000.0f, -2750.0f )
 	};
 	for( int counterPoint = 0; counterPoint < 3; ++counterPoint )
@@ -1024,7 +1029,7 @@ void SceneGame::UpdateTest( void )
 		// タイマーの経過
 		timerSceneGame_ = 0;
 
-		// ライトの設定
+		// ライトの設定（減衰率の参考にするお）
 		attenuationTest = D3DXVECTOR3( 0.0f, 0.00028f, 0.00000005f );
 		pLightTest = pArgument_->pLight_->GetLightPoint();
 		pLightTest->Set( D3DXCOLOR( 1.0f, 0.7f, 0.2f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), pPositionPointTest[ indexPoint ], D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );

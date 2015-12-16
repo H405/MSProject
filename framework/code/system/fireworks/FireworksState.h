@@ -26,8 +26,9 @@
 //******************************************************************************
 #define SQUARE(num) (num * num)
 #define CUBE(num) (num * num * num)
-#define BEJE(num1, num2, num3, time) ((SQUARE(1 - time) * num1) + (2 * (1 - time) * time * num2) + (SQUARE( time ) * num3))
-#define BEJE2(num1, num2, num3, num4, time) ((CUBE(1- time) * num1) + (3 * time * SQUARE(1 - time) * num2) + (3 * SQUARE(time) * (1 - time) * num3) + (CUBE(time) * num4))
+#define BEJE(num1, num2, num3, time) ((SQUARE(1.0f - time) * num1) + (2.0f * (1.0f - time) * time * num2) + (SQUARE( time ) * num3))
+
+#define BEJE2(num1, num2, num3, num4, time) ((CUBE(1.0f- time) * num1) + (3.0f * time * SQUARE(1.0f - time) * num2) + (3.0f * SQUARE(time) * (1.0f - time) * num3) + (CUBE(time) * num4))
 
 //******************************************************************************
 // ÉNÉâÉXëOï˚êÈåæ
