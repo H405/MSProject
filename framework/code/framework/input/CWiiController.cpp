@@ -16,9 +16,9 @@
 //*****************************************************************************
 //	定数定義
 //*****************************************************************************
-#define UPDATE_NORMAL
+//#define UPDATE_NORMAL
 //#define UPDATE_SAVE
-//#define UPDATE_READ
+#define UPDATE_READ
 
 //SlowMode（低速時モード）→ 1.45[deg / s]
 //FastMode（高速時モード）→ 6.59[deg / s]
@@ -804,13 +804,13 @@ void CWiiController::CommonUpdate()
 				joystick.y = -joyStickMax;
 		}
 
-		PrintDebug( _T( "accel.x = %f\n" ), accel.x);
-		PrintDebug( _T( "accel.y = %f\n" ), accel.y);
-		PrintDebug( _T( "accel.z = %f\n" ), accel.z);
-		
-		PrintDebug( _T( "rot.x = %f\n" ), rot.x);
-		PrintDebug( _T( "rot.y = %f\n" ), rot.y);
-		PrintDebug( _T( "rot.z = %f\n" ), rot.z);
+		//PrintDebug( _T( "accel.x = %f\n" ), accel.x);
+		//PrintDebug( _T( "accel.y = %f\n" ), accel.y);
+		//PrintDebug( _T( "accel.z = %f\n" ), accel.z);
+		//
+		//PrintDebug( _T( "rot.x = %f\n" ), rot.x);
+		//PrintDebug( _T( "rot.y = %f\n" ), rot.y);
+		//PrintDebug( _T( "rot.z = %f\n" ), rot.z);
 	}
 
 	//	バランスwiiボード(以下、wiiボード)が接続されていれば
@@ -1041,13 +1041,13 @@ void CWiiController::ReadUpdate()
 		IRScreen.x = saveData[saveDataNum].IRScreen.x;
 		IRScreen.y = saveData[saveDataNum].IRScreen.y;
 
-		PrintDebug( _T( "accel.x = %f\n" ), accel.x);
-		PrintDebug( _T( "accel.y = %f\n" ), accel.y);
-		PrintDebug( _T( "accel.z = %f\n" ), accel.z);
-		
-		PrintDebug( _T( "rot.x = %f\n" ), rot.x);
-		PrintDebug( _T( "rot.y = %f\n" ), rot.y);
-		PrintDebug( _T( "rot.z = %f\n" ), rot.z);
+		//PrintDebug( _T( "accel.x = %f\n" ), accel.x);
+		//PrintDebug( _T( "accel.y = %f\n" ), accel.y);
+		//PrintDebug( _T( "accel.z = %f\n" ), accel.z);
+		//
+		//PrintDebug( _T( "rot.x = %f\n" ), rot.x);
+		//PrintDebug( _T( "rot.y = %f\n" ), rot.y);
+		//PrintDebug( _T( "rot.z = %f\n" ), rot.z);
 
 		//	前フレームの値取得
 		kgPrev = kg;

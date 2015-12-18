@@ -580,7 +580,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 
 
-
+	//DebugProc::SetIsVisible(false);
 
 
 	//	更新関数セット

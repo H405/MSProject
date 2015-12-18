@@ -605,6 +605,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
+	targetAppearFlag = true;
 
 	//	「スコア」文字オブジェクト生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
@@ -653,7 +654,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pEffect,
 		pArgument_->pTexture_->Get( _T( "game/stringScore.png" )),
 		pArgument_->pTexture_->Get( _T( "common/number_white.png" )));
-	combo->setPosition(200.0f, -300.0f, 0.0f);
+	combo->setPosition(120.0f, -300.0f, 0.0f);
 
 
 	//	花火用UI生成
@@ -664,6 +665,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pEffect,
 		pArgument_->pTexture_->Get( _T( "game/ui3.png" )));
 	fireworksUI->setPosition(450.0f, -300.0f, 0.0f);
+	fireworksUI->setColorState(colorState);
 
 
 	//	ゲージオブジェクト生成

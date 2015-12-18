@@ -30,6 +30,8 @@
 #define FIREWORKS_MAX (16)
 #define TARGET_MAX (16)
 
+#define _TEST
+
 //******************************************************************************
 // 列挙体
 //******************************************************************************
@@ -167,6 +169,7 @@ private:
 
 	//	コンボ数オブジェクト
 	Combo* combo;
+	int comboPrev;
 
 	//	花火用UI
 	FireworksUI* fireworksUI;
@@ -305,6 +308,7 @@ private:
 	// Brief  : 花火とターゲットの当たり判定処理
 	//==============================================================================
 	void collision_fireworks_target();
+	void collision_fireworks_targetAuto();
 
 	//==============================================================================
 	// Brief  : 花火と花火の当たり判定処理
@@ -514,6 +518,14 @@ private:
 	int targetAppearCount;
 	D3DXVECTOR3 buffDiffWiiAccel;
 	D3DXVECTOR3 buffDiffWiiRot;
+
+	bool targetAppearFlag;
+
+#ifdef _TEST
+	int autoLaunchCount;
+	int autoLaunchTarget;
+	bool autoLaunchFlag;
+#endif
 };
 
 #endif	// MY_SCENE_GAME_H

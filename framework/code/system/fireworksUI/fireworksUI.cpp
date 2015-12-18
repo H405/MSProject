@@ -88,7 +88,13 @@ int FireworksUI::Initialize(
 		pEffectGeneral,
 		pFireworksUITex
 		);
-	fireworksUI1->SetScale(128.0f, 128.0f, 0.0f);
+	fireworksUI1->SetScale(100.0f, 100.0f, 0.0f);
+
+	//	setScaleTextureで、分割数を設定
+	fireworksUI1->SetScaleTexture(3.0f, 1.0f);
+
+	//	setPositionTextureで、0～1（丸め込む必要無し！）値を設定して、UVスクロールする
+	fireworksUI1->SetPositionTexture(0.0f, 0.0f);
 
 
 	fireworksUI2 = new Object2D();
@@ -101,6 +107,8 @@ int FireworksUI::Initialize(
 		);
 	fireworksUI2->SetScale(180.0f, 180.0f, 0.0f);
 
+	fireworksUI2->SetScaleTexture(3.0f, 1.0f);
+	fireworksUI2->SetPositionTexture(1.0f / 3.0f, 0.0f);
 
 	fireworksUI3 = new Object2D();
 	fireworksUI3->Initialize(0);
@@ -110,7 +118,10 @@ int FireworksUI::Initialize(
 		pEffectGeneral,
 		pFireworksUITex
 		);
-	fireworksUI3->SetScale(128.0f, 128.0f, 0.0f);
+	fireworksUI3->SetScale(100.0f, 100.0f, 0.0f);
+
+	fireworksUI3->SetScaleTexture(3.0f, 1.0f);
+	fireworksUI3->SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
 
 	// 正常終了
 	return 0;
@@ -162,4 +173,37 @@ void FireworksUI::setPosition(float _x, float _y, float _z)
 
 	// 基本クラスの処理
 	ObjectMovement::Update();
+}
+
+//==============================================================================
+// Brief  : 色のセット
+//==============================================================================
+void FireworksUI::setColorState(COLOR_STATE _colorState)
+{
+	switch(_colorState)
+	{
+	case COLOR_STATE_R:
+
+		fireworksUI1->SetPositionTextureX(-1.0f / 3.0f);
+		fireworksUI2->SetPositionTextureX(0.0f);
+		fireworksUI3->SetPositionTextureX(1.0f / 3.0f);
+
+		break;
+
+	case COLOR_STATE_G:
+
+		fireworksUI1->SetPositionTextureX(0.0f);
+		fireworksUI2->SetPositionTextureX(1.0f / 3.0f);
+		fireworksUI3->SetPositionTextureX(-1.0f / 3.0f);
+
+		break;
+
+	case COLOR_STATE_B:
+
+		fireworksUI1->SetPositionTextureX(1.0f / 3.0f);
+		fireworksUI2->SetPositionTextureX(-1.0f / 3.0f);
+		fireworksUI3->SetPositionTextureX(0.0f);
+
+		break;
+	}
 }

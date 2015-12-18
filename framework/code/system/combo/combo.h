@@ -96,6 +96,7 @@ public:
 	void addScore();
 	void setScore(int _value){score = _value;}
 	int getScore(){return score;}
+	int getScorePrev(){return scorePrev;}
 	int getScoreMax(){return scoreMax;}
 
 protected:
@@ -104,6 +105,7 @@ protected:
 	ObjectScore* comboScore;
 
 	int score;
+	int scorePrev;
 	int scoreMax;
 	int flashingCount;
 	float alpha;

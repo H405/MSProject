@@ -157,7 +157,7 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 												&presentParameter,						// デバイスのプレゼンテーションパラメータ
 												&pDevice_ ) ) )							// デバイスインターフェースへのポインタ
 		{
-			MessageBox( NULL, _T( "低画質モードで起動します。" ), _T( "確認" ), MB_OK );
+			//MessageBox( NULL, _T( "低画質モードで起動します。" ), _T( "確認" ), MB_OK );
 			// 上記の設定が失敗したら
 			// [デバイス作成制御]<描画>をハードウェアで行い、<頂点処理>はCPUで行なう
 			if( FAILED( pDirect3D->CreateDevice(	D3DADAPTER_DEFAULT, 
@@ -177,7 +177,7 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 														&pDevice_ ) ) )
 				{
 					// 初期化失敗
-					PrintMsgBox( _T( "デバイスオブジェクトの初期化に失敗しました。" ) );
+					//PrintMsgBox( _T( "デバイスオブジェクトの初期化に失敗しました。" ) );
 					return 1;
 				}
 			}

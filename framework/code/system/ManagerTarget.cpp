@@ -123,7 +123,7 @@ int ManagerTarget::Finalize( void )
 void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
 	//	©“®‚Å¶¬
-	autoAppear(_table, _targetTableIndex);
+	//autoAppear(_table, _targetTableIndex);
 
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
 	{

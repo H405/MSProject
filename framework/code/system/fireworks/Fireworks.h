@@ -43,6 +43,7 @@ class LightPoint;
 class LightDirection;
 class Sound;
 class SceneArgumentMain;
+class Target;
 
 //******************************************************************************
 // ç\ë¢ëÃíËã`
@@ -163,12 +164,24 @@ public:
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		COLOR_STATE _colorState = COLOR_STATE_W);
+	int Set(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target);
 	int SetSP(
 		int _indexState,
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		COLOR_STATE _colorState = COLOR_STATE_W);
+	int SetW(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target);
 
 	//==============================================================================
 	// Brief  : èIóπèàóù
