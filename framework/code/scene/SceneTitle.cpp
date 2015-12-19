@@ -722,6 +722,32 @@ int SceneTitle::Finalize( void )
 		pLight_ = nullptr;
 	}
 
+	// 影用カメラ点の開放
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterLightPoint )
+	{
+		if( ppCameraShadowPoint_[ counterLightPoint ] != nullptr )
+		{
+			ppCameraShadowPoint_[ counterLightPoint ]->SetState( nullptr );
+			ppCameraShadowPoint_[ counterLightPoint ] = nullptr;
+		}
+	}
+	delete[] ppCameraShadowPoint_;
+	ppCameraShadowPoint_ = nullptr;
+
+	// 影用カメラ遠の開放
+	if( pCameraShadowFar_ != nullptr )
+	{
+		pCameraShadowFar_->SetState( nullptr );
+		pCameraShadowFar_ = nullptr;
+	}
+
+	// 影用カメラ近の開放
+	if( pCameraShadowNear_ != nullptr )
+	{
+		pCameraShadowNear_->SetState( nullptr );
+		pCameraShadowNear_ = nullptr;
+	}
+
 	// 基本クラスの処理
 	int		result;		// 実行結果
 	result = SceneMain::Finalize();
