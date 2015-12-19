@@ -191,7 +191,7 @@ float CalculateShadowPoint0( float3 positionWorld )
 			+ attenuationLightPoint0_.z * distanceToVertex * distanceToVertex;
 
 		// ‰e‚Ì”Z‚³‚ðŒˆ’è
-		shadow = 1.0f - 0.7f / (1.0f + attenuation);
+		shadow = 1.0f - 0.5f / (1.0f + attenuation);
 	}
 	else
 	{

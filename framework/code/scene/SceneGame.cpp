@@ -186,7 +186,21 @@ void SceneGame::Update( void )
 	// 焦点距離の更新
 	D3DXVECTOR3	positionLookAt;		// 注視点
 	pCamera_->GetPositionLookAt( &positionLookAt );
-	pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( positionLookAt ) );
+	if( fpUpdate == &SceneGame::normalUpdate )
+	{
+		D3DXVECTOR3	pTablePositionForcus[] =
+		{
+			D3DXVECTOR3( 620.0f, 0.0f, 4550.0f ),
+			D3DXVECTOR3( -1505.0f, 0.0f, 625.0f ),
+			D3DXVECTOR3( 1680.0f, 0.0f, 600.0f ),
+			D3DXVECTOR3( 5400.0f, 0.0f, -380.0f )
+		};
+		pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( pTablePositionForcus[ indexSection_ ] ) );
+	}
+	else
+	{
+		pArgument_->pEffectParameter_->SetForcus( 0.5f * pCamera_->GetViewZ( positionLookAt ) );
+	}
 
 	// 影用カメラ近の更新
 	D3DXVECTOR3	vectorLight;		// ライトベクトル

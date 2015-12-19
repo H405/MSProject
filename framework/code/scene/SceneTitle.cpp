@@ -19,6 +19,7 @@
 #include "../framework/input/InputKeyboard.h"
 #include "../framework/input/VirtualController.h"
 #include "../framework/light/LightDirection.h"
+#include "../framework/light/LightPoint.h"
 #include "../framework/light/ManagerLight.h"
 #include "../framework/object/Object.h"
 #include "../framework/resource/Effect.h"
@@ -29,6 +30,7 @@
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
 #include "../framework/system/ManagerUpdate.h"
+#include "../framework/system/Window.h"
 #include "../system/EffectParameter.h"
 #include "../system/ManagerSceneMain.h"
 #include "../system/SceneArgumentMain.h"
@@ -100,6 +102,9 @@ void SceneTitle::InitializeSelf( void )
 {
 	// メンバ変数の初期化
 	pCamera_ = nullptr;
+	pCameraShadowNear_ = nullptr;
+	pCameraShadowFar_ = nullptr;
+	ppCameraShadowPoint_ = nullptr;
 	pLight_ = nullptr;
 
 	//	タイトルUI関係
@@ -134,16 +139,16 @@ void SceneTitle::InitializeSelf( void )
 	houses = nullptr;
 	gate = nullptr;
 
-	markers = nullptr;
+//	markers = nullptr;
 
 	player = nullptr;
 
 	managerPoint = nullptr;
 	managerFireworks = nullptr;
 
-	pObjectSkinMesh_[0] = nullptr;
-	pObjectSkinMesh_[1] = nullptr;
-	pObjectSkinMesh_[2] = nullptr;
+//	pObjectSkinMesh_[0] = nullptr;
+//	pObjectSkinMesh_[1] = nullptr;
+//	pObjectSkinMesh_[2] = nullptr;
 
 	launchFlag = false;
 	launchCount = 0;
@@ -198,21 +203,52 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	pCamera_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_GENERAL );
 	pCamera_->Set(
 		D3DX_PI / 4.0f,
-		1280,
-		720,
+		pArgument->pWindow_->GetWidth(),
+		pArgument->pWindow_->GetHeight(),
 		0.1f,
-		10000.0f,
+		20000.0f,
 		D3DXVECTOR3( 0.0f, 120.0f, -2400.0f ),
 		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
-
+	
 	// ライトの生成
 	pLight_ = pArgument->pLight_->GetLightDirection();
 	if( pLight_ == nullptr )
 	{
 		return 1;
 	}
-	pLight_->Set( D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f ), D3DXVECTOR3( 0.0f, -0.7f, 0.7f ) );
+	pLight_->Set( D3DXCOLOR( 0.25f, 0.3f, 0.4f, 1.0f ), D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ), D3DXVECTOR3( -1.0f, -1.0f, -1.0f ) );
+
+	// 影用カメラ近の設定
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -3500.0f;
+	pCameraShadowNear_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_NEAR );
+	pCameraShadowNear_->Set( D3DX_PI / 4.0f, 8 * pArgument->pWindow_->GetWidth(), 8 * pArgument->pWindow_->GetHeight(), 0.1f, 7000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
+
+	// 影用カメラ遠の設定
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -10000.0f;
+	pCameraShadowFar_ = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_FAR );
+	pCameraShadowFar_->Set( D3DX_PI / 4.0f, 24 * pArgument->pWindow_->GetWidth(), 24 * pArgument->pWindow_->GetHeight(), 0.1f, 20000.0f,
+		vectorLight, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), false );
+
+	// 影用カメラ点の設定
+	ppCameraShadowPoint_ = new CameraObject*[ GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW ];
+	if( ppCameraShadowPoint_ == nullptr )
+	{
+		return 1;
+	}
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++ counterLightPoint )
+	{
+		ppCameraShadowPoint_[ counterLightPoint ] = pArgument->pCamera_->GetCamera( GraphicMain::CAMERA_SHADOW_POINT_0 + counterLightPoint );
+		ppCameraShadowPoint_[ counterLightPoint ]->Set( D3DX_PI / 4.0f, pArgument->pWindow_->GetWidth(), pArgument->pWindow_->GetHeight(), 0.1f, 10000.0f,
+			D3DXVECTOR3( 0.0f, 1000.0f, 0.0f ), D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR3( 0.0f, 0.0f, 1.0f ), false );
+	}
+
+	// 環境光の設定
+	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
@@ -344,7 +380,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
 	gate->SetRotationY( DEG_TO_RAD( 90 ) );
 	gate->SetScale( 1.0f, 1.0f, 1.0f );
-
+/*
 	// 場所の目印オブジェクトの生成
 	Model*	pModelMarker = nullptr;					// モデル
 	Effect*	pEffectMarkerGeneral = nullptr;			// 通常描画エフェクト
@@ -371,7 +407,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	markers[ 2 ].SetRotationY( 0.0f );
 	markers[ 3 ].SetPosition( 490.0f, 0.0f, 470.0f );
 	markers[ 3 ].SetRotationY( 0.0f );
-
+*/
 	//	ポイントスプライト管理オブジェクト生成
 	Effect*		pEffectPoint = nullptr;				// ポイントエフェクト
 	Effect*		pEffectPointReflect = nullptr;		// ポイントエフェクト
@@ -409,7 +445,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		D3DXVECTOR3(0.0f, -100.0f, 400.0f),
 		pArgument);
 
-
+/*
 	// スキンメッシュの生成
 	Effect*	pEffectSkinMesh = nullptr;					// エフェクト
 	Effect*	pEffectSkinMeshReflect = nullptr;			// エフェクト
@@ -441,7 +477,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[2]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[2]->SetPosition( -300.0f, 100.0f, 0.0f );
-
+*/
 
 
 
@@ -628,14 +664,14 @@ int SceneTitle::Finalize( void )
 
 	delete titleLogo;
 	titleLogo = nullptr;
-
+/*
 	delete pObjectSkinMesh_[2];
 	delete pObjectSkinMesh_[1];
 	delete pObjectSkinMesh_[0];
 	pObjectSkinMesh_[2] = nullptr;
 	pObjectSkinMesh_[1] = nullptr;
 	pObjectSkinMesh_[0] = nullptr;
-
+*/
 	delete player;
 	player = nullptr;
 
@@ -648,8 +684,8 @@ int SceneTitle::Finalize( void )
 	managerPoint = nullptr;
 
 	// 場所目印オブジェクトの開放
-	delete[] markers;
-	markers = nullptr;
+//	delete[] markers;
+//	markers = nullptr;
 
 	// 鳥居オブジェクトの開放
 	delete gate;
@@ -748,6 +784,42 @@ void SceneTitle::Update( void )
 {
 	// テスト
 	PrintDebug( _T( "kawashima\n" ) );
+
+	// 焦点距離の更新
+	D3DXVECTOR3	positionLookAt;		// 注視点
+	pCamera_->GetPositionLookAt( &positionLookAt );
+	pArgument_->pEffectParameter_->SetForcus( 2.5f * pCamera_->GetViewZ( positionLookAt ) );
+
+	// 影用カメラ近の更新
+	D3DXVECTOR3	vectorLight;		// ライトベクトル
+	positionLookAt.y = 0.0f;
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -3500.0f;
+	pCameraShadowNear_->SetPositionCamera( positionLookAt + vectorLight );
+	pCameraShadowNear_->SetPositionLookAt( positionLookAt );
+
+	// 影用カメラ遠の更新
+	pLight_->GetVector( &vectorLight );
+	vectorLight *= -10000.0f;
+	pCameraShadowFar_->SetPositionCamera( positionLookAt + vectorLight );
+	pCameraShadowFar_->SetPositionLookAt( positionLookAt );
+
+	// 影用カメラ点の更新
+	const LightPoint*	pLightPoint = nullptr;		// 点光源
+	for( int counterLightPoint = 0; counterLightPoint < GraphicMain::MAXIMUM_LIGHT_POINT_SHADOW; ++counterLightPoint )
+	{
+		pLightPoint = pArgument_->pEffectParameter_->GetLightPointLightness( counterLightPoint );
+		if( pLightPoint != nullptr )
+		{
+			D3DXVECTOR3	positionLightPointCamera;		// 点光源の視点座標
+			D3DXVECTOR3	positionLightPointLookAt;		// 点光源の注視点座標
+			pLightPoint->GetPosition( &positionLightPointCamera );
+			positionLightPointLookAt = positionLightPointCamera;
+			positionLightPointLookAt.y -= 1000.0f;
+			ppCameraShadowPoint_[ counterLightPoint ]->SetPositionCamera( positionLightPointCamera );
+			ppCameraShadowPoint_[ counterLightPoint ]->SetPositionLookAt( positionLightPointLookAt );
+		}
+	}
 
 	//	設定された更新クラスへ
 	(this->*fpUpdate)();

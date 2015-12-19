@@ -245,7 +245,7 @@ private:
 	//	ターゲット管理クラス
 	ManagerTarget* managerTarget;
 
-	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
+//	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
 
 	//	打ち上げに関するフラグとカウンタ
 	bool launchFlag;
@@ -468,8 +468,6 @@ private:
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
 	int					indexSection_;						// ゲームセクション番号
-
-	ObjectModel*		pObjectTestForShadow_;				// 影確認用
 
 	int Initialize2( void );
 	int Finalize2( void );

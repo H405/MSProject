@@ -143,7 +143,7 @@ float4 DrawPixel( VertexOutput vertex ) : COLOR0
 	}
 	else
 	{
-		proportion /= max( 0.8f - 1.8f * forcus_, 0.004f );
+		proportion /= max( 0.6f - 1.6f * forcus_, 0.004f );
 	}
 	proportion = min( proportion, 1.0f );
 	proportion *= proportion;

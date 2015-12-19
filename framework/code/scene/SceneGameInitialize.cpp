@@ -31,6 +31,7 @@
 #include "../framework/resource/Texture.h"
 #include "../framework/system/Fade.h"
 #include "../framework/system/Window.h"
+#include "../system/camera/CameraStateSpline.h"
 #include "../system/EffectParameter.h"
 #include "../system/point/ManagerPoint.h"
 #include "../system/ManagerFireworks.h"
@@ -150,9 +151,9 @@ void SceneGame::InitializeSelf( void )
 	managerFireworks = nullptr;
 	managerTarget = nullptr;
 
-	pObjectSkinMesh_[0] = nullptr;
-	pObjectSkinMesh_[1] = nullptr;
-	pObjectSkinMesh_[2] = nullptr;
+//	pObjectSkinMesh_[0] = nullptr;
+//	pObjectSkinMesh_[1] = nullptr;
+//	pObjectSkinMesh_[2] = nullptr;
 
 	launchFlag = false;
 	launchCount = 0;
@@ -309,6 +310,15 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 
+	// 学内審査用に開始ステージを家に
+	D3DXVECTOR3	positionCamera;		// 視点座標
+	D3DXVECTOR3	positionLookAt;		// 視点座標
+	pStateCameraBetween_[ 1 ].GetPositionCamera( 0, 0, &positionCamera );
+	pStateCameraBetween_[ 1 ].GetPositionLookAt( 0, 0, &positionLookAt );
+	pCamera_->SetPositionCamera( positionCamera );
+	pCamera_->SetPositionLookAt( positionLookAt );
+	indexSection_ = 1;
+
 	//	更新関数設定
 	fpUpdate = &SceneGame::calibrationUpdate;
 
@@ -409,13 +419,13 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	houses[ 0 ].SetPosition( 640.0f, 0.0f, 3690.0f );
 	houses[ 0 ].SetRotationY( DEG_TO_RAD( 254.0f ) );
 	houses[ 0 ].SetScale( 150.0f, 150.0f, 150.0f );
-	houses[ 1 ].SetPosition( -3700.0f, 0.0f, 2480.0f );
-	houses[ 1 ].SetRotationY( DEG_TO_RAD( 252.0f ) );
-	houses[ 2 ].SetPosition( -3120.0f, 0.0f, 1010.0f );
-	houses[ 2 ].SetRotationY( DEG_TO_RAD( 243.0f ) );
-	houses[ 3 ].SetPosition( -2030.0f, 0.0f, -750.0f );
-	houses[ 3 ].SetRotationY( DEG_TO_RAD( 222.0f ) );
-	houses[ 4 ].SetPosition( -1880.0f, 0.0f, 3160.0f );
+	houses[ 1 ].SetPosition( -3840.0f, 0.0f, 2330.0f );
+	houses[ 1 ].SetRotationY( DEG_TO_RAD( 257.0f ) );
+	houses[ 2 ].SetPosition( -3230.0f, 0.0f, 660.0f );
+	houses[ 2 ].SetRotationY( DEG_TO_RAD( 242.0f ) );
+	houses[ 3 ].SetPosition( -1860.0f, 0.0f, -700.0f );
+	houses[ 3 ].SetRotationY( DEG_TO_RAD( 211.0f ) );
+	houses[ 4 ].SetPosition( -1810.0f, 0.0f, 3230.0f );
 	houses[ 4 ].SetRotationY( DEG_TO_RAD( 51.0f ) );
 	houses[ 5 ].SetPosition( 3500.0f, 0.0f, 5500.0f );
 	houses[ 5 ].SetRotationY( DEG_TO_RAD( 58.0f ) );
@@ -488,11 +498,11 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );
-	markers[ 1 ].SetPosition( -1920.0f, 0.0f, 610.0f );
-	markers[ 1 ].SetRotationY( 0.0f );
-	markers[ 2 ].SetPosition( 1230.0f, 0.0f, 990.0f );
+	markers[ 1 ].SetPosition( -1505.0f, 0.0f, 625.0f );
+	markers[ 1 ].SetRotationY( 134.0f );
+	markers[ 2 ].SetPosition( 1680.0f, 0.0f, 600.0f );
 	markers[ 2 ].SetRotationY( 0.0f );
-	markers[ 3 ].SetPosition( 490.0f, 0.0f, 470.0f );
+	markers[ 3 ].SetPosition( 5400.0f, 0.0f, -380.0f );
 	markers[ 3 ].SetRotationY( 0.0f );
 }
 
@@ -563,7 +573,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		D3DXVECTOR3(0.0f, -100.0f, 400.0f),
 		pArgument);
 
-
+/*
 	// スキンメッシュの生成
 	Effect*	pEffectSkinMesh = nullptr;					// エフェクト
 	Effect*	pEffectSkinMeshReflect = nullptr;			// エフェクト
@@ -595,6 +605,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
 	pObjectSkinMesh_[2]->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
 	pObjectSkinMesh_[2]->SetPosition( -300.0f, 100.0f, 0.0f );
+*/
 }
 
 //==============================================================================
@@ -947,14 +958,14 @@ int SceneGame::Finalize( void )
 
 	delete player;
 	player = nullptr;
-
+/*
 	delete pObjectSkinMesh_[2];
 	delete pObjectSkinMesh_[1];
 	delete pObjectSkinMesh_[0];
 	pObjectSkinMesh_[2] = nullptr;
 	pObjectSkinMesh_[1] = nullptr;
 	pObjectSkinMesh_[0] = nullptr;
-
+*/
 	// 場所目印オブジェクトの開放
 	delete[] markers;
 	markers = nullptr;
