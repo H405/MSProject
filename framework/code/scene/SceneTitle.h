@@ -110,9 +110,12 @@ private:
 	void InitializeSelf( void );
 	SceneTitle( const SceneTitle& );
 	SceneTitle operator=( const SceneTitle& );
-
-	CameraObject*	pCamera_;		// カメラ
-	LightDirection*	pLight_;		// ライト
+	
+	CameraObject*	pCamera_;					// カメラ
+	CameraObject*	pCameraShadowNear_;			// 影用カメラ近
+	CameraObject*	pCameraShadowFar_;			// 影用カメラ遠
+	CameraObject**	ppCameraShadowPoint_;		// 影用カメラ点
+	LightDirection*	pLight_;					// ライト
 
 
 	//	タイトルUI関係
@@ -167,7 +170,7 @@ private:
 	ObjectModelMaterial*	houses;			// 家
 	ObjectModelMaterial*	gate;			// 鳥居
 
-	ObjectSkinMesh*			markers;		// 場所の目印
+//	ObjectSkinMesh*			markers;		// 場所の目印
 
 	//	プレイヤー
 	Player* player;
@@ -178,7 +181,7 @@ private:
 	//	花火管理クラス
 	ManagerFireworks* managerFireworks;
 
-	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
+//	ObjectSkinMesh*		pObjectSkinMesh_[3];		// スキンメッシュ
 
 	//	打ち上げに関するフラグとカウンタ
 	bool launchFlag;

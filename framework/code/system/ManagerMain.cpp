@@ -130,6 +130,11 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	widthWindow = pWindow_->GetWidth();
 	heightWindow = pWindow_->GetHeight();
 
+#ifndef _DEBUG
+	// カーソルの非表示
+	ShowCursor( false );
+#endif
+
 #ifdef _DEVELOP
 	// デバッグ用計測クラスの初期化
 	ManagerDebugMeasure::Initialize();

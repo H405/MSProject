@@ -57,8 +57,6 @@ int APIENTRY _tWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpC
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	UNREFERENCED_PARAMETER( lpCmdLine );
 
-	ShowCursor(false);
-
 	// フレームカウントの初期化
 	int		result;		// 実行結果
 	result = g_frameCount_.Initialize( hInstance, nCmdShow, &g_manager_, MAIN_FPS_UPDATE_INTERVAL, MAIN_FPS_NUM_FRAME_DEST );
