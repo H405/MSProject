@@ -483,10 +483,17 @@ void SceneGame::UpdateBetweenSection( void )
 	++timerSceneGame_;
 
 	// XVˆ—‚ÌØ‚è‘Ö‚¦
-	if( timerSceneGame_ >= pStateCameraBetween_[ indexSection_ - 1 ].GetCountFrame() )
+	int		indexCameraState;		// ƒJƒƒ‰ˆ—”Ô†
+	indexCameraState = indexSection_ - 1;
+	if( indexCameraState < 0 )
+	{
+		indexCameraState = SECTION_MAXIMUM - 2;
+	}
+	if( timerSceneGame_ >= pStateCameraBetween_[ indexCameraState ].GetCountFrame() )
 	{
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::normalUpdate;
+		pCamera_->SetState( nullptr );
 	}
 }
 

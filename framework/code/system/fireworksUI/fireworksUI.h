@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : Gage.h
-// Brief  : シンクロゲージオブジェクトクラス
+// File   : FireworksUI.h
+// Brief  : 花火UIオブジェクトクラス
 // Author : Kotaro Nagasaki
 // Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
 //
@@ -10,13 +10,14 @@
 //******************************************************************************
 // インクルードガード
 //******************************************************************************
-#ifndef MY_GAGE_H
-#define MY_GAGE_H
+#ifndef MY_FIREWORKSUI_H
+#define MY_FIREWORKSUI_H
 
 //******************************************************************************
 // インクルード
 //******************************************************************************
 #include "d3dx9.h"
+#include "../target/Target.h"
 
 //******************************************************************************
 // ライブラリ
@@ -25,7 +26,6 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define GAGEBAR_MAX (25)
 
 //******************************************************************************
 // クラス前方宣言
@@ -44,7 +44,7 @@ class ObjectScore;
 //******************************************************************************
 // クラス定義
 //******************************************************************************
-class Gage : public ObjectMovement
+class FireworksUI : public ObjectMovement
 {
 public:
 	//==============================================================================
@@ -52,14 +52,14 @@ public:
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	Gage( void );
+	FireworksUI( void );
 
 	//==============================================================================
 	// Brief  : デストラクタ
 	// Return : 									: 
 	// Arg    : void								: なし
 	//==============================================================================
-	~Gage( void );
+	~FireworksUI( void );
 
 	//==============================================================================
 	// Brief  : 初期化処理
@@ -73,11 +73,7 @@ public:
 	IDirect3DDevice9* pDevice,
 	const EffectParameter* pParameter,
 	Effect* pEffectGeneral,
-	Effect* pEffectGeneral2,
-	Texture* pGageBar,
-	Texture* pGageBase,
-	Texture* pGageBack,
-	Texture* pGageScore);
+	Texture* pFireworksUITex);
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -97,42 +93,21 @@ public:
 	// アクセサ
 	//==============================================================================
 	void setPosition(float _x, float _y, float _z);
-	void setPercent(float _value){percent = _value;if(percent < 0.0f)percent = 0.0f;if(percent > 100.0f)percent = 100.0f;}
-	void addPercent(float _value){percent += _value;if(percent < 0.0f)percent = 0.0f;if(percent > 100.0f)percent = 100.0f;}
-	int getPercent(){return (int)percent;}
-
-	void setPercentFuture(float _value){percentFuture = _value;if(percentFuture < 0.0f)percentFuture = 0.0f;if(percentFuture > 100.0f)percentFuture = 100.0f;}
-	void addPercentFuture(float _value)
-	{
-		percentFuture += _value;
-		if(percentFuture < 0.0f)
-			percentFuture = 0.0f;
-		if(percentFuture > 100.0f)
-			percentFuture = 100.0f;
-	}
+	void setColorState(COLOR_STATE _colorState);
 
 protected:
 
-	Object2D* gageBar;
-	Object2D* gageBase;
-	Object2D* gageBack;
-	int gageBackCount;
-	float gageBackAddSize;
-
-	ObjectScore* gageScore;
-
-	float percent;
-	float percentFuture;
-	int barNum;
-	int barNumOld;
+	Object2D* fireworksUI1;
+	Object2D* fireworksUI2;
+	Object2D* fireworksUI3;
 
 private:
 	void InitializeSelf( void );
-	Gage( const Gage& );
-	Gage operator=( const Gage& );
+	FireworksUI( const FireworksUI& );
+	FireworksUI operator=( const FireworksUI& );
 
 	//	更新関数格納用ポインタ
-	void (Gage::*fpUpdate)(void);
+	void (FireworksUI::*fpUpdate)(void);
 };
 
-#endif	// MY_GAGE_H
+#endif	// MY_FIREWORKSUI_H

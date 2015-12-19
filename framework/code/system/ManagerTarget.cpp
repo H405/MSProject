@@ -123,7 +123,7 @@ int ManagerTarget::Finalize( void )
 void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
 	//	自動で生成
-	autoAppear(_table, _targetTableIndex);
+	//autoAppear(_table, _targetTableIndex);
 
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
 	{
@@ -143,8 +143,32 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 		{
 			continue;
 		}
-		target[counterPoint].setInvViewMatrix(invViewMatrix);
-		target[counterPoint].Update();
+	}
+
+	//	更新
+	for(int count = 0; count < *_targetTableIndex;count++)
+	{
+		target[_table[count]].setInvViewMatrix(invViewMatrix);
+		target[_table[count]].Update();
+	}
+
+	//	更新の後にもテーブル確認
+	for( int count = 0; count < TARGET_MAX; ++count )
+	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[count] == true &&
+			target[count].IsEnable() == false)
+		{
+			Sort(_table, count);
+			*_targetTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[count] = target[count].IsEnable();
+
+		// 使用されていないとき次へ
+		if( !target[count].IsEnable() )
+			continue;
 	}
 }
 //==============================================================================
@@ -162,7 +186,7 @@ void ManagerTarget::autoAppear(int* _table , int* _targetTableIndex)
 	if(targetAppearData[targetAppearIndex].appearTime == targetAppearCount)
 	{
 		//	生成
-		int buff = Add(targetAppearData[targetAppearIndex].appearPos);
+		int buff = Add(targetAppearData[targetAppearIndex].appearPos, targetAppearData[targetAppearIndex].colorState);
 		targetAppearIndex++;
 
 		//	テーブルへ追加
@@ -179,7 +203,7 @@ void ManagerTarget::autoAppear(int* _table , int* _targetTableIndex)
 		while(targetAppearData[tempIndex].appearTime == targetAppearCount)
 		{
 			//	生成
-			buff = Add(targetAppearData[tempIndex].appearPos);
+			buff = Add(targetAppearData[tempIndex].appearPos, targetAppearData[tempIndex].colorState);
 
 			//	テーブルへ追加
 			if(buff != -1)
@@ -244,7 +268,7 @@ void ManagerTarget::Sort(int* _table, int _deleteIndex)
 // Return : void								: なし
 // Arg2   : D3DXVECTOR3							: 発生位置
 //==============================================================================
-int ManagerTarget::Add(D3DXVECTOR3 _pos)
+int ManagerTarget::Add(D3DXVECTOR3 _pos, COLOR_STATE _colorState)
 {
 	int index = GetIndex();
 	if(index < 0)
@@ -254,7 +278,7 @@ int ManagerTarget::Add(D3DXVECTOR3 _pos)
 	}
 
 	//	ターゲットのセット
-	target[index].Set(_pos);
+	target[index].Set(_pos, _colorState);
 
 	return index;
 }
@@ -326,7 +350,7 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName)
 			strcpy_s(targetAppearData[readDataIndex].name, setName);
 
 			//	出現時間と位置の読み込み
-			Read_TIM_POS(fp, readDataIndex);
+			Read_TIM_POS_COL(fp, readDataIndex);
 			readDataIndex++;
 		}
 		//-----------------------------------------------------------------------
@@ -372,7 +396,7 @@ void ManagerTarget::ReadAppearTargetMax(FILE* _fp)
 	targetAppearData = new TARGET_APPEAR_DATA[targetAppearDataMax];
 }
 
-void ManagerTarget::Read_TIM_POS(FILE* _fp, int _readDataIndex)
+void ManagerTarget::Read_TIM_POS_COL(FILE* _fp, int _readDataIndex)
 {
 	//	TIM の読み飛ばし
 	fgetc(_fp);
@@ -382,7 +406,7 @@ void ManagerTarget::Read_TIM_POS(FILE* _fp, int _readDataIndex)
 	//	実数値読み込み
 	fscanf_s(_fp, "%d", &targetAppearData[_readDataIndex].appearTime);
 
-	//	POSの読み飛ばし
+	//	POS の読み飛ばし
 	fgetc(_fp);
 	fgetc(_fp);
 	fgetc(_fp);
@@ -392,6 +416,26 @@ void ManagerTarget::Read_TIM_POS(FILE* _fp, int _readDataIndex)
 	//fread_s(targetAppearData[_readDataIndex].appearPos, sizeof(float) * 3, sizeof(float), 3, _fp);
 	fscanf_s(_fp, "%f %f %f", &targetAppearData[_readDataIndex].appearPos.x, &targetAppearData[_readDataIndex].appearPos.y, &targetAppearData[_readDataIndex].appearPos.z);
 	//-----------------------------------------------------------------------
+
+	//	COL の読み飛ばし
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+	fgetc(_fp);
+
+	//	R G B Wいづれかの読み込み
+	char c = fgetc(_fp);
+	if(c == 'R')
+		targetAppearData[_readDataIndex].colorState = COLOR_STATE_R;
+	else if(c == 'G')
+		targetAppearData[_readDataIndex].colorState = COLOR_STATE_G;
+	else if(c == 'B')
+		targetAppearData[_readDataIndex].colorState = COLOR_STATE_B;
+	else if(c == 'W')
+		targetAppearData[_readDataIndex].colorState = COLOR_STATE_W;
+	else if(c == 'S')
+		targetAppearData[_readDataIndex].colorState = COLOR_STATE_S;
 }
 
 void ManagerTarget::SkipComment(FILE* _fp)

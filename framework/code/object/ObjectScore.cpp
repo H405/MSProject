@@ -602,7 +602,7 @@ void ObjectScore::AddScore(int _value)
 //==============================================================================
 void ObjectScore::SetScoreFuture(int _value)
 {
-	scoreFuture = _value;
+	scoreFuture = (int)_value;
 }
 //==============================================================================
 // Brief  : スコア未来値の加算
@@ -611,7 +611,7 @@ void ObjectScore::SetScoreFuture(int _value)
 //==============================================================================
 void ObjectScore::AddScoreFuture(int _value)
 {
-	scoreFuture += _value;
+	scoreFuture += (int)_value;
 }
 //==============================================================================
 // Brief  : スコア現在値の設定

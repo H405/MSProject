@@ -1,7 +1,7 @@
 //==============================================================================
 //
-// File   : Gage.cpp
-// Brief  : シンクロゲージオブジェクトクラス
+// File   : FireworksUI.cpp
+// Brief  : 花火UIオブジェクトクラス
 // Author : Kotaro Nagasaki
 // Date   : 2015/10/29 Tur : Kotaro Nagasaki : create
 //
@@ -10,11 +10,10 @@
 //******************************************************************************
 // インクルード
 //******************************************************************************
-#include "gage.h"
+#include "fireworksUI.h"
 #include "../../framework/resource/ManagerEffect.h"
 #include "../../framework/resource/ManagerTexture.h"
 #include "../../object/Object2D.h"
-#include "../../object/ObjectScore.h"
 #include "../../framework/develop/DebugProc.h"
 
 //******************************************************************************
@@ -24,29 +23,17 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
-#define DELETECOUNT_MAX (1000)
-#define RANDAM(value) ((rand() % value) - (rand() % value))
 
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
-static const int gageBarRedNum = 7;
-static const int gageBarGreenNum = 16;
-static const int gageBarBlueNum = GAGEBAR_MAX;
-
-static const D3DXCOLOR gageColor[3] =
-{
-	D3DXCOLOR(1.0f, 0.5f, 0.5f, 1.0f),
-	D3DXCOLOR(0.5f, 1.0f, 0.5f, 1.0f),
-	D3DXCOLOR(0.5f, 0.5f, 1.0f, 1.0f),
-};
 
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Gage::Gage( void ) : ObjectMovement()
+FireworksUI::FireworksUI( void ) : ObjectMovement()
 {
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -56,19 +43,8 @@ Gage::Gage( void ) : ObjectMovement()
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Gage::InitializeSelf( void )
+void FireworksUI::InitializeSelf( void )
 {
-	gageBar = nullptr;
-	gageBase = nullptr;
-	gageBack = nullptr;
-
-	percent = 0.0f;
-	percentFuture = 0.0f;
-	barNum = 0;
-	barNumOld = 0;
-	gageBackCount = 0;
-	gageBackAddSize = 1.0f;
-
 	// メンバ変数の初期化
 	fpUpdate = nullptr;
 }
@@ -77,7 +53,7 @@ void Gage::InitializeSelf( void )
 // Return : 									: 
 // Arg    : void								: なし
 //==============================================================================
-Gage::~Gage( void )
+FireworksUI::~FireworksUI( void )
 {
 	// 終了処理
 	Finalize();
@@ -90,15 +66,11 @@ Gage::~Gage( void )
 // Arg    : Effect* pEffectGeneral				: 通常描画エフェクト
 // Arg    : IDirect3DTexture9* pTexture			: テクスチャ
 //==============================================================================
-int Gage::Initialize(
+int FireworksUI::Initialize(
 	IDirect3DDevice9* pDevice,
 	const EffectParameter* pParameter,
 	Effect* pEffectGeneral,
-	Effect* pEffectGeneral2,
-	Texture* pGageBar,
-	Texture* pGageBase,
-	Texture* pGageBack,
-	Texture* pGageScore)
+	Texture* pFireworksUITex)
 {
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -108,60 +80,48 @@ int Gage::Initialize(
 		return result;
 	}
 
-
-	//	100%の時用の背景
-	gageBack = new Object2D();
-	gageBack->Initialize(0);
-	gageBack->CreateGraphic(
-		0,
-		pParameter,
-		pEffectGeneral2,
-		pGageBack
-		);
-
-	//	ゲージベースオブジェクト生成
-	gageBase = new Object2D;
-	gageBase->Initialize(0);
-	gageBase->CreateGraphic(
+	fireworksUI1 = new Object2D();
+	fireworksUI1->Initialize(0);
+	fireworksUI1->CreateGraphic(
 		0,
 		pParameter,
 		pEffectGeneral,
-		pGageBase
+		pFireworksUITex
 		);
-	//gageBase->SetEnableGraphic(false);
+	fireworksUI1->SetScale(100.0f, 100.0f, 0.0f);
 
-	//	ゲージオブジェクト生成
-	gageBar = new Object2D[GAGEBAR_MAX];
+	//	setScaleTextureで、分割数を設定
+	fireworksUI1->SetScaleTexture(3.0f, 1.0f);
 
-	float rotValue = (D3DX_PI * 2.0f) / (float)GAGEBAR_MAX;
-
-	for(int count = 0;count < GAGEBAR_MAX;count++)
-	{
-		gageBar[count].Initialize(0);
-		gageBar[count].CreateGraphic(
-			0,
-			pParameter,
-			pEffectGeneral,
-			pGageBar
-			);
-		gageBar[count].SetRotationZ(count * rotValue);
-		//gageBar[count].SetEnableGraphic(false);
-	}
+	//	setPositionTextureで、0～1（丸め込む必要無し！）値を設定して、UVスクロールする
+	fireworksUI1->SetPositionTexture(0.0f, 0.0f);
 
 
-	gageScore = new ObjectScore();
-	gageScore->Initialize(0, 3);
-	gageScore->CreateGraphic(
+	fireworksUI2 = new Object2D();
+	fireworksUI2->Initialize(0);
+	fireworksUI2->CreateGraphic(
 		0,
 		pParameter,
 		pEffectGeneral,
-		pGageScore);
-	gageScore->SetSizeX(16.0f);
-	gageScore->SetSizeY(16.0f);
+		pFireworksUITex
+		);
+	fireworksUI2->SetScale(180.0f, 180.0f, 0.0f);
 
-	D3DXVECTOR3 buffScale;
-	gageBase->GetScale(&buffScale);
-	gageBack->SetScale(buffScale * 1.2f);
+	fireworksUI2->SetScaleTexture(3.0f, 1.0f);
+	fireworksUI2->SetPositionTexture(1.0f / 3.0f, 0.0f);
+
+	fireworksUI3 = new Object2D();
+	fireworksUI3->Initialize(0);
+	fireworksUI3->CreateGraphic(
+		0,
+		pParameter,
+		pEffectGeneral,
+		pFireworksUITex
+		);
+	fireworksUI3->SetScale(100.0f, 100.0f, 0.0f);
+
+	fireworksUI3->SetScaleTexture(3.0f, 1.0f);
+	fireworksUI3->SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
 
 	// 正常終了
 	return 0;
@@ -171,13 +131,11 @@ int Gage::Initialize(
 // Return : int									: 実行結果
 // Arg    : void								: なし
 //==============================================================================
-int Gage::Finalize( void )
+int FireworksUI::Finalize( void )
 {
-	delete gageScore;
-	delete[] gageBar;
-	delete gageBase;
-	delete gageBack;
-
+	delete fireworksUI1;
+	delete fireworksUI2;
+	delete fireworksUI3;
 
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -186,7 +144,6 @@ int Gage::Finalize( void )
 	{
 		return result;
 	}
-
 
 	// クラス内の初期化処理
 	InitializeSelf();
@@ -199,73 +156,54 @@ int Gage::Finalize( void )
 // Return : void								: なし
 // Arg    : void								: なし
 //==============================================================================
-void Gage::Update( void )
+void FireworksUI::Update( void )
 {
-	if(percentFuture > percent)
-		percent += 1.0f;
-	else if(percentFuture < percent)
-		percent -= 1;
-
-	barNum = (int)ceil((GAGEBAR_MAX * percent) / 100.0f);
-
-	gageScore->SetScore((int)ceil(percent));
-	gageScore->SetScoreFuture((int)ceil(percent));
-
-	if(barNum != barNumOld)
-	{
-		//	一度すべてを白にして
-		for(int count = 0;count < GAGEBAR_MAX;count++)
-		{
-			gageBar[count].SetColor(1.0f, 1.0f, 1.0f);
-		}
-
-		//	場所に応じて色をセット
-		for(int count = 0;count < barNum;count++)
-		{
-			if(count <= gageBarRedNum)
-				gageBar[count].SetColor(gageColor[0]);
-			else if(count <= gageBarGreenNum)
-				gageBar[count].SetColor(gageColor[1]);
-			else if(count <= gageBarBlueNum)
-				gageBar[count].SetColor(gageColor[2]);
-		}
-	}
-
-	if(percent == 100.0f)
-	{
-		gageBackCount++;
-
-		gageBack->AddScale( gageBackAddSize,  gageBackAddSize, 0.0f);
-
-		if(gageBackCount == 10)
-		{
-			gageBackCount = 0;
-			gageBackAddSize *= -1.0f;
-		}
-	}
-
-	PrintDebug( _T( "\nbarNum = %d\n"), barNum );
-	PrintDebug( _T( "\npercent = %f\n"), percent );
-
-	barNumOld = barNum;
+	// 基本クラスの処理
+	ObjectMovement::Update();
 }
 
 //==============================================================================
 // Brief  : 位置セット処理
 //==============================================================================
-void Gage::setPosition(float _x, float _y, float _z)
+void FireworksUI::setPosition(float _x, float _y, float _z)
 {
-	gageBack->SetPosition(_x, _y, _z);
-
-	gageBase->SetPosition(_x, _y, _z);
-
-	gageScore->SetPos(_x - 16.0f, _y, _z);
-
-	for(int count = 0;count < GAGEBAR_MAX;count++)
-	{
-		gageBar[count].SetPosition(_x, _y, _z);
-	}
+	fireworksUI1->SetPosition(_x + 100.0f, _y, _z);
+	fireworksUI2->SetPosition(_x, _y, _z);
+	fireworksUI3->SetPosition(_x - 100.0f, _y, _z);
 
 	// 基本クラスの処理
 	ObjectMovement::Update();
+}
+
+//==============================================================================
+// Brief  : 色のセット
+//==============================================================================
+void FireworksUI::setColorState(COLOR_STATE _colorState)
+{
+	switch(_colorState)
+	{
+	case COLOR_STATE_R:
+
+		fireworksUI1->SetPositionTextureX(-1.0f / 3.0f);
+		fireworksUI2->SetPositionTextureX(0.0f);
+		fireworksUI3->SetPositionTextureX(1.0f / 3.0f);
+
+		break;
+
+	case COLOR_STATE_G:
+
+		fireworksUI1->SetPositionTextureX(0.0f);
+		fireworksUI2->SetPositionTextureX(1.0f / 3.0f);
+		fireworksUI3->SetPositionTextureX(-1.0f / 3.0f);
+
+		break;
+
+	case COLOR_STATE_B:
+
+		fireworksUI1->SetPositionTextureX(1.0f / 3.0f);
+		fireworksUI2->SetPositionTextureX(-1.0f / 3.0f);
+		fireworksUI3->SetPositionTextureX(0.0f);
+
+		break;
+	}
 }

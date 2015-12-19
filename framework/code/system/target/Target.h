@@ -25,6 +25,15 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
+typedef enum
+{
+	COLOR_STATE_R = 0,	//	赤
+	COLOR_STATE_G,		//	緑
+	COLOR_STATE_B,		//	青
+	COLOR_STATE_W,		//	白
+	COLOR_STATE_S,		//	スペシャル（黄色？）
+	COLOR_STATE_MAX
+}COLOR_STATE;
 
 //******************************************************************************
 // クラス前方宣言
@@ -74,7 +83,7 @@ public:
 	// Brief  : 初期化処理
 	// Return : int									: 実行結果
 	//==============================================================================
-	int Set(D3DXVECTOR3 _pos);
+	int Set(D3DXVECTOR3 _pos, COLOR_STATE _colorState = COLOR_STATE_W);
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -103,6 +112,7 @@ public:
 	// Arg    : void								: なし
 	//==============================================================================
 	void updateAppearArrow( void );
+	void updateAppearArrowBig( void );
 
 	//==============================================================================
 	// Brief  : Circle出現時の更新処理
@@ -110,6 +120,7 @@ public:
 	// Arg    : void								: なし
 	//==============================================================================
 	void updateAppearCircle( void );
+	void updateAppearCircleBig( void );
 
 	//==============================================================================
 	// Brief  : 消滅時の更新処理
@@ -139,6 +150,8 @@ public:
 	bool IsEnable(){return enable;}
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
 
+	COLOR_STATE getColorState(){return colorState;}
+
 protected:
 
 	ObjectBillboard* targetCross;
@@ -160,6 +173,9 @@ protected:
 
 	//	カウンタ
 	int counter;
+
+	//	色情報
+	COLOR_STATE colorState;
 
 private:
 	void InitializeSelf( void );

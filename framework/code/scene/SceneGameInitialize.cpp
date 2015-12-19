@@ -66,6 +66,7 @@
 #include "../framework/polygon/PolygonPoint.h"
 
 #include "../framework/radianTable/radianTable.h"
+#include "../system/fireworksUI/fireworksUI.h"
 
 //******************************************************************************
 // ライブラリ
@@ -98,6 +99,7 @@ void SceneGame::InitializeSelf( void )
 	pCameraShadowFar_ = nullptr;
 	ppCameraShadowPoint_ = nullptr;
 	pLight_ = nullptr;
+	wiiContoroller = nullptr;
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
@@ -105,6 +107,7 @@ void SceneGame::InitializeSelf( void )
 	score = nullptr;
 	gage = nullptr;
 	combo = nullptr;
+	fireworksUI = nullptr;
 	pauseFrame = nullptr;
 	stringReturn = nullptr;
 	stringStop = nullptr;
@@ -119,6 +122,8 @@ void SceneGame::InitializeSelf( void )
 
 	pushChooseObjectFlashingCount = 0;
 	chooseFlag = false;
+
+	colorState = COLOR_STATE_R;
 	//----------------------------------------------------------
 
 
@@ -182,8 +187,8 @@ void SceneGame::InitializeSelf( void )
 
 
 	targetAppearCount = 0;
-	buffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	buffWiiRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	buffDiffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	buffDiffWiiRot   = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //==============================================================================
@@ -257,6 +262,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pArgument->pEffectParameter_->SetColorAmbient( 0.1f, 0.15f, 0.2f );
 
 
+	//	アドレス保存
+	wiiContoroller = pArgument_->pWiiController_;
 
 
 	//	ステージオブジェクトの生成
@@ -274,7 +281,7 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	chooseObject = stringReturn;
 
 	//	wiiリモコンが登録されてる場合は登録しない
-	if(pArgument_->pWiiController_->getIsConnectWiimote() == true)
+	if(wiiContoroller->getIsConnectWiimote() == true)
 	{
 		chooseObject = nullptr;
 		pArgument_->pWiiController_->startGame();
@@ -459,11 +466,13 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 	// 場所の目印オブジェクトの生成
 	Model*	pModelMarker = nullptr;					// モデル
+	Motion*	pMotionMarker = nullptr;				// モーション
 	Effect*	pEffectMarkerGeneral = nullptr;			// 通常描画エフェクト
 	Effect*	pEffectMarkerReflect = nullptr;			// 反射エフェクト
 	Effect*	pEffectMarkerShadow = nullptr;			// 影エフェクト
 	Effect*	pEffectMarkerParaboloid = nullptr;		// 放物変換エフェクト
-	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
+	pModelMarker = pArgument->pModel_->Get( _T( "back_dancer.model" ) );
+	pMotionMarker = pArgument->pMotion_->Get( _T( "back_dancer.motion" ) );
 	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pEffectMarkerShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
@@ -474,6 +483,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		markers[ counterMarker ].Initialize( 0, 0 );
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
+//		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );
@@ -598,6 +608,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	Texture*	pTexture = nullptr;
 	Model*		pModel = nullptr;
 
+	targetAppearFlag = true;
 
 	//	「スコア」文字オブジェクト生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
@@ -646,7 +657,18 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pEffect,
 		pArgument_->pTexture_->Get( _T( "game/stringScore.png" )),
 		pArgument_->pTexture_->Get( _T( "common/number_white.png" )));
-	combo->setPosition(200.0f, -300.0f, 0.0f);
+	combo->setPosition(120.0f, -300.0f, 0.0f);
+
+
+	//	花火用UI生成
+	fireworksUI = new FireworksUI;
+	fireworksUI->Initialize(
+		pArgument_->pDevice_,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pArgument_->pTexture_->Get( _T( "game/ui3.png" )));
+	fireworksUI->setPosition(450.0f, -300.0f, 0.0f);
+	fireworksUI->setColorState(colorState);
 
 
 	//	ゲージオブジェクト生成
@@ -846,6 +868,9 @@ int SceneGame::Finalize( void )
 
 	delete combo;
 	combo = nullptr;
+
+	delete fireworksUI;
+	fireworksUI = nullptr;
 
 	delete gage;
 	gage = nullptr;

@@ -91,6 +91,9 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 		isWindowMode_ = true;
 	}
 
+	D3DDISPLAYMODE displayMode2;
+	HRESULT rr = pDirect3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode2);
+
 	// ディスプレイモードの列挙
 	if( !isWindowMode_ )
 	{	// ウィンドウモードの指定がされていないとき
@@ -135,7 +138,7 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 	else
 	{	// フルスクリーンモード
 		presentParameter.BackBufferFormat			= D3DFMT_R5G6B5;					// バックバッファ
-		presentParameter.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;			// リフレッシュレート
+		presentParameter.FullScreen_RefreshRateInHz	= displayMode.RefreshRate;			// リフレッシュレート
 		presentParameter.PresentationInterval		= D3DPRESENT_INTERVAL_DEFAULT;		// インターバル
 	}
 
@@ -157,7 +160,7 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 												&presentParameter,						// デバイスのプレゼンテーションパラメータ
 												&pDevice_ ) ) )							// デバイスインターフェースへのポインタ
 		{
-			MessageBox( NULL, _T( "低画質モードで起動します。" ), _T( "確認" ), MB_OK );
+			//MessageBox( NULL, _T( "低画質モードで起動します。" ), _T( "確認" ), MB_OK );
 			// 上記の設定が失敗したら
 			// [デバイス作成制御]<描画>をハードウェアで行い、<頂点処理>はCPUで行なう
 			if( FAILED( pDirect3D->CreateDevice(	D3DADAPTER_DEFAULT, 
@@ -177,7 +180,7 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 														&pDevice_ ) ) )
 				{
 					// 初期化失敗
-					PrintMsgBox( _T( "デバイスオブジェクトの初期化に失敗しました。" ) );
+					//PrintMsgBox( _T( "デバイスオブジェクトの初期化に失敗しました。" ) );
 					return 1;
 				}
 			}

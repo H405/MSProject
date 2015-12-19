@@ -54,6 +54,7 @@ public:
 		char name[256];
 		int appearTime;
 		D3DXVECTOR3 appearPos;
+		COLOR_STATE colorState;
 	}TARGET_APPEAR_DATA;
 
 	//==============================================================================
@@ -106,7 +107,7 @@ public:
 	// Return : int									: 配列番号
 	// Arg2   : D3DXVECTOR3							: 発生位置
 	//==============================================================================
-	int Add(D3DXVECTOR3 _pos);
+	int Add(D3DXVECTOR3 _pos, COLOR_STATE _colorState = COLOR_STATE_W);
 
 	//==============================================================================
 	// Brief  : インデックス取得処理
@@ -154,7 +155,7 @@ protected:
 	// Brief  : ターゲット生成スクリプト読み込み処理
 	//==============================================================================
 	void SkipComment(FILE* _fp);
-	void Read_TIM_POS(FILE* _fp, int _readDataIndex);
+	void Read_TIM_POS_COL(FILE* _fp, int _readDataIndex);
 	void ReadAppearTargetMax(FILE* _fp);
 	void SortAppearTargetData();
 	void autoAppear(int* _table , int* _targetTableIndex);

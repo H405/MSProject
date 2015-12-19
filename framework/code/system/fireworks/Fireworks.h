@@ -17,6 +17,7 @@
 // インクルード
 //******************************************************************************
 #include "d3dx9.h"
+#include "../target/Target.h"
 
 //******************************************************************************
 // ライブラリ
@@ -25,10 +26,11 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
-#define FIRE_MAX (24)	//	１つの花火から生成される火花の数
+#define FIRE_MAX (36)	//	１つの花火から生成される火花の数(6の倍数にすること)
 #define SMALL_FIREWORKS_MAX (5)
 #define DELETECOUNT_MAX (100)
 typedef int TIME;
+
 
 //******************************************************************************
 // クラス前方宣言
@@ -41,6 +43,7 @@ class LightPoint;
 class LightDirection;
 class Sound;
 class SceneArgumentMain;
+class Target;
 
 //******************************************************************************
 // 構造体定義
@@ -111,6 +114,10 @@ typedef struct
 	Sound* launchSound;
 	Sound* burnSound;
 
+	//	色情報
+	COLOR_STATE colorState;
+	D3DXCOLOR color;
+
 }FIREWORKS_PARAM;
 
 //******************************************************************************
@@ -155,7 +162,26 @@ public:
 		int _indexState,
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _diffRot);
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState = COLOR_STATE_W);
+	int Set(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target);
+	int SetSP(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState = COLOR_STATE_W);
+	int SetW(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target);
 
 	//==============================================================================
 	// Brief  : 終了処理
@@ -199,7 +225,6 @@ public:
 	// Return : void								: なし
 	// Arg    : void								: なし
 	//==============================================================================
-	//void loadSound(SceneArgumentMain* pArgument, int _count);
 	void setSound(Sound* _burnSound, Sound* _launchSound);
 
 	//==============================================================================
@@ -232,6 +257,8 @@ public:
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){param.invViewMatrix = _invViewMatrix;};
 
 	void setManagerLight(ManagerLight* _managerLight);
+
+	COLOR_STATE getColorState(){return param.colorState;}
 
 protected:
 

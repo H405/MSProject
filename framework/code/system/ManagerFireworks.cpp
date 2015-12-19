@@ -122,8 +122,7 @@ int ManagerFireworks::Finalize( void )
 //==============================================================================
 void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 {
-	int countFireworks = 0;
-
+	//	更新の前にテーブル確認
 	for( int count = 0; count < FIREWORKS_MAX; ++count )
 	{
 		//	消えた瞬間を判定して、テーブルを再構築
@@ -135,16 +134,37 @@ void ManagerFireworks::Update(int* _table , int* _fireworksTableIndex)
 		}
 
 		//	使用状態の前情報を保存
-		enableOld[ count ] = fireworks[ count ].IsEnable();
+		enableOld[count] = fireworks[count].IsEnable();
 
 		// 使用されていないとき次へ
-		if( !fireworks[ count ].IsEnable() )
+		if( !fireworks[count].IsEnable() )
 			continue;
+	}
 
-		fireworks[count].setInvViewMatrix(invViewMatrix);
-		fireworks[count].Update();
+	//	更新
+	for(int count = 0; count < *_fireworksTableIndex;count++)
+	{
+		fireworks[_table[count]].setInvViewMatrix(invViewMatrix);
+		fireworks[_table[count]].Update();
+	}
 
-		countFireworks++;
+	//	更新の後にもテーブル確認
+	for( int count = 0; count < FIREWORKS_MAX; ++count )
+	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[count] == true &&
+			fireworks[count].IsEnable() == false)
+		{
+			Sort(_table, count);
+			*_fireworksTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[count] = fireworks[count].IsEnable();
+
+		// 使用されていないとき次へ
+		if( !fireworks[count].IsEnable() )
+			continue;
 	}
 }
 //==============================================================================
@@ -223,15 +243,12 @@ int ManagerFireworks::Add(
 
 	return index;
 }
-
-
-
-
 int ManagerFireworks::Add(
 		int _indexState,
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _diffRot)
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState)
 {
 	int index = GetIndex();
 	if(index < 0 || index >= FIREWORKS_MAX)
@@ -245,11 +262,35 @@ int ManagerFireworks::Add(
 		_indexState,
 		_managerPoint,
 		_pos,
-		_diffRot);
+		_diffRot,
+		_colorState);
 
 	return index;
 }
+int ManagerFireworks::AddSP(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
 
+	//	花火のセット
+	fireworks[index].SetSP(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot,
+		_colorState);
+
+	return index;
+}
 
 
 

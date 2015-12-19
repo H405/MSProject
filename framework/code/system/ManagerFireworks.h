@@ -37,6 +37,7 @@ class ManagerLight;
 class LightPoint;
 class LightDirection;
 class SceneArgumentMain;
+class Target;
 
 //******************************************************************************
 // クラス定義
@@ -111,7 +112,62 @@ public:
 		int _indexState,
 		ManagerPoint* _managerPoint,
 		D3DXVECTOR3 _pos,
-		D3DXVECTOR3 _diffRot);
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState = COLOR_STATE_W);
+	int AddSP(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		COLOR_STATE _colorState = COLOR_STATE_W);
+	int ManagerFireworks::Add(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target)
+	{
+		int index = GetIndex();
+		if(index < 0 || index >= FIREWORKS_MAX)
+		{
+			//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+			return -1;
+		}
+
+		//	花火のセット
+		fireworks[index].Set(
+			_indexState,
+			_managerPoint,
+			_pos,
+			_diffRot,
+			_target);
+
+		return index;
+	}
+	int ManagerFireworks::AddW(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target)
+	{
+		int index = GetIndex();
+		if(index < 0 || index >= FIREWORKS_MAX)
+		{
+			//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+			return -1;
+		}
+
+		//	花火のセット
+		fireworks[index].SetW(
+			_indexState,
+			_managerPoint,
+			_pos,
+			_diffRot,
+			_target);
+
+		return index;
+	}
 
 	//==============================================================================
 	// Brief  : インデックス取得処理

@@ -112,6 +112,9 @@
     <Filter Include="ソース ファイル\system\combo">
       <UniqueIdentifier>{90546cd6-45a2-4355-ad43-2e2bd535dd7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\system\fireworksUI">
+      <UniqueIdentifier>{14c0ead0-39bc-492c-8f58-18419df81498}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\framework\develop\Debug.h">
@@ -630,6 +633,9 @@
     <ClInclude Include="code\object\ObjectGrass.h">
       <Filter>ソース ファイル\object</Filter>
     </ClInclude>
+    <ClInclude Include="code\system\fireworksUI\fireworksUI.h">
+      <Filter>ソース ファイル\system\fireworksUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\framework\develop\Debug.cpp">
@@ -1147,6 +1153,9 @@
     </ClCompile>
     <ClCompile Include="code\object\ObjectGrass.cpp">
       <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="code\system\fireworksUI\fireworksUI.cpp">
+      <Filter>ソース ファイル\system\fireworksUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "../system/SceneMain.h"
 #include "d3dx9.h"
+#include "../system/target/Target.h"
 
 //******************************************************************************
 // ライブラリ
@@ -28,6 +29,8 @@
 //******************************************************************************
 #define FIREWORKS_MAX (16)
 #define TARGET_MAX (16)
+
+#define _TEST
 
 //******************************************************************************
 // 列挙体
@@ -78,6 +81,8 @@ class Player;
 class Sound;
 class GraphicPoint;
 class PolygonPoint;
+class CWiiController;
+class FireworksUI;
 
 //******************************************************************************
 // クラス定義
@@ -149,7 +154,7 @@ private:
 	CameraObject*	pCameraShadowFar_;			// 影用カメラ遠
 	CameraObject**	ppCameraShadowPoint_;		// 影用カメラ点
 	LightDirection*	pLight_;					// ライト
-
+	CWiiController* wiiContoroller;
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
@@ -164,6 +169,11 @@ private:
 
 	//	コンボ数オブジェクト
 	Combo* combo;
+	int comboPrev;
+
+	//	花火用UI
+	FireworksUI* fireworksUI;
+	COLOR_STATE colorState;
 
 	//	ポーズ時用背景
 	Object2D* pauseFrame;
@@ -298,6 +308,7 @@ private:
 	// Brief  : 花火とターゲットの当たり判定処理
 	//==============================================================================
 	void collision_fireworks_target();
+	void collision_fireworks_targetAuto();
 
 	//==============================================================================
 	// Brief  : 花火と花火の当たり判定処理
@@ -329,11 +340,13 @@ private:
 	//==============================================================================
 	void LaunchFireworks();
 	void Launch();
+	void LaunchSP();
 
 	//==============================================================================
 	// Brief  : シンクロゲージの加算処理処理
 	//==============================================================================
 	void AddGage(ADD_SCORE_STATE _state);
+	void AddGage(float _value);
 
 	//==============================================================================
 	// Brief  : 点と円の当たり判定処理
@@ -503,15 +516,16 @@ private:
 
 	//	一時変数
 	int targetAppearCount;
-	D3DXVECTOR3 buffWiiAccel;
-	D3DXVECTOR3 buffWiiRot;
-
-	int diff;
-	bool diffBuff;
-	bool spDiffBuff;
-	int diffBuffCount;
 	D3DXVECTOR3 buffDiffWiiAccel;
 	D3DXVECTOR3 buffDiffWiiRot;
+
+	bool targetAppearFlag;
+
+#ifdef _TEST
+	int autoLaunchCount;
+	int autoLaunchTarget;
+	bool autoLaunchFlag;
+#endif
 };
 
 #endif	// MY_SCENE_GAME_H

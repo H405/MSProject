@@ -63,6 +63,9 @@
 
 #include "../framework/radianTable/radianTable.h"
 
+#include "../system/fireworksUI/fireworksUI.h"
+#include "../system/fireworks/fireworks.h"
+
 //******************************************************************************
 // ライブラリ
 //******************************************************************************
@@ -106,15 +109,14 @@ static const float targetAppearPosZ = 400.0f;
 //==============================================================================
 SceneGame::SceneGame( void ) : SceneMain()
 {
-	diff = 0;
-	diffBuff = false;
-	spDiffBuff = false;
-	diffBuffCount = 0;
-	buffDiffWiiAccel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	buffDiffWiiRot   = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
 	// クラス内の初期化処理
 	InitializeSelf();
+
+#ifdef _TEST
+	autoLaunchCount = 0;
+	autoLaunchTarget = 0;
+	autoLaunchFlag = false;
+#endif
 }
 
 //==============================================================================
@@ -155,7 +157,7 @@ int SceneGame::Copy( SceneGame* pOut ) const
 void SceneGame::Update( void )
 {
 	// テスト
-	PrintDebug( _T( "ゲームシーン\n" ) );
+	//PrintDebug( _T( "ゲームシーン\n" ) );
 
 #ifdef _DEVELOP
 	// 更新関数の変更
@@ -219,6 +221,8 @@ void SceneGame::Update( void )
 
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
+
+	comboPrev = combo->getScore();
 }
 
 //==============================================================================
@@ -236,8 +240,8 @@ void SceneGame::calibrationUpdate(void)
 
 	if(pArgument_->pVirtualController_->IsTrigger(VC_GAME_START))
 	{
-		pArgument_->pWiiController_->rotReset();
-		pArgument_->pWiiController_->calibrationWiiboard();
+		wiiContoroller->rotReset();
+		wiiContoroller->calibrationWiiboard();
 
 		calibrationWiimote->SetEnableGraphic(false);
 
@@ -253,20 +257,20 @@ void SceneGame::MovePlayer()
 	//	wiiボードを利用した、プレイヤーの移動処理1
 	//---------------------------------------------------------------------------------------------------------
 #ifdef _WIIBOARD
-	float totalCalibKg = pArgument_->pWiiController_->getCalibKg().Total * 0.7f;
-	float totalKgR = pArgument_->pWiiController_->getKg().BottomR + pArgument_->pWiiController_->getKg().TopR;
-	float totalKgL = pArgument_->pWiiController_->getKg().BottomL + pArgument_->pWiiController_->getKg().TopL;
+	float totalCalibKg = wiiContoroller->getCalibKg().Total * 0.7f;
+	float totalKgR = wiiContoroller->getKg().BottomR + wiiContoroller->getKg().TopR;
+	float totalKgL = wiiContoroller->getKg().BottomL + wiiContoroller->getKg().TopL;
 	if(totalKgL
 		>=
 		totalCalibKg)
 	{
-		player->addSpeed((-((totalKgL - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
+		player->addSpeed((-((totalKgL - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
 	}
 	if(totalKgR
 		>=
 		totalCalibKg)
 	{
-		player->addSpeed((((totalKgR - totalCalibKg) / pArgument_->pWiiController_->getCalibKg().Total)) * 2.0f);
+		player->addSpeed((((totalKgR - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
 	}
 #endif
 
@@ -280,11 +284,11 @@ void SceneGame::MovePlayer()
 	}
 
 	D3DXVECTOR3 buff = player->getPosition();
-	PrintDebug( _T( "\nplayerPos.x = %f\n"), buff.x );
+	//PrintDebug( _T( "\nplayerPos.x = %f\n"), buff.x );
 	//---------------------------------------------------------------------------------------------------------
 
 	//	プレイヤー腕オブジェクトに回転量をセット
-	D3DXVECTOR3 buffRot = pArgument_->pWiiController_->getRot();
+	D3DXVECTOR3 buffRot = wiiContoroller->getRot();
 	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
 }
 //==============================================================================
@@ -292,82 +296,9 @@ void SceneGame::MovePlayer()
 //==============================================================================
 void SceneGame::LaunchFireworks()
 {
-	/*if(launchFlag == false)
-	{
-		//	Bボタンを離した時の
-		if(pArgument_->pWiiController_->getAccelerationY() >= 1.0f &&
-			pArgument_->pWiiController_->getRelease(WC_B))
-		{
-			buffWiiAccel = pArgument_->pWiiController_->getAcceleration();
-			buffWiiRot = pArgument_->pWiiController_->getRot();
-
-			int buff;
-			D3DXVECTOR3 buffPos = player->getPosition();
-
-			if(buffWiiAccel.x <= 0.0f)
-			{
-				//	rotは90度で真っ直ぐ飛ぶ
-				//	rotSpeedがマイナス値なら右側に曲がる
-				//	rotSpeedが　プラス値なら左側に曲がる
-				buff = managerFireworks->Add(
-					ManagerFireworks::STATE_RIGHT,
-					managerPoint,
-					buffPos,
-					D3DXVECTOR3(3.0f, 1.0f, 0.0f),
-					90.0f,
-					buffWiiAccel.x * 0.3f
-					);
-			}
-			else
-			{
-				buff = managerFireworks->Add(
-					ManagerFireworks::STATE_LEFT,
-					managerPoint,
-					buffPos,
-					D3DXVECTOR3(3.0f, 1.0f, 0.0f),
-					90.0f,
-					buffWiiAccel.x * 0.5f
-					);
-			}
-
-
-			if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
-
-			launchFlag = true;
-		}
-	}
-	else
-	{
-		launchCount++;
-		if(launchCount >= launchCountMax)
-		{
-			launchCount = 0;
-			launchFlag = false;
-		}
-	}*/
-
-
 	if(launchFlag == false)
 	{
-		if(pArgument_->pWiiController_->getPress(WC_B))
-		{
-			if(diffBuff == false)
-			{
-				buffWiiAccel = pArgument_->pWiiController_->getAcceleration();
-				buffWiiRot = pArgument_->pWiiController_->getRot();
-				diffBuff = true;
-			}
-
-			if(fabsf(pArgument_->pWiiController_->getAccelerationY()) >= 1.0f || pArgument_->pWiiController_->getRelease(WC_B))
-			{
-				Launch();
-			}
-		}
-		else if(spDiffBuff == true)
+		if(fabsf(wiiContoroller->getAccelerationY()) >= 1.0f && wiiContoroller->getRelease(WC_B))
 		{
 			Launch();
 		}
@@ -381,99 +312,27 @@ void SceneGame::LaunchFireworks()
 			launchFlag = false;
 		}
 	}
-
-	if(diffBuff == true)
-	{
-		diffBuffCount++;
-		if(diffBuffCount == 2)
-		{
-			diffBuff = false;
-			diffBuffCount = 0;
-		}
-	}
-
-
-
-
-
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_LEFT))
-	{
-		int buff;
-		D3DXVECTOR3 buffPos = player->getPosition();
-
-		buff = managerFireworks->Add(
-					ManagerFireworks::STATE_LEFT,
-					managerPoint,
-					buffPos,
-					D3DXVECTOR3(3.0f, 1.0f, 0.0f),
-					90.0f,
-					0.5f
-					);
-
-		if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
-	}
-	if(pArgument_->pKeyboard_->IsTrigger(DIK_RIGHT))
-	{
-		int buff;
-		D3DXVECTOR3 buffPos = player->getPosition();
-
-		buff = managerFireworks->Add(
-			ManagerFireworks::STATE_RIGHTSP,
-			managerPoint,
-			buffPos,
-			D3DXVECTOR3(0.0f, 0.0f, 10.0f));
-
-		if(buff != -1)
-			{
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-			}
-	}
 }
 void SceneGame::Launch()
 {
-	buffDiffWiiAccel = pArgument_->pWiiController_->getAcceleration() - buffWiiAccel;
-	buffDiffWiiRot = pArgument_->pWiiController_->getRot() - buffWiiRot;
+	buffDiffWiiAccel = wiiContoroller->getAcceleration() - wiiContoroller->getAccelerationPrev();
+	buffDiffWiiRot = wiiContoroller->getRot() - wiiContoroller->getRotPrev();
 
-	if(buffDiffWiiAccel.x == 0.0f && buffDiffWiiAccel.y == 0.0f && buffDiffWiiAccel.z == 0.0f)
-	{
-		spDiffBuff = true;
-		return;
-	}
-	diffBuff = false;
-	spDiffBuff = false;
+	if(buffDiffWiiRot.z > 90.0f)
+		buffDiffWiiRot.z = 360.0f - buffDiffWiiRot.z;
+	if(buffDiffWiiRot.z < -90.0f)
+		buffDiffWiiRot.z = -(360.0f - buffDiffWiiRot.z);
+
 
 	int buff = -1;
 	D3DXVECTOR3 buffPos = player->getPosition();
 
-	if(buffDiffWiiRot.z > 2.0f)
-	{
-		buff = managerFireworks->Add(
+	buff = managerFireworks->Add(
 			ManagerFireworks::STATE_RIGHTSP,
 			managerPoint,
 			buffPos,
-			buffDiffWiiRot);
-	}
-	else if(buffDiffWiiRot.z < -2.0f)
-	{
-		buff = managerFireworks->Add(
-			ManagerFireworks::STATE_RIGHTSP,
-			managerPoint,
-			buffPos,
-			buffDiffWiiRot);
-	}
-	else
-	{
-		buff = managerFireworks->Add(
-			ManagerFireworks::STATE_RIGHTSP,
-			managerPoint,
-			buffPos,
-			D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	}
+			buffDiffWiiRot,
+			colorState);
 
 	if(buff != -1)
 	{
@@ -483,6 +342,38 @@ void SceneGame::Launch()
 
 	launchFlag = true;
 }
+void SceneGame::LaunchSP()
+{
+	int buff = -1;
+	D3DXVECTOR3 buffPos = player->getPosition();
+
+
+	buff = managerFireworks->AddSP(
+			ManagerFireworks::STATE_RIGHTSP,
+			managerPoint,
+			D3DXVECTOR3(350.0f, buffPos.y, buffPos.z),
+			D3DXVECTOR3(0.0f, 0.0f, 25.0f),
+			COLOR_STATE_W);
+
+	if(buff != -1)
+	{
+		fireworksTable[fireworksTableIndex] = buff;
+		fireworksTableIndex++;
+	}
+
+	buff = managerFireworks->AddSP(
+			ManagerFireworks::STATE_RIGHTSP,
+			managerPoint,
+			D3DXVECTOR3(-350.0f, buffPos.y, buffPos.z),
+			D3DXVECTOR3(0.0f, 0.0f, -25.0f),
+			COLOR_STATE_W);
+
+	if(buff != -1)
+	{
+		fireworksTable[fireworksTableIndex] = buff;
+		fireworksTableIndex++;
+	}
+}
 
 //==============================================================================
 // Brief  : 通常更新処理
@@ -491,7 +382,7 @@ void SceneGame::Launch()
 //==============================================================================
 void SceneGame::normalUpdate(void)
 {
-	PrintDebug( _T( "normalUpdate\n" ) );
+	//PrintDebug( _T( "normalUpdate\n" ) );
 
 	//	接続切れ確認
 	if(wiiLostCheck() == false)
@@ -530,43 +421,42 @@ void SceneGame::normalUpdate(void)
 
 
 
-	//PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
-	//for(int count = 0;count < FIREWORKS_MAX;count++)
-	//	PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
+	PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+		PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
+	PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
+	for(int count = 0;count < TARGET_MAX;count++)
+		PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
 
 
 
 	//	テスト用ここから
 	//---------------------------------------------------------------------------------------------------------
-	PrintDebug( _T( "\nbuffWiiAccel.x = %f"), buffWiiAccel.x );
-	PrintDebug( _T( "\nbuffWiiAccel.y = %f"), buffWiiAccel.y );
-	PrintDebug( _T( "\nbuffWiiAccel.z = %f"), buffWiiAccel.z );
-	PrintDebug( _T( "\nbuffWiiRot.x = %f"), buffWiiRot.x );
-	PrintDebug( _T( "\nbuffWiiRot.y = %f"), buffWiiRot.y );
-	PrintDebug( _T( "\nbuffWiiRot.z = %f"), buffWiiRot.z );
-	PrintDebug( _T( "\nbuffDiffWiiAccel.x = %f"), buffDiffWiiAccel.x );
-	PrintDebug( _T( "\nbuffDiffWiiAccel.y = %f"), buffDiffWiiAccel.y );
-	PrintDebug( _T( "\nbuffDiffWiiAccel.z = %f"), buffDiffWiiAccel.z );
-	PrintDebug( _T( "\nbuffDiffWiiRot.x = %f"), buffDiffWiiRot.x );
-	PrintDebug( _T( "\nbuffDiffWiiRot.y = %f"), buffDiffWiiRot.y );
-	PrintDebug( _T( "\nbuffDiffWiiRot.z = %f"), buffDiffWiiRot.z );
-	PrintDebug( _T( "\ndiff = %d\n"), diff );
+	//PrintDebug( _T( "\nbuffDiffWiiAccel.x = %f"), buffDiffWiiAccel.x );
+	//PrintDebug( _T( "\nbuffDiffWiiAccel.y = %f"), buffDiffWiiAccel.y );
+	//PrintDebug( _T( "\nbuffDiffWiiAccel.z = %f"), buffDiffWiiAccel.z );
+	//PrintDebug( _T( "\nbuffDiffWiiRot.x = %f"), buffDiffWiiRot.x );
+	//PrintDebug( _T( "\nbuffDiffWiiRot.y = %f"), buffDiffWiiRot.y );
+	//PrintDebug( _T( "\nbuffDiffWiiRot.z = %f\n"), buffDiffWiiRot.z );
 
 	//	ターゲット出現
-	targetAppearCount++;
-	if(targetAppearCount == 50)
+	if(targetAppearFlag == true)
 	{
-		int buff;
-		buff = managerTarget->Add(
-			D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ)
-			);
-		if(buff != -1)
+		targetAppearCount++;
+		if(targetAppearCount == 50)
 		{
-			targetTable[targetTableIndex] = buff;
-			targetTableIndex++;
-		}
+			int buff;
+			buff = managerTarget->Add(
+				D3DXVECTOR3(RANDOM(400), (float)(rand() % 50) + 50.0f, targetAppearPosZ),
+				(COLOR_STATE)(rand() % COLOR_STATE_S));
+			if(buff != -1)
+			{
+				targetTable[targetTableIndex] = buff;
+				targetTableIndex++;
+			}
 	
-		targetAppearCount = 0;
+			targetAppearCount = 0;
+		}
 	}
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
@@ -575,8 +465,29 @@ void SceneGame::normalUpdate(void)
 
 
 	//	wiiリモコンの回転初期化
-	if(pArgument_->pWiiController_->getPress(WC_PLUS) && pArgument_->pWiiController_->getPress(WC_MINUS))
-		pArgument_->pWiiController_->rotReset();
+	//if(wiiContoroller->getPress(WC_PLUS) && wiiContoroller->getPress(WC_MINUS))
+	//	wiiContoroller->rotReset();
+
+
+	//	打ち上げる花火色切り替え
+	//------------------------------------------------------------------
+	if(pArgument_->pVirtualController_->IsTrigger(VC_LEFT))
+	{
+		colorState = (COLOR_STATE)(colorState - 1);
+		if(colorState < COLOR_STATE_R)
+			colorState = COLOR_STATE_B;
+
+		fireworksUI->setColorState(colorState);
+	}
+	if(pArgument_->pVirtualController_->IsTrigger(VC_RIGHT))
+	{
+		colorState = (COLOR_STATE)(colorState + 1);
+		if(colorState > COLOR_STATE_B)
+			colorState = COLOR_STATE_R;
+
+		fireworksUI->setColorState(colorState);
+	}
+	//------------------------------------------------------------------
 
 	//	Aボタン押されたら
 	if(pArgument_->pVirtualController_->IsTrigger(VC_BURN) == true)
@@ -584,8 +495,165 @@ void SceneGame::normalUpdate(void)
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
 	}
-	//	花火と花火の当たり判定
+	collision_fireworks_targetAuto();
+
+
+
 	collision_fireworks_fireworks();
+
+
+
+#ifdef _TEST
+
+	//	+キーが押されたら
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_N))
+	{
+		gage->addPercentFuture(10);
+	}
+
+	//	-キーが押されたら
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_M))
+	{
+		gage->addPercentFuture(-10);
+	}
+
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_T))
+	{
+		if(targetAppearFlag == false)
+			targetAppearFlag = true;
+		else
+			targetAppearFlag = false;
+	}
+
+	if(autoLaunchFlag == false)
+	{
+		if(pArgument_->pKeyboard_->IsTrigger(DIK_R))
+		{
+			int buff;
+			buff = managerTarget->Add(
+				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				COLOR_STATE_R);
+			if(buff != -1)
+			{
+				targetTable[targetTableIndex] = buff;
+				targetTableIndex++;
+
+
+				autoLaunchFlag = true;
+				autoLaunchTarget = buff;
+			}
+		}
+
+		if(pArgument_->pKeyboard_->IsTrigger(DIK_G))
+		{
+			int buff;
+			buff = managerTarget->Add(
+				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				COLOR_STATE_G);
+			if(buff != -1)
+			{
+				targetTable[targetTableIndex] = buff;
+				targetTableIndex++;
+
+				autoLaunchFlag = true;
+				autoLaunchTarget = buff;
+			}
+		}
+
+		if(pArgument_->pKeyboard_->IsTrigger(DIK_B))
+		{
+			int buff;
+			buff = managerTarget->Add(
+				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				COLOR_STATE_B);
+			if(buff != -1)
+			{
+				targetTable[targetTableIndex] = buff;
+				targetTableIndex++;
+
+
+				autoLaunchFlag = true;
+				autoLaunchTarget = buff;
+			}
+		}
+
+		if(pArgument_->pKeyboard_->IsTrigger(DIK_W))
+		{
+			int buff;
+			buff = managerTarget->Add(
+				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				COLOR_STATE_W);
+			if(buff != -1)
+			{
+				targetTable[targetTableIndex] = buff;
+				targetTableIndex++;
+
+
+				autoLaunchFlag = true;
+				autoLaunchTarget = buff;
+			}
+		}
+	}
+
+	if(pArgument_->pKeyboard_->IsTrigger(DIK_D))
+	{
+		LaunchSP();
+	}
+
+	if(combo->getScore() != combo->getScorePrev())
+	{
+		if(combo->getScore() % 10 == 0)
+		{
+			LaunchSP();
+		}
+	}
+
+	if(autoLaunchFlag == true)
+	{
+		autoLaunchCount++;
+		if(autoLaunchCount == 50)
+		{
+			int buff2 = -1;
+			D3DXVECTOR3 buffPos = player->getPosition();
+
+			if(managerTarget->getTarget(autoLaunchTarget)->getColorState() == COLOR_STATE_W)
+			{
+				buff2 = managerFireworks->AddW(
+					ManagerFireworks::STATE_RIGHTSP,
+					managerPoint,
+					buffPos,
+					buffDiffWiiRot,
+					managerTarget->getTarget(autoLaunchTarget));
+
+				if(buff2 != -1)
+				{
+					fireworksTable[fireworksTableIndex] = buff2;
+					fireworksTableIndex++;
+				}
+			}
+			else
+			{
+				buff2 = managerFireworks->Add(
+						ManagerFireworks::STATE_RIGHTSP,
+						managerPoint,
+						buffPos,
+						buffDiffWiiRot,
+						managerTarget->getTarget(autoLaunchTarget));
+
+				if(buff2 != -1)
+				{
+					fireworksTable[fireworksTableIndex] = buff2;
+					fireworksTableIndex++;
+				}
+			}
+
+			autoLaunchCount = 0;
+			autoLaunchFlag = false;
+		}
+	}
+
+#endif
+
 
 
 	//	ポーズキーが押されたら
@@ -626,7 +694,7 @@ void SceneGame::pauseUpdate(void)
 	//	wiiリモコンが生成されていれば指の移動
 	if(finger != nullptr)
 	{
-		D3DXVECTOR2 IRBuff = pArgument_->pWiiController_->getIRScreen();
+		D3DXVECTOR2 IRBuff = wiiContoroller->getIRScreen();
 		finger->SetPosition(IRBuff.x, IRBuff.y, 0.0f);
 	}
 
@@ -750,7 +818,7 @@ void SceneGame::pauseUpdate(void)
 	//	wiiリモコンが生成されていれば指の移動
 	if(finger != nullptr)
 	{
-		D3DXVECTOR2 IRBuff = pArgument_->pWiiController_->getIRScreen();
+		D3DXVECTOR2 IRBuff = wiiContoroller->getIRScreen();
 
 		//	「再開」に当たってれば
 		if((IRBuff.x <= (stringReturn->GetPositionX() + (stringReturn->GetScaleX() * 0.5f))) &&
@@ -901,10 +969,10 @@ void SceneGame::reConnectWiimoteUpdate(void)
 {
 	//	再接続要求
 	if(pArgument_->pVirtualController_->IsTrigger(VC_DESIDE))
-		pArgument_->pWiiController_->reConnectWiimote();
+		wiiContoroller->reConnectWiimote();
 
 	//	wiiリモコンが再接続が終了したら
-	if(pArgument_->pWiiController_->getIsReConnectWiimote() == false)
+	if(wiiContoroller->getIsReConnectWiimote() == false)
 	{
 		//	更新関数設定
 		fpUpdate = &SceneGame::pauseUpdate;
@@ -936,10 +1004,10 @@ void SceneGame::reConnectWiiboardUpdate(void)
 {
 	//	再接続要求
 	if(pArgument_->pVirtualController_->IsTrigger(VC_DESIDE))
-		pArgument_->pWiiController_->reConnectWiiboard();
+		wiiContoroller->reConnectWiiboard();
 
 	//	wiiリモコンが再接続が終了したら
-	if(pArgument_->pWiiController_->getIsReConnectWiiboard() == false)
+	if(wiiContoroller->getIsReConnectWiiboard() == false)
 	{
 		//	更新関数設定
 		fpUpdate = &SceneGame::pauseUpdate;
@@ -972,7 +1040,7 @@ void SceneGame::reConnectWiiboardUpdate(void)
 bool SceneGame::wiiLostCheck(void)
 {
 	//	wiiリモコンが再接続要求をした場合
-	if(pArgument_->pWiiController_->getIsReConnectWiimote() == true)
+	if(wiiContoroller->getIsReConnectWiimote() == true)
 	{
 		//	更新関数設定
 		fpUpdate = &SceneGame::reConnectWiimoteUpdate;
@@ -990,7 +1058,7 @@ bool SceneGame::wiiLostCheck(void)
 	}
 
 	//	wiiボードが再接続要求をした場合
-	if(pArgument_->pWiiController_->getIsReConnectWiiboard() == true)
+	if(wiiContoroller->getIsReConnectWiiboard() == true)
 	{
 		//	更新関数設定
 		fpUpdate = &SceneGame::reConnectWiiboardUpdate;
@@ -1016,8 +1084,11 @@ void SceneGame::collision_fireworks_target()
 {
 	float hitPosLength = 0.0f;
 
+	int buffIndex = 0;
+	bool errorCheckFlag = false;
+
 	//	存在する花火の数分ループ
-	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
 	{
 		//	花火の情報取得
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
@@ -1044,14 +1115,31 @@ void SceneGame::collision_fireworks_target()
 				int returnValue = buffFireworks->burn(buffTargetSize * buffTargetSize, hitPosLength);
 
 				//	ゲージ加算
-				AddGage((ADD_SCORE_STATE)returnValue);
+				//----------------------------------------------------------------------------------
+				//	RGBのいずれかと一緒だったら加算（中）
+				if(buffFireworks->getColorState() == buffTarget->getColorState())
+				{
+					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
+					AddGage(f * 0.03f);
+				}
+				//	白色は１００％加算（小）
+				else if(buffFireworks->getColorState() == COLOR_STATE_W)
+				{
+					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
+					AddGage(f * 0.01f);
+				}
+				//----------------------------------------------------------------------------------
+
+				//	スペシャル花火の発射
+				if(buffTarget->getColorState() == COLOR_STATE_S)
+					LaunchSP();
 
 				//	コンボ数加算
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 10));
-				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
+				score->setAddScore((gage->getPercent() + 5));
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5));
 
 				//	ターゲット消去
 				buffTarget->Dissappear();
@@ -1060,9 +1148,9 @@ void SceneGame::collision_fireworks_target()
 				break;
 			}
 		}
-	}*/
+	}
 
-	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
 	{
 		//	花火の情報取得
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
@@ -1078,7 +1166,101 @@ void SceneGame::collision_fireworks_target()
 
 		//	破裂
 		buffFireworks->burn(0.0f, 0.0f);
+
+		//	振動
+		wiiContoroller->rumble((unsigned int)300);
+	}*/
+}
+void SceneGame::collision_fireworks_targetAuto()
+{
+	float hitPosLength = 0.0f;
+
+	//	存在する花火の数分ループ
+	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	{
+		//	花火の情報取得
+		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
+		if(buffFireworks->IsBurnFlag())
+			continue;
+
+		if(buffFireworks->getDeleteCount() != DELETECOUNT_MAX - 1)
+			continue;
+
+		//	花火の位置情報取得
+		D3DXVECTOR3 buffFireworksPos = buffFireworks->getPosition();
+
+		//	存在するターゲットの数分ループ
+		for(int targetCount = 0;targetCount < targetTableIndex;targetCount++)
+		{
+			//	ターゲットの位置情報取得
+			Target* buffTarget = managerTarget->getTarget(targetTable[targetCount]);
+			D3DXVECTOR3 buffTargetPos = buffTarget->getPosition();
+
+			//	ターゲットのサイズ取得
+			float buffTargetSize = (managerTarget->getTarget(targetCount)->getScale() * 0.5f);
+
+			//	当たり判定
+			if(hitCheckPointCircle(buffFireworksPos, buffTargetPos, buffTargetSize, &hitPosLength) == true)
+			{
+				//	破裂
+				int returnValue = buffFireworks->burn(buffTargetSize * buffTargetSize, hitPosLength);
+
+				//	ゲージ加算
+				//----------------------------------------------------------------------------------
+				//	RGBのいずれかと一緒だったら加算（中）
+				if(buffFireworks->getColorState() == buffTarget->getColorState())
+				{
+					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
+					AddGage(f * 0.03f);
+				}
+				//	白色は１００％加算（小）
+				else if(buffFireworks->getColorState() == COLOR_STATE_W)
+				{
+					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
+					AddGage(f * 0.01f);
+				}
+				//----------------------------------------------------------------------------------
+
+				//	スペシャル花火の発射
+				if(buffTarget->getColorState() == COLOR_STATE_S)
+					LaunchSP();
+
+				//	コンボ数加算
+				combo->addScore();
+
+				//	スコア値加算
+				score->setAddScore((gage->getPercent() + 5));
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5));
+
+				//	ターゲット消去
+				buffTarget->Dissappear();
+
+				//	次の花火との当たり判定へ移行
+				break;
+			}
+		}
 	}
+
+	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+	{
+		//	花火の情報取得
+		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
+		if(buffFireworks->IsBurnFlag())
+			continue;
+
+		//	コンボ数加算
+		combo->addScore();
+
+		//	スコア値加算
+		score->setAddScore((gage->getPercent() + 10));
+		score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
+
+		//	破裂
+		buffFireworks->burn(0.0f, 0.0f);
+
+		//	振動
+		wiiContoroller->rumble((unsigned int)300);
+	}*/
 }
 //==============================================================================
 // Brief  : 花火と花火の当たり判定処理
@@ -1144,6 +1326,9 @@ void SceneGame::collision_fireworks_fireworks()
 				//	スコア値加算
 				score->setAddScore((gage->getPercent() + 10));
 				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
+
+				//	振動
+				wiiContoroller->rumble((unsigned int)300);
 
 				//	次の花火との当たり判定へ移行
 				break;
@@ -1216,5 +1401,9 @@ void SceneGame::AddGage(ADD_SCORE_STATE _state)
 
 		break;
 	}
+}
+void SceneGame::AddGage(float _value)
+{
+	gage->addPercentFuture((float)ceil(_value));
 }
 

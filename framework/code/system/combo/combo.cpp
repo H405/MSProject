@@ -53,6 +53,7 @@ void Combo::InitializeSelf( void )
 	comboScore = nullptr;
 
 	score = 0;
+	scorePrev = 0;
 	scoreMax = 0;
 	flashingCount = 0;
 	alpha = 1.0f;
@@ -149,10 +150,12 @@ int Combo::Finalize( void )
 //==============================================================================
 void Combo::Update( void )
 {
+	scorePrev = score;
+
 	if(alpha > 0.0f)
 	{
 		flashingCount++;
-		alpha += addAlpha;
+		//alpha += addAlpha;
 
 		if(flashingCount == (FLASHING_COUNT_MAX / 2))
 		{
