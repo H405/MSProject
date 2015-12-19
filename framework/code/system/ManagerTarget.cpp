@@ -143,8 +143,32 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 		{
 			continue;
 		}
-		target[counterPoint].setInvViewMatrix(invViewMatrix);
-		target[counterPoint].Update();
+	}
+
+	//	更新
+	for(int count = 0; count < *_targetTableIndex;count++)
+	{
+		target[_table[count]].setInvViewMatrix(invViewMatrix);
+		target[_table[count]].Update();
+	}
+
+	//	更新の後にもテーブル確認
+	for( int count = 0; count < TARGET_MAX; ++count )
+	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[count] == true &&
+			target[count].IsEnable() == false)
+		{
+			Sort(_table, count);
+			*_targetTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[count] = target[count].IsEnable();
+
+		// 使用されていないとき次へ
+		if( !target[count].IsEnable() )
+			continue;
 	}
 }
 //==============================================================================

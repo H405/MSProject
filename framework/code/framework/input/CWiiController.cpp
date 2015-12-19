@@ -16,9 +16,9 @@
 //*****************************************************************************
 //	定数定義
 //*****************************************************************************
-//#define UPDATE_NORMAL
+#define UPDATE_NORMAL
 //#define UPDATE_SAVE
-#define UPDATE_READ
+//#define UPDATE_READ
 
 //SlowMode（低速時モード）→ 1.45[deg / s]
 //FastMode（高速時モード）→ 6.59[deg / s]

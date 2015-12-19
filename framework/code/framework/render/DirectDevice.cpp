@@ -91,6 +91,9 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 		isWindowMode_ = true;
 	}
 
+	D3DDISPLAYMODE displayMode2;
+	HRESULT rr = pDirect3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode2);
+
 	// ディスプレイモードの列挙
 	if( !isWindowMode_ )
 	{	// ウィンドウモードの指定がされていないとき

@@ -256,7 +256,7 @@ void SceneGame::MovePlayer()
 {
 	//	wiiボードを利用した、プレイヤーの移動処理1
 	//---------------------------------------------------------------------------------------------------------
-//#ifdef _WIIBOARD
+#ifdef _WIIBOARD
 	float totalCalibKg = wiiContoroller->getCalibKg().Total * 0.7f;
 	float totalKgR = wiiContoroller->getKg().BottomR + wiiContoroller->getKg().TopR;
 	float totalKgL = wiiContoroller->getKg().BottomL + wiiContoroller->getKg().TopL;
@@ -272,7 +272,7 @@ void SceneGame::MovePlayer()
 	{
 		player->addSpeed((((totalKgR - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
 	}
-//#endif
+#endif
 
 	if(pArgument_->pKeyboard_->IsPress(DIK_LEFT) == true)
 	{
@@ -447,7 +447,7 @@ void SceneGame::normalUpdate(void)
 		{
 			int buff;
 			buff = managerTarget->Add(
-				D3DXVECTOR3(RANDOM(500), (float)(rand() % 100), targetAppearPosZ),
+				D3DXVECTOR3(RANDOM(400), (float)(rand() % 50) + 50.0f, targetAppearPosZ),
 				(COLOR_STATE)(rand() % COLOR_STATE_S));
 			if(buff != -1)
 			{
@@ -465,8 +465,8 @@ void SceneGame::normalUpdate(void)
 
 
 	//	wiiリモコンの回転初期化
-	if(wiiContoroller->getPress(WC_PLUS) && wiiContoroller->getPress(WC_MINUS))
-		wiiContoroller->rotReset();
+	//if(wiiContoroller->getPress(WC_PLUS) && wiiContoroller->getPress(WC_MINUS))
+	//	wiiContoroller->rotReset();
 
 
 	//	打ち上げる花火色切り替え
@@ -496,7 +496,9 @@ void SceneGame::normalUpdate(void)
 		collision_fireworks_target();
 	}
 	collision_fireworks_targetAuto();
-	//	花火と花火の当たり判定
+
+
+
 	collision_fireworks_fireworks();
 
 
@@ -552,10 +554,6 @@ void SceneGame::normalUpdate(void)
 			{
 				targetTable[targetTableIndex] = buff;
 				targetTableIndex++;
-
-				fireworksTable[fireworksTableIndex] = buff;
-				fireworksTableIndex++;
-
 
 				autoLaunchFlag = true;
 				autoLaunchTarget = buff;
@@ -1085,6 +1083,9 @@ bool SceneGame::wiiLostCheck(void)
 void SceneGame::collision_fireworks_target()
 {
 	float hitPosLength = 0.0f;
+
+	int buffIndex = 0;
+	bool errorCheckFlag = false;
 
 	//	存在する花火の数分ループ
 	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
