@@ -466,11 +466,13 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 
 	// 場所の目印オブジェクトの生成
 	Model*	pModelMarker = nullptr;					// モデル
+	Motion*	pMotionMarker = nullptr;				// モーション
 	Effect*	pEffectMarkerGeneral = nullptr;			// 通常描画エフェクト
 	Effect*	pEffectMarkerReflect = nullptr;			// 反射エフェクト
 	Effect*	pEffectMarkerShadow = nullptr;			// 影エフェクト
 	Effect*	pEffectMarkerParaboloid = nullptr;		// 放物変換エフェクト
-	pModelMarker = pArgument->pModel_->Get( _T( "sizeTest.model" ) );
+	pModelMarker = pArgument->pModel_->Get( _T( "back_dancer.model" ) );
+	pMotionMarker = pArgument->pMotion_->Get( _T( "back_dancer.motion" ) );
 	pEffectMarkerGeneral = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pEffectMarkerShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
@@ -481,6 +483,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		markers[ counterMarker ].Initialize( 0, 0 );
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
+//		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );

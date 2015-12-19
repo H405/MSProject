@@ -138,7 +138,7 @@ int DirectDevice::Initialize( HWND windowHandle, int width, int height, bool isW
 	else
 	{	// フルスクリーンモード
 		presentParameter.BackBufferFormat			= D3DFMT_R5G6B5;					// バックバッファ
-		presentParameter.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;			// リフレッシュレート
+		presentParameter.FullScreen_RefreshRateInHz	= displayMode.RefreshRate;			// リフレッシュレート
 		presentParameter.PresentationInterval		= D3DPRESENT_INTERVAL_DEFAULT;		// インターバル
 	}
 

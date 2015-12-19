@@ -490,7 +490,7 @@ int ManagerModel< TypeItem >::LoadModelConvert( TCHAR* pPath, int index )
 
 		// “Ç‚Ýž‚Ý
 		_tcscpy_s( &pNameTexture[ 0 ], _MAX_PATH, _T( "model/" ) );
-		_tcscat_s( &pNameTexture[ 0 ], _MAX_PATH, &pBufferTexture[ 0 ] );
+		_tcscat_s( &pNameTexture[ 0 ], _MAX_PATH, _T( "texture.png" ) );//&pBufferTexture[ 0 ] );
 		pIndexTexture[ 0 ] = pTexture_->Load( &pNameTexture[ 0 ] );
 		indexTextureCurrent += 1;
 		for( unsigned long counterIndex = 0; counterIndex < sizeBufferTexture - 1; ++counterIndex )
