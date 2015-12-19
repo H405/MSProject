@@ -198,6 +198,7 @@ private:
 
 	//	「この姿勢になってABキーを同時押し」オブジェクト
 	Object2D* calibrationWiimote;
+	Object2D* calibrationWiimoteIllust;
 
 	//	wiiリモコンで操作する指
 	Object2D* finger;

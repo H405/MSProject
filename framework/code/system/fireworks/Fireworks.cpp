@@ -208,11 +208,11 @@ int Fireworks::Set(
 	//	色情報
 	param.colorState = _colorState;
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(1.0f, 0.5f, 0.5f, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(0.5f, 1.0f, 0.5f, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+		param.color = D3DXCOLOR(0.5f, 0.5f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
 		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_S)
@@ -227,7 +227,7 @@ int Fireworks::Set(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
+	param.lightPoint->SetAttenuation(0.0f, 0.00028f, 0.0000005f);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -242,7 +242,9 @@ int Fireworks::Set(
 
 	//	endの上限値は、yが200くらい、xが-200～200くらい？
 	param.startPos = _pos;
-	param.buffPos1 = D3DXVECTOR3(_pos.x - (_diffRot.z * (diffRotMul * 0.25f)), 110.0f, _pos.z);
+	//param.buffPos1 = D3DXVECTOR3(_pos.x - (_diffRot.z * (diffRotMul * 0.25f)), 450.0f, _pos.z + 2000.0f);
+	//param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * diffRotMul), 650.0f, _pos.z + 4500.0f);
+	param.buffPos1 = D3DXVECTOR3(_pos.x - (_diffRot.z * (diffRotMul * 0.3f)), 140.0f, _pos.z);
 	param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * diffRotMul), 200.0f, _pos.z);
 
 	param.count = 0;
@@ -444,8 +446,8 @@ int Fireworks::SetW(
 
 	//	endの上限値は、yが200くらい、xが-200～200くらい？
 	param.startPos = _pos;
-	param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
-	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z);
+	param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z + 250.0f);
+	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z + 500.0f);
 
 	param.count = 0;
 
@@ -550,7 +552,8 @@ void Fireworks::BurnUpdate( void )
 
 	// 減衰率の設定
 	D3DXVECTOR3	attenuation;		// 減衰率0.00028f, 0.00000005f     0.0005f, 0.00005f
-	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0028f * proportion, 0.0000005f * proportion );
+	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.00028f * proportion, 0.0000005f * proportion );
+	//param.lightPoint->SetAttenuation(0.0f, 0.00028f, 0.0000005f);
 	param.lightPoint->SetAttenuation( attenuation );
 }
 //==============================================================================

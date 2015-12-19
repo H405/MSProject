@@ -401,9 +401,9 @@ void Target::updateAppearCircleBig( void )
 void Target::updateDisAppear( void )
 {
 	//	‚¾‚ñ‚¾‚ñ‚ÆÁ‚·
-	//targetCross->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
-	//targetArrow->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
-	//targetCircle->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
+	targetCross->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
+	targetArrow->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
+	targetCircle->AddColorAlpha(-1.0f / (float)DISAPPEAR_COUNT_MAX);
 
 	//	ƒJƒEƒ“ƒ^‚Å“®‚«§Œä
 	counter++;

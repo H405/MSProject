@@ -108,7 +108,7 @@ void VirtualController::update()
 		press[VC_PAUSE] = true;
 
 	//	ゲームスタート（キャリブレーション）押下情報
-	if((wiiController->getPress(WC_PLUS) && wiiController->getPress(WC_MINUS)) ||
+	if((wiiController->getPress(WC_A) && wiiController->getPress(WC_B)) ||
 		keyboard->IsPress(DIK_C))
 		press[VC_GAME_START] = true;
 

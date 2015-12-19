@@ -23,10 +23,35 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
+#define MOVE_COUNT_MAX (5)
 
 //******************************************************************************
 // 静的メンバ変数
 //******************************************************************************
+static const float posRate = 160.0f;
+static const float rotRate = D3DX_PI / 6.0f;
+static const float rotOffset = 0.78399348f;
+static const float defaultScale = 64.0f;
+static const float addScale = 12.0f;
+
+static const COLOR_STATE stateTable[FIREWORKS_UI_MAX] =
+{
+	COLOR_STATE_R,
+	COLOR_STATE_G,
+	COLOR_STATE_B,
+
+	COLOR_STATE_R,
+	COLOR_STATE_G,
+	COLOR_STATE_B,
+
+	COLOR_STATE_R,
+	COLOR_STATE_G,
+	COLOR_STATE_B,
+
+	COLOR_STATE_R,
+	COLOR_STATE_G,
+	COLOR_STATE_B,
+};
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -46,7 +71,17 @@ FireworksUI::FireworksUI( void ) : ObjectMovement()
 void FireworksUI::InitializeSelf( void )
 {
 	// メンバ変数の初期化
-	fpUpdate = nullptr;
+	fireworksUI = nullptr;
+
+	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	rot = 0.0f;
+	addRot = 0.0f;
+
+	stateNum = 0;
+	colorState = stateTable[stateNum];
+	stateNumOld = stateNum;
+	moveFlag = false;
+	moveCount = 0;
 }
 //==============================================================================
 // Brief  : デストラクタ
@@ -80,48 +115,37 @@ int FireworksUI::Initialize(
 		return result;
 	}
 
-	fireworksUI1 = new Object2D();
-	fireworksUI1->Initialize(0);
-	fireworksUI1->CreateGraphic(
-		0,
-		pParameter,
-		pEffectGeneral,
-		pFireworksUITex
+	fireworksUI = new Object2D[FIREWORKS_UI_MAX];
+	for(int count = 0;count < FIREWORKS_UI_MAX;count++)
+	{
+		fireworksUI[count].Initialize(0);
+		fireworksUI[count].CreateGraphic(
+			0,
+			pParameter,
+			pEffectGeneral,
+			pFireworksUITex
 		);
-	fireworksUI1->SetScale(100.0f, 100.0f, 0.0f);
+		fireworksUI[count].SetScale(defaultScale, defaultScale, 0.0f);
 
-	//	setScaleTextureで、分割数を設定
-	fireworksUI1->SetScaleTexture(3.0f, 1.0f);
+		//	setScaleTextureで、分割数を設定
+		fireworksUI[count].SetScaleTexture(3.0f, 1.0f);
+	}
 
 	//	setPositionTextureで、0～1（丸め込む必要無し！）値を設定して、UVスクロールする
-	fireworksUI1->SetPositionTexture(0.0f, 0.0f);
+	fireworksUI[0].SetPositionTexture(0.0f, 0.0f);
+	fireworksUI[1].SetPositionTexture(1.0f / 3.0f, 0.0f);
+	fireworksUI[2].SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
+	fireworksUI[3].SetPositionTexture(0.0f, 0.0f);
+	fireworksUI[4].SetPositionTexture(1.0f / 3.0f, 0.0f);
+	fireworksUI[5].SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
+	fireworksUI[6].SetPositionTexture(0.0f, 0.0f);
+	fireworksUI[7].SetPositionTexture(1.0f / 3.0f, 0.0f);
+	fireworksUI[8].SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
+	fireworksUI[9].SetPositionTexture(0.0f, 0.0f);
+	fireworksUI[10].SetPositionTexture(1.0f / 3.0f, 0.0f);
+	fireworksUI[11].SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
 
-
-	fireworksUI2 = new Object2D();
-	fireworksUI2->Initialize(0);
-	fireworksUI2->CreateGraphic(
-		0,
-		pParameter,
-		pEffectGeneral,
-		pFireworksUITex
-		);
-	fireworksUI2->SetScale(180.0f, 180.0f, 0.0f);
-
-	fireworksUI2->SetScaleTexture(3.0f, 1.0f);
-	fireworksUI2->SetPositionTexture(1.0f / 3.0f, 0.0f);
-
-	fireworksUI3 = new Object2D();
-	fireworksUI3->Initialize(0);
-	fireworksUI3->CreateGraphic(
-		0,
-		pParameter,
-		pEffectGeneral,
-		pFireworksUITex
-		);
-	fireworksUI3->SetScale(100.0f, 100.0f, 0.0f);
-
-	fireworksUI3->SetScaleTexture(3.0f, 1.0f);
-	fireworksUI3->SetPositionTexture(1.0f / 3.0f * 2.0f, 0.0f);
+	fireworksUI[0].AddScale(addScale * MOVE_COUNT_MAX, addScale * MOVE_COUNT_MAX, 0.0f);
 
 	// 正常終了
 	return 0;
@@ -133,9 +157,7 @@ int FireworksUI::Initialize(
 //==============================================================================
 int FireworksUI::Finalize( void )
 {
-	delete fireworksUI1;
-	delete fireworksUI2;
-	delete fireworksUI3;
+	delete[] fireworksUI;
 
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -158,6 +180,77 @@ int FireworksUI::Finalize( void )
 //==============================================================================
 void FireworksUI::Update( void )
 {
+	if(moveFlag == true)
+	{
+		moveCount++;
+		if(moveCount > MOVE_COUNT_MAX)
+		{
+			moveCount = 0;
+			moveFlag = false;
+		}
+		else
+		{
+			rot += addRot;
+			fireworksUI[stateNum].AddScale(addScale, addScale, 0.0f);
+			fireworksUI[stateNumOld].AddScale(-addScale, -addScale, 0.0f);
+		}
+	}
+
+
+	D3DXMATRIX transMatrix, transOffsetMatrix, rotMatrix;
+	D3DXMATRIX outMatrix;
+
+	for(int count = 0;count < FIREWORKS_UI_MAX;count++)
+	{
+		D3DXMatrixIdentity(&outMatrix);
+		D3DXMatrixIdentity(&transMatrix);
+		D3DXMatrixIdentity(&transOffsetMatrix);
+		D3DXMatrixIdentity(&rotMatrix);
+
+		//	オフセット値として、少しずらす
+		D3DXMatrixTranslation(
+			&transOffsetMatrix,
+			0.0f,
+			posRate,
+			0.0f);
+
+		D3DXMatrixMultiply(
+			&outMatrix,
+			&outMatrix,
+			&transOffsetMatrix
+			);
+
+
+		//	移動した後に回転
+		D3DXMatrixRotationYawPitchRoll(
+			&rotMatrix,
+			0.0f,
+			0.0f,
+			rot + (rotRate * count) + rotOffset);
+
+		D3DXMatrixMultiply(
+			&outMatrix,
+			&outMatrix,
+			&rotMatrix
+			);
+
+
+		//	共通の位置移動
+		D3DXMatrixTranslation(
+			&transMatrix,
+			pos.x,
+			pos.y,
+			pos.z);
+
+		D3DXMatrixMultiply(
+			&outMatrix,
+			&outMatrix,
+			&transMatrix
+			);
+
+		fireworksUI[count].SetPosition(outMatrix._41, outMatrix._42, outMatrix._43);
+	}
+
 	// 基本クラスの処理
 	ObjectMovement::Update();
 }
@@ -167,43 +260,49 @@ void FireworksUI::Update( void )
 //==============================================================================
 void FireworksUI::setPosition(float _x, float _y, float _z)
 {
-	fireworksUI1->SetPosition(_x + 100.0f, _y, _z);
-	fireworksUI2->SetPosition(_x, _y, _z);
-	fireworksUI3->SetPosition(_x - 100.0f, _y, _z);
+	pos.x = _x;
+	pos.y = _y;
+	pos.z = _z;
 
 	// 基本クラスの処理
 	ObjectMovement::Update();
 }
 
 //==============================================================================
-// Brief  : 色のセット
+// Brief  : 花火色情報セット処理
 //==============================================================================
-void FireworksUI::setColorState(COLOR_STATE _colorState)
+void FireworksUI::addRotColor()
 {
-	switch(_colorState)
+	if(moveFlag == false)
 	{
-	case COLOR_STATE_R:
+		stateNumOld = stateNum;
 
-		fireworksUI1->SetPositionTextureX(-1.0f / 3.0f);
-		fireworksUI2->SetPositionTextureX(0.0f);
-		fireworksUI3->SetPositionTextureX(1.0f / 3.0f);
+		stateNum--;
+		if(stateNum <= -1)
+			stateNum = FIREWORKS_UI_MAX - 1;
 
-		break;
+		colorState = stateTable[stateNum];
 
-	case COLOR_STATE_G:
+		moveFlag = true;
 
-		fireworksUI1->SetPositionTextureX(0.0f);
-		fireworksUI2->SetPositionTextureX(1.0f / 3.0f);
-		fireworksUI3->SetPositionTextureX(-1.0f / 3.0f);
+		addRot = (rotRate / (float)MOVE_COUNT_MAX);
 
-		break;
+	}
+}
+void FireworksUI::subRotColor()
+{
+	if(moveFlag == false)
+	{
+		stateNumOld = stateNum;
 
-	case COLOR_STATE_B:
+		stateNum++;
+		if(stateNum >= FIREWORKS_UI_MAX)
+			stateNum = 0;
 
-		fireworksUI1->SetPositionTextureX(1.0f / 3.0f);
-		fireworksUI2->SetPositionTextureX(-1.0f / 3.0f);
-		fireworksUI3->SetPositionTextureX(0.0f);
+		colorState = stateTable[stateNum];
 
-		break;
+		moveFlag = true;
+
+		addRot = (-rotRate / (float)MOVE_COUNT_MAX);
 	}
 }

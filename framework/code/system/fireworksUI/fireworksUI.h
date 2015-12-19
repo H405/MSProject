@@ -26,6 +26,7 @@
 //******************************************************************************
 // マクロ
 //******************************************************************************
+#define FIREWORKS_UI_MAX (12)
 
 //******************************************************************************
 // クラス前方宣言
@@ -93,21 +94,30 @@ public:
 	// アクセサ
 	//==============================================================================
 	void setPosition(float _x, float _y, float _z);
-	void setColorState(COLOR_STATE _colorState);
+	void addPositionX(float _value){pos.x += _value;}
+	void addPositionY(float _value){pos.y += _value;}
+	COLOR_STATE getColorState(){return colorState;}
+	void addRotColor();
+	void subRotColor();
 
 protected:
 
-	Object2D* fireworksUI1;
-	Object2D* fireworksUI2;
-	Object2D* fireworksUI3;
+	Object2D* fireworksUI;
+
+	D3DXVECTOR3 pos;
+	float rot;
+	float addRot;
+
+	COLOR_STATE colorState;
+	int stateNum;
+	int stateNumOld;
+	bool moveFlag;
+	int moveCount;
 
 private:
 	void InitializeSelf( void );
 	FireworksUI( const FireworksUI& );
 	FireworksUI operator=( const FireworksUI& );
-
-	//	更新関数格納用ポインタ
-	void (FireworksUI::*fpUpdate)(void);
 };
 
 #endif	// MY_FIREWORKSUI_H

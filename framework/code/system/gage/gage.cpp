@@ -158,6 +158,7 @@ int Gage::Initialize(
 		pGageScore);
 	gageScore->SetSizeX(16.0f);
 	gageScore->SetSizeY(16.0f);
+	//gageScore->setAlphaFlag(true);
 
 	D3DXVECTOR3 buffScale;
 	gageBase->GetScale(&buffScale);

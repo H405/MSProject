@@ -165,6 +165,17 @@ public:
 	float GetSizeZ();
 
 	void setAddScore(int _value){addScore = _value;}
+	void setAlphaFlag(bool _flag){alphaFlag = _flag;}
+	void setAlphaSPFlag(bool _flag){alphaSPFlag = _flag;}
+	void setAlphaSP(float _value){alphaSP = _value;}
+
+	//==============================================================================
+	// Brief  : スコアの値に応じてテクスチャUV値を決定する
+	// Return : void								: なし
+	// Arg    : void								: なし
+	//==============================================================================
+	void desideScore();
+	void desideScoreSP(float _value);
 
 protected:
 	D3DXCOLOR	color_;					// 色
@@ -191,17 +202,15 @@ protected:
 	//	スコア未来値
 	int scoreFuture;
 
+	//	透明にするしない
+	bool alphaFlag;
+	bool alphaSPFlag;
+	float alphaSP;
+
 private:
 	void InitializeSelf( void );
 	ObjectScore( const ObjectScore& );
 	ObjectScore operator=( const ObjectScore& );
-
-	//==============================================================================
-	// Brief  : スコアの値に応じてテクスチャUV値を決定する
-	// Return : void								: なし
-	// Arg    : void								: なし
-	//==============================================================================
-	void desideScore();
 };
 
 #endif	// MY_OBJECT_SCORE_H

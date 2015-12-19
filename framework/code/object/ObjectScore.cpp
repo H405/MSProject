@@ -53,6 +53,9 @@ void ObjectScore::InitializeSelf( void )
 	scoreMax = 0;
 	scoreFuture = 0;
 	figure = 0;
+	alphaFlag = false;
+	alphaSPFlag = false;
+	alphaSP = 0.0f;
 }
 //==============================================================================
 // Brief  : デストラクタ
@@ -205,9 +208,95 @@ void ObjectScore::Update( void )
 
 	//	スコアが変動したらテクスチャ座標変更
 	if(tempFlag == true)
-		desideScore();
+	{
+		if(alphaSPFlag == true)
+			desideScoreSP(alphaSP);
+		else
+			desideScore();
+	}
 }
+//==============================================================================
+// Brief  : スコアの値に応じてテクスチャUV値を決定する
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ObjectScore::desideScore()
+{
+	bool tempFlag2 = true;
 
+	for (int count = 0; count < figure; count++)
+	{
+		int nowFigure = 1;
+		for (int figureCount = figure - 1; figureCount > count; figureCount--)
+		{
+			nowFigure *= 10;
+		}
+
+		int setScore;
+		setScore = (score % (nowFigure * 10)) / nowFigure;
+
+		number[count]->SetPositionTextureX(setScore * 0.1f);
+
+		if(setScore != 0.0f)
+			tempFlag2 = false;
+
+		if(alphaFlag == true)
+		{
+			if(tempFlag2 == true)
+			{
+				if(count != figure - 1)
+					number[count]->SetColorA(0.0f);
+				else
+					number[count]->SetColorA(1.0f);
+			}
+			else
+					number[count]->SetColorA(1.0f);
+		}
+		else
+					number[count]->SetColorA(1.0f);
+	}
+}
+//==============================================================================
+// Brief  : スコアの値に応じてテクスチャUV値を決定する
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ObjectScore::desideScoreSP(float _value)
+{
+	bool tempFlag2 = true;
+
+	for (int count = 0; count < figure; count++)
+	{
+		int nowFigure = 1;
+		for (int figureCount = figure - 1; figureCount > count; figureCount--)
+		{
+			nowFigure *= 10;
+		}
+
+		int setScore;
+		setScore = (score % (nowFigure * 10)) / nowFigure;
+
+		number[count]->SetPositionTextureX(setScore * 0.1f);
+
+		if(setScore != 0.0f)
+			tempFlag2 = false;
+
+		if(alphaFlag == true)
+		{
+			if(tempFlag2 == true)
+			{
+				if(count != figure - 1)
+					number[count]->SetColorA(0.0f);
+				else
+					number[count]->SetColorA(_value);
+			}
+			else
+					number[count]->SetColorA(_value);
+		}
+		else
+					number[count]->SetColorA(_value);
+	}
+}
 //==============================================================================
 // Brief  : 描画クラスの生成
 // Return : int									: 実行結果
@@ -989,24 +1078,4 @@ float ObjectScore::GetSizeZ()
 {
 	return size.z;
 }
-//==============================================================================
-// Brief  : スコアの値に応じてテクスチャUV値を決定する
-// Return : void								: なし
-// Arg    : void								: なし
-//==============================================================================
-void ObjectScore::desideScore()
-{
-	for (int count = 0; count < figure; count++)
-	{
-		int nowFigure = 1;
-		for (int figureCount = figure - 1; figureCount > count; figureCount--)
-		{
-			nowFigure *= 10;
-		}
 
-		int setScore;
-		setScore = (score % (nowFigure * 10)) / nowFigure;
-
-		number[count]->SetPositionTextureX(setScore * 0.1f);
-	}
-}

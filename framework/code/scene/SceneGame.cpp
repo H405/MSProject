@@ -244,6 +244,8 @@ void SceneGame::calibrationUpdate(void)
 		wiiContoroller->calibrationWiiboard();
 
 		calibrationWiimote->SetEnableGraphic(false);
+		calibrationWiimoteIllust->SetEnableGraphic(false);
+		combo->setStartFlag(true);
 
 		fpUpdate = &SceneGame::normalUpdate;
 	}
@@ -473,19 +475,13 @@ void SceneGame::normalUpdate(void)
 	//------------------------------------------------------------------
 	if(pArgument_->pVirtualController_->IsTrigger(VC_LEFT))
 	{
-		colorState = (COLOR_STATE)(colorState - 1);
-		if(colorState < COLOR_STATE_R)
-			colorState = COLOR_STATE_B;
-
-		fireworksUI->setColorState(colorState);
+		fireworksUI->addRotColor();
+		colorState = fireworksUI->getColorState();
 	}
 	if(pArgument_->pVirtualController_->IsTrigger(VC_RIGHT))
 	{
-		colorState = (COLOR_STATE)(colorState + 1);
-		if(colorState > COLOR_STATE_B)
-			colorState = COLOR_STATE_R;
-
-		fireworksUI->setColorState(colorState);
+		fireworksUI->subRotColor();
+		colorState = fireworksUI->getColorState();
 	}
 	//------------------------------------------------------------------
 
@@ -1119,14 +1115,12 @@ void SceneGame::collision_fireworks_target()
 				//	RGB‚Ì‚¢‚¸‚ê‚©‚Æˆê‚¾‚Á‚½‚ç‰ÁŽZi’†j
 				if(buffFireworks->getColorState() == buffTarget->getColorState())
 				{
-					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
-					AddGage(f * 0.03f);
+					AddGage(3.0f);
 				}
 				//	”’F‚Í‚P‚O‚O“‰ÁŽZi¬j
-				else if(buffFireworks->getColorState() == COLOR_STATE_W)
+				else if(buffTarget->getColorState() == COLOR_STATE_W)
 				{
-					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
-					AddGage(f * 0.01f);
+					AddGage(1.0f);
 				}
 				//----------------------------------------------------------------------------------
 
@@ -1150,7 +1144,9 @@ void SceneGame::collision_fireworks_target()
 		}
 	}
 
-	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
+
+	/*
+	for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
 	{
 		//	‰Ô‰Î‚Ìî•ñŽæ“¾
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
@@ -1169,7 +1165,8 @@ void SceneGame::collision_fireworks_target()
 
 		//	U“®
 		wiiContoroller->rumble((unsigned int)300);
-	}*/
+	}
+	*/
 }
 void SceneGame::collision_fireworks_targetAuto()
 {
@@ -1210,14 +1207,12 @@ void SceneGame::collision_fireworks_targetAuto()
 				//	RGB‚Ì‚¢‚¸‚ê‚©‚Æˆê‚¾‚Á‚½‚ç‰ÁŽZi’†j
 				if(buffFireworks->getColorState() == buffTarget->getColorState())
 				{
-					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
-					AddGage(f * 0.03f);
+					AddGage(3.0f);
 				}
 				//	”’F‚Í‚P‚O‚O“‰ÁŽZi¬j
-				else if(buffFireworks->getColorState() == COLOR_STATE_W)
+				else if(buffTarget->getColorState() == COLOR_STATE_W)
 				{
-					float f = ((buffTargetSize * buffTargetSize) - hitPosLength);
-					AddGage(f * 0.01f);
+					AddGage(1.0f);
 				}
 				//----------------------------------------------------------------------------------
 

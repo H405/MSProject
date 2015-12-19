@@ -51,12 +51,14 @@ void Combo::InitializeSelf( void )
 {
 	comboString = nullptr;
 	comboScore = nullptr;
+	comboSya = nullptr;
 
 	score = 0;
 	scorePrev = 0;
 	scoreMax = 0;
 	flashingCount = 0;
 	alpha = 1.0f;
+	startFlag = false;
 
 	// メンバ変数の初期化
 	fpUpdate = nullptr;
@@ -83,6 +85,7 @@ int Combo::Initialize(
 	IDirect3DDevice9* pDevice,
 	const EffectParameter* pParameter,
 	Effect* pEffectGeneral,
+	Texture* pComboSya,
 	Texture* pComboString,
 	Texture* pComboScore)
 {
@@ -95,6 +98,18 @@ int Combo::Initialize(
 	}
 
 
+	//	シャッ　テクスチャ
+	comboSya = new Object2D();
+	comboSya->Initialize(0);
+	comboSya->CreateGraphic(
+		0,
+		pParameter,
+		pEffectGeneral,
+		pComboSya
+		);
+	comboSya->SetScale(224.0f, 56.0f, 0.0f);
+
+
 	//	「連発」文字テクスチャ
 	comboString = new Object2D();
 	comboString->Initialize(0);
@@ -104,8 +119,12 @@ int Combo::Initialize(
 		pEffectGeneral,
 		pComboString
 		);
-	comboString->SetScale(150.0f, 80.0f, 0.0f);
+	comboString->SetScale(96.0f, 48.0f, 0.0f);
+	comboString->SetScaleTexture(8.0f, 16.0f);
+	comboString->SetPositionTexture(1.0f / 8.0f * 2.0f, 1.0f / 16.0f * 4.0f);
 
+
+	//	スコア
 	comboScore = new ObjectScore();
 	comboScore->Initialize(0, 2);
 	comboScore->CreateGraphic(
@@ -113,8 +132,16 @@ int Combo::Initialize(
 		pParameter,
 		pEffectGeneral,
 		pComboScore);
-	comboScore->SetSizeX(32.0f);
-	comboScore->SetSizeY(32.0f);
+	comboScore->SetSizeX(64.0f);
+	comboScore->SetSizeY(64.0f);
+	comboScore->setAlphaFlag(true);
+	comboScore->setAlphaSPFlag(true);
+
+
+	comboSya->SetColorA(0.0f);
+	comboString->SetColorA(0.0f);
+	comboScore->SetColorA(0.0f);
+
 
 	// 正常終了
 	return 0;
@@ -128,6 +155,7 @@ int Combo::Finalize( void )
 {
 	delete comboScore;
 	delete comboString;
+	delete comboSya;
 
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -150,36 +178,49 @@ int Combo::Finalize( void )
 //==============================================================================
 void Combo::Update( void )
 {
-	scorePrev = score;
-
-	if(alpha > 0.0f)
+	if(startFlag == true)
 	{
-		flashingCount++;
-		//alpha += addAlpha;
+		scorePrev = score;
 
-		if(flashingCount == (FLASHING_COUNT_MAX / 2))
+		if(alpha > 0.0f)
 		{
-			comboString->SetColorA(0.0f);
-			comboScore->SetColorA(0.0f);
+			flashingCount++;
+			//alpha += addAlpha;
+
+			if(flashingCount == (FLASHING_COUNT_MAX / 2))
+			{
+				comboSya->SetColorA(alpha);
+				comboString->SetColorA(alpha);
+				comboScore->SetColorA(alpha);
+				comboScore->setAlphaSP(alpha);
+
+				comboScore->desideScoreSP(alpha);
+			}
+			else if(flashingCount == FLASHING_COUNT_MAX)
+			{
+				flashingCount = 0;
+
+				comboSya->SetColorA(0.0f);
+				comboString->SetColorA(0.0f);
+				comboScore->SetColorA(0.0f);
+			}
 		}
-		else if(flashingCount == FLASHING_COUNT_MAX)
-		{
-			flashingCount = 0;
-			comboString->SetColorA(alpha);
-			comboScore->SetColorA(alpha);
-		}
+
+		// 基本クラスの処理
+		ObjectMovement::Update();
 	}
-
-	// 基本クラスの処理
-	ObjectMovement::Update();
 }
-
+void Combo::firstUpdate()
+{
+	comboScore->desideScoreSP(alpha);
+}
 //==============================================================================
 // Brief  : 位置セット処理
 //==============================================================================
 void Combo::setPosition(float _x, float _y, float _z)
 {
-	comboString->SetPosition(_x + 100.0f, _y, _z);
+	comboString->SetPosition(_x + 134.0f, _y - 8.0f, _z);
+	comboSya->SetPosition(_x + 112.0f, _y - 32.0f, _z);
 
 	comboScore->SetPos(_x, _y, _z);
 
@@ -209,4 +250,10 @@ void Combo::addScore()
 
 	// 基本クラスの処理
 	ObjectMovement::Update();
+}
+void Combo::setColor(D3DXCOLOR _color)
+{
+	comboScore->SetColor(_color.r, _color.g, _color.b, _color.a);
+	comboSya->SetColor(_color.r, _color.g, _color.b, _color.a);
+	comboString->SetColor(_color.r, _color.g, _color.b, _color.a);
 }

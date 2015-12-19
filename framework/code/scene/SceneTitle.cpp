@@ -461,7 +461,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	Aボタンを押してね
-	pTexture = pArgument_->pTexture_->Get( _T( "title/pressAKey.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "title/pushAKey.png" ) );
 	pushAKey = new Object2D;
 	pushAKey->Initialize(0);
 
@@ -476,7 +476,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 	//	「演舞開始」文字オブジェクトの生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "title/startGame.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
 
 	startGame = new Object2D;
 	startGame->Initialize(0);
@@ -487,14 +487,18 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	pEffect,
 	pTexture);
 
-	startGame->SetPosition(-300.0f, -100.0f, 0.0f);
+	startGame->SetPosition(-300.0f, -212.0f, 0.0f);
 	startGame->SetScaleX(startXX_NormalSizeX);
 	startGame->SetScaleY(startXX_NormalSizeY);
 	startGame->SetEnableGraphic(false);
 
 
+	startGame->SetScaleTexture(4.0f, 16.0f);
+	startGame->SetPositionTexture(0.0f, 1.0f / 16.0f * 2.0f);
+
+
 	//	「練習開始」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "title/startTutorial.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
 
 	startTutorial = new Object2D;
 	startTutorial->Initialize(0);
@@ -505,12 +509,13 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	pEffect,
 	pTexture);
 
-	startTutorial->SetPosition(300.0f, -100.0f, 0.0f);
+	startTutorial->SetPosition(300.0f, -212.0f, 0.0f);
 	startTutorial->SetScaleX(startXX_NormalSizeX);
 	startTutorial->SetScaleY(startXX_NormalSizeY);
 	startTutorial->SetEnableGraphic(false);
 
-
+	startTutorial->SetScaleTexture(4.0f, 16.0f);
+	startTutorial->SetPositionTexture(0.0f, 1.0f / 16.0f * 3.0f);
 
 	//	wiiリモコンが接続されていれば
 	//	指の初期化
@@ -576,8 +581,6 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	desideSound = pArgument_->pSound_->Get("se/deside.wav");
 	selectSound = pArgument_->pSound_->Get("se/select.wav");
 	cancelSound = pArgument_->pSound_->Get("se/cancel.wav");
-
-
 
 
 	//DebugProc::SetIsVisible(false);

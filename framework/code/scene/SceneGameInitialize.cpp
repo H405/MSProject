@@ -83,8 +83,8 @@
 // 静的変数
 //******************************************************************************
 //	○○　文字のサイズ
-static const float stringXX_NormalSizeX = 400.0f;
-static const float stringXX_NormalSizeY = 120.0f;
+static const float stringXX_NormalSizeX = 384.0f;
+static const float stringXX_NormalSizeY = 128.0f;
 
 //==============================================================================
 // Brief  : クラス内の初期化処理
@@ -116,6 +116,7 @@ void SceneGame::InitializeSelf( void )
 	reConnectWiimote = nullptr;
 	reConnectWiiboard = nullptr;
 	calibrationWiimote = nullptr;
+	calibrationWiimoteIllust = nullptr;
 	finger = nullptr;
 	chooseObject = nullptr;
 	chooseObjectPrev = nullptr;
@@ -552,7 +553,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureArrow,
 		pTextureCircle
 		);
-	managerTarget->ReadTargetScriptFromFile("data/script/script_test.txt");
+	managerTarget->ReadTargetScriptFromFile("data/script/script_test2.txt");
 
 
 	//	プレイヤーオブジェクト(Posはカメラとの相対座標)
@@ -612,7 +613,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 	//	「スコア」文字オブジェクト生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "game/stringScore.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
 
 	stringScore = new Object2D;
 	stringScore->Initialize(0);
@@ -623,9 +624,11 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pEffect,
 		pTexture);
 
-	stringScore->SetScale(150.0f, 80.0f, 0.0f);
-	stringScore->SetPosition(-380.0f, -300.0f, 0.0f);
+	stringScore->SetScale(128.0f, 32.0f, 0.0f);
+	stringScore->SetPosition(272.0f, 332.0f, 0.0f);
 
+	stringScore->SetScaleTexture(4.0f, 16.0f);
+	stringScore->SetPositionTexture(0.0f, 0.0f);
 
 
 	//	スコアオブジェクト生成
@@ -642,8 +645,8 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 	score->SetSizeX(32.0f);
 	score->SetSizeY(32.0f);
-	score->SetPosX(-300.0f);
-	score->SetPosY(-300.0f);
+	score->SetPosX(332.0f);
+	score->SetPosY(332.0f);
 
 	score->SetScoreFuture(0);
 	score->setAddScore(10);
@@ -655,9 +658,13 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pDevice_,
 		pArgument_->pEffectParameter_,
 		pEffect,
-		pArgument_->pTexture_->Get( _T( "game/stringScore.png" )),
+		pArgument_->pTexture_->Get( _T( "game/sya.png" )),
+		pArgument_->pTexture_->Get( _T( "common/font.png" )),
 		pArgument_->pTexture_->Get( _T( "common/number_white.png" )));
-	combo->setPosition(120.0f, -300.0f, 0.0f);
+	combo->setPosition(192.0f, -286.0f, 0.0f);
+	combo->setColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+	combo->firstUpdate();
+	combo->setStartFlag(false);
 
 
 	//	花火用UI生成
@@ -667,8 +674,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pEffectParameter_,
 		pEffect,
 		pArgument_->pTexture_->Get( _T( "game/ui3.png" )));
-	fireworksUI->setPosition(450.0f, -300.0f, 0.0f);
-	fireworksUI->setColorState(colorState);
+	fireworksUI->setPosition(595.61084f, -314.89725f, 0.0f);
 
 
 	//	ゲージオブジェクト生成
@@ -685,23 +691,6 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 	gage->setPosition(-540.0f, -270.0f, 0.0f);
 
-
-
-	//	「初めから」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringRetry.png" ) );
-
-	stringRetry = new Object2D;
-	stringRetry->Initialize(0);
-
-	stringRetry->CreateGraphic(
-		0,
-		pArgument_->pEffectParameter_,
-		pEffect,
-		pTexture);
-
-	stringRetry->SetPosition(0.0f, -200.0f, 0.0f);
-	stringRetry->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
-	stringRetry->SetEnableGraphic(false);
 
 
 	//	ポーズ時用背景オブジェクト生成
@@ -723,7 +712,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 
 	//	「再開」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringReturn.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
 
 	stringReturn = new Object2D;
 	stringReturn->Initialize(0);
@@ -734,14 +723,17 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pEffect,
 		pTexture);
 
-	stringReturn->SetPosition(0.0f, 200.0f, 0.0f);
+	stringReturn->SetPosition(0.0f, 176.0f, 0.0f);
 	stringReturn->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
 	stringReturn->SetEnableGraphic(false);
+
+	stringReturn->SetScaleTexture(4.0f, 16.0f);
+	stringReturn->SetPositionTexture(0.0f, 1.0f / 16.0f);
 
 
 
 	//	「中止」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringStop.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
 
 	stringStop = new Object2D;
 	stringStop->Initialize(0);
@@ -756,19 +748,29 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	stringStop->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
 	stringStop->SetEnableGraphic(false);
 
+	stringStop->SetScaleTexture(4.0f, 16.0f);
+	stringStop->SetPositionTexture(1.0f / 4.0f * 2.0f, 1.0f / 16.0f);
 
-	//	ゲーム開始前のキャリブレーションお願いオブジェクト
-	pTexture = pArgument_->pTexture_->Get( _T( "game/pause/stringRetry.png" ) );
 
-	calibrationWiimote = new Object2D;
-	calibrationWiimote->Initialize(0);
+	//	「初めから」文字オブジェクトの生成
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
 
-	calibrationWiimote->CreateGraphic(
+	stringRetry = new Object2D;
+	stringRetry->Initialize(0);
+
+	stringRetry->CreateGraphic(
 		0,
 		pArgument_->pEffectParameter_,
 		pEffect,
 		pTexture);
-	//calibrationWiimote->SetEnableGraphic(false);
+
+	stringRetry->SetPosition(0.0f, -176.0f, 0.0f);
+	stringRetry->SetScale(stringXX_NormalSizeX, stringXX_NormalSizeY, 0.0f);
+	stringRetry->SetEnableGraphic(false);
+
+	stringRetry->SetScaleTexture(4.0f, 16.0f);
+	stringRetry->SetPositionTexture(1.0f / 4.0f, 0.0f);
+
 
 
 	//	wiiリモコンが接続されていれば
@@ -819,6 +821,36 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 		reConnectWiiboard->SetEnableGraphic(false);
 	}
+
+
+	//	ゲーム開始前のキャリブレーションお願いイラスト
+	pTexture = pArgument_->pTexture_->Get( _T( "common/tatie.png" ) );
+	calibrationWiimoteIllust = new Object2D;
+	calibrationWiimoteIllust->Initialize(0);
+
+	calibrationWiimoteIllust->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+
+	//	ゲーム開始前のキャリブレーションお願いオブジェクト
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+
+	calibrationWiimote = new Object2D;
+	calibrationWiimote->Initialize(0);
+
+	calibrationWiimote->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+	//calibrationWiimote->SetEnableGraphic(false);
+
+	calibrationWiimote->SetScale(stringXX_NormalSizeX * 2.0f, stringXX_NormalSizeY * 2.0f, 0.0f);
+	calibrationWiimote->SetScaleTexture(4.0f, 16.0f);
+	calibrationWiimote->SetPositionTexture(1.0f / 4.0f, 1.0f / 16.0f);
 }
 
 //==============================================================================
@@ -889,6 +921,9 @@ int SceneGame::Finalize( void )
 
 	delete finger;
 	finger = nullptr;
+
+	delete calibrationWiimoteIllust;
+	calibrationWiimoteIllust = nullptr;
 
 	delete calibrationWiimote;
 	calibrationWiimote = nullptr;

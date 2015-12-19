@@ -72,6 +72,7 @@ public:
 	IDirect3DDevice9* pDevice,
 	const EffectParameter* pParameter,
 	Effect* pEffectGeneral,
+	Texture* pComboSya,
 	Texture* pComboString,
 	Texture* pComboScore);
 
@@ -95,13 +96,18 @@ public:
 	void setPosition(float _x, float _y, float _z);
 	void addScore();
 	void setScore(int _value){score = _value;}
+	void setColor(D3DXCOLOR _color);
 	int getScore(){return score;}
 	int getScorePrev(){return scorePrev;}
 	int getScoreMax(){return scoreMax;}
 
+	void firstUpdate();
+	void setStartFlag(bool _flag){startFlag = _flag;};
+
 protected:
 
 	Object2D* comboString;
+	Object2D* comboSya;
 	ObjectScore* comboScore;
 
 	int score;
@@ -109,6 +115,8 @@ protected:
 	int scoreMax;
 	int flashingCount;
 	float alpha;
+
+	bool startFlag;
 
 private:
 	void InitializeSelf( void );
