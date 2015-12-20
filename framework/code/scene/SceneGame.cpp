@@ -454,7 +454,7 @@ void SceneGame::normalUpdate(void)
 	//PrintDebug( _T( "\nbuffDiffWiiRot.z = %f\n"), buffDiffWiiRot.z );
 
 	//	ターゲット出現
-	if(targetAppearFlag == true)
+	/*if(targetAppearFlag == true)
 	{
 		targetAppearCount++;
 		if(targetAppearCount == 150)
@@ -472,7 +472,7 @@ void SceneGame::normalUpdate(void)
 	
 			targetAppearCount = 0;
 		}
-	}
+	}*/
 	//---------------------------------------------------------------------------------------------------------
 	//	テスト用ここまで
 
@@ -546,7 +546,7 @@ void SceneGame::normalUpdate(void)
 		{
 			int buff;
 			buff = managerTarget->Add(
-				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				D3DXVECTOR3(0.0f, 90.0f, targetAppearPosZ),
 				COLOR_STATE_R);
 			if(buff != -1)
 			{
@@ -563,7 +563,7 @@ void SceneGame::normalUpdate(void)
 		{
 			int buff;
 			buff = managerTarget->Add(
-				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				D3DXVECTOR3(0.0f, 90.0f, targetAppearPosZ),
 				COLOR_STATE_G);
 			if(buff != -1)
 			{
@@ -579,7 +579,7 @@ void SceneGame::normalUpdate(void)
 		{
 			int buff;
 			buff = managerTarget->Add(
-				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
+				D3DXVECTOR3(0.0f, 90.0f, targetAppearPosZ),
 				COLOR_STATE_B);
 			if(buff != -1)
 			{
@@ -1292,6 +1292,9 @@ void SceneGame::collision_fireworks_target()
 				//	ターゲット消去
 				buffTarget->Dissappear();
 
+				//	振動
+				wiiContoroller->rumble((unsigned int)250);
+
 				//	次の花火との当たり判定へ移行
 				break;
 			}
@@ -1382,6 +1385,9 @@ void SceneGame::collision_fireworks_targetAuto()
 				//	ターゲット消去
 				buffTarget->Dissappear();
 
+				//	振動
+				wiiContoroller->rumble((unsigned int)250);
+
 				//	次の花火との当たり判定へ移行
 				break;
 			}
@@ -1460,7 +1466,7 @@ void SceneGame::collision_fireworks_fireworks()
 				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
 
 				//	振動
-				wiiContoroller->rumble((unsigned int)300);
+				wiiContoroller->rumble((unsigned int)500);
 
 				//	次の花火との当たり判定へ移行
 				break;

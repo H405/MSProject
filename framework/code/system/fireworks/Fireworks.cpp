@@ -67,7 +67,8 @@ static const float diffRotMul = 16.0f;
 static const float fireSpeed = 3.0f;
 
 static const float mainColor = 1.0f;
-static const float subColor = 0.15f;
+static const float subColor1 = 0.1f;
+static const float subColor2 = 0.1f;
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -216,15 +217,13 @@ int Fireworks::Set(
 	//	色情報
 	param.colorState = _colorState;
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(mainColor, subColor2, subColor1, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(subColor1, mainColor, subColor2, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+		param.color = D3DXCOLOR(subColor2, subColor1, mainColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
-		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_S)
-		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(mainColor, mainColor, mainColor, 1.0f);
 
 	indexState = _indexState;
 
@@ -356,37 +355,15 @@ int Fireworks::Set(
 	param.setPosOld = 0;
 
 	//	色情報
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↓
-///////////////////////////////////////////////////////////////////////////////
-#if 1
 	param.colorState = _target->getColorState();
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(mainColor, subColor2, subColor1, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(subColor1, mainColor, subColor2, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+		param.color = D3DXCOLOR(subColor2, subColor1, mainColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
-		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_S)
-		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
-#else
-	param.colorState = _target->getColorState();
-	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(1.0f, 0.4f, 0.3f, 1.0f);
-	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(0.3f, 1.0f, 0.4f, 1.0f);
-	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(0.4f, 0.3f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_W)
-		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_S)
-		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
-#endif
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↑
-///////////////////////////////////////////////////////////////////////////////
+		param.color = D3DXCOLOR(mainColor, mainColor, mainColor, 1.0f);
 
 	indexState = _indexState;
 
@@ -466,15 +443,13 @@ int Fireworks::SetW(
 	//	色情報
 	param.colorState = (COLOR_STATE)(rand() % COLOR_STATE_W);
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(mainColor, subColor2, subColor1, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(subColor1, mainColor, subColor2, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+		param.color = D3DXCOLOR(subColor2, subColor1, mainColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
-		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_S)
-		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(mainColor, mainColor, mainColor, 1.0f);
 
 	indexState = _indexState;
 
@@ -536,15 +511,13 @@ int Fireworks::SetW(
 	//	色情報
 	param.colorState = (COLOR_STATE)(rand() % COLOR_STATE_W);
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(mainColor, subColor2, subColor1, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(subColor1, mainColor, subColor2, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+		param.color = D3DXCOLOR(subColor2, subColor1, mainColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
-		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_S)
-		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(mainColor, mainColor, mainColor, 1.0f);
 
 	indexState = _indexState;
 
@@ -679,63 +652,27 @@ void Fireworks::BurnUpdate( void )
 		//param.smallFire[count].Update();
 	}
 
-	//PrintDebug( _T( "\ncountFire:Burn1 = %d\n"), param.fireMax - buffCount );
-
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↓
-///////////////////////////////////////////////////////////////////////////////
-#if 1
 	if(buffCount == param.fireMax)
 	{
 		param.enable = false;
 		param.lightPoint->SetIsEnable(false);
 	}
-#endif
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↑
-///////////////////////////////////////////////////////////////////////////////
-
 
 	// 割合の決定
 	float	proportion;		// 割合
 	int counter = param.fire[0].getDeleteCount();
-	
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↓
-///////////////////////////////////////////////////////////////////////////////
-#if 1
-	if( counter < compAppear )
-	{
-		proportion = Utility::Easing( 0.0f, 1.0f, (float)counter / (float)compAppear);
-	}
-	else
-	{
-		proportion = Utility::Easing( 1.0f, 0.0f, (float)(counter - compAppear) / (float)compDisppear);
-	}
-#else
+
 	if( timerForLight < 60 )
 	{
 		proportion = Utility::Easing( 1.0f, 0.0f, (float)timerForLight / 60.0f);
 	}
 	else
 	{
-		proportion = Utility::Easing( 0.0f, 1.0f, (float)(timerForLight - 60) / 100);
+		//	60は花火一番開くところの時間・80(火花のDELETECOUNT) - 60(一番開くとこ)が光が消えていく時間
+		//	マジックナンバーなので、要調整
+		proportion = Utility::Easing( 0.0f, 1.0f, (float)(timerForLight - 60) / 20);
 	}
-#endif
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↑
-///////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↓
-///////////////////////////////////////////////////////////////////////////////
-#if 1
-	// 減衰率の設定
-	D3DXVECTOR3	attenuation;		// 減衰率0.00028f, 0.00000005f     0.0005f, 0.00005f
-	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0028f * proportion, 0.000005f * proportion );
-	//param.lightPoint->SetAttenuation(0.0f, 0.00028f, 0.0000005f);
-	param.lightPoint->SetAttenuation( attenuation );
-#else
 	D3DXVECTOR3	attenuation;
 	if( timerForLight < 60 )
 	{
@@ -747,24 +684,6 @@ void Fireworks::BurnUpdate( void )
 		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
-#endif
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川変更 ↑
-///////////////////////////////////////////////////////////////////////////////
-#if 0
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川追加 ↓
-///////////////////////////////////////////////////////////////////////////////
-	if(timerForLight >= 100)
-	{
-		param.enable = false;
-		param.lightPoint->SetIsEnable(false);
-	}
-	++timerForLight;
-///////////////////////////////////////////////////////////////////////////////
-// 2015_12_20 白川追加 ↑
-///////////////////////////////////////////////////////////////////////////////
-#endif
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -797,23 +716,31 @@ void Fireworks::Burn2Update( void )
 		param.lightPoint->SetIsEnable(false);
 	}
 
-
 	// 割合の決定
 	float	proportion;		// 割合
 	int counter = param.fire[0].getDeleteCount();
 
-	if( counter < compAppear )
+	if( timerForLight < 60 )
 	{
-		proportion = Utility::Easing( 0.0f, 1.0f, (float)counter / (float)compAppear);
+		proportion = Utility::Easing( 1.0f, 0.0f, (float)timerForLight / 60.0f);
 	}
 	else
 	{
-		proportion = Utility::Easing( 1.0f, 0.0f, (float)(counter - compAppear) / (float)compDisppear);
+		//	60は花火一番開くところの時間・80(火花のDELETECOUNT) - 60(一番開くとこ)が光が消えていく時間
+		//	マジックナンバーなので、要調整
+		proportion = Utility::Easing( 0.0f, 1.0f, (float)(timerForLight - 60) / 20);
 	}
 
-	// 減衰率の設定
-	D3DXVECTOR3	attenuation;		// 減衰率0.00028f, 0.00000005f     0.0005f, 0.00005f
-	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0028f * proportion, 0.0000005f * proportion );
+	D3DXVECTOR3	attenuation;
+	if( timerForLight < 60 )
+	{
+		attenuation = (1.0f - proportion) * attenuationValue;
+		attenuation += proportion * 7.0f * attenuationValue;
+	}
+	else
+	{
+		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
+	}
 	param.lightPoint->SetAttenuation( attenuation );
 }
 

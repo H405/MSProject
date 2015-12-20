@@ -884,7 +884,8 @@ void SceneTitle::firstUpdate( void )
 
 	//	ƒfƒ‚‚ÖˆÚs
 	ManagerSceneMain::demoCount++;
-	if(ManagerSceneMain::demoCount == ManagerSceneMain::demoCountMax / 2)
+	//if(ManagerSceneMain::demoCount == ManagerSceneMain::demoCountMax / 2)
+	if(ManagerSceneMain::demoCount == 60)
 	{
 		ManagerSceneMain::demoCount = 0;
 
