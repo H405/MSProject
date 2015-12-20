@@ -101,6 +101,12 @@ public:
 	//==============================================================================
 	void Update( void );
 
+
+	//	NAGASAKIïœçX
+	static bool demoFlag;
+	static int demoCount;
+	static int demoCountMax;
+
 protected:
 
 private:

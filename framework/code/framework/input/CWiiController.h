@@ -313,6 +313,8 @@ public:
 
 	void refreshWiiRemote();
 
+	WORD getRefreshState(){wiiRemote->RefreshState(); return wiiRemote->Button.Bits;}
+
 private:
 
 	//	バッテリーの充電量に応じてLEDを点灯させる

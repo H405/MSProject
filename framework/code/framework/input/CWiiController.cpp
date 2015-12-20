@@ -216,6 +216,7 @@ void CWiiController::startGame()
 	//--------------------------------------------------
 #ifdef UPDATE_READ
 	saveDataNumMax = 0;
+	saveDataNum = 0;
 	Read();
 	fpCommonUpdate = &CWiiController::ReadUpdate;
 #endif
@@ -1084,7 +1085,8 @@ void CWiiController::Read()
 
 	//	ÉfÅ[É^ì«Ç›çûÇ›
 	//-------------------------------------------------------------------------------
-	fopen_s(&fp, "data/wiimoteSave/wiimoteSave.bin", "rb");
+	fopen_s(&fp, "data/wiimoteSave/wiimoteSave1.bin", "rb");
+
 	if (fp == NULL)
 	{
 #ifdef _DEBUG

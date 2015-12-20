@@ -512,7 +512,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 	//	「演舞開始」文字オブジェクトの生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	startGame = new Object2D;
 	startGame->Initialize(0);
@@ -534,7 +534,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 
 
 	//	「練習開始」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	startTutorial = new Object2D;
 	startTutorial->Initialize(0);
@@ -862,8 +862,6 @@ void SceneTitle::firstUpdate( void )
 	if(wiiLostCheck() == false)
 		return;
 
-
-
 	// シーン遷移
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
@@ -882,6 +880,21 @@ void SceneTitle::firstUpdate( void )
 			pushAKey->AddColorA(addFlashingAlpha);
 		else
 			pushAKeyFlashingCount = 0;
+	}
+
+	//	デモへ移行
+	ManagerSceneMain::demoCount++;
+	if(ManagerSceneMain::demoCount == ManagerSceneMain::demoCountMax / 2)
+	{
+		ManagerSceneMain::demoCount = 0;
+
+		//	次の更新関数へ
+		fpUpdate = &SceneTitle::fadeUpdateDemo;
+
+		if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
+		{
+			pArgument_->pFade_->FadeOut( 20 );
+		}
 	}
 
 
@@ -1125,6 +1138,22 @@ void SceneTitle::fadeUpdate( void )
 		SetIsEnd( true );
 	}
 }
+void SceneTitle::fadeUpdateDemo( void )
+{
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+	// シーン遷移
+	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
+	{
+		SetSceneNext( ManagerSceneMain::TYPE_GAME );//ほんとはチュートリアル
+		ManagerSceneMain::demoFlag = true;
+
+		SetIsEnd( true );
+	}
+}
+
 //==============================================================================
 // Brief  : 再接続要求時用の更新処理
 // Return : void								: なし

@@ -88,7 +88,7 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 	D3DXMatrixIdentity(&param->matrix);
 
 	//	ベジェ曲線の計算
-	float buffTime = (1.0f / (float)DELETECOUNT_MAX) * (float)param->disappear;
+	float buffTime = (1.0f / (float)param->deleteCountMax) * (float)param->disappear;
 	D3DXVECTOR3 f1 = (1.0f - buffTime) * (1.0f - buffTime) * param->startPos;
 	D3DXVECTOR3 f2 = (1.0f - buffTime) * buffTime * 2.0f * param->buffPos1;
 	D3DXVECTOR3 f3 = buffTime * buffTime * param->endPos;
@@ -162,7 +162,7 @@ void FireworksStateRightSP::Update( Fireworks* _fireworks )
 
 	//	消滅カウンタ更新
 	param->disappear++;
-	if(param->disappear >= DELETECOUNT_MAX)
+	if(param->disappear >= param->deleteCountMax)
 	{
 		param->enable = false;
 		param->burnFlag = true;

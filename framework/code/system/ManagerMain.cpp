@@ -894,7 +894,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 		return 1;
 	}
 #ifdef _DEBUG
-	result = pScene_->Initialize( ManagerSceneMain::TYPE_GAME, pArgument_ );
+	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #else
 	result = pScene_->Initialize( ManagerSceneMain::TYPE_TITLE, pArgument_ );
 #endif

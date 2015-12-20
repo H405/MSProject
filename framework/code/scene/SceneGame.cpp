@@ -272,38 +272,36 @@ void SceneGame::MovePlayer()
 {
 	//	wiiボードを利用した、プレイヤーの移動処理1
 	//---------------------------------------------------------------------------------------------------------
-#ifdef _WIIBOARD
-	float totalCalibKg = wiiContoroller->getCalibKg().Total * 0.7f;
-	float totalKgR = wiiContoroller->getKg().BottomR + wiiContoroller->getKg().TopR;
-	float totalKgL = wiiContoroller->getKg().BottomL + wiiContoroller->getKg().TopL;
-	if(totalKgL
-		>=
-		totalCalibKg)
+	if(wiiContoroller->getIsConnectWiiboard() == true)
 	{
-		player->addSpeed((-((totalKgL - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
-	}
-	if(totalKgR
-		>=
-		totalCalibKg)
-	{
-		player->addSpeed((((totalKgR - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
-	}
-#endif
+		float totalCalibKg = wiiContoroller->getCalibKg().Total * 0.7f;
+		float totalKgR = wiiContoroller->getKg().BottomR + wiiContoroller->getKg().TopR;
+		float totalKgL = wiiContoroller->getKg().BottomL + wiiContoroller->getKg().TopL;
+		if(totalKgL
+			>=
+			totalCalibKg)
+		{
+			player->addSpeed((-((totalKgL - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
+		}
+		if(totalKgR
+			>=
+			totalCalibKg)
+		{
+			player->addSpeed((((totalKgR - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
+		}
 
-	if(pArgument_->pKeyboard_->IsPress(DIK_LEFT) == true)
-	{
-		player->AddPositionX(-1.0f);
+		if(pArgument_->pKeyboard_->IsPress(DIK_LEFT) == true)
+		{
+			player->AddPositionX(-1.0f);
+		}
+		if(pArgument_->pKeyboard_->IsPress(DIK_RIGHT) == true)
+		{
+			player->AddPositionX(1.0f);
+		}
 	}
-	if(pArgument_->pKeyboard_->IsPress(DIK_RIGHT) == true)
-	{
-		player->AddPositionX(1.0f);
-	}
-
-	D3DXVECTOR3 buff = player->getPosition();
-	//PrintDebug( _T( "\nplayerPos.x = %f\n"), buff.x );
-	//---------------------------------------------------------------------------------------------------------
 
 	//	プレイヤー腕オブジェクトに回転量をセット
+	D3DXVECTOR3 buff = player->getPosition();
 	D3DXVECTOR3 buffRot = wiiContoroller->getRot();
 	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
 }
@@ -459,11 +457,12 @@ void SceneGame::normalUpdate(void)
 	if(targetAppearFlag == true)
 	{
 		targetAppearCount++;
-		if(targetAppearCount == 50)
+		if(targetAppearCount == 150)
 		{
 			int buff;
 			buff = managerTarget->Add(
-				D3DXVECTOR3(RANDOM(400), (float)(rand() % 50) + 50.0f, targetAppearPosZ),
+				//D3DXVECTOR3(RANDOM(400), (float)(rand() % 50) + 50.0f, targetAppearPosZ),
+				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
 				(COLOR_STATE)(rand() % COLOR_STATE_S));
 			if(buff != -1)
 			{
@@ -506,10 +505,16 @@ void SceneGame::normalUpdate(void)
 		collision_fireworks_target();
 	}
 	collision_fireworks_targetAuto();
-
-
-
 	collision_fireworks_fireworks();
+
+	//	コンボが一定数になったら、シンクロ花火発射
+	if(combo->getScore() != combo->getScorePrev())
+	{
+		if(combo->getScore() % 10 == 0)
+		{
+			LaunchSP();
+		}
+	}
 
 
 
@@ -617,14 +622,6 @@ void SceneGame::normalUpdate(void)
 		LaunchSP();
 	}
 
-	if(combo->getScore() != combo->getScorePrev())
-	{
-		if(combo->getScore() % 10 == 0)
-		{
-			LaunchSP();
-		}
-	}
-
 	if(autoLaunchFlag == true)
 	{
 		autoLaunchCount++;
@@ -694,6 +691,120 @@ void SceneGame::normalUpdate(void)
 
 		if(finger != nullptr)
 			finger->SetEnableGraphic(true);
+	}
+}
+//==============================================================================
+// Brief  : デモ用更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::demoUpdate(void)
+{
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+
+	//	カメラの逆行列を取得する
+	D3DXMATRIX cameraInvMat;
+	pCamera_->GetRenderMatrix()->GetMatrixView(&cameraInvMat);
+	D3DXMatrixInverse(&cameraInvMat, nullptr, &cameraInvMat);
+
+	//	カメラの逆行列をプレイヤーにセット
+	player->setInvViewMatrix(cameraInvMat);
+
+
+	{
+		//	花火管理クラスの更新
+		//MeasureTime("managerFireworksUpdate");
+		managerFireworks->setInvViewMatrix(cameraInvMat);
+		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
+	}
+	//	ターゲットクラスの更新
+	managerTarget->setInvViewMatrix(cameraInvMat);
+	managerTarget->Update(targetTable, &targetTableIndex);
+	{
+		// ポイントスプライト管理クラスの更新
+		//MeasureTime("managerPoint");
+		managerPoint->Update();
+	}
+
+
+	//	ターゲット出現
+	targetAppearCount++;
+	if(targetAppearCount == 90)
+	{
+		int buff;
+		buff = managerTarget->Add(
+			D3DXVECTOR3(RANDOM(300), (float)(rand() % 50) + 50.0f, targetAppearPosZ),
+			(COLOR_STATE)(rand() % COLOR_STATE_W));
+		if(buff != -1)
+		{
+			targetTable[targetTableIndex] = buff;
+			targetTableIndex++;
+
+			autoLaunchFlag = true;
+			autoLaunchTarget = buff;
+		}
+	
+		targetAppearCount = 0;
+	}
+
+
+	if(autoLaunchFlag == true)
+	{
+		autoLaunchCount++;
+		if(autoLaunchCount == 80)
+		{
+			int buff2 = -1;
+			D3DXVECTOR3 buffPos = player->getPosition();
+
+			buff2 = managerFireworks->Add(
+					ManagerFireworks::STATE_RIGHTSP,
+					managerPoint,
+					buffPos,
+					buffDiffWiiRot,
+					managerTarget->getTarget(autoLaunchTarget));
+
+			if(buff2 != -1)
+			{
+				fireworksTable[fireworksTableIndex] = buff2;
+				fireworksTableIndex++;
+			}
+
+			autoLaunchCount = 0;
+			autoLaunchFlag = false;
+		}
+	}
+
+	collision_fireworks_fireworks();
+	collision_fireworks_targetAuto();
+
+	//	コンボが一定数になったら、シンクロ花火発射
+	if(combo->getScore() != combo->getScorePrev())
+	{
+		if(combo->getScore() % 10 == 0)
+		{
+			LaunchSP();
+		}
+	}
+
+	ManagerSceneMain::demoCount++;
+
+	//	ポーズキーが押されたら
+	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE) ||
+		ManagerSceneMain::demoCount >= ManagerSceneMain::demoCountMax)
+	{
+		ManagerSceneMain::demoCount = 0;
+
+		//	更新関数設定
+		fpUpdate = &SceneGame::pauseFadeUpdateDemo;
+
+		if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
+		{
+			pArgument_->pFade_->FadeOut( 20 );
+			pArgument_->pUpdate_->SetIsEnable( true );
+		}
 	}
 }
 //==============================================================================
@@ -981,6 +1092,24 @@ void SceneGame::pauseFadeUpdate(void)
 	}
 }
 //==============================================================================
+// Brief  : ポーズ更新処理(フェード用)
+//==============================================================================
+void SceneGame::pauseFadeUpdateDemo(void)
+{
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+	// シーン遷移
+	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
+	{
+		SetSceneNext( ManagerSceneMain::TYPE_TITLE );
+		ManagerSceneMain::demoFlag = false;
+
+		SetIsEnd( true );
+	}
+}
+//==============================================================================
 // Brief  : 再接続要求時用の更新処理
 //==============================================================================
 void SceneGame::reConnectWiimoteUpdate(void)
@@ -1205,7 +1334,7 @@ void SceneGame::collision_fireworks_targetAuto()
 		if(buffFireworks->IsBurnFlag())
 			continue;
 
-		if(buffFireworks->getDeleteCount() != DELETECOUNT_MAX - 1)
+		if(buffFireworks->getDeleteCount() != buffFireworks->getParam()->deleteCountMax - 1)
 			continue;
 
 		//	花火の位置情報取得

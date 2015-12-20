@@ -319,8 +319,17 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pCamera_->SetPositionLookAt( positionLookAt );
 	indexSection_ = 1;
 
+
 	//	更新関数設定
-	fpUpdate = &SceneGame::calibrationUpdate;
+	if(ManagerSceneMain::demoFlag == false)
+		fpUpdate = &SceneGame::calibrationUpdate;
+	else
+	{
+		fpUpdate = &SceneGame::demoUpdate;
+		calibrationWiimote->SetEnableGraphic(false);
+		calibrationWiimoteIllust->SetEnableGraphic(false);
+		combo->setStartFlag(true);
+	}
 
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
@@ -624,7 +633,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 	//	「スコア」文字オブジェクト生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	stringScore = new Object2D;
 	stringScore->Initialize(0);
@@ -670,8 +679,8 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pEffectParameter_,
 		pEffect,
 		pArgument_->pTexture_->Get( _T( "game/sya.png" )),
-		pArgument_->pTexture_->Get( _T( "common/font.png" )),
-		pArgument_->pTexture_->Get( _T( "common/number_white.png" )));
+		pArgument_->pTexture_->Get( _T( "common/font_edge.png" )),
+		pArgument_->pTexture_->Get( _T( "common/numberEdge.png" )));
 	combo->setPosition(192.0f, -286.0f, 0.0f);
 	combo->setColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
 	combo->firstUpdate();
@@ -723,7 +732,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 
 	//	「再開」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	stringReturn = new Object2D;
 	stringReturn->Initialize(0);
@@ -744,7 +753,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 
 	//	「中止」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	stringStop = new Object2D;
 	stringStop->Initialize(0);
@@ -764,7 +773,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 
 	//	「初めから」文字オブジェクトの生成
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	stringRetry = new Object2D;
 	stringRetry->Initialize(0);
@@ -847,7 +856,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 
 	//	ゲーム開始前のキャリブレーションお願いオブジェクト
-	pTexture = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 
 	calibrationWiimote = new Object2D;
 	calibrationWiimote->Initialize(0);

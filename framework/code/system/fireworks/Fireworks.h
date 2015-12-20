@@ -88,6 +88,7 @@ typedef struct
 
 	//	自然消滅までのカウンタ
 	TIME disappear;
+	TIME deleteCountMax;
 
 	//	生成用カウンタ
 	TIME appear;

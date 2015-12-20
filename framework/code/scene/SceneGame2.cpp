@@ -108,7 +108,7 @@ int SceneGame::Initialize2( void )
 
 	// 演武開始
 	Texture*	pTextureFont = nullptr;		// フォントテクスチャ
-	pTextureFont = pArgument_->pTexture_->Get( _T( "common/font.png" ) );
+	pTextureFont = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 	result = pObjectCount_[ IMAGE_COUNT_START ].Initialize( 0 );
 	if( result != 0 )
 	{

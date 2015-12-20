@@ -257,6 +257,7 @@ int Fireworks::Set(
 
 	param.count = 0;
 	param.burnSPFlag = false;
+	param.deleteCountMax = DELETECOUNT_MAX;
 
 	// 正常終了
 	return 0;
@@ -326,6 +327,7 @@ int Fireworks::SetSP(
 
 	param.count = 0;
 	param.burnSPFlag = true;
+	param.deleteCountMax = DELETECOUNT_MAX;
 
 	// 正常終了
 	return 0;
@@ -424,8 +426,8 @@ int Fireworks::Set(
 ///////////////////////////////////////////////////////////////////////////////
 
 	param.count = 0;
-
 	param.burnSPFlag = false;
+	param.deleteCountMax = DELETECOUNT_MAX / 2;
 
 ///////////////////////////////////////////////////////////////////////////////
 // 2015_12_20 白川追加 ↓
@@ -502,6 +504,7 @@ int Fireworks::SetW(
 	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z);
 
 	param.count = 0;
+	param.deleteCountMax = DELETECOUNT_MAX / 2;
 
 	// 正常終了
 	return 0;
@@ -586,6 +589,7 @@ int Fireworks::SetW(
 	}
 
 	param.count = 0;
+	param.deleteCountMax = DELETECOUNT_MAX/ 2;
 
 	// 正常終了
 	return 0;
