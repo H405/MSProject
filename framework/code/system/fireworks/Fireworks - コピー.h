@@ -27,8 +27,6 @@
 // マクロ
 //******************************************************************************
 #define FIRE_MAX (150)	//	１つの花火から生成される火花の数(6の倍数にすること)
-#define FIRE_XZ_MAX (30)
-#define FIRE_Y_MAX (90)
 #define SMALL_FIREWORKS_MAX (5)
 #define DELETECOUNT_MAX (100)
 typedef int TIME;
@@ -84,7 +82,6 @@ typedef struct
 
 	//	破裂フラグ
 	bool burnFlag;
-	bool burnSPFlag;
 
 	//	自然消滅までのカウンタ
 	TIME disappear;
@@ -96,12 +93,10 @@ typedef struct
 	TIME setPosOld;
 
 	Fire* fire;
-	//Fire* smallFire;
+	Fire* smallFire;
 
 	//	弾ける火花の総数
 	int fireMax;
-	int fireXZMax;
-	int fireYMax;
 
 	//	分裂した花火の総数
 	int smallFireMax;
@@ -210,9 +205,6 @@ public:
 	int burn(
 		float _hitCheckOffset,
 		float _hitPosLength);
-	int burnNew151220(
-	float _hitCheckOffset,
-	float _hitPosLength);
 
 	//==============================================================================
 	// Brief  : 花火の爆発処理(予備・前Ver)
@@ -220,7 +212,6 @@ public:
 	// Arg    : void								: なし
 	//==============================================================================
 	void burn2();
-	void burn2New151220();
 
 	//==============================================================================
 	// Brief  : ステートの設定
@@ -268,9 +259,6 @@ public:
 	void setManagerLight(ManagerLight* _managerLight);
 
 	COLOR_STATE getColorState(){return param.colorState;}
-
-	void setBurnSPFlag(bool _flag){param.burnSPFlag = _flag;}
-	bool getBurnSPFlag(){return param.burnSPFlag;}
 
 protected:
 

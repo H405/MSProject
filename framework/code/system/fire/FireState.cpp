@@ -85,7 +85,7 @@ void FireStateBig::Update( Fire* _fireworks )
 
 
 	param->pos += param->speed;
-	param->speed *= 0.99f;
+	param->speed *= 0.95f;
 
 
 	D3DXVECTOR4 setPos;

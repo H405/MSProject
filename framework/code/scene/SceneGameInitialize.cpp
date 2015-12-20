@@ -532,7 +532,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 	{
 		//return 1;
 	}
-	result = managerPoint->Initialize( 51200, 17, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
+	result = managerPoint->Initialize( 256000, 17, pArgument->pDevice_, pArgument->pEffectParameter_, pEffectPoint, pEffectPointReflect, pTexturePoint->pTexture_ );
 	if( result != 0 )
 	{
 		//return result;

@@ -38,7 +38,6 @@
 //******************************************************************************
 // マクロ定義
 //******************************************************************************
-#define RANDAM(value) (float)((rand() % value) - (rand() % value))
 
 //******************************************************************************
 // 静的メンバ変数
@@ -48,7 +47,6 @@ FireworksState** Fireworks::ppState_ = nullptr;
 
 static const int bigFireFirstSpeed = 10;
 static const int fireBGExistTime = 50;
-
 static const float fireBGAddSize = 5.0f;
 
 static int createFireNum = 0;
@@ -64,11 +62,6 @@ static const TIME compLaunchDisppear = (int)(DELETECOUNT_MAX);
 
 static const float diffRotMul = 16.0f;
 
-static const float fireSpeed = 3.0f;
-
-static const float mainColor = 1.0f;
-static const float subColor = 0.15f;
-
 //==============================================================================
 // Brief  : コンストラクタ
 // Return : 									: 
@@ -80,8 +73,8 @@ Fireworks::Fireworks( void )
 	InitializeSelf();
 
 	//	火花生成
-	param.fire = new Fire[FIRE_XZ_MAX * FIRE_Y_MAX * SMALL_FIREWORKS_MAX];
-	//param.smallFire = new Fire[FIRE_XZ_MAX * FIRE_Y_MAX * SMALL_FIREWORKS_MAX];
+	param.fire = new Fire[FIRE_MAX * SMALL_FIREWORKS_MAX];
+	param.smallFire = new Fire[FIRE_MAX * SMALL_FIREWORKS_MAX];
 
 	burnSoundIndex = -1;
 	launchSoundIndex = -1;
@@ -110,7 +103,6 @@ void Fireworks::InitializeSelf( void )
 	param.smallFireMax = 0;
 	param.setSmallFireIndex = 0;
 	param.setPosOld = 0;
-	param.burnSPFlag = false;
 
 	param.lightPoint = nullptr;
 
@@ -216,11 +208,11 @@ int Fireworks::Set(
 	//	色情報
 	param.colorState = _colorState;
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(1.0f, 0.3f, 0.3f, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(0.3f, 1.0f, 0.3f, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+		param.color = D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
 		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_S)
@@ -256,7 +248,6 @@ int Fireworks::Set(
 	param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * diffRotMul), 200.0f, _pos.z);
 
 	param.count = 0;
-	param.burnSPFlag = false;
 
 	// 正常終了
 	return 0;
@@ -325,7 +316,6 @@ int Fireworks::SetSP(
 	param.endPos = D3DXVECTOR3(_pos.x - (_diffRot.z * diffRotMul), 130.0f, _pos.z);
 
 	param.count = 0;
-	param.burnSPFlag = true;
 
 	// 正常終了
 	return 0;
@@ -356,11 +346,11 @@ int Fireworks::Set(
 	//	色情報
 	param.colorState = _target->getColorState();
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+		param.color = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+		param.color = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
 		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_S)
@@ -395,13 +385,9 @@ int Fireworks::Set(
 
 	param.count = 0;
 
-	param.burnSPFlag = false;
-
 	// 正常終了
 	return 0;
 }
-//==============================================================================
-// Brief  : 花火あげる処理
 // Return : int									: 実行結果
 //==============================================================================
 int Fireworks::SetW(
@@ -485,7 +471,7 @@ int Fireworks::Finalize( void )
 
 	param.lightPoint = nullptr;
 
-	//delete[] param.smallFire;
+	delete[] param.smallFire;
 	delete[] param.fire;
 
 	// クラス内の初期化処理
@@ -537,9 +523,9 @@ void Fireworks::BurnUpdate( void )
 		}
 
 		param.fire[count].setInvViewMatrix(param.invViewMatrix);
-		//param.smallFire[count].setInvViewMatrix(param.invViewMatrix);
+		param.smallFire[count].setInvViewMatrix(param.invViewMatrix);
 		param.fire[count].Update();
-		//param.smallFire[count].Update();
+		param.smallFire[count].Update();
 	}
 
 	//PrintDebug( _T( "\ncountFire:Burn1 = %d\n"), param.fireMax - buffCount );
@@ -588,9 +574,9 @@ void Fireworks::Burn2Update( void )
 		}
 
 		param.fire[count].setInvViewMatrix(param.invViewMatrix);
-		//param.smallFire[count].setInvViewMatrix(param.invViewMatrix);
+		param.smallFire[count].setInvViewMatrix(param.invViewMatrix);
 		param.fire[count].Update();
-		//param.smallFire[count].Update();
+		param.smallFire[count].Update();
 	}
 
 	//PrintDebug( _T( "\ncountFire:Burn2 = %d\n"), param.fireMax * SMALL_FIREWORKS_MAX - buffCount );
@@ -714,14 +700,14 @@ int Fireworks::burn(
 
 
 		//	小さい火花生成
-		//param.smallFire[count].Set(
-		//	Fire::STATE_SMALL,
-		//	param.managerPoint,
-		//	buffSetPos,
-		//	D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.1f),
-		//				(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
-		//				0.0f),
-		//	param.color);
+		param.smallFire[count].Set(
+			Fire::STATE_SMALL,
+			param.managerPoint,
+			buffSetPos,
+			D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.1f),
+						(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
+						0.0f),
+			param.color);
 	}
 
 
@@ -738,6 +724,7 @@ int Fireworks::burn(
 
 	return returnValue;
 }
+
 //==============================================================================
 // Brief  : 花火の爆発処理(予備・前Ver)
 // Return : void								: なし
@@ -800,231 +787,21 @@ void Fireworks::burn2()
 							(speedY * (float)(rand() % bigFireFirstSpeed) * 0.1f),
 							0.0f),
 				param.color);
-		}
-	}
 
 
-	//	更新関数設定
-	fpUpdate = &Fireworks::Burn2Update;
-
-	//	破裂フラグON
-	param.burnFlag = true;
-
-	//	音再生
-	param.launchSound->Stop(launchSoundIndex);
-	burnSoundIndex = param.burnSound->Play();
-}
-
-//==============================================================================
-// Brief  : 花火の爆発処理
-// Return : void								: なし
-// Arg    : void								: なし
-//==============================================================================
-int Fireworks::burnNew151220(
-	float _hitCheckOffset,
-	float _hitPosLength)
-{
-	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
-	D3DXVECTOR4 setPos;
-	D3DXVec3Transform(&setPos, &param.pos, &param.invViewMatrix);
-	param.setPos.x = setPos.x;
-	param.setPos.y = setPos.y;
-	param.setPos.z = setPos.z;
-
-	//	火花のスピード
-	float buffFireSpeed;
-
-	//	火花の最大数
-	float fireSize;
-
-	//	返り値
-	int returnValue;
-
-	//	優
-	if(_hitPosLength <= (_hitCheckOffset * 0.1f))
-	{
-		param.fireXZMax = FIRE_XZ_MAX;
-		param.fireYMax = FIRE_Y_MAX;
-		param.fireMax = param.fireXZMax * param.fireYMax;
-		fireSize = 45.0f;
-		buffFireSpeed = fireSpeed;
-		returnValue = ADD_10;
-	}
-	//	良
-	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
-	{
-		param.fireXZMax = FIRE_XZ_MAX * 2 / 3;
-		param.fireYMax = FIRE_Y_MAX * 2 / 3;
-		param.fireMax = param.fireXZMax * param.fireYMax;
-		buffFireSpeed = fireSpeed / 3.0f * 2.0f;
-		fireSize = 25.0f;
-
-		returnValue = ADD_5;
-	}
-	//	可
-	else
-	{
-		param.fireXZMax = FIRE_XZ_MAX / 3;
-		param.fireYMax = FIRE_Y_MAX / 3;
-		param.fireMax = param.fireXZMax * param.fireYMax;
-		buffFireSpeed = fireSpeed / 3.0f;
-		fireSize = 5.0f;
-
-		returnValue = ADD_1;
-	}
-
-	//	花火の背景用生成
-	param.managerPoint->Add(
-		fireBGExistTime,
-		param.setPos,
-		param.color,
-		fireSize,
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-		D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
-		fireBGAddSize,
-		PointMain::STATE_ADD
-		);
-
-	//	火花の数だけループ
-	for(int countY = 0;countY < param.fireYMax;countY++)
-	{
-		for(int count = 0;count < param.fireXZMax;count++)
-		{
-			D3DXVECTOR3 fireVec = D3DXVECTOR3(RANDAM((int)(buffFireSpeed * 100.0f)) * 0.001f, buffFireSpeed + RANDAM((int)(buffFireSpeed * 100.0f)) * 0.001f, RANDAM((int)(buffFireSpeed * 100.0f)) * 0.001f);
-			D3DXVECTOR4 fireSetVec = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
-			D3DXMATRIX rotMatrix;
-			D3DXMatrixIdentity(&rotMatrix);
-			float fBuff = (D3DX_PI  / (float)FIRE_Y_MAX) * 1000.0f;
-			D3DXMatrixRotationYawPitchRoll(
-				&rotMatrix,
-				(D3DX_PI  / (float)param.fireYMax) * countY + (RANDAM((int)fBuff) * 0.01f),
-				(RANDAM((int)fBuff) * 0.01f),
-				(D3DX_PI / (float)param.fireXZMax) * count);
-			D3DXVec3Transform(
-				&fireSetVec,
-				&fireVec,
-				&rotMatrix
-				);
-
-
-			//	ローカル頂点座標を計算
-			D3DXVECTOR3 buffSetPos = D3DXVECTOR3(param.pos.x, param.pos.y, param.pos.z);
-
-			//	火花生成
-			param.fire[count + (param.fireXZMax * countY)].Set(
-				Fire::STATE_BIG,
+			//	小さい火花生成
+			param.smallFire[count + (FIRE_MAX * smallFireCount)].Set(
+				Fire::STATE_SMALL,
 				param.managerPoint,
 				buffSetPos,
-				D3DXVECTOR3(
-							fireSetVec.x,
-							fireSetVec.y,
-							-fireSetVec.z),
+				D3DXVECTOR3((speedX * (float)(rand() % bigFireFirstSpeed) * 0.13f),
+							(speedY * (float)(rand() % bigFireFirstSpeed) * 0.13f),
+							0.0f),
 				param.color);
 		}
 	}
 
 
-
-	//	更新関数設定
-	fpUpdate = &Fireworks::BurnUpdate;
-
-	//	破裂フラグON
-	param.burnFlag = true;
-
-	//	音再生
-	param.launchSound->Stop(launchSoundIndex);
-	burnSoundIndex = param.burnSound->Play();
-
-	return returnValue;
-}
-
-//==============================================================================
-// Brief  : 花火の爆発処理(予備・前Ver)
-// Return : void								: なし
-// Arg    : void								: なし
-//==============================================================================
-void Fireworks::burn2New151220()
-{
-	for(int smallFireCount = 0;smallFireCount < param.setSmallFireIndex;smallFireCount++)
-	{
-		//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
-		D3DXVECTOR4 setPos;
-		D3DXVECTOR3 buffPos = param.posOld[smallFireCount];
-		D3DXVec3Transform(&setPos, &buffPos, &param.invViewMatrix);
-		param.setPos.x = setPos.x;
-		param.setPos.y = setPos.y;
-		param.setPos.z = setPos.z;
-
-		//	火花のスピード
-		float buffFireSpeed;
-
-		//	花火の数に応じた、１つの火花の角度間隔
-		float buffValue = 0.0f;
-
-		//	火花の最大数
-		float fireSize;
-
-
-		//	強制的に優に設定
-		param.fireXZMax = FIRE_XZ_MAX * 2 / 3;
-		param.fireYMax = FIRE_Y_MAX * 2 / 3;
-		param.fireMax = param.fireXZMax * param.fireYMax;
-		buffFireSpeed = fireSpeed / 3.0f * 2.0f;
-		fireSize = 25.0f;
-
-
-		//	花火の背景用生成
-		param.managerPoint->Add(
-			fireBGExistTime,
-			param.setPos,
-			param.color,
-			fireSize,
-			D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-			D3DXCOLOR( 0.0f, 0.0f, 0.0f, -0.02f ),
-			fireBGAddSize,
-			PointMain::STATE_ADD
-			);
-
-		//	火花の数だけループ
-		for(int countY = 0;countY < param.fireYMax;countY++)
-		{
-			for(int count = 0;count < param.fireXZMax;count++)
-			{
-				D3DXVECTOR3 fireVec = D3DXVECTOR3(RANDAM((int)(buffFireSpeed * 100.0f)) * 0.001f, buffFireSpeed + RANDAM((int)(buffFireSpeed * 100.0f)) * 0.001f, RANDAM((int)(buffFireSpeed * 100.0f)) * 0.001f);
-				D3DXVECTOR4 fireSetVec = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
-				D3DXMATRIX rotMatrix;
-				D3DXMatrixIdentity(&rotMatrix);
-				float fBuff = (D3DX_PI  / (float)FIRE_Y_MAX) * 1000.0f;
-				D3DXMatrixRotationYawPitchRoll(
-					&rotMatrix,
-					(D3DX_PI  / (float)param.fireYMax) * countY + (RANDAM((int)fBuff) * 0.01f),
-					(RANDAM((int)fBuff) * 0.01f),
-					(D3DX_PI / (float)param.fireXZMax) * count);
-				D3DXVec3Transform(
-					&fireSetVec,
-					&fireVec,
-					&rotMatrix
-					);
-
-
-				//	ローカル頂点座標を計算
-				D3DXVECTOR3 buffSetPos = D3DXVECTOR3(buffPos.x, buffPos.y, buffPos.z);
-
-				//	火花生成
-				param.fire[count + (param.fireXZMax * countY) + (smallFireCount * param.fireMax)].Set(
-					Fire::STATE_BIG,
-					param.managerPoint,
-					buffSetPos,
-					D3DXVECTOR3(
-								fireSetVec.x,
-								fireSetVec.y,
-								-fireSetVec.z),
-					param.color);
-			}
-		}
-	}
-
-
 	//	更新関数設定
 	fpUpdate = &Fireworks::Burn2Update;
 
@@ -1035,7 +812,6 @@ void Fireworks::burn2New151220()
 	param.launchSound->Stop(launchSoundIndex);
 	burnSoundIndex = param.burnSound->Play();
 }
-
 
 //==============================================================================
 // Brief  : 花火の音生成処理
