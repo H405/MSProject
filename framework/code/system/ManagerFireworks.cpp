@@ -208,41 +208,7 @@ void ManagerFireworks::Sort(int* _table, int _deleteIndex)
 }
 //==============================================================================
 // Brief  : 花火発射処理
-// Return : void								: なし
-// Arg    : int indexState						: ステート番号
-// Arg   : ManagerPoint*						: ポイントスプライト生成用マネージャ
-// Arg   : D3DXVECTOR3							: 発生位置
-// Arg   : D3DXVECTOR3							: 速度
-// Arg   : float								: 更新ごとの回転量
-// Arg   : float								: ↑に加算する回転量（大きすぎると変になるから注意）
 //==============================================================================
-int ManagerFireworks::Add(
-	int _indexState,
-	ManagerPoint* _managerPoint,
-	D3DXVECTOR3 _pos,
-	D3DXVECTOR3 _speed,
-	float _rot,
-	float _rotSpeed)
-{
-	int index = GetIndex();
-	if(index < 0 || index >= FIREWORKS_MAX)
-	{
-		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
-		return -1;
-	}
-
-	//	花火のセット
-	fireworks[index].Set(
-		_indexState,
-		_managerPoint,
-		_pos,
-		_speed,
-		_rot,
-		_rotSpeed
-		);
-
-	return index;
-}
 int ManagerFireworks::Add(
 		int _indexState,
 		ManagerPoint* _managerPoint,
@@ -267,6 +233,9 @@ int ManagerFireworks::Add(
 
 	return index;
 }
+//==============================================================================
+// Brief  : 花火発射処理
+//==============================================================================
 int ManagerFireworks::AddSP(
 		int _indexState,
 		ManagerPoint* _managerPoint,
@@ -291,8 +260,89 @@ int ManagerFireworks::AddSP(
 
 	return index;
 }
+//==============================================================================
+// Brief  : 花火発射処理
+//==============================================================================
+int ManagerFireworks::Add(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot,
+	Target* _target)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
 
+	//	花火のセット
+	fireworks[index].Set(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot,
+		_target);
 
+	return index;
+}
+//==============================================================================
+// Brief  : 花火発射処理
+//==============================================================================
+int ManagerFireworks::AddW(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot,
+	Target* _target)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
+
+	//	花火のセット
+	fireworks[index].SetW(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot,
+		_target);
+
+	return index;
+}
+//==============================================================================
+// Brief  : 花火発射処理
+//==============================================================================
+int ManagerFireworks::AddW(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot,
+	Target* _target,
+	int _near)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
+
+	//	花火のセット
+	fireworks[index].SetW(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot,
+		_target,
+		_near);
+
+	return index;
+}
 
 //==============================================================================
 // Brief  : インデックス取得処理

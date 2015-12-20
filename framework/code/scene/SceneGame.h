@@ -524,6 +524,7 @@ private:
 	int autoLaunchCount;
 	int autoLaunchTarget;
 	bool autoLaunchFlag;
+	int autoLaunchNear;
 #endif
 };
 

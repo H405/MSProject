@@ -426,11 +426,11 @@ int Fireworks::SetW(
 	//	色情報
 	param.colorState = (COLOR_STATE)(rand() % COLOR_STATE_W);
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
 		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_S)
@@ -460,8 +460,92 @@ int Fireworks::SetW(
 
 	//	endの上限値は、yが200くらい、xが-200～200くらい？
 	param.startPos = _pos;
-	param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z + 250.0f);
-	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z + 500.0f);
+	param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
+	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z);
+
+	param.count = 0;
+
+	// 正常終了
+	return 0;
+}
+//==============================================================================
+// Brief  : 花火あげる処理
+// Return : int									: 実行結果
+//==============================================================================
+int Fireworks::SetW(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot,
+	Target* _target,
+	int _near)
+{
+	//	変数の保存と初期化
+	param.managerPoint = _managerPoint;
+	param.pos = _pos;
+	param.matRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.enable = true;
+	param.burnFlag = false;
+	param.disappear = 0;
+	param.fireMax = 0;
+	param.smallFireMax = 0;
+	param.setSmallFireIndex = 0;
+	param.setPosOld = 0;
+
+	//	色情報
+	param.colorState = (COLOR_STATE)(rand() % COLOR_STATE_W);
+	if(param.colorState == COLOR_STATE_R)
+		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
+	else if(param.colorState == COLOR_STATE_G)
+		param.color = D3DXCOLOR(subColor, mainColor, subColor, 1.0f);
+	else if(param.colorState == COLOR_STATE_B)
+		param.color = D3DXCOLOR(subColor, subColor, mainColor, 1.0f);
+	else if(param.colorState == COLOR_STATE_W)
+		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_S)
+		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+
+	indexState = _indexState;
+
+	if(param.lightPoint == nullptr)
+	{
+		param.lightPoint = managerLight->GetLightPoint();
+		param.lightPoint->SetDiffuse(param.color);
+		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
+	}
+	param.lightPoint->SetDiffuse(param.color);
+	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
+	param.lightPoint->SetIsEnable(true);
+
+	//	音再生
+	burnSoundIndex = -1;
+	launchSoundIndex = -1;
+	launchSoundIndex = param.launchSound->Play();
+
+	//	更新関数設定
+	fpUpdate = &Fireworks::NormalUpdate;
+
+
+
+	//	endの上限値は、yが200くらい、xが-200～200くらい？
+	if(_near == 0)
+	{
+		param.startPos = _pos;
+		param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
+		param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z);
+	}
+	else if(_near == 1)
+	{
+		param.startPos = _pos;
+		param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
+		param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y * 0.9f, _pos.z);
+	}
+	else if(_near == 2)
+	{
+		param.startPos = _pos;
+		param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
+		param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y * 0.8f, _pos.z);
+	}
 
 	param.count = 0;
 

@@ -437,12 +437,12 @@ void SceneGame::normalUpdate(void)
 
 
 
-	PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
-	for(int count = 0;count < FIREWORKS_MAX;count++)
-		PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
-	PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
-	for(int count = 0;count < TARGET_MAX;count++)
-		PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
+	//PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
+	//for(int count = 0;count < FIREWORKS_MAX;count++)
+	//	PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
+	//PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
+	//for(int count = 0;count < TARGET_MAX;count++)
+	//	PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
 
 
 
@@ -590,6 +590,7 @@ void SceneGame::normalUpdate(void)
 		if(pArgument_->pKeyboard_->IsTrigger(DIK_W))
 		{
 			int buff;
+			autoLaunchNear = 0;
 			buff = managerTarget->Add(
 				D3DXVECTOR3(0.0f, 100.0f, targetAppearPosZ),
 				COLOR_STATE_W);
@@ -602,6 +603,12 @@ void SceneGame::normalUpdate(void)
 				autoLaunchFlag = true;
 				autoLaunchTarget = buff;
 			}
+
+			//	数字キーを押しながらWを打ち上げると、優(その他)良(1)可(2)の花火があがる
+			if(pArgument_->pKeyboard_->IsPress(DIK_1))
+				autoLaunchNear = 1;
+			else if(pArgument_->pKeyboard_->IsPress(DIK_2))
+				autoLaunchNear = 2;
 		}
 	}
 
@@ -633,7 +640,8 @@ void SceneGame::normalUpdate(void)
 					managerPoint,
 					buffPos,
 					buffDiffWiiRot,
-					managerTarget->getTarget(autoLaunchTarget));
+					managerTarget->getTarget(autoLaunchTarget),
+					autoLaunchNear);
 
 				if(buff2 != -1)
 				{
@@ -1217,7 +1225,7 @@ void SceneGame::collision_fireworks_targetAuto()
 			if(hitCheckPointCircle(buffFireworksPos, buffTargetPos, buffTargetSize, &hitPosLength) == true)
 			{
 				//	破裂
-				int returnValue = buffFireworks->burn(buffTargetSize * buffTargetSize, hitPosLength);
+				int returnValue = buffFireworks->burnNew151220(buffTargetSize * buffTargetSize, hitPosLength);
 
 				//	ゲージ加算
 				//----------------------------------------------------------------------------------
@@ -1252,27 +1260,6 @@ void SceneGame::collision_fireworks_targetAuto()
 			}
 		}
 	}
-
-	/*for(int fireworksCount = 0;fireworksCount < fireworksTableIndex;fireworksCount++)
-	{
-		//	花火の情報取得
-		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
-		if(buffFireworks->IsBurnFlag())
-			continue;
-
-		//	コンボ数加算
-		combo->addScore();
-
-		//	スコア値加算
-		score->setAddScore((gage->getPercent() + 10));
-		score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
-
-		//	破裂
-		buffFireworks->burn(0.0f, 0.0f);
-
-		//	振動
-		wiiContoroller->rumble((unsigned int)300);
-	}*/
 }
 //==============================================================================
 // Brief  : 花火と花火の当たり判定処理

@@ -187,6 +187,13 @@ public:
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		Target* _target);
+	int SetW(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target,
+		int _near);
 
 	//==============================================================================
 	// Brief  : èIóπèàóù
