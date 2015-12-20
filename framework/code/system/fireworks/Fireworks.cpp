@@ -67,8 +67,8 @@ static const float diffRotMul = 16.0f;
 static const float fireSpeed = 3.0f;
 
 static const float mainColor = 1.0f;
-static const float subColor1 = 0.1f;
-static const float subColor2 = 0.1f;
+static const float subColor1 = 0.3f;
+static const float subColor2 = 0.4f;
 
 //==============================================================================
 // Brief  : コンストラクタ
@@ -234,7 +234,7 @@ int Fireworks::Set(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(0.0f, 0.00028f, 0.0000005f);
+	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -287,15 +287,13 @@ int Fireworks::SetSP(
 	//	色情報
 	param.colorState = _colorState;
 	if(param.colorState == COLOR_STATE_R)
-		param.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(mainColor, subColor2, subColor1, 1.0f);
 	else if(param.colorState == COLOR_STATE_G)
-		param.color = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(subColor1, mainColor, subColor2, 1.0f);
 	else if(param.colorState == COLOR_STATE_B)
-		param.color = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+		param.color = D3DXCOLOR(subColor2, subColor1, mainColor, 1.0f);
 	else if(param.colorState == COLOR_STATE_W)
-		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	else if(param.colorState == COLOR_STATE_S)
-		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+		param.color = D3DXCOLOR(mainColor, mainColor, mainColor, 1.0f);
 
 	indexState = _indexState;
 
@@ -306,7 +304,7 @@ int Fireworks::SetSP(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
+	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -460,7 +458,7 @@ int Fireworks::SetW(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
+	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -528,7 +526,7 @@ int Fireworks::SetW(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
+	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -684,6 +682,9 @@ void Fireworks::BurnUpdate( void )
 		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
+
+	// タイマー経過
+	++timerForLight;
 }
 //==============================================================================
 // Brief  : 更新処理
@@ -742,6 +743,9 @@ void Fireworks::Burn2Update( void )
 		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
+
+	// タイマー経過
+	++timerForLight;
 }
 
 //==============================================================================
