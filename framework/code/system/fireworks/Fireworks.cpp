@@ -53,7 +53,7 @@ static const float fireBGAddSize = 5.0f;
 
 static int createFireNum = 0;
 
-static const D3DXVECTOR3 attenuationValue = D3DXVECTOR3(0.0f, 0.0028f, 0.0000005f);
+static const D3DXVECTOR3 attenuationValue = D3DXVECTOR3(0.0f, 0.00028f, 0.00000005f);
 
 static const TIME compAppear = (int)(DELETECOUNT_MAX * 0.9f);
 static const TIME compDisppear = (int)(DELETECOUNT_MAX);
@@ -354,6 +354,10 @@ int Fireworks::Set(
 	param.setPosOld = 0;
 
 	//	色情報
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↓
+///////////////////////////////////////////////////////////////////////////////
+#if 1
 	param.colorState = _target->getColorState();
 	if(param.colorState == COLOR_STATE_R)
 		param.color = D3DXCOLOR(mainColor, subColor, subColor, 1.0f);
@@ -365,6 +369,22 @@ int Fireworks::Set(
 		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	else if(param.colorState == COLOR_STATE_S)
 		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+#else
+	param.colorState = _target->getColorState();
+	if(param.colorState == COLOR_STATE_R)
+		param.color = D3DXCOLOR(1.0f, 0.4f, 0.3f, 1.0f);
+	else if(param.colorState == COLOR_STATE_G)
+		param.color = D3DXCOLOR(0.3f, 1.0f, 0.4f, 1.0f);
+	else if(param.colorState == COLOR_STATE_B)
+		param.color = D3DXCOLOR(0.4f, 0.3f, 1.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_W)
+		param.color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	else if(param.colorState == COLOR_STATE_S)
+		param.color = D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↑
+///////////////////////////////////////////////////////////////////////////////
 
 	indexState = _indexState;
 
@@ -375,7 +395,7 @@ int Fireworks::Set(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(0.0f, 0.0028f, 0.0000005f);
+	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -391,11 +411,29 @@ int Fireworks::Set(
 	//	endの上限値は、yが200くらい、xが-200～200くらい？
 	param.startPos = _pos;
 	param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↓
+///////////////////////////////////////////////////////////////////////////////
+#if 1
 	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z);
+#else
+	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y + 550.0f, _pos.z + 3000.0f);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↑
+///////////////////////////////////////////////////////////////////////////////
 
 	param.count = 0;
 
 	param.burnSPFlag = false;
+
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↓
+///////////////////////////////////////////////////////////////////////////////
+	timerForLight = 0;
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↑
+///////////////////////////////////////////////////////////////////////////////
 
 	// 正常終了
 	return 0;
@@ -586,7 +624,18 @@ int Fireworks::Finalize( void )
 void Fireworks::Update( void )
 {
 	MeasureTime("fireworksUpdate");
-
+#if 0
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↓
+///////////////////////////////////////////////////////////////////////////////
+	if( param.pos.y >= 500.0f && !param.burnFlag )
+	{
+		burn( 0.0f, 0.0f );
+	}
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↑
+///////////////////////////////////////////////////////////////////////////////
+#endif
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
 
@@ -628,17 +677,29 @@ void Fireworks::BurnUpdate( void )
 
 	//PrintDebug( _T( "\ncountFire:Burn1 = %d\n"), param.fireMax - buffCount );
 
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↓
+///////////////////////////////////////////////////////////////////////////////
+#if 1
 	if(buffCount == param.fireMax)
 	{
 		param.enable = false;
 		param.lightPoint->SetIsEnable(false);
 	}
+#endif
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↑
+///////////////////////////////////////////////////////////////////////////////
 
 
 	// 割合の決定
 	float	proportion;		// 割合
 	int counter = param.fire[0].getDeleteCount();
-
+	
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↓
+///////////////////////////////////////////////////////////////////////////////
+#if 1
 	if( counter < compAppear )
 	{
 		proportion = Utility::Easing( 0.0f, 1.0f, (float)counter / (float)compAppear);
@@ -647,12 +708,59 @@ void Fireworks::BurnUpdate( void )
 	{
 		proportion = Utility::Easing( 1.0f, 0.0f, (float)(counter - compAppear) / (float)compDisppear);
 	}
+#else
+	if( timerForLight < 60 )
+	{
+		proportion = Utility::Easing( 1.0f, 0.0f, (float)timerForLight / 60.0f);
+	}
+	else
+	{
+		proportion = Utility::Easing( 0.0f, 1.0f, (float)(timerForLight - 60) / 100);
+	}
+#endif
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↑
+///////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↓
+///////////////////////////////////////////////////////////////////////////////
+#if 1
 	// 減衰率の設定
 	D3DXVECTOR3	attenuation;		// 減衰率0.00028f, 0.00000005f     0.0005f, 0.00005f
-	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.00028f * proportion, 0.0000005f * proportion );
+	attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.0028f * proportion, 0.000005f * proportion );
 	//param.lightPoint->SetAttenuation(0.0f, 0.00028f, 0.0000005f);
 	param.lightPoint->SetAttenuation( attenuation );
+#else
+	D3DXVECTOR3	attenuation;
+	if( timerForLight < 60 )
+	{
+		attenuation = (1.0f - proportion) * attenuationValue;
+		attenuation += proportion * 7.0f * attenuationValue;
+	}
+	else
+	{
+		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
+	}
+	param.lightPoint->SetAttenuation( attenuation );
+#endif
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↑
+///////////////////////////////////////////////////////////////////////////////
+#if 0
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↓
+///////////////////////////////////////////////////////////////////////////////
+	if(timerForLight >= 100)
+	{
+		param.enable = false;
+		param.lightPoint->SetIsEnable(false);
+	}
+	++timerForLight;
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↑
+///////////////////////////////////////////////////////////////////////////////
+#endif
 }
 //==============================================================================
 // Brief  : 更新処理
