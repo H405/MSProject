@@ -883,7 +883,7 @@ void SceneTitle::firstUpdate( void )
 	}
 
 	//	ƒfƒ‚‚ÖˆÚs
-	ManagerSceneMain::demoCount++;
+	/*ManagerSceneMain::demoCount++;
 	//if(ManagerSceneMain::demoCount == ManagerSceneMain::demoCountMax / 2)
 	if(ManagerSceneMain::demoCount == 60)
 	{
@@ -896,7 +896,7 @@ void SceneTitle::firstUpdate( void )
 		{
 			pArgument_->pFade_->FadeOut( 20 );
 		}
-	}
+	}*/
 
 
 	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )

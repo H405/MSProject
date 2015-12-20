@@ -14,6 +14,7 @@
 #include "../framework/develop/Debug.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerTexture.h"
+#include "ManagerSceneMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -50,6 +51,7 @@ void ManagerTarget::InitializeSelf( void )
 	targetAppearDataMax = 0;
 	targetAppearCount = 0;
 	targetAppearIndex = 0;
+	autoAppearFlag = true;
 
 	for(int count = 0;count < TARGET_MAX;count++)
 		enableOld[count] = false;
@@ -123,7 +125,8 @@ int ManagerTarget::Finalize( void )
 void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
 	//	自動で生成
-	//autoAppear(_table, _targetTableIndex);
+	if(ManagerSceneMain::demoFlag == false)
+		autoAppear(_table, _targetTableIndex);
 
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
 	{
@@ -178,32 +181,18 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 //==============================================================================
 void ManagerTarget::autoAppear(int* _table , int* _targetTableIndex)
 {
-	//	出現カウント加算
-	if(targetAppearIndex < targetAppearDataMax)
-		targetAppearCount++;
-
-	//	現在の出現データの、出現時間がカウンタと一致したら
-	if(targetAppearData[targetAppearIndex].appearTime == targetAppearCount)
+	if(autoAppearFlag == true)
 	{
-		//	生成
-		int buff = Add(targetAppearData[targetAppearIndex].appearPos, targetAppearData[targetAppearIndex].colorState);
-		targetAppearIndex++;
+		//	出現カウント加算
+		if(targetAppearIndex < targetAppearDataMax)
+			targetAppearCount++;
 
-		//	テーブルへ追加
-		if(buff != -1)
-		{
-			_table[*_targetTableIndex] = buff;
-			*_targetTableIndex += 1;
-		}
-
-		//	同じ時間に複数生成される場合があるので、その判定
-		int tempIndex = targetAppearIndex;
-
-		//	カウンタが同じである限り続ける
-		while(targetAppearData[tempIndex].appearTime == targetAppearCount)
+		//	現在の出現データの、出現時間がカウンタと一致したら
+		if(targetAppearData[targetAppearIndex].appearTime == targetAppearCount)
 		{
 			//	生成
-			buff = Add(targetAppearData[tempIndex].appearPos, targetAppearData[tempIndex].colorState);
+			int buff = Add(targetAppearData[targetAppearIndex].appearPos, targetAppearData[targetAppearIndex].colorState);
+			targetAppearIndex++;
 
 			//	テーブルへ追加
 			if(buff != -1)
@@ -212,16 +201,33 @@ void ManagerTarget::autoAppear(int* _table , int* _targetTableIndex)
 				*_targetTableIndex += 1;
 			}
 
+			//	同じ時間に複数生成される場合があるので、その判定
+			int tempIndex = targetAppearIndex;
 
-			//	さらに次のインデックスと判定
-			tempIndex++;
+			//	カウンタが同じである限り続ける
+			while(targetAppearData[tempIndex].appearTime == targetAppearCount)
+			{
+				//	生成
+				buff = Add(targetAppearData[tempIndex].appearPos, targetAppearData[tempIndex].colorState);
 
-			if(tempIndex >= targetAppearDataMax)
-				break;
+				//	テーブルへ追加
+				if(buff != -1)
+				{
+					_table[*_targetTableIndex] = buff;
+					*_targetTableIndex += 1;
+				}
+
+
+				//	さらに次のインデックスと判定
+				tempIndex++;
+
+				if(tempIndex >= targetAppearDataMax)
+					break;
+			}
+
+			//	インデックス値をセットし直す
+			targetAppearIndex = tempIndex;
 		}
-
-		//	インデックス値をセットし直す
-		targetAppearIndex = tempIndex;
 	}
 }
 //==============================================================================

@@ -29,7 +29,7 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class ObjectModelMaterial;
+class ObjectSkinMesh;
 class SceneArgumentMain;
 
 //******************************************************************************
@@ -81,7 +81,11 @@ public:
 	void setPosition(D3DXVECTOR3 _pos){pos = _pos;}
 	void AddPositionX(float _value){pos.x += _value;};
 	void setRotationArm(float _x, float _y, float _z);
+	void addRotationArm(float _x, float _y, float _z);
+	void addPositionArm(float _x, float _y, float _z);
+
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
+	void setCameraVec(D3DXVECTOR3 _cameraVec){cameraVec = _cameraVec;}
 	void setSpeed(float _value){speed = _value;}
 	void addSpeed(float _value){speed += _value;}
 
@@ -89,15 +93,20 @@ protected:
 
 	//	位置情報
 	D3DXVECTOR3 pos;
+	D3DXVECTOR3 rot;
 
 	//	移動スピード
 	float speed;
 
 	//	カメラの逆行列
 	D3DXMATRIX invViewMatrix;
+	D3DXVECTOR3 cameraVec;
 
-	ObjectModelMaterial* body;
-	ObjectModelMaterial* arm;
+	ObjectSkinMesh* body;
+	ObjectSkinMesh* arm_l;
+	ObjectSkinMesh* arm_r;
+	ObjectSkinMesh* leg_l;
+	ObjectSkinMesh* leg_r;
 
 private:
 	void InitializeSelf( void );
