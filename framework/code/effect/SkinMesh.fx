@@ -75,6 +75,7 @@ VertexOutput TransformVertex( float3 positionLocal : POSITION, float3 weight : B
 	matrixBone += matrixBone_[ indices[ 3 ] ] * (1.0f - weight.x - weight.y - weight.z);
 	matrixBone4x4 = float4x4( matrixBone[ 0 ], 0.0f, matrixBone[ 1 ], 0.0f, matrixBone[ 2 ], 0.0f, matrixBone[ 3 ], 1.0f );
 	output.position_ = mul( float4( positionLocal, 1.0f ), matrixBone4x4 );
+//	output.position_.xyz *= 100.0f;
 
 	// ê[ìxÇÃåvéZ
 	output.depth_ = mul( output.position_, matrixWorldView_ ).z;
