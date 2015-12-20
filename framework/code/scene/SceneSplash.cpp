@@ -305,12 +305,12 @@ int SceneSplash::Initialize( SceneArgumentMain* pArgument )
 	pEffectSkinMeshReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pEffectSkinMeshShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
 	pEffectSkinMeshParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
-	pModelSkinMesh = pArgument_->pModel_->Get( _T( "test.model" ) );
+	pModelSkinMesh = pArgument_->pModel_->Get( _T( "back_dancer.model" ) );
 	pObjectSkinMesh_ = new ObjectSkinMesh();
 	pObjectSkinMesh_->Initialize( 0, 1 );
 	pObjectSkinMesh_->CreateGraphic( 0, pModelSkinMesh, pArgument->pEffectParameter_,
 		pEffectSkinMesh, pEffectSkinMeshReflect, pEffectSkinMeshShadow, pEffectSkinMeshParaboloid );
-	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "test.motion" ) ) );
+	pObjectSkinMesh_->SetTableMotion( 0, pArgument->pMotion_->Get( _T( "back_dancer.motion" ) ) );
 	pObjectSkinMesh_->SetPosition( -100.0f, 0.0f, 100.0f );
 
 	// ì‚Ì¶¬

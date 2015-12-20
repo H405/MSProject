@@ -491,10 +491,10 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	markers = new ObjectSkinMesh[ 4 ];
 	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
 	{
-		markers[ counterMarker ].Initialize( 0, 0 );
+		markers[ counterMarker ].Initialize( 0, 1 );
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
-//		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
+		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );
