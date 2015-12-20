@@ -11,7 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "Player.h"
-#include "../../Object/ObjectModelMaterial.h"
+#include "../../Object/ObjectSkinMesh.h"
 #include "../../framework/resource/ManagerEffect.h"
 #include "../../framework/resource/ManagerModel.h"
 #include "../../system/SceneArgumentMain.h"
@@ -52,7 +52,7 @@ void Player::InitializeSelf( void )
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	speed = 0.0f;
 	body = nullptr;
-	arm = nullptr;
+	arm_l = nullptr;
 	D3DXMatrixIdentity(&invViewMatrix);
 }
 
@@ -85,6 +85,7 @@ int Player::Initialize(
 
 
 	pos = _pos;
+	rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//	オブジェクトの生成開始
 	Effect*		pEffect = nullptr;
@@ -94,36 +95,52 @@ int Player::Initialize(
 	Model*		pModel = nullptr;
 
 	//	プレイヤー固定用の台生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
-	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "kuma.x" ) );
-	body = new ObjectModelMaterial();
-	body->Initialize(0);
+	pEffect = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
+	pEffectShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
+	pEffectParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
+
+
+	pModel = pArgument->pModel_->Get( _T( "player_body.model" ) );
+	body = new ObjectSkinMesh();
+	body->Initialize(0, 0);
 	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	body->SetPosition(pos);
-	body->AddPositionX(offsetPosX);
-	body->AddPositionY(offsetPosY);
-	//body->SetPosition(0.0f, 50.0f, 300.0f);
 
-	//	プレイヤー生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
-	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
-	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
-	pModel = pArgument->pModel_->Get( _T( "arm_r.x" ) );
-	arm = new ObjectModelMaterial();
-	arm->Initialize(0);
-	arm->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
-	arm->SetPosition(pos);
-	//arm->SetPosition(0.0f, 50.0f, 300.0f);
+	pModel = pArgument->pModel_->Get( _T( "player_hand_l.model" ) );
+	arm_l = new ObjectSkinMesh();
+	arm_l->Initialize(0, 0);
+	arm_l->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 
-	body->SetScale(1.0f, 1.0f, 1.0f);
-	arm->SetScale(1.0f, 1.0f, 1.0f);
+	pModel = pArgument->pModel_->Get( _T( "player_hand_l.model" ) );
+	arm_r = new ObjectSkinMesh();
+	arm_r->Initialize(0, 0);
+	arm_r->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
+	arm_r->AddPosition(0.0f, 0.0f, 0.0f);
+	arm_r->SetRotationY(D3DX_PI);
+
+	pModel = pArgument->pModel_->Get( _T( "player_foot_l.model" ) );
+	leg_l = new ObjectSkinMesh();
+	leg_l->Initialize(0, 0);
+	leg_l->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
+
+	pModel = pArgument->pModel_->Get( _T( "player_foot_l.model" ) );
+	leg_r = new ObjectSkinMesh();
+	leg_r->Initialize(0, 0);
+	leg_r->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
+	leg_r->AddPosition(-15.0f, 0.0f, 0.0f);
+
+	body->SetScale(0.5f, 0.5f, 0.5f);
+	arm_l->SetScale(1.0f, 1.0f, 1.0f);
+	arm_r->SetScale(1.0f, 1.0f, 1.0f);
+	leg_l->SetScale(1.0f, 1.0f, 1.0f);
+	leg_r->SetScale(1.0f, 1.0f, 1.0f);
 
 	//	親オブジェクト登録
-	arm->SetParent(body);
+	arm_l->SetParent(body);
+	arm_r->SetParent(body);
+	leg_l->SetParent(body);
+	leg_r->SetParent(body);
 
 
 	// 正常終了
@@ -138,7 +155,10 @@ int Player::Initialize(
 int Player::Finalize( void )
 {
 	delete body;
-	delete arm;
+	delete arm_l;
+	delete arm_r;
+	delete leg_l;
+	delete leg_r;
 
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -169,22 +189,16 @@ void Player::Update( void )
 	else if(pos.x >= 250.0f)
 		pos.x = 250.0f;
 
-	//	カメラの逆行列をかけて、常に一定の場所に出るようにする処理
-	D3DXVECTOR4 setPos;
-
-	D3DXVec3Transform(&setPos, &pos, &invViewMatrix);
-
-	//	腕にセット
-	arm->SetPosition(setPos.x, setPos.y, setPos.z);
-
 	//	オフセット値を加味してもう一度
-	D3DXVECTOR3 buffPos = pos;
-	buffPos.x += offsetPosX;
-	buffPos.y += offsetPosY;
-	D3DXVec3Transform(&setPos, &buffPos, &invViewMatrix);
+	D3DXVECTOR4 buffPos;
+	D3DXVec3Transform(&buffPos, &pos, &invViewMatrix);
 
 	//	身体にセット
-	body->SetPosition(setPos.x, setPos.y, setPos.z);
+	body->SetPosition(buffPos.x, buffPos.y, buffPos.z);
+	body->SetRotation(0.0f, atan2f(-cameraVec.x, -cameraVec.z), 0.0f);
+	//body->AddRotationX(0.01f);
+	//body->AddRotationY(0.01f);
+	//body->AddRotationZ(0.01f);
 
 	// 基本クラスの処理
 	ObjectMovement::Update();
@@ -195,5 +209,17 @@ void Player::Update( void )
 //==============================================================================
 void Player::setRotationArm(float _x, float _y, float _z)
 {
-	arm->SetRotation(_x, _y, _z);
+	rot.x = _x;
+	rot.y = _y;
+	rot.z = _z;
+}
+void Player::addRotationArm(float _x, float _y, float _z)
+{
+	rot.x += _x;
+	rot.y += _y;
+	rot.z += _z;
+}
+void Player::addPositionArm(float _x, float _y, float _z)
+{
+	arm_l->AddPosition(_x, _y, _z);
 }

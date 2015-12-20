@@ -348,6 +348,7 @@ private:
 	void LaunchFireworks();
 	void Launch();
 	void LaunchSP();
+	void LaunchAuto();
 
 	//==============================================================================
 	// Brief  : シンクロゲージの加算処理処理
@@ -525,6 +526,9 @@ private:
 	D3DXVECTOR3 buffDiffWiiRot;
 
 	bool targetAppearFlag;
+
+	bool autoLaunchTable[TARGET_MAX];
+	bool selfLaunchFlag;
 
 #ifdef _TEST
 	int autoLaunchCount;

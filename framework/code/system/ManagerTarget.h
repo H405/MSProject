@@ -134,6 +134,8 @@ public:
 	Target* getTarget(int _index){return &target[_index];}
 	void setInvViewMatrix(D3DXMATRIX _invViewMatrix){invViewMatrix = _invViewMatrix;};
 
+	void setAutoAppearFlag(bool _flag){autoAppearFlag = _flag;}
+
 protected:
 
 	//	ターゲットの配列
@@ -150,6 +152,8 @@ protected:
 
 	int targetAppearCount;
 	int targetAppearIndex;
+
+	bool autoAppearFlag;
 
 	//==============================================================================
 	// Brief  : ターゲット生成スクリプト読み込み処理

@@ -331,6 +331,22 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		combo->setStartFlag(true);
 	}
 
+
+
+
+
+	//	プレゼン直前の悪あがき
+	for(int count = 0;count < TARGET_MAX;count++)
+		autoLaunchTable[count] = false;
+
+	selfLaunchFlag = false;
+	//	プレゼン直前の悪あがき
+
+
+
+
+
+
 	// フェードイン
 	pArgument->pFade_->FadeIn( 20 );
 
@@ -572,14 +588,16 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureArrow,
 		pTextureCircle
 		);
-	managerTarget->ReadTargetScriptFromFile("data/script/script_test2.txt");
+
+	if(ManagerSceneMain::demoFlag == false)
+		managerTarget->ReadTargetScriptFromFile("data/script/script_test2.txt");
 
 
 	//	プレイヤーオブジェクト(Posはカメラとの相対座標)
 	player = new Player;
 	player->Initialize(
 		//D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
-		D3DXVECTOR3(0.0f, -100.0f, 400.0f),
+		D3DXVECTOR3(0.0f, -150.0f, 400.0f),
 		pArgument);
 
 /*

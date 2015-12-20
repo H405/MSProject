@@ -186,7 +186,7 @@ void SceneGame::Update( void )
 	// 焦点距離の更新
 	D3DXVECTOR3	positionLookAt;		// 注視点
 	pCamera_->GetPositionLookAt( &positionLookAt );
-	if( fpUpdate == &SceneGame::normalUpdate )
+	if( fpUpdate == &SceneGame::normalUpdate || fpUpdate == &SceneGame::demoUpdate )
 	{
 		D3DXVECTOR3	pTablePositionForcus[] =
 		{
@@ -301,9 +301,9 @@ void SceneGame::MovePlayer()
 	}
 
 	//	プレイヤー腕オブジェクトに回転量をセット
-	D3DXVECTOR3 buff = player->getPosition();
-	D3DXVECTOR3 buffRot = wiiContoroller->getRot();
-	player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
+	//D3DXVECTOR3 buff = player->getPosition();
+	//D3DXVECTOR3 buffRot = wiiContoroller->getRot();
+	//player->setRotationArm(DEG_TO_RAD(buffRot.x), DEG_TO_RAD(-buffRot.y), DEG_TO_RAD(buffRot.z));
 }
 //==============================================================================
 // Brief  : 花火打ち上げ処理
@@ -355,6 +355,42 @@ void SceneGame::Launch()
 	}
 
 	launchFlag = true;
+}
+void SceneGame::LaunchAuto()
+{
+	if(fabsf(wiiContoroller->getAccelerationY()) >= 1.0f && wiiContoroller->getRelease(WC_B))
+	{
+		Target* autoTarget = nullptr;
+		for(int count = 0;count < targetTableIndex;count++)
+		{
+			if(autoLaunchTable[targetTable[count]] == false)
+			{
+				autoTarget = managerTarget->getTarget(targetTable[count]);
+				autoLaunchTable[targetTable[count]] = true;
+
+				break;
+			}
+		}
+
+		if(autoTarget != nullptr)
+		{
+			int buff = -1;
+			D3DXVECTOR3 buffPos = player->getPosition();
+
+			buff = managerFireworks->Add(
+					ManagerFireworks::STATE_RIGHTSP,
+					managerPoint,
+					buffPos,
+					buffDiffWiiRot,
+					autoTarget);
+
+			if(buff != -1)
+			{
+				fireworksTable[fireworksTableIndex] = buff;
+				fireworksTableIndex++;
+			}
+		}
+	}
 }
 void SceneGame::LaunchSP()
 {
@@ -411,6 +447,11 @@ void SceneGame::normalUpdate(void)
 	//	カメラの逆行列をプレイヤーにセット
 	player->setInvViewMatrix(cameraInvMat);
 
+	//	カメラの視線ベクトル取得
+	D3DXVECTOR3 cameraVec;
+	pCamera_->GetVector(&cameraVec);
+	player->setCameraVec(cameraVec);
+
 
 	{
 		//	花火管理クラスの更新
@@ -430,17 +471,44 @@ void SceneGame::normalUpdate(void)
 	//	プレイヤー移動処理
 	MovePlayer();
 
-	//	花火打ち上げ処理
-	LaunchFireworks();
+
+	if(targetAppearFlag == true)
+	{
+
+		//	花火打ち上げ処理
+		//LaunchFireworks();
+
+		//	プレゼン直前の悪あがき
+		if(selfLaunchFlag == true)
+			LaunchFireworks();
+		else
+			LaunchAuto();
+
+		if(pArgument_->pKeyboard_->IsTrigger(DIK_S))
+		{
+			if(selfLaunchFlag == true)
+				selfLaunchFlag = false;
+			else
+				selfLaunchFlag = true;
+		}
+		//	プレゼン直前の悪あがき
+
+	}
+	else
+	{
+		//	プレゼン直前の悪あがき
+		if(selfLaunchFlag == false)
+			LaunchAuto();
+	}
 
 
 
 	//PrintDebug( _T( "fireworksTableIndex = %d\n"), fireworksTableIndex);
 	//for(int count = 0;count < FIREWORKS_MAX;count++)
 	//	PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
-	//PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
-	//for(int count = 0;count < TARGET_MAX;count++)
-	//	PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
+	PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
+	for(int count = 0;count < TARGET_MAX;count++)
+		PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
 
 
 
@@ -478,6 +546,37 @@ void SceneGame::normalUpdate(void)
 
 
 
+	if(pArgument_->pKeyboard_->IsPress(DIK_LSHIFT))
+	{
+		if(pArgument_->pKeyboard_->IsPress(DIK_UP))
+		{
+			player->addRotationArm(0.1f, 0.0f, 0.0f);
+		}
+		else if(pArgument_->pKeyboard_->IsPress(DIK_DOWN))
+		{
+			player->addRotationArm(-0.1f, 0.0f, 0.0f);
+		}
+
+		if(pArgument_->pKeyboard_->IsPress(DIK_LEFT))
+		{
+			player->addRotationArm(0.0f, 0.1f, 0.0f);
+		}
+		else if(pArgument_->pKeyboard_->IsPress(DIK_RIGHT))
+		{
+			player->addRotationArm(0.0f, -0.1f, 0.0f);
+		}
+
+		if(pArgument_->pKeyboard_->IsPress(DIK_Q))
+		{
+			player->addRotationArm(0.0f, 0.0f, 0.1f);
+		}
+		else if(pArgument_->pKeyboard_->IsPress(DIK_E))
+		{
+			player->addRotationArm(0.0f, 0.0f, -0.1f);
+		}
+	}
+
+
 
 	//	wiiリモコンの回転初期化
 	//if(wiiContoroller->getPress(WC_PLUS) && wiiContoroller->getPress(WC_MINUS))
@@ -488,12 +587,12 @@ void SceneGame::normalUpdate(void)
 	//------------------------------------------------------------------
 	if(pArgument_->pVirtualController_->IsTrigger(VC_LEFT))
 	{
-		fireworksUI->addRotColor();
+		fireworksUI->subRotColor();
 		colorState = fireworksUI->getColorState();
 	}
 	if(pArgument_->pVirtualController_->IsTrigger(VC_RIGHT))
 	{
-		fireworksUI->subRotColor();
+		fireworksUI->addRotColor();
 		colorState = fireworksUI->getColorState();
 	}
 	//------------------------------------------------------------------
@@ -535,9 +634,15 @@ void SceneGame::normalUpdate(void)
 	if(pArgument_->pKeyboard_->IsTrigger(DIK_T))
 	{
 		if(targetAppearFlag == false)
+		{
 			targetAppearFlag = true;
+			managerTarget->setAutoAppearFlag(true);
+		}
 		else
+		{
 			targetAppearFlag = false;
+			managerTarget->setAutoAppearFlag(false);
+		}
 	}
 
 	if(autoLaunchFlag == false)
@@ -1360,6 +1465,8 @@ void SceneGame::collision_fireworks_targetAuto()
 			{
 				//	破裂
 				int returnValue = buffFireworks->burnNew151220(buffTargetSize * buffTargetSize, hitPosLength);
+
+				autoLaunchTable[targetTable[targetCount]] = false;
 
 				//	ゲージ加算
 				//----------------------------------------------------------------------------------
