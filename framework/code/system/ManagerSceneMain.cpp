@@ -32,7 +32,7 @@
 //******************************************************************************
 bool ManagerSceneMain::demoFlag = false;
 int ManagerSceneMain::demoCount = 0;
-int ManagerSceneMain::demoCountMax = 600;
+int ManagerSceneMain::demoCountMax = 780;
 
 //==============================================================================
 // Brief  : コンストラクタ

@@ -1248,3 +1248,13 @@ void Fireworks::setManagerLight(ManagerLight* _managerLight)
 {
 	managerLight = _managerLight;
 }
+
+void Fireworks::posUp1()
+{
+	//	ベジェ曲線の計算
+	float buffTime = (1.0f / (float)param.deleteCountMax) * (float)(param.disappear + 1);
+	D3DXVECTOR3 f1 = (1.0f - buffTime) * (1.0f - buffTime) * param.startPos;
+	D3DXVECTOR3 f2 = (1.0f - buffTime) * buffTime * 2.0f * param.buffPos1;
+	D3DXVECTOR3 f3 = buffTime * buffTime * param.endPos;
+	param.pos = f1 + f2 + f3;
+}

@@ -783,7 +783,7 @@ void SceneGame::demoUpdate(void)
 	//	コンボが一定数になったら、シンクロ花火発射
 	if(combo->getScore() != combo->getScorePrev())
 	{
-		if(combo->getScore() % 10 == 0)
+		if(combo->getScore() % 5 == 0)
 		{
 			LaunchSP();
 		}
@@ -1331,6 +1331,7 @@ void SceneGame::collision_fireworks_targetAuto()
 	{
 		//	花火の情報取得
 		Fireworks* buffFireworks = managerFireworks->getFireworks(fireworksTable[fireworksCount]);
+
 		if(buffFireworks->IsBurnFlag())
 			continue;
 
@@ -1338,6 +1339,7 @@ void SceneGame::collision_fireworks_targetAuto()
 			continue;
 
 		//	花火の位置情報取得
+		buffFireworks->posUp1();
 		D3DXVECTOR3 buffFireworksPos = buffFireworks->getPosition();
 
 		//	存在するターゲットの数分ループ
@@ -1369,10 +1371,6 @@ void SceneGame::collision_fireworks_targetAuto()
 					AddGage(1.0f);
 				}
 				//----------------------------------------------------------------------------------
-
-				//	スペシャル花火の発射
-				if(buffTarget->getColorState() == COLOR_STATE_S)
-					LaunchSP();
 
 				//	コンボ数加算
 				combo->addScore();

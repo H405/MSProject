@@ -280,6 +280,8 @@ public:
 	void setBurnSPFlag(bool _flag){param.burnSPFlag = _flag;}
 	bool getBurnSPFlag(){return param.burnSPFlag;}
 
+	void posUp1();
+
 protected:
 
 	// ステート
