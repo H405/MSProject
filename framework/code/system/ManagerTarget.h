@@ -101,6 +101,7 @@ public:
 	// Arg    : void								: なし
 	//==============================================================================
 	void Update(int* _table , int* _fireworksTableIndex);
+	void Update(int* _table , int* _targetTableIndex, bool* _tableSP);
 
 	//==============================================================================
 	// Brief  : ターゲット発射処理
@@ -122,6 +123,7 @@ public:
 	// Arg    : void								: なし
 	//==============================================================================
 	void Sort(int* _table, int _deleteIndex);
+	void Sort(int* _table, int _deleteIndex, bool* _tableSP);
 
 	//==============================================================================
 	// Brief  : ターゲット生成スクリプト読み込み処理

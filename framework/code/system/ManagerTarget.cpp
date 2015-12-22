@@ -175,6 +175,63 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 	}
 }
 //==============================================================================
+// Brief  : 更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ManagerTarget::Update(int* _table , int* _targetTableIndex, bool* _tableSP)
+{
+	//	自動で生成
+	if(ManagerSceneMain::demoFlag == false)
+		autoAppear(_table, _targetTableIndex);
+
+	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
+	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[counterPoint] == true &&
+			target[counterPoint].IsEnable() == false)
+		{
+			Sort(_table, counterPoint, _tableSP);
+			*_targetTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[ counterPoint ] = target[ counterPoint ].IsEnable();
+
+		// 使用されていないとき次へ
+		if( !target[ counterPoint ].IsEnable() )
+		{
+			continue;
+		}
+	}
+
+	//	更新
+	for(int count = 0; count < *_targetTableIndex;count++)
+	{
+		target[_table[count]].setInvViewMatrix(invViewMatrix);
+		target[_table[count]].Update();
+	}
+
+	//	更新の後にもテーブル確認
+	for( int count = 0; count < TARGET_MAX; ++count )
+	{
+		//	消えた瞬間を判定して、テーブルを再構築
+		if(enableOld[count] == true &&
+			target[count].IsEnable() == false)
+		{
+			Sort(_table, count);
+			*_targetTableIndex -= 1;
+		}
+
+		//	使用状態の前情報を保存
+		enableOld[count] = target[count].IsEnable();
+
+		// 使用されていないとき次へ
+		if( !target[count].IsEnable() )
+			continue;
+	}
+}
+//==============================================================================
 // Brief  : 自動生成処理
 // Return : void								: なし
 // Arg    : void								: なし
@@ -252,6 +309,47 @@ void ManagerTarget::Sort(int* _table, int _deleteIndex)
 		if(_table[count] == _deleteIndex)
 			tempIndex = count;
 	}
+
+	//	配列保存用の一時カウンタ
+	int tempCount = 0;
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		//	削除する番号以外
+		if(count != tempIndex)
+		{
+			_table[tempCount] = tempTable[count];
+			tempCount++;
+		}
+	}
+
+	//	最後に-1追加
+	_table[TARGET_MAX - 1] = -1;
+}
+//==============================================================================
+// Brief  : テーブルのソート処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void ManagerTarget::Sort(int* _table, int _deleteIndex, bool* _tableSP)
+{
+	//	消去するテーブル番号の一時保存
+	int tempIndex;
+
+	//	テーブルを全て一時保存
+	int tempTable[TARGET_MAX];
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		//	テーブルを全て一時保存
+		tempTable[count] = _table[count];
+
+		//	消去するテーブル番号の一時保存
+		if(_table[count] == _deleteIndex)
+			tempIndex = count;
+	}
+
+	_tableSP[tempIndex] = false;
 
 	//	配列保存用の一時カウンタ
 	int tempCount = 0;

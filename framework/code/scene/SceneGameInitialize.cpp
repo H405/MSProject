@@ -590,7 +590,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		);
 
 	if(ManagerSceneMain::demoFlag == false)
-		managerTarget->ReadTargetScriptFromFile("data/script/script_test2.txt");
+		managerTarget->ReadTargetScriptFromFile("data/script/script_test.txt");
 
 
 	//	プレイヤーオブジェクト(Posはカメラとの相対座標)

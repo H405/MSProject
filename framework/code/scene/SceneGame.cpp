@@ -112,6 +112,8 @@ SceneGame::SceneGame( void ) : SceneMain()
 	// クラス内の初期化処理
 	InitializeSelf();
 
+	synchronizeFlag = false;
+
 #ifdef _TEST
 	autoLaunchCount = 0;
 	autoLaunchTarget = 0;
@@ -359,6 +361,7 @@ void SceneGame::Launch()
 void SceneGame::LaunchAuto()
 {
 	if(fabsf(wiiContoroller->getAccelerationY()) >= 1.0f && wiiContoroller->getRelease(WC_B))
+	//if(pArgument_->pKeyboard_->IsTrigger(DIK_U))
 	{
 		Target* autoTarget = nullptr;
 		for(int count = 0;count < targetTableIndex;count++)
@@ -390,6 +393,12 @@ void SceneGame::LaunchAuto()
 				fireworksTableIndex++;
 			}
 		}
+	}
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		if(targetTable[count] == -1)
+			autoLaunchTable[count] = false;
 	}
 }
 void SceneGame::LaunchSP()
@@ -461,7 +470,7 @@ void SceneGame::normalUpdate(void)
 	}
 	//	ターゲットクラスの更新
 	managerTarget->setInvViewMatrix(cameraInvMat);
-	managerTarget->Update(targetTable, &targetTableIndex);
+	managerTarget->Update(targetTable, &targetTableIndex, autoLaunchTable);
 	{
 		// ポイントスプライト管理クラスの更新
 		//MeasureTime("managerPoint");
@@ -508,8 +517,19 @@ void SceneGame::normalUpdate(void)
 	//	PrintDebug( _T( "fireworksTable[%d] = %d\n"), count, fireworksTable[count]);
 	PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
 	for(int count = 0;count < TARGET_MAX;count++)
+	{
 		PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
+		PrintDebug( _T( "autoLaunchTable[%d] = %d\n"), count, autoLaunchTable[count]);
+	}
 
+
+	if(wiiContoroller->getTrigger(WC_TWO))
+	{
+		if(synchronizeFlag == false)
+			synchronizeFlag = true;
+		else
+			synchronizeFlag = false;
+	}
 
 
 	//	テスト用ここから
@@ -607,14 +627,14 @@ void SceneGame::normalUpdate(void)
 	collision_fireworks_fireworks();
 
 	//	コンボが一定数になったら、シンクロ花火発射
-	if(combo->getScore() != combo->getScorePrev())
+	/*if(combo->getScore() != combo->getScorePrev())
 	{
-		if(combo->getScore() % 10 == 0)
+		if(combo->getScore() % 25 == 0)
 		{
 			LaunchSP();
 		}
 	}
-
+	*/
 
 
 #ifdef _TEST
@@ -730,7 +750,7 @@ void SceneGame::normalUpdate(void)
 	if(autoLaunchFlag == true)
 	{
 		autoLaunchCount++;
-		if(autoLaunchCount == 50)
+		if(autoLaunchCount >= 150)
 		{
 			int buff2 = -1;
 			D3DXVECTOR3 buffPos = player->getPosition();
@@ -1467,6 +1487,14 @@ void SceneGame::collision_fireworks_targetAuto()
 				int returnValue = buffFireworks->burnNew151220(buffTargetSize * buffTargetSize, hitPosLength);
 
 				autoLaunchTable[targetTable[targetCount]] = false;
+
+
+				if(synchronizeFlag == true)
+				{
+					synchronizeFlag = false;
+					LaunchSP();
+				}
+
 
 				//	ゲージ加算
 				//----------------------------------------------------------------------------------

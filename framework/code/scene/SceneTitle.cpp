@@ -619,7 +619,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	cancelSound = pArgument_->pSound_->Get("se/cancel.wav");
 
 
-	//DebugProc::SetIsVisible(false);
+	DebugProc::SetIsVisible(false);
 
 
 	//	更新関数セット

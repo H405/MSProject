@@ -530,6 +530,8 @@ private:
 	bool autoLaunchTable[TARGET_MAX];
 	bool selfLaunchFlag;
 
+	bool synchronizeFlag;
+
 #ifdef _TEST
 	int autoLaunchCount;
 	int autoLaunchTarget;

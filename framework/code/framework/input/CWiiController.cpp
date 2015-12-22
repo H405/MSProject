@@ -844,11 +844,11 @@ void CWiiController::CommonUpdate()
 		//	’l‚ÌŠi”[
 		kg = wiiBoard->BalanceBoard.Kg;
 
-		//PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
-		//PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
-		//PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
-		//PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
-		//PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
+		PrintDebug( _T( "atRestKg.BottomL = %f\n" ),	calibKg.BottomL);
+		PrintDebug( _T( "atRestKg.BottomR = %f\n" ),	calibKg.BottomR);
+		PrintDebug( _T( "atRestKg.TopL = %f\n" ),		calibKg.TopL);
+		PrintDebug( _T( "atRestKg.TopR = %f\n" ),		calibKg.TopR);
+		PrintDebug( _T( "atRestKg.Total = %f\n" ),		calibKg.Total);
 
 		//PrintDebug( _T( "Kg.BottomL = %f\n" ),	kg.BottomL);
 		//PrintDebug( _T( "Kg.BottomR = %f\n" ),	kg.BottomR);
@@ -1375,11 +1375,9 @@ void CWiiController::updateMode5()
 }
 void CWiiController::calibrationWiiboard()
 {
-#ifndef UPDATE_READ
 	if(wiiBoard != nullptr)
 	{
-		wiiBoard->CalibrateAtRest();calibKg = wiiBoard->BalanceBoard.AtRestKg;
+		wiiBoard->CalibrateAtRest();calibKg = wiiBoard->BalanceBoard.Kg;
 	}
-#endif
 }
 //-----------------------------------EOF---------------------------------------
