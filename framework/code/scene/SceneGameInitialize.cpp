@@ -390,7 +390,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Effect*	pEffectFieldReflect = nullptr;			// 反射エフェクト
 	Effect*	pEffectFieldShadow = nullptr;			// 影エフェクト
 	Effect*	pEffectFieldParaboloid = nullptr;		// 放物変換エフェクト
-	pModelField = pArgument->pModel_->Get( _T( "Stagever.1.03.x" ) );
+	pModelField = pArgument->pModel_->Get( _T( "Stage_ver103.x" ) );
 	pEffectFieldGeneral = pArgument->pEffect_->Get( "Model.fx" );
 	pEffectFieldReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
 	pEffectFieldShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
@@ -471,7 +471,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Effect*	pEffectGateReflect = nullptr;			// 反射エフェクト
 	Effect*	pEffectGateShadow = nullptr;			// 影エフェクト
 	Effect*	pEffectGateParaboloid = nullptr;		// 放物変換エフェクト
-	pModelGate = pArgument->pModel_->Get( _T( "torii.x" ) );
+	pModelGate = pArgument->pModel_->Get( _T( "torii_002.x" ) );
 	pEffectGateGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
 	pEffectGateReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
 	pEffectGateShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
