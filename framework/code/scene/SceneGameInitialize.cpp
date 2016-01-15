@@ -310,19 +310,18 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 
 
-	// 学内審査用に開始ステージを家に
+	// 視点の初期位置を設定
 	D3DXVECTOR3	positionCamera;		// 視点座標
 	D3DXVECTOR3	positionLookAt;		// 視点座標
-	pStateCameraBetween_[ 1 ].GetPositionCamera( 0, 0, &positionCamera );
-	pStateCameraBetween_[ 1 ].GetPositionLookAt( 0, 0, &positionLookAt );
+	pStateCameraPrevious_->GetPositionCamera( 0, 0, &positionCamera );
+	pStateCameraPrevious_->GetPositionLookAt( 0, 0, &positionLookAt );
 	pCamera_->SetPositionCamera( positionCamera );
 	pCamera_->SetPositionLookAt( positionLookAt );
-	indexSection_ = 1;
 
 
 	//	更新関数設定
 	if(ManagerSceneMain::demoFlag == false)
-		fpUpdate = &SceneGame::calibrationUpdate;
+		fpUpdate = &SceneGame::UpdatePreviousGame;//::calibrationUpdate;
 	else
 	{
 		fpUpdate = &SceneGame::demoUpdate;

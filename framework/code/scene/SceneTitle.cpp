@@ -847,6 +847,9 @@ void SceneTitle::Update( void )
 		}
 	}
 
+	// カメラの焦点を更新
+	pArgument_->pEffectParameter_->SetForcus( 0.5f * pCamera_->GetViewZ( positionLookAt ) );
+
 	//	設定された更新クラスへ
 	(this->*fpUpdate)();
 }

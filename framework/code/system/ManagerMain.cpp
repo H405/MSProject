@@ -437,6 +437,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	{
 		return result;
 	}
+	DebugProc::SetIsVisible( false );
 
 	// 更新管理クラスの生成
 	pUpdate_ = new ManagerUpdate< Object >();
