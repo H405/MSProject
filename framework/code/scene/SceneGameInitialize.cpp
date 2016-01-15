@@ -408,11 +408,11 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	Effect*	pEffectBridgeShadow = nullptr;			// 影エフェクト
 	Effect*	pEffectBridgeParaboloid = nullptr;		// 放物変換エフェクト
 	pModelBridge = pArgument->pModel_->Get( _T( "bridge_002.x" ) );
-	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
-	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectBridgeGeneral = pArgument->pEffect_->Get( "Model.fx" );
+	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
 	pEffectBridgeShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
 	pEffectBridgeParaboloid = pArgument->pEffect_->Get( "ModelParaboloid.fx" );
-	bridge = new ObjectModelMaterial();
+	bridge = new ObjectModel();
 	bridge->Initialize( 0 );
 	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect, pEffectBridgeShadow, pEffectBridgeParaboloid );
 	bridge->SetPosition( 1558.0f, 460.0f, -2240.0f );
@@ -481,7 +481,7 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	gate->CreateGraphic( 0, pModelGate, pArgument->pEffectParameter_, pEffectGateGeneral, pEffectGateReflect, pEffectGateShadow, pEffectGateParaboloid );
 	gate->SetPosition( 5870.0f, 0.0f, -400.0f );
 	gate->SetRotationY( DEG_TO_RAD( 90 ) );
-	gate->SetScale( 1.0f, 1.0f, 1.0f );
+	gate->SetScale( 55.0f, 55.0f, 55.0f );
 
 	// 草の生成
 	Texture*	pTextureGrass = nullptr;		// テクスチャ
@@ -516,10 +516,10 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	markers = new ObjectSkinMesh[ 4 ];
 	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
 	{
-		markers[ counterMarker ].Initialize( 0, 0 );
+		markers[ counterMarker ].Initialize( 0, 1 );
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
-//		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
+		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
 	}
 	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
 	markers[ 0 ].SetRotationY( 0.0f );

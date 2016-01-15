@@ -224,7 +224,7 @@ private:
 	ObjectRiver*			river;			// êÏ
 	ObjectModel*			field;			// ínå`
 
-	ObjectModelMaterial*	bridge;			// ã¥
+	ObjectModel*			bridge;			// ã¥
 	ObjectWaterwheel*		waterwheel;		// êÖé‘
 	ObjectModelMaterial*	houses;			// â∆
 	ObjectModelMaterial*	gate;			// íπãè

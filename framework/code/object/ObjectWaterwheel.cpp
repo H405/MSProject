@@ -11,7 +11,7 @@
 // インクルード
 //******************************************************************************
 #include "ObjectWaterwheel.h"
-#include "ObjectModelMaterial.h"
+#include "ObjectModel.h"
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerModel.h"
 #include "../system/SceneArgumentMain.h"
@@ -81,24 +81,24 @@ int ObjectWaterwheel::Initialize(
 	Model*		pModel = nullptr;
 
 	//	水車固定用の台生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "suisya_dai_002.x" ) );
-	stand = new ObjectModelMaterial();
+	stand = new ObjectModel();
 	stand->Initialize(0);
 	stand->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	stand->SetPosition(pos);
 	stand->SetRotationY(_rotY);
 
 	//	水車生成
-	pEffect = pArgument->pEffect_->Get( _T( "ModelMaterial.fx" ) );
-	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelMaterialReflect.fx" ) );
+	pEffect = pArgument->pEffect_->Get( _T( "Model.fx" ) );
+	pEffectReflect = pArgument->pEffect_->Get( _T( "ModelReflect.fx" ) );
 	pEffectShadow = pArgument->pEffect_->Get( _T( "ModelShadow.fx" ) );
 	pEffectParaboloid = pArgument->pEffect_->Get( _T( "ModelParaboloid.fx" ) );
 	pModel = pArgument->pModel_->Get( _T( "suisya_gear_002.x" ) );
-	wheel = new ObjectModelMaterial();
+	wheel = new ObjectModel();
 	wheel->Initialize(0);
 	wheel->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	wheel->SetPosition(pos);

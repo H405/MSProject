@@ -306,11 +306,11 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 	Effect*	pEffectBridgeShadow = nullptr;			// 影エフェクト
 	Effect*	pEffectBridgeParaboloid = nullptr;		// 放物変換エフェクト
 	pModelBridge = pArgument->pModel_->Get( _T( "bridge_002.x" ) );
-	pEffectBridgeGeneral = pArgument->pEffect_->Get( "ModelMaterial.fx" );
-	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelMaterialReflect.fx" );
+	pEffectBridgeGeneral = pArgument->pEffect_->Get( "Model.fx" );
+	pEffectBridgeReflect = pArgument->pEffect_->Get( "ModelReflect.fx" );
 	pEffectBridgeShadow = pArgument->pEffect_->Get( "ModelShadow.fx" );
 	pEffectBridgeParaboloid = pArgument->pEffect_->Get( "ModelParaboloid.fx" );
-	bridge = new ObjectModelMaterial();
+	bridge = new ObjectModel();
 	bridge->Initialize( 0 );
 	bridge->CreateGraphic( 0, pModelBridge, pArgument->pEffectParameter_, pEffectBridgeGeneral, pEffectBridgeReflect, pEffectBridgeShadow, pEffectBridgeParaboloid );
 	bridge->SetPosition( 1558.0f, 460.0f, -2240.0f );

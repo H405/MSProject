@@ -29,7 +29,7 @@
 //******************************************************************************
 // クラス前方宣言
 //******************************************************************************
-class ObjectModelMaterial;
+class ObjectModel;
 class SceneArgumentMain;
 
 //******************************************************************************
@@ -89,8 +89,8 @@ protected:
 	//	Z軸の回転速度（１アップデートでどのくらい回転するか）
 	float rotSpeed;
 
-	ObjectModelMaterial* stand;
-	ObjectModelMaterial* wheel;
+	ObjectModel* stand;
+	ObjectModel* wheel;
 
 private:
 	void InitializeSelf( void );

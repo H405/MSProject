@@ -914,7 +914,7 @@ void SceneGame::UpdateTest( void )
 	// オブジェクトの移動
 	Object*	pObject = nullptr;		// 移動対象オブジェクト
 	float	velocity;				// 移動速度
-	pObject = &markers[ 2 ];
+	pObject = gate;
 	if( pArgument_->pKeyboard_->IsPress( DIK_LCONTROL ) )
 	{
 		velocity = 10.0f;
