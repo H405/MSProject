@@ -270,3 +270,47 @@ void Gage::setPosition(float _x, float _y, float _z)
 	// 基本クラスの処理
 	ObjectMovement::Update();
 }
+
+//==============================================================================
+// Brief  : 描画クラスの有効設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void Gage::SetEnableGraphic( bool value )
+{
+	// 値の設定
+	for( int counterItem = 0; counterItem < GAGEBAR_MAX; ++counterItem )
+	{
+		gageBar[ counterItem ].SetEnableGraphic( value );
+	}
+	gageBase->SetEnableGraphic( value );
+	gageBack->SetEnableGraphic( value );
+}
+
+//==============================================================================
+// Brief  : 色のアルファ値の設定
+// Return : void								: なし
+// Arg    : float alpha							: アルファ値
+//==============================================================================
+void Gage::SetColorAlpha( float alpha )
+{
+	// 値の設定
+	for( int counterItem = 0; counterItem < GAGEBAR_MAX; ++counterItem )
+	{
+		gageBar[ counterItem ].SetColorAlpha( alpha );
+	}
+	gageBase->SetColorAlpha( alpha );
+	gageBack->SetColorAlpha( alpha );
+	gageScore->SetColorAlpha( alpha );
+}
+
+//==============================================================================
+// Brief  : 割合の非表示
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void Gage::SetEnableGraphicPercent( bool value )
+{
+	// 値の設定
+	gageScore->SetEnableGraphic( value );
+}

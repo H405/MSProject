@@ -18,11 +18,14 @@
 #include "../framework/resource/ManagerEffect.h"
 #include "../framework/resource/ManagerTexture.h"
 #include "../framework/resource/Texture.h"
+#include "../framework/system/Fade.h"
 #include "../graphic/graphic/GraphicMain.h"
 #include "../object/Object2D.h"
 #include "../object/ObjectScore.h"
 #include "../object/ObjectSkinMesh.h"
 #include "../system/camera/CameraStateSpline.h"
+#include "../system/combo/combo.h"
+#include "../system/gage/gage.h"
 #include "../system/SceneArgumentMain.h"
 
 // テスト用
@@ -32,6 +35,7 @@
 #include "../object/ObjectModel.h"
 #include "../object/ObjectModelMaterial.h"
 #include "../system/point/ManagerPoint.h"
+#include "../system/ManagerSceneMain.h"
 
 //******************************************************************************
 // ライブラリ
@@ -97,7 +101,21 @@ int SceneGame::Initialize2( void )
 		return result;
 	}
 
+	// フォントテクスチャの読み込み
+	Texture*	pTextureFont = nullptr;		// フォントテクスチャ
+	pTextureFont = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
+
+	// 枠付き数字テクスチャの読み込み
+	Texture*	pTextureNumberEdge = nullptr;		// 数字テクスチャ
+	pTextureNumberEdge = pArgument_->pTexture_->Get( _T( "common/numberEdge.png" ) );
+
 	// カウントダウン画像オブジェクトの生成
+	TCHAR	pNameFileTextureCount[][ _MAX_PATH ] =
+	{
+		_T( "game/count3.png" ),
+		_T( "game/count2.png" ),
+		_T( "game/count1.png" )
+	};
 	Effect*	pEffect2D = nullptr;		// 2D描画エフェクト
 	pEffect2D = pArgument_->pEffect_->Get( "Polygon2D.fx" );
 	pObjectCount_ = new Object2D[ IMAGE_COUNT_MAXIMUM ];
@@ -105,10 +123,23 @@ int SceneGame::Initialize2( void )
 	{
 		return 1;
 	}
+	for( int counterCount = 0; counterCount < IMAGE_COUNT_MAXIMUM - 1; ++counterCount )
+	{
+		Texture*	pTextureCount = nullptr;		// テクスチャ
+		pTextureCount = pArgument_->pTexture_->Get( &pNameFileTextureCount[ counterCount ][ 0 ] );
+		result = pObjectCount_[ counterCount ].Initialize( 0 );
+		if( result != 0 )
+		{
+			return result;
+		}
+		result = pObjectCount_[ counterCount ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureCount );
+		if( result != 0 )
+		{
+			return result;
+		}
+	}
 
 	// 演武開始
-	Texture*	pTextureFont = nullptr;		// フォントテクスチャ
-	pTextureFont = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
 	result = pObjectCount_[ IMAGE_COUNT_START ].Initialize( 0 );
 	if( result != 0 )
 	{
@@ -120,10 +151,11 @@ int SceneGame::Initialize2( void )
 		return result;
 	}
 	pObjectCount_[ IMAGE_COUNT_START ].SetPosition( 0.0f, 0.0f, 0.0f );
-	pObjectCount_[ IMAGE_COUNT_START ].SetScale( pTextureFont->width_ / 2.0f, pTextureFont->height_ / 12.0f, 1.0f );
-	pObjectCount_[ IMAGE_COUNT_START ].SetPositionTextureY( 5.0f / 12.0f );
-	pObjectCount_[ IMAGE_COUNT_START ].SetScaleTexture( 2.0f, 12.0f );
-	pObjectCount_[ IMAGE_COUNT_START ].SetEnableGraphic( false );
+	pObjectCount_[ IMAGE_COUNT_START ].SetScale( 4.0f * 256.0f, 1.0f * 256.0f, 1.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetWidth( 4.0f * 256.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetHeight( 1.0f * 256.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetScaleTexture( 16.0f / 4.0f, 16.0f / 1.0f );
+	pObjectCount_[ IMAGE_COUNT_START ].SetPositionTexture( 0.0f / 16.0f, 2.0f / 16.0f );
 
 	// リザルト画像オブジェクトの生成
 	pObjectResult_ = new Object2D[ IMAGE_RESULT_MAXIMUM ];
@@ -147,58 +179,96 @@ int SceneGame::Initialize2( void )
 	}
 	pObjectResult_[ IMAGE_RESULT_BACK ].SetPosition( 320.0f, 0.0f, 0.0f );
 
+	// リザルトゲージオブジェクト生成
+	Texture*	pTextureGageBar = nullptr;			// テクスチャ
+	Texture*	pTextureGageBase = nullptr;			// テクスチャ
+	Texture*	pTextureGageEffect = nullptr;		// テクスチャ
+	Texture*	pTextureGageNumber = nullptr;		// テクスチャ
+	Effect*		pEffectGage = nullptr;				// エフェクト
+	Effect*		pEffectGageAdd = nullptr;			// エフェクト
+	pTextureGageBar = pArgument_->pTexture_->Get( _T( "game/gageBar.png" ) );
+	pTextureGageBase = pArgument_->pTexture_->Get( _T( "game/gageBase.png" ) );
+	pTextureGageEffect = pArgument_->pTexture_->Get( _T( "game/effect.png" ) );
+	pTextureGageNumber = pArgument_->pTexture_->Get( _T( "common/number.png" ) );
+	pEffectGage = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
+	pEffectGageAdd = pArgument_->pEffect_->Get( _T( "Polygon2DAdd.fx" ) );
+	pObjectGageResult_ = new Gage();
+	pObjectGageResult_->Initialize( pArgument_->pDevice_, pArgument_->pEffectParameter_, pEffectGage, pEffectGageAdd,
+		pTextureGageBar, pTextureGageBase, pTextureGageEffect, pTextureGageNumber );
+	pObjectGageResult_->setPosition( 195.0f, -50.0f, 0.0f );
+	pObjectGageResult_->SetEnableGraphicPercent( false );
+
 	// リザルトロゴ
-	Texture*	pTextureResultLogo = nullptr;		// ロゴテクスチャ
-	pTextureResultLogo = pArgument_->pTexture_->Get( _T( "result/result_logo.png" ) );
 	result = pObjectResult_[ IMAGE_RESULT_LOGO ].Initialize( 0 );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pObjectResult_[ IMAGE_RESULT_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureResultLogo );
+	result = pObjectResult_[ IMAGE_RESULT_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureFont );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pObjectResult_[ IMAGE_RESULT_LOGO ].SetPosition( 320.0f, 300.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetPosition( 320.0f, 55.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetScale( 4.0f * 64.0f, 1.0f * 64.0f, 1.0f );
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetWidth( 4.0f * 64.0f );
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetHeight( 1.0f * 64.0f );
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetScaleTexture( 16.0f / 4.0f, 16.0f / 1.0f );
+	pObjectResult_[ IMAGE_RESULT_LOGO ].SetPositionTexture( 0.0f / 16.0f, 4.0f / 16.0f );
 
-	// シンクロ率
-	Texture*	pTextureSyncronize = nullptr;		// ロゴテクスチャ
-	pTextureSyncronize = pArgument_->pTexture_->Get( _T( "result/synchronize.png" ) );
-	result = pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].Initialize( 0 );
+	// パーセント
+	result = pObjectResult_[ IMAGE_RESULT_PERCENT ].Initialize( 0 );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureSyncronize );
+	result = pObjectResult_[ IMAGE_RESULT_PERCENT ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureFont );
 	if( result != 0 )
 	{
 		return result;
 	}
-	pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetPosition( 280.0f, 100.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_PERCENT ].SetPosition( 490.0f, -15.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_PERCENT ].SetScale( 1.0f * 64.0f, 1.0f * 64.0f, 1.0f );
+	pObjectResult_[ IMAGE_RESULT_PERCENT ].SetWidth( 1.0f * 64.0f );
+	pObjectResult_[ IMAGE_RESULT_PERCENT ].SetHeight( 1.0f * 64.0f );
+	pObjectResult_[ IMAGE_RESULT_PERCENT ].SetScaleTexture( 16.0f / 1.0f, 16.0f / 1.0f );
+	pObjectResult_[ IMAGE_RESULT_PERCENT ].SetPositionTexture( 0.0f / 16.0f, 3.0f / 16.0f );
 
-	// 判定
-	Texture*	pTextureJudge = nullptr;		// 判定テクスチャ
-	float		heightJudge;					// 判定画像の高さ
-	pTextureJudge = pArgument_->pTexture_->Get( _T( "result/judge.png" ) );
-	for( int counterJudge = 0; counterJudge < 3; ++counterJudge )
+	// 連発
+	result = pObjectResult_[ IMAGE_RESULT_COMBO ].Initialize( 0 );
+	if( result != 0 )
 	{
-		result = pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].Initialize( 0 );
-		if( result != 0 )
-		{
-			return result;
-		}
-		result = pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureJudge );
-		if( result != 0 )
-		{
-			return result;
-		}
-		heightJudge = pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].GetScaleY();
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetScaleY( heightJudge / 4.0f );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPositionTextureY( 0.25f * counterJudge );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetScaleTextureY( 4.0f );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 + counterJudge ].SetPosition( 200.0f, -100.0f * counterJudge, 0.0f );
+		return result;
 	}
+	result = pObjectResult_[ IMAGE_RESULT_COMBO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureFont );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_COMBO ].SetPosition( 470.0f, -85.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_COMBO ].SetScale( 2.0f * 64.0f, 1.0f * 64.0f, 1.0f );
+	pObjectResult_[ IMAGE_RESULT_COMBO ].SetWidth( 2.0f * 64.0f );
+	pObjectResult_[ IMAGE_RESULT_COMBO ].SetHeight( 1.0f * 64.0f );
+	pObjectResult_[ IMAGE_RESULT_COMBO ].SetScaleTexture( 16.0f / 2.0f, 16.0f / 1.0f );
+	pObjectResult_[ IMAGE_RESULT_COMBO ].SetPositionTexture( 4.0f / 16.0f, 4.0f / 16.0f );
+
+	// スコア
+	result = pObjectResult_[ IMAGE_RESULT_SCORE ].Initialize( 0 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectResult_[ IMAGE_RESULT_SCORE ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureFont );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectResult_[ IMAGE_RESULT_SCORE ].SetPosition( 210.0f, -145.0f, 0.0f );
+	pObjectResult_[ IMAGE_RESULT_SCORE ].SetScale( 4.0f * 48.0f, 1.0f * 48.0f, 1.0f );
+	pObjectResult_[ IMAGE_RESULT_SCORE ].SetWidth( 4.0f * 48.0f );
+	pObjectResult_[ IMAGE_RESULT_SCORE ].SetHeight( 1.0f * 48.0f );
+	pObjectResult_[ IMAGE_RESULT_SCORE ].SetScaleTexture( 16.0f / 4.0f, 16.0f / 1.0f );
+	pObjectResult_[ IMAGE_RESULT_SCORE ].SetPositionTexture( 0.0f / 16.0f, 0.0f / 16.0f );
 
 	// ランキングへ
 	Texture*	pTextureToRanking = nullptr;		// ランキングへテクスチャ
@@ -230,6 +300,66 @@ int SceneGame::Initialize2( void )
 	}
 	pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetPosition( -220.0f, -305.0f, 0.0f );
 
+	// リザルトシンクロ率オブジェクト
+	pObjectSynchronizeResult_ = new ObjectScore();
+	if( pObjectSynchronizeResult_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectSynchronizeResult_->Initialize( 0, 3 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectSynchronizeResult_->CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureNumberEdge );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectSynchronizeResult_->SetPos( 340.0f, -15.0f, 0.0f );
+	pObjectSynchronizeResult_->SetSizeX( static_cast< float >( pTextureNumberEdge->width_ ) / 16.0f );
+	pObjectSynchronizeResult_->SetSizeY( static_cast< float >( pTextureNumberEdge->height_ ) / 2.0f );
+
+	// リザルトコンボオブジェクト
+	pObjectComboResult_ = new ObjectScore();
+	if( pObjectComboResult_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectComboResult_->Initialize( 0, 3 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectComboResult_->CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureNumberEdge );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectComboResult_->SetPos( 290.0f, -85.0f, 0.0f );
+	pObjectComboResult_->SetSizeX( 36.0f );
+	pObjectComboResult_->SetSizeY( 36.0f );
+
+	// リザルトスコアオブジェクト
+	pObjectScoreResult_ = new ObjectScore();
+	if( pObjectScoreResult_ == nullptr )
+	{
+		return 1;
+	}
+	result = pObjectScoreResult_->Initialize( 0, 10 );
+	if( result != 0 )
+	{
+		return result;
+	}
+	result = pObjectScoreResult_->CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureNumberEdge );
+	if( result != 0 )
+	{
+		return result;
+	}
+	pObjectScoreResult_->SetPos( 175.0f, -195.0f, 0.0f );
+	pObjectScoreResult_->SetSizeX( 24.0f );
+	pObjectScoreResult_->SetSizeY( 24.0f );
+
 	// ランキング画像オブジェクトの生成
 	pObjectRanking_ = new Object2D[ IMAGE_RANKING_MAXIMUM ];
 	if( pObjectRanking_ == nullptr )
@@ -238,24 +368,24 @@ int SceneGame::Initialize2( void )
 	}
 
 	// ランキングロゴ
-	Texture*	pTextureRankingLogo = nullptr;		// ロゴテクスチャ
-	pTextureRankingLogo = pArgument_->pTexture_->Get( _T( "ranking/ranking_logo.png" ) );
 	result = pObjectRanking_[ IMAGE_RANKING_LOGO ].Initialize( 0 );
 	if( result != 0 )
 	{
 		return result;
 	}
-	result = pObjectRanking_[ IMAGE_RANKING_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureRankingLogo );
+	result = pObjectRanking_[ IMAGE_RANKING_LOGO ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureFont );
 	if( result != 0 )
 	{
 		return result;
 	}
 	pObjectRanking_[ IMAGE_RANKING_LOGO ].SetPosition( 0.0f, 300.0f, 0.0f );
+	pObjectRanking_[ IMAGE_RANKING_LOGO ].SetScale( 4.0f * 64.0f, 1.0f * 64.0f, 1.0f );
+	pObjectRanking_[ IMAGE_RANKING_LOGO ].SetWidth( 4.0f * 64.0f );
+	pObjectRanking_[ IMAGE_RANKING_LOGO ].SetHeight( 1.0f * 64.0f );
+	pObjectRanking_[ IMAGE_RANKING_LOGO ].SetScaleTexture( 16.0f / 4.0f, 16.0f / 1.0f );
+	pObjectRanking_[ IMAGE_RANKING_LOGO ].SetPositionTexture( 0.0f / 16.0f, 4.0f / 16.0f );
 
 	// ランク
-	Texture*	pTextureRank = nullptr;		// ロゴテクスチャ
-	float		heightRank;					// ランキング画像高さ
-	pTextureRank = pArgument_->pTexture_->Get( _T( "ranking/rank.png" ) );
 	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
 	{
 		result = pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].Initialize( 0 );
@@ -263,16 +393,16 @@ int SceneGame::Initialize2( void )
 		{
 			return result;
 		}
-		result = pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureRank );
+		result = pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].CreateGraphic( 0, pArgument_->pEffectParameter_, pEffect2D, pTextureNumberEdge );
 		if( result != 0 )
 		{
 			return result;
 		}
-		heightRank = pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].GetScaleY();
-		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetPosition( -500.0f, 170.0f - 120.0f * counterRank, 0.0f );
-		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetScaleY( heightRank / 8.0f );
-		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetScaleTextureY( 8.0f );
-		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetPositionTextureY( 1.0f / 8.0f * counterRank );
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetPosition( -500.0f, 190.0f - 120.0f * counterRank, 0.0f );
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetScaleX( 128.0f );
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetScaleY( 128.0f );
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetScaleTextureX( 10.0f );
+		pObjectRanking_[ IMAGE_RANKING_RANK_1 + counterRank ].SetPositionTextureX( 1.0f / 10.0f * (counterRank + 1) );
 	}
 
 	// ランキングスコアオブジェクト
@@ -295,9 +425,12 @@ int SceneGame::Initialize2( void )
 		{
 			return result;
 		}
-		pObjectScoreRanking_[ counterRank ].SetSizeX( static_cast< float >( pTextureNumber->width_ ) / 8.0f );
+		pObjectScoreRanking_[ counterRank ].SetSizeX( static_cast< float >( pTextureNumber->width_ ) / 10.0f );
 		pObjectScoreRanking_[ counterRank ].SetEnableGraphic( false );
 	}
+
+	// カウントダウンオブジェクトの非表示
+	DisableObjectCount();
 
 	// リザルトオブジェクトの非表示
 	DisableObjectResult();
@@ -323,6 +456,22 @@ int SceneGame::Finalize2( void )
 	// ランキング画像オブジェクトの開放
 	delete[] pObjectRanking_;
 	pObjectRanking_ = nullptr;
+
+	// リザルトスコアオブジェクトの開放
+	delete pObjectScoreResult_;
+	pObjectScoreResult_ = nullptr;
+
+	// リザルトコンボオブジェクトの開放
+	delete pObjectComboResult_;
+	pObjectComboResult_ = nullptr;
+
+	// リザルトシンクロ率オブジェクトの開放
+	delete pObjectSynchronizeResult_;
+	pObjectSynchronizeResult_ = nullptr;
+
+	// リザルトゲージオブジェクトの開放
+	delete pObjectGageResult_;
+	pObjectGageResult_ = nullptr;
 
 	// リザルト画像オブジェクトの開放
 	delete[] pObjectResult_;
@@ -362,6 +511,10 @@ void SceneGame::InitializeSelf2( void )
 	timerSceneGame_ = 0;
 	pObjectCount_ = nullptr;
 	pObjectResult_ = nullptr;
+	pObjectGageResult_ = nullptr;
+	pObjectSynchronizeResult_ = nullptr;
+	pObjectComboResult_ = nullptr;
+	pObjectScoreResult_ = nullptr;
 	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
 	{
 		pRankingScore_[ counterRank ] = 0;
@@ -370,6 +523,7 @@ void SceneGame::InitializeSelf2( void )
 	pObjectRanking_ = nullptr;
 	pObjectScoreRanking_ = nullptr;
 	indexSection_ = 0;
+	maximumCombo_ = 0;
 }
 
 //==============================================================================
@@ -416,11 +570,95 @@ void SceneGame::UpdateCountDownGame( void )
 		pCamera_->SetState( nullptr );
 	}
 
+	// 3
+	if( timerSceneGame_ == 0 )
+	{
+		pObjectCount_[ IMAGE_COUNT_3 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= 0 && timerSceneGame_ <= 60 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - 0) ) / 60;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectCount_[ IMAGE_COUNT_3 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectCount_[ IMAGE_COUNT_3 ].SetScale( pObjectCount_[ IMAGE_COUNT_3 ].GetWidth() * scale, pObjectCount_[ IMAGE_COUNT_3 ].GetHeight() * scale, 1.0f );
+	}
+	if( timerSceneGame_ >= 80 && timerSceneGame_ <= 100 )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - 80) ) / 20;
+		pObjectCount_[ IMAGE_COUNT_3 ].SetColorAlpha( Utility::Easing( 1.0f, 0.0f, proportion ) );
+	}
+
+	// 2
+	if( timerSceneGame_ == 60 )
+	{
+		pObjectCount_[ IMAGE_COUNT_2 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= 60 && timerSceneGame_ <= 120 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - 60) ) / 60;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectCount_[ IMAGE_COUNT_2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectCount_[ IMAGE_COUNT_2 ].SetScale( pObjectCount_[ IMAGE_COUNT_2 ].GetWidth() * scale, pObjectCount_[ IMAGE_COUNT_2 ].GetHeight() * scale, 1.0f );
+	}
+	if( timerSceneGame_ >= 140 && timerSceneGame_ <= 160 )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - 140) ) / 20;
+		pObjectCount_[ IMAGE_COUNT_2 ].SetColorAlpha( Utility::Easing( 1.0f, 0.0f, proportion ) );
+	}
+
+	// 1
+	if( timerSceneGame_ == 120 )
+	{
+		pObjectCount_[ IMAGE_COUNT_1 ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= 120 && timerSceneGame_ <= 180 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - 120) ) / 60;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectCount_[ IMAGE_COUNT_1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectCount_[ IMAGE_COUNT_1 ].SetScale( pObjectCount_[ IMAGE_COUNT_1 ].GetWidth() * scale, pObjectCount_[ IMAGE_COUNT_1 ].GetHeight() * scale, 1.0f );
+	}
+	if( timerSceneGame_ >= 200 && timerSceneGame_ <= 220 )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - 200) ) / 20;
+		pObjectCount_[ IMAGE_COUNT_1 ].SetColorAlpha( Utility::Easing( 1.0f, 0.0f, proportion ) );
+	}
+
+	// 演武開始
+	if( timerSceneGame_ == 180 )
+	{
+		pObjectCount_[ IMAGE_COUNT_START ].SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= 180 && timerSceneGame_ <= 240 )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - 180) ) / 60;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectCount_[ IMAGE_COUNT_START ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectCount_[ IMAGE_COUNT_START ].SetScale( pObjectCount_[ IMAGE_COUNT_START ].GetWidth() * scale, pObjectCount_[ IMAGE_COUNT_START ].GetHeight() * scale, 1.0f );
+	}
+	if( timerSceneGame_ >= 260 && timerSceneGame_ <= 290 )
+	{
+		float	proportion;		// 割合
+		proportion = static_cast< float >( (timerSceneGame_ - 260) ) / 30;
+		pObjectCount_[ IMAGE_COUNT_START ].SetColorAlpha( Utility::Easing( 1.0f, 0.0f, proportion ) );
+	}
+
 	// タイマーの経過
 	++timerSceneGame_;
 
 	// 更新処理の切り替え
-	if( timerSceneGame_ >= 240 )
+	if( timerSceneGame_ >= 290 )
 	{
 		timerSceneGame_ = 0;
 		fpUpdate = &SceneGame::normalUpdate;
@@ -540,6 +778,47 @@ void SceneGame::UpdateResult( void )
 	PrintDebug( _T( "UpdateResult\n" ) );
 	PrintDebug( _T( "Timer : %05d\n" ), timerSceneGame_ );
 
+#ifdef _DEBUG
+	// オブジェクトの移動
+	Object*	pObject = nullptr;		// 移動対象オブジェクト
+	float	velocity;				// 移動速度
+	pObject = pObjectScoreResult_;
+	if( pArgument_->pKeyboard_->IsPress( DIK_LCONTROL ) )
+	{
+		velocity = 10.0f;
+	}
+	else if( pArgument_->pKeyboard_->IsPress( DIK_LSHIFT ) )
+	{
+		velocity = 100.0f;
+	}
+	else
+	{
+		velocity = 1.0f;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_W, 30, 1 ) )
+	{
+		pObject->AddPositionY( velocity );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_S, 30, 1 ) )
+	{
+		pObject->AddPositionY( -velocity );
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_A, 30, 1 ) )
+	{
+		pObject->AddPositionX( -velocity );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_D, 30, 1 ) )
+	{
+		pObject->AddPositionX( velocity );
+	}
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "| デバッグオブジェクト                 |\n" ) );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "座標 ： ( %11.6f, %11.6f, %11.6f )\n" ), pObject->GetPositionX(), pObject->GetPositionY(), pObject->GetPositionZ() );
+	PrintDebug( _T( "回転 ： ( %11.6f, %11.6f, %11.6f )\n" ), 180.0f / D3DX_PI * pObject->GetRotationX(), 180.0f / D3DX_PI * pObject->GetRotationY(), 180.0f / D3DX_PI * pObject->GetRotationZ() );
+	PrintDebug( _T( "拡縮 ： ( %11.6f, %11.6f, %11.6f )\n" ), pObject->GetScaleX(), pObject->GetScaleY(), pObject->GetScaleZ() );
+#endif
+
 	// カメラの処理を設定
 	if( timerSceneGame_ == 0 )
 	{
@@ -550,12 +829,34 @@ void SceneGame::UpdateResult( void )
 	if( timerSceneGame_ == TIME_RESULT_BEGIN_BACK )
 	{
 		pObjectResult_[ IMAGE_RESULT_BACK ].SetEnableGraphic( true );
+		pObjectResult_[ IMAGE_RESULT_PERCENT ].SetEnableGraphic( true );
+		pObjectResult_[ IMAGE_RESULT_COMBO ].SetEnableGraphic( true );
+		pObjectGageResult_->SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_BACK && timerSceneGame_ < TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_BACK && timerSceneGame_ <= TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK )
 	{
+		// 透明度の決定
 		float	proportion;		// 割合
+		float	alpha;			// 透明度
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_BACK) ) / COUNT_RESULT_BEGIN_BACK;
-		pObjectResult_[ IMAGE_RESULT_BACK ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		alpha = Utility::Easing( 0.0f, 1.0f, proportion );
+
+		// 看板
+		pObjectResult_[ IMAGE_RESULT_BACK ].SetColorAlpha( alpha );
+
+		// ゲージ
+		pObjectGageResult_->SetColorAlpha( alpha );
+
+		// シンクロ率
+		pObjectResult_[ IMAGE_RESULT_PERCENT ].SetColorAlpha( alpha );
+		pObjectSynchronizeResult_->SetColorAlpha( alpha );
+
+		// コンボ
+		pObjectResult_[ IMAGE_RESULT_COMBO ].SetColorAlpha( alpha );
+		pObjectComboResult_->SetColorAlpha( alpha );
+
+		// スコア
+		pObjectScoreResult_->SetColorAlpha( alpha );
 	}
 
 	// ロゴの表示
@@ -563,7 +864,7 @@ void SceneGame::UpdateResult( void )
 	{
 		pObjectResult_[ IMAGE_RESULT_LOGO ].SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_LOGO && timerSceneGame_ < TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_LOGO && timerSceneGame_ <= TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO )
 	{
 		float	proportion;		// 割合
 		float	scale;			// 大きさ
@@ -574,70 +875,84 @@ void SceneGame::UpdateResult( void )
 	}
 
 	// シンクロ率の表示
-	if( timerSceneGame_ == TIME_RESULT_BEGIN_SYNCRONIZE )
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_GAGE )
 	{
-		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetEnableGraphic( true );
+		pObjectSynchronizeResult_->SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_SYNCRONIZE && timerSceneGame_ < TIME_RESULT_BEGIN_SYNCRONIZE + COUNT_RESULT_BEGIN_SYNCRONIZE )
-	{
-		float	proportion;		// 割合
-		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_SYNCRONIZE) ) / COUNT_RESULT_BEGIN_SYNCRONIZE;
-		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectResult_[ IMAGE_RESULT_SYNCRONIZE ].SetPositionY( Utility::Easing( 90.0f, 100.0f, proportion ) );
-	}
-
-	// 判定0の表示
-	if( timerSceneGame_ == TIME_RESULT_BEGIN_JUDGE_0 )
-	{
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].SetEnableGraphic( true );
-	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_JUDGE_0 && timerSceneGame_ < TIME_RESULT_BEGIN_JUDGE_0 + COUNT_RESULT_BEGIN_JUDGE_0 )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_GAGE && timerSceneGame_ <= TIME_RESULT_BEGIN_GAGE + COUNT_RESULT_BEGIN_GAGE )
 	{
 		float	proportion;		// 割合
 		float	scale;			// 大きさ
-		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_JUDGE_0) ) / COUNT_RESULT_BEGIN_JUDGE_0;
-		scale = Utility::Easing( 1.5f, 1.0f, proportion );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].SetScale( pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_JUDGE_0 ].GetHeight() / 4.0f * scale, 1.0f );
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_GAGE) ) / COUNT_RESULT_BEGIN_GAGE;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectGageResult_->setPercent( proportion * gage->getPercent() );
+		pObjectGageResult_->setPercentFuture( proportion * gage->getPercent() );
+		pObjectSynchronizeResult_->SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectSynchronizeResult_->SetScore( static_cast< int >( proportion * gage->getPercent() ) );
+		pObjectSynchronizeResult_->SetScoreFuture( static_cast< int >( proportion * gage->getPercent() ) );
+		pObjectSynchronizeResult_->SetSize( 48.0f * scale, 48.0f * scale, 1.0f );
+		pObjectSynchronizeResult_->SetPos( 407.0f - 1.5f * 48.0f * scale, -39.0f + 24.0f * scale, 0.0f );
 	}
 
-	// 判定1の表示
-	if( timerSceneGame_ == TIME_RESULT_BEGIN_JUDGE_1 )
+	// コンボの表示
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_COMBO )
 	{
-		pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].SetEnableGraphic( true );
+		pObjectComboResult_->SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_JUDGE_1 && timerSceneGame_ < TIME_RESULT_BEGIN_JUDGE_1 + COUNT_RESULT_BEGIN_JUDGE_1 )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_COMBO && timerSceneGame_ <= TIME_RESULT_BEGIN_COMBO + COUNT_RESULT_BEGIN_COMBO )
 	{
 		float	proportion;		// 割合
 		float	scale;			// 大きさ
-		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_JUDGE_1) ) / COUNT_RESULT_BEGIN_JUDGE_1;
-		scale = Utility::Easing( 1.5f, 1.0f, proportion );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].SetScale( pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_JUDGE_1 ].GetHeight() / 4.0f * scale, 1.0f );
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_COMBO) ) / COUNT_RESULT_BEGIN_COMBO;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectComboResult_->SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectComboResult_->SetScore( static_cast< int >( proportion * maximumCombo_ ) );
+		pObjectComboResult_->SetScoreFuture( static_cast< int >( proportion * maximumCombo_ ) );
+		pObjectComboResult_->SetSize( 48.0f * scale, 48.0f * scale, 1.0f );
+		pObjectComboResult_->SetPos( 357.0f - 1.5f * 48.0f * scale, -109.0f + 24.0f * scale, 0.0f );
 	}
 
-	// 判定2の表示
-	if( timerSceneGame_ == TIME_RESULT_BEGIN_JUDGE_2 )
+	// スコア文字の表示
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_SCORE_STRING )
 	{
-		pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].SetEnableGraphic( true );
+		pObjectResult_[ IMAGE_RESULT_SCORE ].SetEnableGraphic( true );
+		pObjectScoreResult_->SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_JUDGE_2 && timerSceneGame_ < TIME_RESULT_BEGIN_JUDGE_2 + COUNT_RESULT_BEGIN_JUDGE_2 )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_SCORE_STRING && timerSceneGame_ <= TIME_RESULT_BEGIN_SCORE_STRING + COUNT_RESULT_BEGIN_SCORE_STRING )
 	{
 		float	proportion;		// 割合
 		float	scale;			// 大きさ
-		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_JUDGE_2) ) / COUNT_RESULT_BEGIN_JUDGE_2;
-		scale = Utility::Easing( 1.25f, 1.0f, proportion );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].SetScale( pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_JUDGE_2 ].GetHeight() / 4.0f * scale, 1.0f );
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_SCORE_STRING) ) / COUNT_RESULT_BEGIN_SCORE_STRING;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectResult_[ IMAGE_RESULT_SCORE ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectResult_[ IMAGE_RESULT_SCORE ].SetScale( pObjectResult_[ IMAGE_RESULT_SCORE ].GetWidth() * scale, pObjectResult_[ IMAGE_RESULT_SCORE ].GetHeight() * scale, 1.0f );
 	}
 
+	// スコアの表示
+	if( timerSceneGame_ == TIME_RESULT_BEGIN_SCORE )
+	{
+		pObjectResult_[ IMAGE_RESULT_SCORE ].SetEnableGraphic( true );
+		pObjectScoreResult_->SetEnableGraphic( true );
+	}
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_SCORE && timerSceneGame_ <= TIME_RESULT_BEGIN_SCORE + COUNT_RESULT_BEGIN_SCORE )
+	{
+		float	proportion;		// 割合
+		float	scale;			// 大きさ
+		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_SCORE) ) / COUNT_RESULT_BEGIN_SCORE;
+		scale = Utility::Easing( 2.0f, 1.0f, proportion );
+		pObjectScoreResult_->SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
+		pObjectScoreResult_->SetScore( static_cast< int >( proportion * score->GetScore() ) );
+		pObjectScoreResult_->SetScoreFuture( static_cast< int >( proportion * score->GetScore() ) );
+		pObjectScoreResult_->SetSize( 36.0f * scale, 36.0f * scale, 1.0f );
+		pObjectScoreResult_->SetPos( 355.0f - 5.0f * 36.0f * scale, -213.0f + 18.0f * scale, 0.0f );
+	}
 
 	// ランキングへの表示
 	if( timerSceneGame_ == TIME_RESULT_BEGIN_TO_RANKING )
 	{
 		pObjectResult_[ IMAGE_RESULT_TO_RANKING ].SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_TO_RANKING && timerSceneGame_ < TIME_RESULT_BEGIN_TO_RANKING + COUNT_RESULT_BEGIN_TO_RANKING )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_TO_RANKING && timerSceneGame_ <= TIME_RESULT_BEGIN_TO_RANKING + COUNT_RESULT_BEGIN_TO_RANKING )
 	{
 		float	proportion;		// 割合
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_RANKING) ) / COUNT_RESULT_BEGIN_TO_RANKING;
@@ -649,7 +964,7 @@ void SceneGame::UpdateResult( void )
 	{
 		pObjectResult_[ IMAGE_RESULT_TO_TITLE ].SetEnableGraphic( true );
 	}
-	if( timerSceneGame_ >= TIME_RESULT_BEGIN_TO_TITLE && timerSceneGame_ < TIME_RESULT_BEGIN_TO_TITLE + COUNT_RESULT_BEGIN_TO_TITLE )
+	if( timerSceneGame_ >= TIME_RESULT_BEGIN_TO_TITLE && timerSceneGame_ <= TIME_RESULT_BEGIN_TO_TITLE + COUNT_RESULT_BEGIN_TO_TITLE )
 	{
 		float	proportion;		// 割合
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RESULT_BEGIN_TO_TITLE) ) / COUNT_RESULT_BEGIN_TO_TITLE;
@@ -804,12 +1119,12 @@ void SceneGame::UpdateRanking( void )
 		float	height;			// 高さ
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_5) ) / COUNT_RANKING_BEGIN_RANK_5;
 		scale = Utility::Easing( 2.5f, 1.0f, proportion );
-		width = pObjectRanking_[ IMAGE_RANKING_RANK_5 ].GetWidth() * scale;
-		height = pObjectRanking_[ IMAGE_RANKING_RANK_5 ].GetHeight() / 8.0f * scale;
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_5 ].GetWidth() / 10.0f * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_5 ].GetHeight() * scale;
 		pObjectRanking_[ IMAGE_RANKING_RANK_5 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
 		pObjectRanking_[ IMAGE_RANKING_RANK_5 ].SetScale( width, height, 1.0f );
 		pObjectScoreRanking_[ 4 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectScoreRanking_[ 4 ].SetPos( -250.0f, 170.0f - 120.0f * 4, 0.0f );
+		pObjectScoreRanking_[ 4 ].SetPos( -250.0f, 190.0f - 120.0f * 4, 0.0f );
 	}
 
 	// ランク4の表示
@@ -826,12 +1141,12 @@ void SceneGame::UpdateRanking( void )
 		float	height;			// 高さ
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_4) ) / COUNT_RANKING_BEGIN_RANK_4;
 		scale = Utility::Easing( 2.5f, 1.0f, proportion );
-		width = pObjectRanking_[ IMAGE_RANKING_RANK_4 ].GetWidth() * scale;
-		height = pObjectRanking_[ IMAGE_RANKING_RANK_4 ].GetHeight() / 8.0f * scale;
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_4 ].GetWidth() / 10.0f * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_4 ].GetHeight() * scale;
 		pObjectRanking_[ IMAGE_RANKING_RANK_4 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
 		pObjectRanking_[ IMAGE_RANKING_RANK_4 ].SetScale( width, height, 1.0f );
 		pObjectScoreRanking_[ 3 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectScoreRanking_[ 3 ].SetPos( -250.0f, 170.0f - 120.0f * 3, 0.0f );
+		pObjectScoreRanking_[ 3 ].SetPos( -250.0f, 190.0f - 120.0f * 3, 0.0f );
 	}
 
 	// ランク3の表示
@@ -848,12 +1163,12 @@ void SceneGame::UpdateRanking( void )
 		float	height;			// 高さ
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_3) ) / COUNT_RANKING_BEGIN_RANK_3;
 		scale = Utility::Easing( 2.5f, 1.0f, proportion );
-		width = pObjectRanking_[ IMAGE_RANKING_RANK_3 ].GetWidth() * scale;
-		height = pObjectRanking_[ IMAGE_RANKING_RANK_3 ].GetHeight() / 8.0f * scale;
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_3 ].GetWidth() / 10.0f * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_3 ].GetHeight() * scale;
 		pObjectRanking_[ IMAGE_RANKING_RANK_3 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
 		pObjectRanking_[ IMAGE_RANKING_RANK_3 ].SetScale( width, height, 1.0f );
 		pObjectScoreRanking_[ 2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectScoreRanking_[ 2 ].SetPos( -250.0f, 170.0f - 120.0f * 2, 0.0f );
+		pObjectScoreRanking_[ 2 ].SetPos( -250.0f, 190.0f - 120.0f * 2, 0.0f );
 	}
 
 	// ランク2の表示
@@ -870,12 +1185,12 @@ void SceneGame::UpdateRanking( void )
 		float	height;			// 高さ
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_2) ) / COUNT_RANKING_BEGIN_RANK_2;
 		scale = Utility::Easing( 2.5f, 1.0f, proportion );
-		width = pObjectRanking_[ IMAGE_RANKING_RANK_2 ].GetWidth() * scale;
-		height = pObjectRanking_[ IMAGE_RANKING_RANK_2 ].GetHeight() / 8.0f * scale;
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_2 ].GetWidth() / 10.0f * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_2 ].GetHeight() * scale;
 		pObjectRanking_[ IMAGE_RANKING_RANK_2 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
 		pObjectRanking_[ IMAGE_RANKING_RANK_2 ].SetScale( width, height, 1.0f );
 		pObjectScoreRanking_[ 1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectScoreRanking_[ 1 ].SetPos( -250.0f, 170.0f - 120.0f * 1, 0.0f );
+		pObjectScoreRanking_[ 1 ].SetPos( -250.0f, 190.0f - 120.0f * 1, 0.0f );
 	}
 
 	// ランク1の表示
@@ -892,16 +1207,30 @@ void SceneGame::UpdateRanking( void )
 		float	height;			// 高さ
 		proportion = static_cast< float >( (timerSceneGame_ - TIME_RANKING_BEGIN_RANK_1) ) / COUNT_RANKING_BEGIN_RANK_1;
 		scale = Utility::Easing( 4.0f, 1.0f, proportion );
-		width = pObjectRanking_[ IMAGE_RANKING_RANK_1 ].GetWidth() * scale;
-		height = pObjectRanking_[ IMAGE_RANKING_RANK_1 ].GetHeight() / 8.0f * scale;
+		width = pObjectRanking_[ IMAGE_RANKING_RANK_1 ].GetWidth() / 10.0f * scale;
+		height = pObjectRanking_[ IMAGE_RANKING_RANK_1 ].GetHeight() * scale;
 		pObjectRanking_[ IMAGE_RANKING_RANK_1 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
 		pObjectRanking_[ IMAGE_RANKING_RANK_1 ].SetScale( width, height, 1.0f );
 		pObjectScoreRanking_[ 0 ].SetColorAlpha( Utility::Easing( 0.0f, 1.0f, proportion ) );
-		pObjectScoreRanking_[ 0 ].SetPos( -250.0f, 170.0f - 120.0f * 0, 0.0f );
+		pObjectScoreRanking_[ 0 ].SetPos( -250.0f, 190.0f - 120.0f * 0, 0.0f );
 	}
 
 	// タイマーの経過
 	++timerSceneGame_;
+
+	// タイトルへ戻る
+	if( pArgument_->pVirtualController_->IsTrigger( VC_DESIDE ) )
+	{
+		if( pArgument_->pFade_->GetState() != Fade::STATE_OUT_WHILE )
+		{
+			pArgument_->pFade_->FadeOut( 20 );
+		}
+	}
+	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
+	{
+		SetSceneNext( ManagerSceneMain::TYPE_TITLE );
+		SetIsEnd( true );
+	}
 }
 
 //==============================================================================
@@ -1305,6 +1634,20 @@ void SceneGame::UpdateTestCamera( void )
 }
 
 //==============================================================================
+// Brief  : カウントダウンオブジェクトを非表示にする
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::DisableObjectCount( void )
+{
+	// オブジェクトを非表示にする
+	for( int counterObject = 0; counterObject < IMAGE_COUNT_MAXIMUM; ++counterObject )
+	{
+		pObjectCount_[ counterObject ].SetEnableGraphic( false );
+	}
+}
+
+//==============================================================================
 // Brief  : リザルトオブジェクトを非表示にする
 // Return : void								: なし
 // Arg    : void								: なし
@@ -1316,6 +1659,18 @@ void SceneGame::DisableObjectResult( void )
 	{
 		pObjectResult_[ counterObject ].SetEnableGraphic( false );
 	}
+
+	// シンクロ率を非表示にする
+	pObjectSynchronizeResult_->SetEnableGraphic( false );
+
+	// コンボを非表示にする
+	pObjectComboResult_->SetEnableGraphic( false );
+
+	// スコアを非表示にする
+	pObjectScoreResult_->SetEnableGraphic( false );
+
+	// ゲージを非表示にする
+	pObjectGageResult_->SetEnableGraphic( false );
 }
 
 //==============================================================================
@@ -1334,6 +1689,6 @@ void SceneGame::DisableObjectRanking( void )
 	// スコアを非表示にする
 	for( int counterRank = 0; counterRank < MAXIMUM_RANK; ++counterRank )
 	{
-		pObjectScoreRanking_[ counterRank ].SetPos( 2500.0f, 170.0f - 120.0f * counterRank, 0.0f );
+		pObjectScoreRanking_[ counterRank ].SetEnableGraphic( false );
 	}
 }

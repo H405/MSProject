@@ -111,6 +111,10 @@ public:
 			percentFuture = 100.0f;
 	}
 
+	void SetEnableGraphic( bool value );
+	void SetColorAlpha( float alpha );
+	void SetEnableGraphicPercent( bool value );
+
 protected:
 
 	Object2D* gageBar;

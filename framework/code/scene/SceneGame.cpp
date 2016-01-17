@@ -171,7 +171,7 @@ void SceneGame::Update( void )
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F6 ) )
 	{
 		timerSceneGame_ = 0;
-		fpUpdate = &SceneGame::UpdatePreviousResult;
+		fpUpdate = &SceneGame::UpdateCountDownGame;
 	}
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F7 ) )
 	{
@@ -239,6 +239,12 @@ void SceneGame::Update( void )
 	(this->*fpUpdate)();
 
 	comboPrev = combo->getScore();
+
+	// 最大コンボ数の更新
+	if( comboPrev > maximumCombo_ )
+	{
+		maximumCombo_ = comboPrev;
+	}
 }
 
 //==============================================================================

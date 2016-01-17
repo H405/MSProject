@@ -393,10 +393,9 @@ private:
 	{
 		IMAGE_RESULT_BACK = 0,			// 背景
 		IMAGE_RESULT_LOGO,				// ロゴ
-		IMAGE_RESULT_SYNCRONIZE,		// シンクロ
-		IMAGE_RESULT_JUDGE_0,			// 判定0
-		IMAGE_RESULT_JUDGE_1,			// 判定1
-		IMAGE_RESULT_JUDGE_2,			// 判定2
+		IMAGE_RESULT_PERCENT,			// パーセント
+		IMAGE_RESULT_COMBO,				// 連発
+		IMAGE_RESULT_SCORE,				// スコア
 		IMAGE_RESULT_TO_RANKING,		// ランキングへ
 		IMAGE_RESULT_TO_TITLE,			// タイトルへ
 		IMAGE_RESULT_MAXIMUM			// 最大値
@@ -422,19 +421,17 @@ private:
 		COUNT_RESULT_BEGIN_BACK			= 10,																		// 背景開始フレーム数
 		TIME_RESULT_BEGIN_LOGO			= TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK,							// ロゴ開始時間
 		COUNT_RESULT_BEGIN_LOGO			= 20,																		// ロゴ開始フレーム数
-		TIME_RESULT_BEGIN_SYNCRONIZE	= TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO,							// シンクロ率開始時間
-		COUNT_RESULT_BEGIN_SYNCRONIZE	= 20,																		// シンクロ率開始フレーム数
-		TIME_RESULT_BEGIN_JUDGE_0		= TIME_RESULT_BEGIN_SYNCRONIZE + COUNT_RESULT_BEGIN_SYNCRONIZE + 10,		// 判定0開始時間
-		COUNT_RESULT_BEGIN_JUDGE_0		= 15,																		// 判定0開始フレーム数
-		TIME_RESULT_BEGIN_JUDGE_1		= TIME_RESULT_BEGIN_JUDGE_0 + 5,											// 判定1開始時間
-		COUNT_RESULT_BEGIN_JUDGE_1		= 15,																		// 判定1開始フレーム数
-		TIME_RESULT_BEGIN_JUDGE_2		= TIME_RESULT_BEGIN_JUDGE_0 + 10,											// 判定2開始時間
-		COUNT_RESULT_BEGIN_JUDGE_2		= 15,																		// 判定2開始フレーム数
-		TIME_RESULT_BEGIN_GAUGE			= TIME_RESULT_BEGIN_JUDGE_2 + COUNT_RESULT_BEGIN_JUDGE_2,					// シンクロゲージ開始時間
-		COUNT_RESULT_BEGIN_GAUGE		= 120,																		// シンクロゲージ開始フレーム数
-		TIME_RESULT_BEGIN_TO_RANKING	= TIME_RESULT_BEGIN_GAUGE + COUNT_RESULT_BEGIN_GAUGE + 30,					// ランキングへ開始開始時間
+		TIME_RESULT_BEGIN_GAGE			= TIME_RESULT_BEGIN_LOGO + COUNT_RESULT_BEGIN_LOGO,							// シンクロゲージ開始時間
+		COUNT_RESULT_BEGIN_GAGE			= 60,																		// シンクロゲージ開始フレーム数
+		TIME_RESULT_BEGIN_COMBO			= TIME_RESULT_BEGIN_GAGE + COUNT_RESULT_BEGIN_GAGE,							// コンボ開始時間
+		COUNT_RESULT_BEGIN_COMBO		= 60,																		// コンボ開始フレーム数
+		TIME_RESULT_BEGIN_SCORE_STRING	= TIME_RESULT_BEGIN_COMBO + COUNT_RESULT_BEGIN_COMBO,						// スコア文字開始時間
+		COUNT_RESULT_BEGIN_SCORE_STRING	= 20,																		// スコア文字開始フレーム数
+		TIME_RESULT_BEGIN_SCORE			= TIME_RESULT_BEGIN_COMBO + COUNT_RESULT_BEGIN_COMBO,						// スコア開始時間
+		COUNT_RESULT_BEGIN_SCORE		= 150,																		// スコア開始フレーム数
+		TIME_RESULT_BEGIN_TO_RANKING	= TIME_RESULT_BEGIN_SCORE + COUNT_RESULT_BEGIN_SCORE + 60,					// ランキングへ開始開始時間
 		COUNT_RESULT_BEGIN_TO_RANKING	= 20,																		// ランキングへ開始開始フレーム数
-		TIME_RESULT_BEGIN_TO_TITLE		= TIME_RESULT_BEGIN_GAUGE + COUNT_RESULT_BEGIN_GAUGE + 30,					// タイトルへ開始開始時間
+		TIME_RESULT_BEGIN_TO_TITLE		= TIME_RESULT_BEGIN_SCORE + COUNT_RESULT_BEGIN_SCORE + 60,					// タイトルへ開始開始時間
 		COUNT_RESULT_BEGIN_TO_TITLE		= 20,																		// タイトルへ開始開始フレーム数
 		TIME_RESULT_END					= TIME_RESULT_BEGIN_TO_TITLE + COUNT_RESULT_BEGIN_TO_TITLE					// 終了
 	};
@@ -468,6 +465,10 @@ private:
 	Object2D*			pObjectCount_;						// カウントダウン画像オブジェクト
 
 	Object2D*			pObjectResult_;						// リザルト画像オブジェクト
+	Gage*				pObjectGageResult_;					// リザルトゲージオブジェクト
+	ObjectScore*		pObjectSynchronizeResult_;			// リザルトシンクロ率オブジェクト
+	ObjectScore*		pObjectComboResult_;				// リザルトコンボオブジェクト
+	ObjectScore*		pObjectScoreResult_;				// リザルトスコアオブジェクト
 
 	int					pRankingScore_[ MAXIMUM_RANK ];		// ランキングのスコア
 	int					indexRank_;							// ランクの番号
@@ -475,6 +476,8 @@ private:
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
 	int					indexSection_;						// ゲームセクション番号
+
+	int					maximumCombo_;						// 最大コンボ数
 
 	int Initialize2( void );
 	int Finalize2( void );
@@ -506,6 +509,9 @@ private:
 
 	// カメラのテスト更新
 	void UpdateTestCamera( void );
+
+	// カウントダウンオブジェクトを非表示にする
+	void DisableObjectCount( void );
 
 	// リザルトオブジェクトを非表示にする
 	void DisableObjectResult( void );
