@@ -271,18 +271,77 @@ void Gage::setPosition(float _x, float _y, float _z)
 	ObjectMovement::Update();
 }
 
+void Gage::SetEnableGraphic(bool _flag)
+{
+	gageBar[0].SetEnableGraphic(_flag);
+	gageBar[1].SetEnableGraphic(_flag);
+	gageBar[2].SetEnableGraphic(_flag);
+	gageBar[3].SetEnableGraphic(_flag);
+	gageBar[4].SetEnableGraphic(_flag);
+	gageBar[5].SetEnableGraphic(_flag);
+	gageBar[6].SetEnableGraphic(_flag);
+	gageBar[7].SetEnableGraphic(_flag);
+	gageBar[8].SetEnableGraphic(_flag);
+	gageBar[9].SetEnableGraphic(_flag);
+
+	gageBar[10].SetEnableGraphic(_flag);
+	gageBar[11].SetEnableGraphic(_flag);
+	gageBar[12].SetEnableGraphic(_flag);
+	gageBar[13].SetEnableGraphic(_flag);
+	gageBar[14].SetEnableGraphic(_flag);
+	gageBar[15].SetEnableGraphic(_flag);
+	gageBar[16].SetEnableGraphic(_flag);
+	gageBar[17].SetEnableGraphic(_flag);
+	gageBar[18].SetEnableGraphic(_flag);
+	gageBar[19].SetEnableGraphic(_flag);
+
+	gageBar[20].SetEnableGraphic(_flag);
+	gageBar[21].SetEnableGraphic(_flag);
+	gageBar[22].SetEnableGraphic(_flag);
+	gageBar[23].SetEnableGraphic(_flag);
+	gageBar[24].SetEnableGraphic(_flag);
+
+	gageBack->SetEnableGraphic(_flag);
+	gageBase->SetEnableGraphic(_flag);
+	gageScore->SetEnableGraphic(_flag);
+}
+
 //==============================================================================
 // Brief  : 描画クラスの有効設定
 // Return : void								: なし
 // Arg    : bool value							: 設定する値
 //==============================================================================
-void Gage::SetEnableGraphic( bool value )
+void Gage::SetEnableGraphic2( bool value )
 {
 	// 値の設定
-	for( int counterItem = 0; counterItem < GAGEBAR_MAX; ++counterItem )
-	{
-		gageBar[ counterItem ].SetEnableGraphic( value );
-	}
+	gageBar[ 0 ].SetEnableGraphic( value );
+	gageBar[ 1 ].SetEnableGraphic( value );
+	gageBar[ 2 ].SetEnableGraphic( value );
+	gageBar[ 3 ].SetEnableGraphic( value );
+	gageBar[ 4 ].SetEnableGraphic( value );
+	gageBar[ 5 ].SetEnableGraphic( value );
+	gageBar[ 6 ].SetEnableGraphic( value );
+	gageBar[ 7 ].SetEnableGraphic( value );
+	gageBar[ 8 ].SetEnableGraphic( value );
+	gageBar[ 9 ].SetEnableGraphic( value );
+
+	gageBar[ 10 ].SetEnableGraphic( value );
+	gageBar[ 11 ].SetEnableGraphic( value );
+	gageBar[ 12 ].SetEnableGraphic( value );
+	gageBar[ 13 ].SetEnableGraphic( value );
+	gageBar[ 14 ].SetEnableGraphic( value );
+	gageBar[ 15 ].SetEnableGraphic( value );
+	gageBar[ 16 ].SetEnableGraphic( value );
+	gageBar[ 17 ].SetEnableGraphic( value );
+	gageBar[ 18 ].SetEnableGraphic( value );
+	gageBar[ 19 ].SetEnableGraphic( value );
+
+	gageBar[ 20 ].SetEnableGraphic( value );
+	gageBar[ 21 ].SetEnableGraphic( value );
+	gageBar[ 22 ].SetEnableGraphic( value );
+	gageBar[ 23 ].SetEnableGraphic( value );
+	gageBar[ 24 ].SetEnableGraphic( value );
+
 	gageBase->SetEnableGraphic( value );
 	gageBack->SetEnableGraphic( value );
 }

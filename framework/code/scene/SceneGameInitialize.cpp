@@ -321,13 +321,36 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 
 	//	更新関数設定
 	if(ManagerSceneMain::demoFlag == false)
-		fpUpdate = &SceneGame::UpdatePreviousGame;//::calibrationUpdate;
+	{
+		if(ManagerSceneMain::tutorialFlag == false)
+		{
+			fpUpdate = &SceneGame::UpdatePreviousGame;//::calibrationUpdate;
+		}
+		else
+		{
+			fpUpdate = &SceneGame::calibrationUpdate;
+
+			calibrationWiimote->SetEnableGraphic(true);
+			calibrationWiimoteIllust->SetEnableGraphic(true);
+			combo->setStartFlag(true);
+
+			fireworksUI->SetEnableGraphic(true);
+			stringScore->SetEnableGraphic(true);
+			score->SetEnableGraphic(true);
+			gage->SetEnableGraphic(true);
+		}
+	}
 	else
 	{
 		fpUpdate = &SceneGame::demoUpdate;
 		calibrationWiimote->SetEnableGraphic(false);
 		calibrationWiimoteIllust->SetEnableGraphic(false);
 		combo->setStartFlag(true);
+
+		fireworksUI->SetEnableGraphic(true);
+		stringScore->SetEnableGraphic(true);
+		score->SetEnableGraphic(true);
+		gage->SetEnableGraphic(true);
 	}
 
 
@@ -588,8 +611,15 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureCircle
 		);
 
+	autoFadeTable[2];
+	autoFadeTable[0] = -1;
+	autoFadeTable[1] = -1;
+	autoFadeTableMax = 0;
+	autoFadeTableNum = 0;
+	autoFadeTableCount = 0;
+
 	if(ManagerSceneMain::demoFlag == false)
-		managerTarget->ReadTargetScriptFromFile("data/script/script_test.txt");
+		managerTarget->ReadTargetScriptFromFile("data/script/script_test.txt", autoFadeTable, &autoFadeTableMax);
 
 
 	//	プレイヤーオブジェクト(Posはカメラとの相対座標)
@@ -870,6 +900,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pEffectParameter_,
 		pEffect,
 		pTexture);
+	calibrationWiimoteIllust->SetEnableGraphic(false);
 
 
 	//	ゲーム開始前のキャリブレーションお願いオブジェクト
@@ -883,11 +914,17 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pArgument_->pEffectParameter_,
 		pEffect,
 		pTexture);
-	//calibrationWiimote->SetEnableGraphic(false);
+	calibrationWiimote->SetEnableGraphic(false);
 
 	calibrationWiimote->SetScale(stringXX_NormalSizeX * 2.0f, stringXX_NormalSizeY * 2.0f, 0.0f);
 	calibrationWiimote->SetScaleTexture(4.0f, 16.0f);
 	calibrationWiimote->SetPositionTexture(1.0f / 4.0f, 1.0f / 16.0f);
+
+
+	fireworksUI->SetEnableGraphic(false);
+	stringScore->SetEnableGraphic(false);
+	score->SetEnableGraphic(false);
+	gage->SetEnableGraphic(false);
 }
 
 //==============================================================================

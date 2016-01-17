@@ -284,6 +284,7 @@ private:
 	// Brief  : 通常時用の更新処理
 	//==============================================================================
 	void normalUpdate(void);
+	void tutorialUpdate(void);
 
 	//==============================================================================
 	// Brief  : ポーズ時用の更新処理
@@ -537,6 +538,13 @@ private:
 	bool selfLaunchFlag;
 
 	bool synchronizeFlag;
+
+
+	int autoFadeTable[2];
+	int autoFadeTableMax;
+	int autoFadeTableNum;
+	int autoFadeTableCount;
+
 
 #ifdef _TEST
 	int autoLaunchCount;

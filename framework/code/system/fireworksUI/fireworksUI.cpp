@@ -306,3 +306,21 @@ void FireworksUI::subRotColor()
 		addRot = (-rotRate / (float)MOVE_COUNT_MAX);
 	}
 }
+
+
+
+void FireworksUI::SetEnableGraphic(bool _flag)
+{
+	fireworksUI[0].SetEnableGraphic(_flag);
+	fireworksUI[1].SetEnableGraphic(_flag);
+	fireworksUI[2].SetEnableGraphic(_flag);
+	fireworksUI[3].SetEnableGraphic(_flag);
+	fireworksUI[4].SetEnableGraphic(_flag);
+	fireworksUI[5].SetEnableGraphic(_flag);
+	fireworksUI[6].SetEnableGraphic(_flag);
+	fireworksUI[7].SetEnableGraphic(_flag);
+	fireworksUI[8].SetEnableGraphic(_flag);
+	fireworksUI[9].SetEnableGraphic(_flag);
+	fireworksUI[10].SetEnableGraphic(_flag);
+	fireworksUI[11].SetEnableGraphic(_flag);
+}

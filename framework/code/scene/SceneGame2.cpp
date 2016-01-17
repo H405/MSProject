@@ -27,6 +27,7 @@
 #include "../system/combo/combo.h"
 #include "../system/gage/gage.h"
 #include "../system/SceneArgumentMain.h"
+#include "../system/gage/gage.h"
 
 // テスト用
 #include "../framework/light/LightPoint.h"
@@ -36,6 +37,7 @@
 #include "../object/ObjectModelMaterial.h"
 #include "../system/point/ManagerPoint.h"
 #include "../system/ManagerSceneMain.h"
+#include "../system/fireworksUI/fireworksUI.h"
 
 //******************************************************************************
 // ライブラリ
@@ -549,7 +551,18 @@ void SceneGame::UpdatePreviousGame( void )
 	if( timerSceneGame_ >= pStateCameraPrevious_->GetCountFrame() )
 	{
 		timerSceneGame_ = 0;
+		pCamera_->SetState( NULL );
 		fpUpdate = &SceneGame::calibrationUpdate;
+
+		//	UI関係を可視化する
+		calibrationWiimoteIllust->SetEnableGraphic(true);
+		calibrationWiimote->SetEnableGraphic(true);
+
+		fireworksUI->SetEnableGraphic(true);
+		stringScore->SetEnableGraphic(true);
+		score->SetEnableGraphic(true);
+		gage->SetEnableGraphic(true);
+		//	UI関係を可視化する
 	}
 }
 
@@ -831,7 +844,7 @@ void SceneGame::UpdateResult( void )
 		pObjectResult_[ IMAGE_RESULT_BACK ].SetEnableGraphic( true );
 		pObjectResult_[ IMAGE_RESULT_PERCENT ].SetEnableGraphic( true );
 		pObjectResult_[ IMAGE_RESULT_COMBO ].SetEnableGraphic( true );
-		pObjectGageResult_->SetEnableGraphic( true );
+		pObjectGageResult_->SetEnableGraphic2( true );
 	}
 	if( timerSceneGame_ >= TIME_RESULT_BEGIN_BACK && timerSceneGame_ <= TIME_RESULT_BEGIN_BACK + COUNT_RESULT_BEGIN_BACK )
 	{
@@ -1670,7 +1683,7 @@ void SceneGame::DisableObjectResult( void )
 	pObjectScoreResult_->SetEnableGraphic( false );
 
 	// ゲージを非表示にする
-	pObjectGageResult_->SetEnableGraphic( false );
+	pObjectGageResult_->SetEnableGraphic2( false );
 }
 
 //==============================================================================

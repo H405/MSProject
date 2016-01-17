@@ -31,6 +31,7 @@
 // Ã“Iƒƒ“ƒo•Ï”
 //******************************************************************************
 bool ManagerSceneMain::demoFlag = false;
+bool ManagerSceneMain::tutorialFlag = false;
 int ManagerSceneMain::demoCount = 0;
 int ManagerSceneMain::demoCountMax = 780;
 

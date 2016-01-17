@@ -100,6 +100,8 @@ public:
 	void addRotColor();
 	void subRotColor();
 
+	void SetEnableGraphic(bool _flag);
+
 protected:
 
 	Object2D* fireworksUI;
