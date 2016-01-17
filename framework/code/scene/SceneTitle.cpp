@@ -886,9 +886,9 @@ void SceneTitle::firstUpdate( void )
 	}
 
 	//	デモへ移行
-	/*ManagerSceneMain::demoCount++;
+	ManagerSceneMain::demoCount++;
 	//if(ManagerSceneMain::demoCount == ManagerSceneMain::demoCountMax / 2)
-	if(ManagerSceneMain::demoCount == 60)
+	if(ManagerSceneMain::demoCount == 600)
 	{
 		ManagerSceneMain::demoCount = 0;
 
@@ -899,7 +899,7 @@ void SceneTitle::firstUpdate( void )
 		{
 			pArgument_->pFade_->FadeOut( 20 );
 		}
-	}*/
+	}
 
 
 	if( pArgument_->pVirtualController_->IsTrigger(VC_DESIDE) )
@@ -1135,9 +1135,17 @@ void SceneTitle::fadeUpdate( void )
 	if( pArgument_->pFade_->GetState() == Fade::STATE_OUT_END )
 	{
 		if(chooseObject == startGame)
+		{
 			SetSceneNext( ManagerSceneMain::TYPE_GAME );
+
+			ManagerSceneMain::tutorialFlag = false;
+		}
 		else
+		{
 			SetSceneNext( ManagerSceneMain::TYPE_GAME );//ほんとはチュートリアル
+
+			ManagerSceneMain::tutorialFlag = true;
+		}
 
 		SetIsEnd( true );
 	}

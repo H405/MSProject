@@ -270,3 +270,38 @@ void Gage::setPosition(float _x, float _y, float _z)
 	// Šî–{ƒNƒ‰ƒX‚Ìˆ—
 	ObjectMovement::Update();
 }
+
+void Gage::SetEnableGraphic(bool _flag)
+{
+	gageBar[0].SetEnableGraphic(_flag);
+	gageBar[1].SetEnableGraphic(_flag);
+	gageBar[2].SetEnableGraphic(_flag);
+	gageBar[3].SetEnableGraphic(_flag);
+	gageBar[4].SetEnableGraphic(_flag);
+	gageBar[5].SetEnableGraphic(_flag);
+	gageBar[6].SetEnableGraphic(_flag);
+	gageBar[7].SetEnableGraphic(_flag);
+	gageBar[8].SetEnableGraphic(_flag);
+	gageBar[9].SetEnableGraphic(_flag);
+
+	gageBar[10].SetEnableGraphic(_flag);
+	gageBar[11].SetEnableGraphic(_flag);
+	gageBar[12].SetEnableGraphic(_flag);
+	gageBar[13].SetEnableGraphic(_flag);
+	gageBar[14].SetEnableGraphic(_flag);
+	gageBar[15].SetEnableGraphic(_flag);
+	gageBar[16].SetEnableGraphic(_flag);
+	gageBar[17].SetEnableGraphic(_flag);
+	gageBar[18].SetEnableGraphic(_flag);
+	gageBar[19].SetEnableGraphic(_flag);
+
+	gageBar[20].SetEnableGraphic(_flag);
+	gageBar[21].SetEnableGraphic(_flag);
+	gageBar[22].SetEnableGraphic(_flag);
+	gageBar[23].SetEnableGraphic(_flag);
+	gageBar[24].SetEnableGraphic(_flag);
+
+	gageBack->SetEnableGraphic(_flag);
+	gageBase->SetEnableGraphic(_flag);
+	gageScore->SetEnableGraphic(_flag);
+}

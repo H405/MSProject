@@ -125,7 +125,7 @@ int ManagerTarget::Finalize( void )
 void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 {
 	//	自動で生成
-	if(ManagerSceneMain::demoFlag == false)
+	if(ManagerSceneMain::demoFlag == false && ManagerSceneMain::tutorialFlag == false)
 		autoAppear(_table, _targetTableIndex);
 
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
@@ -182,7 +182,7 @@ void ManagerTarget::Update(int* _table , int* _targetTableIndex)
 void ManagerTarget::Update(int* _table , int* _targetTableIndex, bool* _tableSP)
 {
 	//	自動で生成
-	if(ManagerSceneMain::demoFlag == false)
+	if(ManagerSceneMain::demoFlag == false && ManagerSceneMain::tutorialFlag == false)
 		autoAppear(_table, _targetTableIndex);
 
 	for( int counterPoint = 0; counterPoint < TARGET_MAX; ++counterPoint )
@@ -409,7 +409,7 @@ int ManagerTarget::GetIndex()
 //==============================================================================
 // Brief  : ターゲット生成スクリプト読み込み処理
 //==============================================================================
-void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName)
+void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName, int* _table, int* _max)
 {
 	//	ファイル読み込み開始
 	FILE* fp;
@@ -419,6 +419,13 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName)
 
 	char readBuff[256];
 	int readDataIndex = 0;
+
+
+	int autoFadeTable[2];
+	autoFadeTable[0] = -1;
+	autoFadeTable[1] = -1;
+	int autoFadeTableMax = 0;
+
 
 	//	生成するターゲット情報を読み込み
 	ReadAppearTargetMax(fp);
@@ -442,6 +449,21 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName)
 		{
 			continue;
 		}
+		//	ステージ切り替えを行う時間
+		else if(readBuff[0] == 'F' && readBuff[1] == 'A' && readBuff[2] == 'D')
+		{
+			//	NAM を読み飛ばす
+			char* setName;
+			char* ctx;
+			ctx = strtok_s(readBuff, " ", &setName);
+
+			//	名前保存
+			strcpy_s(targetAppearData[readDataIndex].name, setName);
+
+			autoFadeTable[autoFadeTableMax] = atoi(setName);
+
+			autoFadeTableMax++;
+		}
 		//	オブジェクトの名前を認識したら
 		else if(readBuff[0] == 'N' && readBuff[1] == 'A' && readBuff[2] == 'M')
 		{
@@ -462,6 +484,9 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName)
 
 	fclose(fp);
 
+	_table[0] = autoFadeTable[0];
+	_table[1] = autoFadeTable[1];
+	*_max = autoFadeTableMax;
 
 	//	データのソート
 	SortAppearTargetData();

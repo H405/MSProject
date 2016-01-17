@@ -24,6 +24,7 @@
 #include "../object/ObjectSkinMesh.h"
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/SceneArgumentMain.h"
+#include "../system/gage/gage.h"
 
 // テスト用
 #include "../framework/light/LightPoint.h"
@@ -32,6 +33,7 @@
 #include "../object/ObjectModel.h"
 #include "../object/ObjectModelMaterial.h"
 #include "../system/point/ManagerPoint.h"
+#include "../system/fireworksUI/fireworksUI.h"
 
 //******************************************************************************
 // ライブラリ
@@ -395,7 +397,18 @@ void SceneGame::UpdatePreviousGame( void )
 	if( timerSceneGame_ >= pStateCameraPrevious_->GetCountFrame() )
 	{
 		timerSceneGame_ = 0;
+		pCamera_->SetState( NULL );
 		fpUpdate = &SceneGame::calibrationUpdate;
+
+		//	UI関係を可視化する
+		calibrationWiimoteIllust->SetEnableGraphic(true);
+		calibrationWiimote->SetEnableGraphic(true);
+
+		fireworksUI->SetEnableGraphic(true);
+		stringScore->SetEnableGraphic(true);
+		score->SetEnableGraphic(true);
+		gage->SetEnableGraphic(true);
+		//	UI関係を可視化する
 	}
 }
 

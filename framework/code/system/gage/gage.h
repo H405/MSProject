@@ -101,6 +101,8 @@ public:
 	void addPercent(float _value){percent += _value;if(percent < 0.0f)percent = 0.0f;if(percent > 100.0f)percent = 100.0f;}
 	int getPercent(){return (int)percent;}
 
+	void SetEnableGraphic(bool _flag);
+
 	void setPercentFuture(float _value){percentFuture = _value;if(percentFuture < 0.0f)percentFuture = 0.0f;if(percentFuture > 100.0f)percentFuture = 100.0f;}
 	void addPercentFuture(float _value)
 	{

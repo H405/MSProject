@@ -57,7 +57,7 @@ void Combo::InitializeSelf( void )
 	scorePrev = 0;
 	scoreMax = 0;
 	flashingCount = 0;
-	alpha = 1.0f;
+	alpha = 0.0f;
 	startFlag = false;
 
 	// メンバ変数の初期化
@@ -185,7 +185,7 @@ void Combo::Update( void )
 		if(alpha > 0.0f)
 		{
 			flashingCount++;
-			//alpha += addAlpha;
+			alpha += addAlpha;
 
 			if(flashingCount == (FLASHING_COUNT_MAX / 2))
 			{
@@ -213,6 +213,9 @@ void Combo::Update( void )
 void Combo::firstUpdate()
 {
 	comboScore->desideScoreSP(alpha);
+	comboSya->SetColorA(0.0f);
+	comboString->SetColorA(0.0f);
+	comboScore->SetColorA(0.0f);
 }
 //==============================================================================
 // Brief  : 位置セット処理

@@ -67,8 +67,8 @@ static const float diffRotMul = 16.0f;
 static const float fireSpeed = 3.0f;
 
 static const float mainColor = 1.0f;
-static const float subColor1 = 0.3f;
-static const float subColor2 = 0.4f;
+static const float subColor1 = 0.2f;
+static const float subColor2 = 0.3f;
 
 //==============================================================================
 // Brief  : コンストラクタ
