@@ -319,6 +319,10 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 	pCamera_->SetPositionLookAt( positionLookAt );
 
 
+	fireAutoManulFlag = true;
+
+	ManagerSceneMain::reTutorialFlag = false;
+
 	//	XVŠÖ”Ý’è
 	if(ManagerSceneMain::demoFlag == false)
 	{
@@ -328,6 +332,20 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		}
 		else
 		{
+/*			fpUpdate = &SceneGame::calibrationUpdate;
+
+			calibrationWiimote->SetEnableGraphic(true);
+			calibrationWiimoteIllust->SetEnableGraphic(true);
+			combo->setStartFlag(true);
+
+			fireworksUI->SetEnableGraphic(true);
+			stringScore->SetEnableGraphic(true);
+			score->SetEnableGraphic(true);
+			gage->SetEnableGraphic(true);
+*/
+			fpUpdate = &SceneGame::UpdatePreviousGame;
+
+#ifdef FIRE_KING
 			fpUpdate = &SceneGame::calibrationUpdate;
 
 			calibrationWiimote->SetEnableGraphic(true);
@@ -338,6 +356,10 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 			stringScore->SetEnableGraphic(true);
 			score->SetEnableGraphic(true);
 			gage->SetEnableGraphic(true);
+
+			pCamera_->SetPositionCamera(1680.0,   120.0,  1270.0);
+			pCamera_->SetPositionLookAt(1640.0,   390.0, -1185.0);
+#endif
 		}
 	}
 	else
@@ -351,6 +373,9 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		stringScore->SetEnableGraphic(true);
 		score->SetEnableGraphic(true);
 		gage->SetEnableGraphic(true);
+
+		pCamera_->SetPositionCamera(1680.0,   120.0,  1270.0);
+		pCamera_->SetPositionLookAt(1640.0,   390.0, -1185.0);
 	}
 
 

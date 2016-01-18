@@ -432,6 +432,7 @@ int ManagerMain::Initialize( HINSTANCE instanceHandle, int typeShow )
 	// •`‰æ•\¦ƒNƒ‰ƒX‚Ì‰Šú‰»
 #ifdef _DEVELOP
 	result = DebugProc::Initialize( pDevice );
+	DebugProc::SetIsVisible(false);
 #endif
 	if( result != 0 )
 	{

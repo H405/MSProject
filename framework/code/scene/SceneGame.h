@@ -32,6 +32,8 @@
 
 #define _TEST
 
+#define FIRE_KING
+
 //******************************************************************************
 // —ñ‹“‘Ì
 //******************************************************************************
@@ -540,11 +542,12 @@ private:
 	bool synchronizeFlag;
 
 
-	int autoFadeTable[2];
+	int autoFadeTable[3];
 	int autoFadeTableMax;
 	int autoFadeTableNum;
 	int autoFadeTableCount;
 
+	bool fireAutoManulFlag;
 
 #ifdef _TEST
 	int autoLaunchCount;

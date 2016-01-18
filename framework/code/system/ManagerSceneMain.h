@@ -107,6 +107,7 @@ public:
 	static int demoCount;
 	static int demoCountMax;
 	static bool tutorialFlag;
+	static bool reTutorialFlag;
 
 protected:
 

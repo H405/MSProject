@@ -421,9 +421,10 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName, int* _table,
 	int readDataIndex = 0;
 
 
-	int autoFadeTable[2];
+	int autoFadeTable[3];
 	autoFadeTable[0] = -1;
 	autoFadeTable[1] = -1;
+	autoFadeTable[2] = -1;
 	int autoFadeTableMax = 0;
 
 
@@ -452,7 +453,24 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName, int* _table,
 		//	ステージ切り替えを行う時間
 		else if(readBuff[0] == 'F' && readBuff[1] == 'A' && readBuff[2] == 'D')
 		{
-			//	NAM を読み飛ばす
+			if(autoFadeTableMax < 3)
+			{
+				//	FAD を読み飛ばす
+				char* setName;
+				char* ctx;
+				ctx = strtok_s(readBuff, " ", &setName);
+
+				//	名前保存
+				strcpy_s(targetAppearData[readDataIndex].name, setName);
+
+				autoFadeTable[autoFadeTableMax] = atoi(setName);
+
+				autoFadeTableMax++;
+			}
+		}
+		else if(readBuff[0] == 'E' && readBuff[1] == 'N' && readBuff[2] == 'D')
+		{
+			//	END を読み飛ばす
 			char* setName;
 			char* ctx;
 			ctx = strtok_s(readBuff, " ", &setName);
@@ -460,9 +478,9 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName, int* _table,
 			//	名前保存
 			strcpy_s(targetAppearData[readDataIndex].name, setName);
 
-			autoFadeTable[autoFadeTableMax] = atoi(setName);
+			autoFadeTable[2] = atoi(setName);
 
-			autoFadeTableMax++;
+			autoFadeTableMax = 3;
 		}
 		//	オブジェクトの名前を認識したら
 		else if(readBuff[0] == 'N' && readBuff[1] == 'A' && readBuff[2] == 'M')
@@ -486,6 +504,7 @@ void ManagerTarget::ReadTargetScriptFromFile(const char* _fileName, int* _table,
 
 	_table[0] = autoFadeTable[0];
 	_table[1] = autoFadeTable[1];
+	_table[2] = autoFadeTable[2];
 	*_max = autoFadeTableMax;
 
 	//	データのソート

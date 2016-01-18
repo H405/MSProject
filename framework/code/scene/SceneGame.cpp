@@ -76,11 +76,13 @@
 #define DEG_TO_RAD(_deg)	((D3DX_PI / 180.0f) * _deg)
 #define RANDOM(value) (float)((rand() % value) - (rand() % value))
 #define SQUARE(_value) (_value * _value)
-#define AUTO_SYNCRO_FIREWORKS (5)
+#define AUTO_SYNCRO_FIREWORKS (4)
+
+#define SCORE_MUL (1214)
 
 //#define _WIIBOARD
-#define FIRE_AUTO
-//#define FIRE_MANUAL
+//#define FIRE_AUTO
+#define FIRE_MANUAL
 
 //******************************************************************************
 // 静的変数
@@ -272,9 +274,17 @@ void SceneGame::calibrationUpdate(void)
 		combo->setStartFlag(true);
 
 		if(ManagerSceneMain::tutorialFlag == false)
+		{
 			fpUpdate = &SceneGame::UpdateCountDownGame;
+
+			fireAutoManulFlag = false;
+		}
 		else
+		{
 			fpUpdate = &SceneGame::tutorialUpdate;
+
+			fireAutoManulFlag = true;
+		}
 	}
 }
 
@@ -498,7 +508,10 @@ void SceneGame::normalUpdate(void)
 		{
 			autoFadeTableNum++;
 
-			fpUpdate = &SceneGame::UpdateBetweenSection;
+			if(autoFadeTableNum != autoFadeTableMax)
+				fpUpdate = &SceneGame::UpdateBetweenSection;
+			else
+				fpUpdate = &SceneGame::UpdatePreviousResult;
 		}
 	}
 
@@ -511,27 +524,28 @@ void SceneGame::normalUpdate(void)
 
 	if(targetAppearFlag == true)
 	{
-#ifdef FIRE_MANUAL
-		//	花火打ち上げ処理
-		LaunchFireworks();
-#endif
-
-#ifdef FIRE_AUTO
-		//	プレゼン直前の悪あがき
-		if(selfLaunchFlag == true)
-			LaunchFireworks();
-		else
-			LaunchAuto();
-
-		if(pArgument_->pKeyboard_->IsTrigger(DIK_S))
+		if(fireAutoManulFlag == false)
 		{
-			if(selfLaunchFlag == true)
-				selfLaunchFlag = false;
-			else
-				selfLaunchFlag = true;
+			//	花火打ち上げ処理
+			LaunchFireworks();
 		}
-		//	プレゼン直前の悪あがき
-#endif
+		else
+		{
+			//	プレゼン直前の悪あがき
+			if(selfLaunchFlag == true)
+				LaunchFireworks();
+			else
+				LaunchAuto();
+
+			if(pArgument_->pKeyboard_->IsTrigger(DIK_S))
+			{
+				if(selfLaunchFlag == true)
+					selfLaunchFlag = false;
+				else
+					selfLaunchFlag = true;
+			}
+			//	プレゼン直前の悪あがき
+		}
 	}
 	else
 	{
@@ -548,14 +562,6 @@ void SceneGame::normalUpdate(void)
 		PrintDebug( _T( "autoLaunchTable[%d] = %d\n"), count, autoLaunchTable[count]);
 	}
 
-
-	if(wiiContoroller->getTrigger(WC_TWO))
-	{
-		if(synchronizeFlag == false)
-			synchronizeFlag = true;
-		else
-			synchronizeFlag = false;
-	}
 
 	//	打ち上げる花火色切り替え
 	//------------------------------------------------------------------
@@ -577,7 +583,9 @@ void SceneGame::normalUpdate(void)
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
 	}
-	collision_fireworks_targetAuto();
+	if(fireAutoManulFlag == true)
+		collision_fireworks_targetAuto();
+
 	collision_fireworks_fireworks();
 
 
@@ -819,29 +827,40 @@ void SceneGame::tutorialUpdate(void)
 	MovePlayer();
 
 
+	if(wiiContoroller->getTrigger(WC_ONE))
+	{
+		fireAutoManulFlag = false;
+	}
+	if(wiiContoroller->getTrigger(WC_TWO))
+	{
+		fireAutoManulFlag = true;
+	}
+	
+
 	if(targetAppearFlag == true)
 	{
-#ifdef FIRE_MANUAL
-		//	花火打ち上げ処理
-		LaunchFireworks();
-#endif
-
-#ifdef FIRE_AUTO
-		//	プレゼン直前の悪あがき
-		if(selfLaunchFlag == true)
-			LaunchFireworks();
-		else
-			LaunchAuto();
-
-		if(pArgument_->pKeyboard_->IsTrigger(DIK_S))
+		if(fireAutoManulFlag == false)
 		{
-			if(selfLaunchFlag == true)
-				selfLaunchFlag = false;
-			else
-				selfLaunchFlag = true;
+			//	花火打ち上げ処理
+			LaunchFireworks();
 		}
-		//	プレゼン直前の悪あがき
-#endif
+		else
+		{
+			//	プレゼン直前の悪あがき
+			if(selfLaunchFlag == true)
+				LaunchFireworks();
+			else
+				LaunchAuto();
+
+			if(pArgument_->pKeyboard_->IsTrigger(DIK_S))
+			{
+				if(selfLaunchFlag == true)
+					selfLaunchFlag = false;
+				else
+					selfLaunchFlag = true;
+			}
+			//	プレゼン直前の悪あがき
+		}
 	}
 	else
 	{
@@ -850,20 +869,13 @@ void SceneGame::tutorialUpdate(void)
 			LaunchAuto();
 	}
 
+
+
 	PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
 	for(int count = 0;count < TARGET_MAX;count++)
 	{
 		PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
 		PrintDebug( _T( "autoLaunchTable[%d] = %d\n"), count, autoLaunchTable[count]);
-	}
-
-
-	if(wiiContoroller->getTrigger(WC_TWO))
-	{
-		if(synchronizeFlag == false)
-			synchronizeFlag = true;
-		else
-			synchronizeFlag = false;
 	}
 
 
@@ -944,7 +956,9 @@ void SceneGame::tutorialUpdate(void)
 		//	ターゲットと花火の当たり判定
 		collision_fireworks_target();
 	}
-	collision_fireworks_targetAuto();
+	if(fireAutoManulFlag == true)
+		collision_fireworks_targetAuto();
+
 	collision_fireworks_fireworks();
 
 
@@ -962,6 +976,13 @@ void SceneGame::tutorialUpdate(void)
 	{
 		fpUpdate = &SceneGame::UpdateCountDownGame;
 		ManagerSceneMain::tutorialFlag = false;
+		ManagerSceneMain::reTutorialFlag = true;
+
+		score->SetScoreFuture(0);
+		score->SetScore(0);
+		combo->firstUpdate();
+		gage->setPercent(0.0f);
+		gage->setPercentFuture(0.0f);
 	}
 }
 //==============================================================================
@@ -1357,7 +1378,15 @@ void SceneGame::pauseFadeUpdate(void)
 		if(chooseObject == stringStop)
 			SetSceneNext( ManagerSceneMain::TYPE_TITLE );
 		else
+		{
+			if(ManagerSceneMain::reTutorialFlag == true)
+			{
+				ManagerSceneMain::reTutorialFlag = false;
+				ManagerSceneMain::tutorialFlag = true;
+			}
+
 			SetSceneNext( ManagerSceneMain::TYPE_GAME );
+		}
 
 		SetIsEnd( true );
 	}
@@ -1557,8 +1586,8 @@ void SceneGame::collision_fireworks_target()
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 5));
-				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5));
+				score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5) * SCORE_MUL);
 
 				//	ターゲット消去
 				buffTarget->Dissappear();
@@ -1660,8 +1689,8 @@ void SceneGame::collision_fireworks_targetAuto()
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 5));
-				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5));
+				score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5) * SCORE_MUL);
 
 				//	ターゲット消去
 				buffTarget->Dissappear();
@@ -1743,8 +1772,8 @@ void SceneGame::collision_fireworks_fireworks()
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 10));
-				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10));
+				score->setAddScore((gage->getPercent() + 10) * SCORE_MUL);
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10) * SCORE_MUL);
 
 				//	振動
 				wiiContoroller->rumble((unsigned int)500);

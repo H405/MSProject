@@ -552,6 +552,8 @@ void SceneGame::UpdatePreviousGame( void )
 	{
 		timerSceneGame_ = 0;
 		pCamera_->SetState( NULL );
+
+
 		fpUpdate = &SceneGame::calibrationUpdate;
 
 		//	UIŠÖŒW‚ð‰ÂŽ‹‰»‚·‚é
