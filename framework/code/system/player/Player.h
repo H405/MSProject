@@ -89,6 +89,8 @@ public:
 	void setSpeed(float _value){speed = _value;}
 	void addSpeed(float _value){speed += _value;}
 
+	void SetEnableGraphic( bool value );
+
 protected:
 
 	//	à íuèÓïÒ
@@ -103,10 +105,10 @@ protected:
 	D3DXVECTOR3 cameraVec;
 
 	ObjectSkinMesh* body;
-	ObjectSkinMesh* arm_l;
-	ObjectSkinMesh* arm_r;
-	ObjectSkinMesh* leg_l;
-	ObjectSkinMesh* leg_r;
+//	ObjectSkinMesh* arm_l;
+//	ObjectSkinMesh* arm_r;
+//	ObjectSkinMesh* leg_l;
+//	ObjectSkinMesh* leg_r;
 
 private:
 	void InitializeSelf( void );

@@ -14,6 +14,7 @@
 #include "../../Object/ObjectSkinMesh.h"
 #include "../../framework/resource/ManagerEffect.h"
 #include "../../framework/resource/ManagerModel.h"
+#include "../../framework/resource/ManagerMotion.h"
 #include "../../system/SceneArgumentMain.h"
 
 //******************************************************************************
@@ -52,7 +53,7 @@ void Player::InitializeSelf( void )
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	speed = 0.0f;
 	body = nullptr;
-	arm_l = nullptr;
+//	arm_l = nullptr;
 	D3DXMatrixIdentity(&invViewMatrix);
 }
 
@@ -93,6 +94,7 @@ int Player::Initialize(
 	Effect*		pEffectShadow = nullptr;
 	Effect*		pEffectParaboloid = nullptr;
 	Model*		pModel = nullptr;
+	Motion*		pMotion = nullptr;
 
 	//	プレイヤー固定用の台生成
 	pEffect = pArgument->pEffect_->Get( _T( "SkinMesh.fx" ) );
@@ -101,12 +103,14 @@ int Player::Initialize(
 	pEffectParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
 
 
-	pModel = pArgument->pModel_->Get( _T( "player_body.model" ) );
+	pModel = pArgument->pModel_->Get( _T( "back_dancer.model" ) );
+	pMotion = pArgument->pMotion_->Get( _T( "back_dancer.motion" ) );
 	body = new ObjectSkinMesh();
-	body->Initialize(0, 0);
+	body->Initialize(0, 1);
 	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
+	body->SetTableMotion(0, pMotion);
 	body->SetPosition(pos);
-
+#if 0
 	pModel = pArgument->pModel_->Get( _T( "player_hand_l.model" ) );
 	arm_l = new ObjectSkinMesh();
 	arm_l->Initialize(0, 0);
@@ -135,13 +139,16 @@ int Player::Initialize(
 	arm_r->SetScale(1.0f, 1.0f, 1.0f);
 	leg_l->SetScale(1.0f, 1.0f, 1.0f);
 	leg_r->SetScale(1.0f, 1.0f, 1.0f);
-
+#else
+	body->SetScale(1.0f, 1.0f, 1.0f);
+#endif
+#if 0
 	//	親オブジェクト登録
 	arm_l->SetParent(body);
 	arm_r->SetParent(body);
 	leg_l->SetParent(body);
 	leg_r->SetParent(body);
-
+#endif
 
 	// 正常終了
 	return 0;
@@ -155,10 +162,10 @@ int Player::Initialize(
 int Player::Finalize( void )
 {
 	delete body;
-	delete arm_l;
-	delete arm_r;
-	delete leg_l;
-	delete leg_r;
+//	delete arm_l;
+//	delete arm_r;
+//	delete leg_l;
+//	delete leg_r;
 
 	// 基本クラスの処理
 	int		result;		// 実行結果
@@ -221,5 +228,15 @@ void Player::addRotationArm(float _x, float _y, float _z)
 }
 void Player::addPositionArm(float _x, float _y, float _z)
 {
-	arm_l->AddPosition(_x, _y, _z);
+//	arm_l->AddPosition(_x, _y, _z);
+}
+
+//==============================================================================
+// Brief  : 描画クラスの有効設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void Player::SetEnableGraphic( bool value )
+{
+	body->SetEnableGraphic( value );
 }
