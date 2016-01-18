@@ -290,6 +290,35 @@ int ManagerFireworks::Add(
 //==============================================================================
 // Brief  : 花火発射処理
 //==============================================================================
+int ManagerFireworks::Add(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot,
+	Target* _target,
+	COLOR_STATE _colorState)
+{
+	int index = GetIndex();
+	if(index < 0 || index >= FIREWORKS_MAX)
+	{
+		//PrintDebugWnd( _T( "ポイントに空きがありません。\n" ) );
+		return -1;
+	}
+
+	//	花火のセット
+	fireworks[index].Set(
+		_indexState,
+		_managerPoint,
+		_pos,
+		_diffRot,
+		_target,
+		_colorState);
+
+	return index;
+}
+//==============================================================================
+// Brief  : 花火発射処理
+//==============================================================================
 int ManagerFireworks::AddW(
 	int _indexState,
 	ManagerPoint* _managerPoint,

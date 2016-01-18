@@ -416,6 +416,93 @@ int Fireworks::Set(
 	return 0;
 }
 //==============================================================================
+// Brief  : 花火あげる処理(ターゲットへ向かって)
+// Return : int									: 実行結果
+//==============================================================================
+int Fireworks::Set(
+	int _indexState,
+	ManagerPoint* _managerPoint,
+	D3DXVECTOR3 _pos,
+	D3DXVECTOR3 _diffRot,
+	Target* _target,
+	COLOR_STATE _colorState)
+{
+	//	変数の保存と初期化
+	param.managerPoint = _managerPoint;
+	param.pos = _pos;
+	param.matRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	param.enable = true;
+	param.burnFlag = false;
+	param.disappear = 0;
+	param.fireMax = 0;
+	param.smallFireMax = 0;
+	param.setSmallFireIndex = 0;
+	param.setPosOld = 0;
+
+	//	色情報
+	param.colorState = _colorState;
+	if(param.colorState == COLOR_STATE_R)
+		param.color = D3DXCOLOR(mainColor, subColor2, subColor1, 1.0f);
+	else if(param.colorState == COLOR_STATE_G)
+		param.color = D3DXCOLOR(subColor1, mainColor, subColor2, 1.0f);
+	else if(param.colorState == COLOR_STATE_B)
+		param.color = D3DXCOLOR(subColor2, subColor1, mainColor, 1.0f);
+	else if(param.colorState == COLOR_STATE_W)
+		param.color = D3DXCOLOR(mainColor, mainColor, mainColor, 1.0f);
+
+	indexState = _indexState;
+
+	if(param.lightPoint == nullptr)
+	{
+		param.lightPoint = managerLight->GetLightPoint();
+		param.lightPoint->SetDiffuse(param.color);
+		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
+	}
+	param.lightPoint->SetDiffuse(param.color);
+	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
+	param.lightPoint->SetIsEnable(true);
+
+	//	音再生
+	burnSoundIndex = -1;
+	launchSoundIndex = -1;
+	launchSoundIndex = param.launchSound->Play();
+
+	//	更新関数設定
+	fpUpdate = &Fireworks::NormalUpdate;
+
+
+
+	//	endの上限値は、yが200くらい、xが-200～200くらい？
+	param.startPos = _pos;
+	param.buffPos1 = D3DXVECTOR3(_pos.x + (_target->getPosition().x - _pos.x) * 0.3f, _pos.y + (_target->getPosition().y - _pos.y) * 0.7f, _pos.z);
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↓
+///////////////////////////////////////////////////////////////////////////////
+#if 1
+	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y, _pos.z);
+#else
+	param.endPos = D3DXVECTOR3(_target->getPosition().x, _target->getPosition().y + 550.0f, _pos.z + 3000.0f);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川変更 ↑
+///////////////////////////////////////////////////////////////////////////////
+
+	param.count = 0;
+	param.burnSPFlag = false;
+	param.deleteCountMax = DELETECOUNT_MAX / 2;
+
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↓
+///////////////////////////////////////////////////////////////////////////////
+	timerForLight = 0;
+///////////////////////////////////////////////////////////////////////////////
+// 2015_12_20 白川追加 ↑
+///////////////////////////////////////////////////////////////////////////////
+
+	// 正常終了
+	return 0;
+}
+//==============================================================================
 // Brief  : 花火あげる処理
 // Return : int									: 実行結果
 //==============================================================================

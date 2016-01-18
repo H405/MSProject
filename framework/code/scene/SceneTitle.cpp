@@ -567,7 +567,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		pEffect,
 		pTexture);
 
-		finger->SetScale(50.0f, 50.0f, 0.1f);
+		finger->SetScale(150.0f, 150.0f, 0.1f);
 		finger->SetEnableGraphic(false);
 
 		//	IR‚Å‘I‘ğ‚É•ÏX

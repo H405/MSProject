@@ -104,6 +104,8 @@ void SceneGame::InitializeSelf( void )
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
+	stringDemo = nullptr;
+	stringManual = nullptr;
 	stringScore = nullptr;
 	score = nullptr;
 	gage = nullptr;
@@ -373,6 +375,8 @@ int SceneGame::Initialize( SceneArgumentMain* pArgument )
 		stringScore->SetEnableGraphic(true);
 		score->SetEnableGraphic(true);
 		gage->SetEnableGraphic(true);
+
+		stringDemo->SetEnableGraphic(true);
 
 		pCamera_->SetPositionCamera(1680.0,   120.0,  1270.0);
 		pCamera_->SetPositionLookAt(1640.0,   390.0, -1185.0);
@@ -703,6 +707,45 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 
 	targetAppearFlag = true;
 
+
+	//	「マニュアル」文字オブジェクト生成
+	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "game/manual.png" ) );
+
+	stringManual = new Object2D;
+	stringManual->Initialize(0);
+
+	stringManual->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+	stringManual->SetScale(192.0f, 64.0f, 0.0f);
+	stringManual->SetPosition(-500.0f, 332.0f, 0.0f);
+
+	stringManual->SetEnableGraphic(false);
+
+
+	//	「デモ」文字オブジェクト生成
+	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
+	pTexture = pArgument_->pTexture_->Get( _T( "game/demoPlay.png" ) );
+
+	stringDemo = new Object2D;
+	stringDemo->Initialize(0);
+
+	stringDemo->CreateGraphic(
+		0,
+		pArgument_->pEffectParameter_,
+		pEffect,
+		pTexture);
+
+	stringDemo->SetScale(192.0f, 64.0f, 0.0f);
+	stringDemo->SetPosition(-500.0f, 332.0f, 0.0f);
+
+	stringDemo->SetEnableGraphic(false);
+
+
 	//	「スコア」文字オブジェクト生成
 	pEffect = pArgument_->pEffect_->Get( _T( "Polygon2D.fx" ) );
 	pTexture = pArgument_->pTexture_->Get( _T( "common/font_edge.png" ) );
@@ -879,7 +922,7 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 		pEffect,
 		pTexture);
 
-		finger->SetScale(50.0f, 50.0f, 0.1f);
+		finger->SetScale(150.0f, 150.0f, 0.1f);
 		finger->SetEnableGraphic(false);
 
 		//	IRで選択に変更
@@ -950,6 +993,8 @@ void SceneGame::InitializeUI(SceneArgumentMain* pArgument)
 	stringScore->SetEnableGraphic(false);
 	score->SetEnableGraphic(false);
 	gage->SetEnableGraphic(false);
+
+	tutorialFadeCount = 0;
 }
 
 //==============================================================================
@@ -990,6 +1035,12 @@ int SceneGame::Finalize( void )
 	{
 		return result;
 	}
+
+	delete stringDemo;
+	stringDemo = nullptr;
+
+	delete stringManual;
+	stringManual = nullptr;
 
 	delete stringScore;
 	stringScore = nullptr;

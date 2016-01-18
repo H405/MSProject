@@ -278,6 +278,7 @@ void SceneGame::calibrationUpdate(void)
 			fpUpdate = &SceneGame::UpdateCountDownGame;
 
 			fireAutoManulFlag = false;
+			stringManual->SetEnableGraphic(true);
 		}
 		else
 		{
@@ -312,15 +313,15 @@ void SceneGame::MovePlayer()
 		{
 			player->addSpeed((((totalKgR - totalCalibKg) / wiiContoroller->getCalibKg().Total)) * 2.0f);
 		}
+	}
 
-		if(pArgument_->pKeyboard_->IsPress(DIK_LEFT) == true)
-		{
-			player->AddPositionX(-1.0f);
-		}
-		if(pArgument_->pKeyboard_->IsPress(DIK_RIGHT) == true)
-		{
-			player->AddPositionX(1.0f);
-		}
+	if(pArgument_->pKeyboard_->IsPress(DIK_A) == true)
+	{
+		player->AddPositionX(-1.0f);
+	}
+	if(pArgument_->pKeyboard_->IsPress(DIK_D) == true)
+	{
+		player->AddPositionX(1.0f);
 	}
 
 	//	プレイヤー腕オブジェクトに回転量をセット
@@ -382,6 +383,51 @@ void SceneGame::Launch()
 void SceneGame::LaunchAuto()
 {
 	if(fabsf(wiiContoroller->getAccelerationY()) >= 1.0f && wiiContoroller->getRelease(WC_B))
+	{
+		Target* autoTarget = nullptr;
+		for(int count = 0;count < targetTableIndex;count++)
+		{
+			if(autoLaunchTable[targetTable[count]] == false &&
+				((float)abs(player->getPosition().x - managerTarget->getTarget(targetTable[count])->getPosition().x)) <= 150.0f)
+			{
+				autoTarget = managerTarget->getTarget(targetTable[count]);
+				autoLaunchTable[targetTable[count]] = true;
+
+				break;
+			}
+		}
+
+		if(autoTarget != nullptr)
+		{
+			int buff = -1;
+			D3DXVECTOR3 buffPos = player->getPosition();
+
+			buff = managerFireworks->Add(
+					ManagerFireworks::STATE_RIGHTSP,
+					managerPoint,
+					buffPos,
+					buffDiffWiiRot,
+					autoTarget,
+					colorState);
+
+			if(buff != -1)
+			{
+				fireworksTable[fireworksTableIndex] = buff;
+				fireworksTableIndex++;
+			}
+		}
+	}
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		if(targetTable[count] == -1)
+			autoLaunchTable[count] = false;
+	}
+
+
+	//	発表前直前の差し替え前
+	/*
+	if(fabsf(wiiContoroller->getAccelerationY()) >= 1.0f && wiiContoroller->getRelease(WC_B))
 	//if(pArgument_->pKeyboard_->IsTrigger(DIK_U))
 	{
 		Target* autoTarget = nullptr;
@@ -390,7 +436,13 @@ void SceneGame::LaunchAuto()
 			if(autoLaunchTable[targetTable[count]] == false)
 			{
 				autoTarget = managerTarget->getTarget(targetTable[count]);
+
+
+
+				//	一度上げると、Aボタン（爆発）で失敗しても上げられない仕様になってる
 				autoLaunchTable[targetTable[count]] = true;
+
+
 
 				break;
 			}
@@ -421,6 +473,7 @@ void SceneGame::LaunchAuto()
 		if(targetTable[count] == -1)
 			autoLaunchTable[count] = false;
 	}
+	*/
 }
 void SceneGame::LaunchSP()
 {
@@ -830,10 +883,14 @@ void SceneGame::tutorialUpdate(void)
 	if(wiiContoroller->getTrigger(WC_ONE))
 	{
 		fireAutoManulFlag = false;
+
+		stringManual->SetEnableGraphic(true);
 	}
 	if(wiiContoroller->getTrigger(WC_TWO))
 	{
 		fireAutoManulFlag = true;
+
+		stringManual->SetEnableGraphic(false);
 	}
 	
 
@@ -974,6 +1031,95 @@ void SceneGame::tutorialUpdate(void)
 	//	ポーズキーが押されたら
 	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))
 	{
+		fpUpdate = &SceneGame::tutorialFadeUpdate;
+	}
+}
+//==============================================================================
+// Brief  : 通常更新処理
+// Return : void								: なし
+// Arg    : void								: なし
+//==============================================================================
+void SceneGame::tutorialFadeUpdate(void)
+{
+	//PrintDebug( _T( "normalUpdate\n" ) );
+
+	//	接続切れ確認
+	if(wiiLostCheck() == false)
+		return;
+
+
+	//	カメラの逆行列を取得する
+	D3DXMATRIX cameraInvMat;
+	pCamera_->GetRenderMatrix()->GetMatrixView(&cameraInvMat);
+	D3DXMatrixInverse(&cameraInvMat, nullptr, &cameraInvMat);
+
+	//	カメラの逆行列をプレイヤーにセット
+	player->setInvViewMatrix(cameraInvMat);
+
+	//	カメラの視線ベクトル取得
+	D3DXVECTOR3 cameraVec;
+	pCamera_->GetVector(&cameraVec);
+	player->setCameraVec(cameraVec);
+
+
+	{
+		//	花火管理クラスの更新
+		//MeasureTime("managerFireworksUpdate");
+		managerFireworks->setInvViewMatrix(cameraInvMat);
+		managerFireworks->Update(fireworksTable, &fireworksTableIndex);
+	}
+	//	ターゲットクラスの更新
+	managerTarget->setInvViewMatrix(cameraInvMat);
+	managerTarget->Update(targetTable, &targetTableIndex, autoLaunchTable);
+	{
+		// ポイントスプライト管理クラスの更新
+		//MeasureTime("managerPoint");
+		managerPoint->Update();
+	}
+
+
+
+	if(fireAutoManulFlag == true)
+		collision_fireworks_targetAuto();
+
+	collision_fireworks_fireworks();
+
+
+
+	PrintDebug( _T( "targetTableIndex = %d\n"), targetTableIndex);
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		PrintDebug( _T( "targetTable[%d] = %d\n"), count, targetTable[count]);
+		PrintDebug( _T( "autoLaunchTable[%d] = %d\n"), count, autoLaunchTable[count]);
+	}
+
+	bool targetAllDisappearFlag = false;
+	int targetAllDisappearCount = 0;
+
+	for(int count = 0;count < TARGET_MAX;count++)
+	{
+		if(targetTable[count] == -1)
+			targetAllDisappearCount++;
+	}
+	if(targetAllDisappearCount == 16)
+		targetAllDisappearFlag = true;
+
+
+	bool fireworksAllDisappearFlag = false;
+	int fireworksAllDisappearCount = 0;
+
+	for(int count = 0;count < FIREWORKS_MAX;count++)
+	{
+		if(fireworksTable[count] == -1)
+			fireworksAllDisappearCount++;
+	}
+	if(fireworksAllDisappearCount == 16)
+		fireworksAllDisappearFlag = true;
+
+
+	//	ポーズキーが押されたら
+	if( targetAllDisappearFlag == true && fireworksAllDisappearFlag == true)
+	{
 		fpUpdate = &SceneGame::UpdateCountDownGame;
 		ManagerSceneMain::tutorialFlag = false;
 		ManagerSceneMain::reTutorialFlag = true;
@@ -983,6 +1129,8 @@ void SceneGame::tutorialUpdate(void)
 		combo->firstUpdate();
 		gage->setPercent(0.0f);
 		gage->setPercentFuture(0.0f);
+
+		player->setPosition(D3DXVECTOR3(0.0f, -150.0f, 400.0f));
 	}
 }
 //==============================================================================

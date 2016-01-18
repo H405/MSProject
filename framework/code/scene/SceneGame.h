@@ -160,6 +160,12 @@ private:
 
 	//	ゲームUI関係
 	//----------------------------------------------------------
+	//	「マニュアルモード」文字
+	Object2D* stringManual;
+
+	//	「デモモード」文字
+	Object2D* stringDemo;
+
 	//	「スコア」文字
 	Object2D* stringScore;
 
@@ -269,6 +275,10 @@ private:
 	Sound* cancelSound;
 	//----------------------------------------------------------
 
+
+	int tutorialFadeCount;
+
+
 	//	カメラの方向
 	CAMERA_STATE cameraState;
 
@@ -287,6 +297,7 @@ private:
 	//==============================================================================
 	void normalUpdate(void);
 	void tutorialUpdate(void);
+	void tutorialFadeUpdate(void);
 
 	//==============================================================================
 	// Brief  : ポーズ時用の更新処理

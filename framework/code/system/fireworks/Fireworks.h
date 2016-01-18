@@ -176,6 +176,13 @@ public:
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		Target* _target);
+	int Set(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target,
+		COLOR_STATE _colorState);
 	int SetSP(
 		int _indexState,
 		ManagerPoint* _managerPoint,

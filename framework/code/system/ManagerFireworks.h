@@ -109,6 +109,13 @@ public:
 		D3DXVECTOR3 _pos,
 		D3DXVECTOR3 _diffRot,
 		Target* _target);
+	int ManagerFireworks::Add(
+		int _indexState,
+		ManagerPoint* _managerPoint,
+		D3DXVECTOR3 _pos,
+		D3DXVECTOR3 _diffRot,
+		Target* _target,
+		COLOR_STATE _colorState);
 	int ManagerFireworks::AddW(
 		int _indexState,
 		ManagerPoint* _managerPoint,
