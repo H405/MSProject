@@ -54,6 +54,8 @@ static const float fireBGAddSize = 5.0f;
 static int createFireNum = 0;
 
 static const D3DXVECTOR3 attenuationValue = D3DXVECTOR3(0.0f, 0.00028f, 0.00000005f);
+static const D3DXVECTOR3 attenuationLaunch = D3DXVECTOR3(0.0f, 0.0028f, 0.00000005f);
+static const D3DXVECTOR3 attenuationBurn = D3DXVECTOR3(0.0f, 0.0005f, 0.00000005f);
 
 static const TIME compAppear = (int)(DELETECOUNT_MAX * 0.9f);
 static const TIME compDisppear = (int)(DELETECOUNT_MAX);
@@ -188,6 +190,9 @@ int Fireworks::Set(
 	//	更新関数設定
 	fpUpdate = &Fireworks::NormalUpdate;
 
+	// タイマーの初期化
+	timerForLight = 0;
+
 	// 正常終了
 	return 0;
 }
@@ -234,7 +239,7 @@ int Fireworks::Set(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
+	param.lightPoint->SetAttenuation(attenuationLaunch);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -257,6 +262,8 @@ int Fireworks::Set(
 	param.count = 0;
 	param.burnSPFlag = false;
 	param.deleteCountMax = DELETECOUNT_MAX;
+
+	timerForLight = 0;
 
 	// 正常終了
 	return 0;
@@ -304,7 +311,7 @@ int Fireworks::SetSP(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
+	param.lightPoint->SetAttenuation(attenuationLaunch);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -325,6 +332,8 @@ int Fireworks::SetSP(
 	param.count = 0;
 	param.burnSPFlag = true;
 	param.deleteCountMax = DELETECOUNT_MAX;
+
+	timerForLight = 0;
 
 	// 正常終了
 	return 0;
@@ -372,7 +381,7 @@ int Fireworks::Set(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
+	param.lightPoint->SetAttenuation(attenuationLaunch);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -458,7 +467,7 @@ int Fireworks::SetW(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
+	param.lightPoint->SetAttenuation(attenuationLaunch);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -478,6 +487,8 @@ int Fireworks::SetW(
 
 	param.count = 0;
 	param.deleteCountMax = DELETECOUNT_MAX / 2;
+
+	timerForLight = 0;
 
 	// 正常終了
 	return 0;
@@ -526,7 +537,7 @@ int Fireworks::SetW(
 		param.lightPoint->SetSpecular(1.0f, 1.0f, 1.0f);
 	}
 	param.lightPoint->SetDiffuse(param.color);
-	param.lightPoint->SetAttenuation(7.0f * attenuationValue);
+	param.lightPoint->SetAttenuation(attenuationLaunch);
 	param.lightPoint->SetIsEnable(true);
 
 	//	音再生
@@ -561,6 +572,8 @@ int Fireworks::SetW(
 
 	param.count = 0;
 	param.deleteCountMax = DELETECOUNT_MAX/ 2;
+
+	timerForLight = 0;
 
 	// 正常終了
 	return 0;
@@ -650,7 +663,8 @@ void Fireworks::BurnUpdate( void )
 		//param.smallFire[count].Update();
 	}
 
-	if(buffCount == param.fireMax)
+//	if(buffCount == param.fireMax)
+	if( timerForLight > 120 )
 	{
 		param.enable = false;
 		param.lightPoint->SetIsEnable(false);
@@ -668,18 +682,18 @@ void Fireworks::BurnUpdate( void )
 	{
 		//	60は花火一番開くところの時間・80(火花のDELETECOUNT) - 60(一番開くとこ)が光が消えていく時間
 		//	マジックナンバーなので、要調整
-		proportion = Utility::Easing( 0.0f, 1.0f, (float)(timerForLight - 60) / 20);
+		proportion = static_cast< float >( timerForLight - 60 ) / 60.0f;
 	}
 
 	D3DXVECTOR3	attenuation;
 	if( timerForLight < 60 )
 	{
-		attenuation = (1.0f - proportion) * attenuationValue;
-		attenuation += proportion * 7.0f * attenuationValue;
+		attenuation = (1.0f - proportion) * attenuationBurn;
+		attenuation += proportion * attenuationLaunch;
 	}
 	else
 	{
-		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
+		attenuation = attenuationBurn + D3DXVECTOR3( 500.0f * proportion * proportion * proportion * proportion * proportion, 0.0f, 0.0f );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
 
@@ -711,7 +725,8 @@ void Fireworks::Burn2Update( void )
 
 	//PrintDebug( _T( "\ncountFire:Burn2 = %d\n"), param.fireMax * SMALL_FIREWORKS_MAX - buffCount );
 
-	if(buffCount == param.fireMax * param.setSmallFireIndex)
+//	if(buffCount == param.fireMax * param.setSmallFireIndex)
+	if( timerForLight > 120 )
 	{
 		param.enable = false;
 		param.lightPoint->SetIsEnable(false);
@@ -729,18 +744,18 @@ void Fireworks::Burn2Update( void )
 	{
 		//	60は花火一番開くところの時間・80(火花のDELETECOUNT) - 60(一番開くとこ)が光が消えていく時間
 		//	マジックナンバーなので、要調整
-		proportion = Utility::Easing( 0.0f, 1.0f, (float)(timerForLight - 60) / 20);
+		proportion = static_cast< float >( timerForLight - 60 ) / 60.0f;
 	}
 
 	D3DXVECTOR3	attenuation;
 	if( timerForLight < 60 )
 	{
-		attenuation = (1.0f - proportion) * attenuationValue;
-		attenuation += proportion * 7.0f * attenuationValue;
+		attenuation = (1.0f - proportion) * attenuationBurn;
+		attenuation += proportion * attenuationLaunch;
 	}
 	else
 	{
-		attenuation = attenuationValue + D3DXVECTOR3( 0.0f, 0.01f * proportion, 0.0001f * proportion );
+		attenuation = attenuationBurn + D3DXVECTOR3( 500.0f * proportion * proportion * proportion * proportion * proportion, 0.0f, 0.0f );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
 

@@ -444,6 +444,7 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		//D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
 		D3DXVECTOR3(0.0f, -100.0f, 400.0f),
 		pArgument);
+	player->SetEnableGraphic( false );
 
 /*
 	// スキンメッシュの生成
