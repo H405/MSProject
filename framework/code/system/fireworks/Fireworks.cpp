@@ -55,7 +55,7 @@ static int createFireNum = 0;
 
 static const D3DXVECTOR3 attenuationValue = D3DXVECTOR3(0.0f, 0.00028f, 0.00000005f);
 static const D3DXVECTOR3 attenuationLaunch = D3DXVECTOR3(0.0f, 0.0028f, 0.00000005f);
-static const D3DXVECTOR3 attenuationBurn = D3DXVECTOR3(0.0f, 0.0005f, 0.00000005f);
+static const D3DXVECTOR3 attenuationBurn = D3DXVECTOR3(0.0f, 0.0006f, 0.00000005f);
 
 static const TIME compAppear = (int)(DELETECOUNT_MAX * 0.9f);
 static const TIME compDisppear = (int)(DELETECOUNT_MAX);
@@ -192,6 +192,7 @@ int Fireworks::Set(
 
 	// タイマーの初期化
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 
 	// 正常終了
 	return 0;
@@ -264,6 +265,7 @@ int Fireworks::Set(
 	param.deleteCountMax = DELETECOUNT_MAX;
 
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 
 	// 正常終了
 	return 0;
@@ -334,6 +336,7 @@ int Fireworks::SetSP(
 	param.deleteCountMax = DELETECOUNT_MAX;
 
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 
 	// 正常終了
 	return 0;
@@ -417,6 +420,7 @@ int Fireworks::Set(
 // 2015_12_20 白川追加 ↓
 ///////////////////////////////////////////////////////////////////////////////
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 ///////////////////////////////////////////////////////////////////////////////
 // 2015_12_20 白川追加 ↑
 ///////////////////////////////////////////////////////////////////////////////
@@ -504,6 +508,7 @@ int Fireworks::Set(
 // 2015_12_20 白川追加 ↓
 ///////////////////////////////////////////////////////////////////////////////
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 ///////////////////////////////////////////////////////////////////////////////
 // 2015_12_20 白川追加 ↑
 ///////////////////////////////////////////////////////////////////////////////
@@ -576,6 +581,7 @@ int Fireworks::SetW(
 	param.deleteCountMax = DELETECOUNT_MAX / 2;
 
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 
 	// 正常終了
 	return 0;
@@ -661,6 +667,7 @@ int Fireworks::SetW(
 	param.deleteCountMax = DELETECOUNT_MAX/ 2;
 
 	timerForLight = 0;
+	param.fireSize = 0.0f;
 
 	// 正常終了
 	return 0;
@@ -775,12 +782,12 @@ void Fireworks::BurnUpdate( void )
 	D3DXVECTOR3	attenuation;
 	if( timerForLight < 60 )
 	{
-		attenuation = (1.0f - proportion) * attenuationBurn;
+		attenuation = (1.0f - proportion) * attenuationBurn * (2.0f - param.fireSize / 45.0f);
 		attenuation += proportion * attenuationLaunch;
 	}
 	else
 	{
-		attenuation = attenuationBurn + D3DXVECTOR3( 500.0f * proportion * proportion * proportion * proportion * proportion, 0.0f, 0.0f );
+		attenuation = attenuationBurn * (2.0f - param.fireSize / 45.0f) + D3DXVECTOR3( 500.0f * proportion * proportion * proportion * proportion * proportion, 0.0f, 0.0f );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
 
@@ -837,12 +844,12 @@ void Fireworks::Burn2Update( void )
 	D3DXVECTOR3	attenuation;
 	if( timerForLight < 60 )
 	{
-		attenuation = (1.0f - proportion) * attenuationBurn;
+		attenuation = (1.0f - proportion) * attenuationBurn * (2.0f - param.fireSize / 45.0f);
 		attenuation += proportion * attenuationLaunch;
 	}
 	else
 	{
-		attenuation = attenuationBurn + D3DXVECTOR3( 500.0f * proportion * proportion * proportion * proportion * proportion, 0.0f, 0.0f );
+		attenuation = attenuationBurn * (2.0f - param.fireSize / 45.0f) + D3DXVECTOR3( 500.0f * proportion * proportion * proportion * proportion * proportion, 0.0f, 0.0f );
 	}
 	param.lightPoint->SetAttenuation( attenuation );
 
@@ -881,6 +888,7 @@ int Fireworks::burn(
 		param.fireMax = FIRE_MAX;
 		buffValue = 360.0f / (float)(param.fireMax);
 		fireSize = 45.0f;
+		param.fireSize = 45.0f;
 
 		returnValue = ADD_10;
 	}
@@ -890,6 +898,7 @@ int Fireworks::burn(
 		param.fireMax = FIRE_MAX / 3;
 		buffValue = 360.0f / (float)(param.fireMax);
 		fireSize = 15.0f;
+		param.fireSize = 15.0f;
 
 		returnValue = ADD_5;
 	}
@@ -899,6 +908,7 @@ int Fireworks::burn(
 		param.fireMax = FIRE_MAX / 6;
 		buffValue = 360.0f / (float)(param.fireMax);
 		fireSize = 5.0f;
+		param.fireSize = 5.0f;
 
 		returnValue = ADD_1;
 	}
@@ -1078,6 +1088,7 @@ int Fireworks::burnNew151220(
 		fireSize = 45.0f;
 		buffFireSpeed = fireSpeed;
 		returnValue = ADD_10;
+		param.fireSize = 45.0f;
 	}
 	//	良
 	else if(_hitPosLength <= (_hitCheckOffset * 0.3f))
@@ -1087,6 +1098,7 @@ int Fireworks::burnNew151220(
 		param.fireMax = param.fireXZMax * param.fireYMax;
 		buffFireSpeed = fireSpeed / 3.0f * 2.0f;
 		fireSize = 25.0f;
+		param.fireSize = 15.0f;
 
 		returnValue = ADD_5;
 	}
@@ -1098,6 +1110,7 @@ int Fireworks::burnNew151220(
 		param.fireMax = param.fireXZMax * param.fireYMax;
 		buffFireSpeed = fireSpeed / 3.0f;
 		fireSize = 5.0f;
+		param.fireSize = 5.0f;
 
 		returnValue = ADD_1;
 	}
@@ -1200,6 +1213,7 @@ void Fireworks::burn2New151220()
 		param.fireMax = param.fireXZMax * param.fireYMax;
 		buffFireSpeed = fireSpeed / 3.0f * 2.0f;
 		fireSize = 25.0f;
+		param.fireSize = 45.0f;
 
 
 		//	花火の背景用生成

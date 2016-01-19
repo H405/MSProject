@@ -104,6 +104,8 @@ typedef struct
 	int fireXZMax;
 	int fireYMax;
 
+	float fireSize;
+
 	//	•ª—ô‚µ‚½‰Ô‰Î‚Ì‘”
 	int smallFireMax;
 	int setSmallFireIndex;
