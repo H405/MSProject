@@ -573,8 +573,8 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
 		markers[ counterMarker ].SetEnableMotion( false );
 	}
-	markers[ 0 ].SetPosition( 5400.0f, 0.0f, -380.0f );
-	markers[ 0 ].SetRotationY( DEG_TO_RAD( 0.0f ) );
+	markers[ 0 ].SetPosition( 5450.0f, 0.0f, -380.0f );
+	markers[ 0 ].SetRotationY( DEG_TO_RAD( -86.0f ) );
 	markers[ 0 ].SetEnableMotion( true );
 	markers[ 1 ].SetPosition( 960.0f, 0.0f, 3860.0f );
 	markers[ 1 ].SetRotationY( DEG_TO_RAD( 40.0f ) );
@@ -595,6 +595,54 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	markers[ 9 ].SetPosition( 1430.0f, 800.0f, -2550.0f );
 	markers[ 9 ].SetRotationY( DEG_TO_RAD( -2.0f ) );
 	markers[ 9 ].SetScale( 2.0f, 2.0f, 2.0f );
+
+	// ƒ}ƒeƒŠƒAƒ‹‚ÌÝ’è
+	Material	materialDancer;
+	pModelMarker->GetMaterial( 0, &materialDancer );
+	materialDancer.specular_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	materialDancer.reflection_ = 0.7f;
+	materialDancer.power_ = 5.0f;
+	pModelMarker->SetMaterial( 0, materialDancer );
+
+	Material	materialBridge;
+	pModelBridge->GetMaterial( 0, &materialBridge );
+	materialBridge.specular_ = D3DXCOLOR( 0.7f, 0.7f, 0.7f, 1.0f );
+	materialBridge.reflection_ = 0.5f;
+	materialBridge.power_ = 5.0f;
+	pModelBridge->SetMaterial( 0, materialBridge );
+
+	Material	materialField;
+	pModelField->GetMaterial( 0, &materialField );
+	materialField.specular_ = D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f );
+	materialField.reflection_ = 0.5f;
+	materialField.power_ = 2.0f;
+	pModelField->SetMaterial( 0, materialField );
+
+	Material	materialWindow;
+	pModelHouse->GetMaterial( 0, &materialWindow );
+	materialWindow.specular_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	materialWindow.reflection_ = 1.0f;
+	materialWindow.power_ = 5.0f;
+	pModelHouse->SetMaterial( 0, materialWindow );
+
+	Material	materialHouse;
+	pModelHouse->GetMaterial( 1, &materialHouse );
+	materialHouse.specular_ = D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f );
+	materialHouse.reflection_ = 0.25f;
+	materialHouse.power_ = 1.5f;
+	pModelHouse->SetMaterial( 1, materialHouse );
+
+	Model*		pModelGear = nullptr;
+	Model*		pModelBase = nullptr;
+	pModelGear = pArgument->pModel_->Get( _T( "suisya_gear_002.x" ) );
+	pModelBase = pArgument->pModel_->Get( _T( "suisya_dai_002.x" ) );
+	Material	materialWaterwheel;
+	pModelHouse->GetMaterial( 0, &materialWaterwheel );
+	materialWaterwheel.specular_ = D3DXCOLOR( 0.9f, 0.9f, 0.9f, 1.0f );
+	materialWaterwheel.reflection_ = 0.4f;
+	materialWaterwheel.power_ = 3.0f;
+	pModelGear->SetMaterial( 0, materialWaterwheel );
+	pModelBase->SetMaterial( 0, materialWaterwheel );
 }
 
 //==============================================================================

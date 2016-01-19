@@ -207,8 +207,8 @@ int SceneTitle::Initialize( SceneArgumentMain* pArgument )
 		pArgument->pWindow_->GetHeight(),
 		0.1f,
 		20000.0f,
-		D3DXVECTOR3( 0.0f, 120.0f, -2400.0f ),
-		D3DXVECTOR3( 0.0f, 720.0f, 0.0f ),
+		D3DXVECTOR3( 3955.0f, 1410.0f, -3465.0f ),
+		D3DXVECTOR3( 2810.0f, 835.0f, -1350.0f ),
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
 	
 	// ÉâÉCÉgÇÃê∂ê¨

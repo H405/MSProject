@@ -175,7 +175,7 @@ void SceneGame::Update( void )
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F6 ) )
 	{
 		timerSceneGame_ = 0;
-		fpUpdate = &SceneGame::UpdateCountDownGame;
+		fpUpdate = &SceneGame::UpdatePreviousResult;
 	}
 	if( pArgument_->pKeyboard_->IsTrigger( DIK_F7 ) )
 	{
