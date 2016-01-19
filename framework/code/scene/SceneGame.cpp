@@ -78,7 +78,7 @@
 #define SQUARE(_value) (_value * _value)
 #define AUTO_SYNCRO_FIREWORKS (4)
 
-#define SCORE_MUL (1214)
+#define SCORE_MUL (1260)
 
 //#define _WIIBOARD
 //#define FIRE_AUTO
@@ -637,11 +637,17 @@ void SceneGame::normalUpdate(void)
 	{
 		fireworksUI->subRotColor();
 		colorState = fireworksUI->getColorState();
+
+		//	音再生
+		selectSound->Play();
 	}
 	if(pArgument_->pVirtualController_->IsTrigger(VC_RIGHT))
 	{
 		fireworksUI->addRotColor();
 		colorState = fireworksUI->getColorState();
+
+		//	音再生
+		selectSound->Play();
 	}
 	//------------------------------------------------------------------
 
@@ -774,7 +780,7 @@ void SceneGame::normalUpdate(void)
 
 	if(pArgument_->pKeyboard_->IsTrigger(DIK_D))
 	{
-		LaunchSP();
+		//LaunchSP();
 	}
 
 	if(autoLaunchFlag == true)
@@ -899,11 +905,17 @@ void SceneGame::tutorialUpdate(void)
 	{
 		fireAutoManulFlag = false;
 
+		//	音再生
+		selectSound->Play();
+
 		stringManual->SetEnableGraphic(true);
 	}
 	if(wiiContoroller->getTrigger(WC_TWO))
 	{
 		fireAutoManulFlag = true;
+
+		//	音再生
+		selectSound->Play();
 
 		stringManual->SetEnableGraphic(false);
 	}
@@ -1014,11 +1026,17 @@ void SceneGame::tutorialUpdate(void)
 	{
 		fireworksUI->subRotColor();
 		colorState = fireworksUI->getColorState();
+
+		//	音再生
+		selectSound->Play();
 	}
 	if(pArgument_->pVirtualController_->IsTrigger(VC_RIGHT))
 	{
 		fireworksUI->addRotColor();
 		colorState = fireworksUI->getColorState();
+
+		//	音再生
+		selectSound->Play();
 	}
 	//------------------------------------------------------------------
 
@@ -1047,6 +1065,9 @@ void SceneGame::tutorialUpdate(void)
 	if( pArgument_->pVirtualController_->IsTrigger(VC_PAUSE))
 	{
 		fpUpdate = &SceneGame::tutorialFadeUpdate;
+
+		//	音再生
+		desideSound->Play();
 	}
 }
 //==============================================================================
@@ -1146,6 +1167,10 @@ void SceneGame::tutorialFadeUpdate(void)
 		gage->setPercentFuture(0.0f);
 
 		player->setPosition(D3DXVECTOR3(0.0f, -150.0f, 400.0f));
+
+
+		//	音再生
+		desideSound->Play();
 	}
 }
 //==============================================================================
@@ -1260,6 +1285,9 @@ void SceneGame::demoUpdate(void)
 			pArgument_->pFade_->FadeOut( 20 );
 			pArgument_->pUpdate_->SetIsEnable( true );
 		}
+
+		//	音再生
+		desideSound->Play();
 	}
 }
 //==============================================================================
@@ -1526,12 +1554,18 @@ void SceneGame::pauseUpdate(void)
 		fireAutoManulFlag = false;
 
 		stringManual->SetEnableGraphic(true);
+
+		//	音再生
+		selectSound->Play();
 	}
 	if(wiiContoroller->getTrigger(WC_TWO))
 	{
 		fireAutoManulFlag = true;
 
 		stringManual->SetEnableGraphic(false);
+
+		//	音再生
+		selectSound->Play();
 	}
 
 
@@ -1769,7 +1803,7 @@ void SceneGame::collision_fireworks_target()
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
+				//score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
 				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5) * SCORE_MUL);
 
 				//	ターゲット消去
@@ -1872,7 +1906,7 @@ void SceneGame::collision_fireworks_targetAuto()
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
+				//score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
 				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5) * SCORE_MUL);
 
 				//	ターゲット消去
@@ -1948,14 +1982,14 @@ void SceneGame::collision_fireworks_fireworks()
 				buffFireworks2->burn2New151220();
 
 				//	ゲージ加算
-				AddGage(ADD_20);
+				AddGage(ADD_5);
 
 				//	コンボ数加算
 				combo->addScore();
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
+				//score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
 				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5) * SCORE_MUL);
 
 				//	setAddScoreして、そのAddSocoreでの加算処理が終わる前に、次のAddScoreが設定されるからバグる
@@ -2020,17 +2054,17 @@ void SceneGame::AddGage(ADD_SCORE_STATE _state)
 		break;
 
 	case ADD_5:
-		gage->addPercentFuture(5.0f);
+		gage->addPercentFuture(3.0f);
 
 		break;
 
 	case ADD_10:
-		gage->addPercentFuture(10.0f);
+		gage->addPercentFuture(5.0f);
 
 		break;
 
 	case ADD_20:
-		gage->addPercentFuture(20.0f);
+		gage->addPercentFuture(10.0f);
 
 		break;
 	}

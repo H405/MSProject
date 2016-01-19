@@ -186,6 +186,56 @@ void ObjectScore::Update( void )
 	if(score < scoreFuture)
 	{
 		score += addScore;
+
+		if(score + addScore > scoreFuture)
+		{
+			score = scoreFuture;
+			addScore = 0;
+		}
+
+		tempFlag = true;
+	}
+	else if(score > scoreFuture)
+	{
+		score += addScore;
+
+		if(score + addScore < scoreFuture)
+		{
+			score = scoreFuture;
+			addScore = 0;
+		}
+
+		tempFlag = true;
+	}
+
+	//	最大値と最小値のまるめ
+	if (score >= scoreMax)
+	{
+		score = scoreMax - 1;
+		tempFlag = true;
+	}
+	else if (score <= -1)
+	{
+		score = 0;
+		tempFlag = true;
+	}
+
+	//	スコアが変動したらテクスチャ座標変更
+	if(tempFlag == true)
+	{
+		if(alphaSPFlag == true)
+			desideScoreSP(alphaSP);
+		else
+			desideScore();
+	}
+
+	/*
+	bool tempFlag = false;
+
+	//	スコア値加算
+	if(score < scoreFuture)
+	{
+		score += addScore;
 		tempFlag = true;
 	}
 	else if(score > scoreFuture)
@@ -214,6 +264,7 @@ void ObjectScore::Update( void )
 		else
 			desideScore();
 	}
+	*/
 }
 //==============================================================================
 // Brief  : スコアの値に応じてテクスチャUV値を決定する
@@ -692,6 +743,7 @@ void ObjectScore::AddScore(int _value)
 void ObjectScore::SetScoreFuture(int _value)
 {
 	scoreFuture = (int)_value;
+	addScore = (scoreFuture - score) / 10;
 }
 //==============================================================================
 // Brief  : スコア未来値の加算
@@ -701,6 +753,7 @@ void ObjectScore::SetScoreFuture(int _value)
 void ObjectScore::AddScoreFuture(int _value)
 {
 	scoreFuture += (int)_value;
+	addScore = (scoreFuture - score) / 10;
 }
 //==============================================================================
 // Brief  : スコア現在値の設定
