@@ -212,6 +212,10 @@ void Combo::Update( void )
 }
 void Combo::firstUpdate()
 {
+	score = 0;
+	scorePrev = 0;
+	scoreMax = 0;
+
 	comboScore->desideScoreSP(alpha);
 	comboSya->SetColorA(0.0f);
 	comboString->SetColorA(0.0f);

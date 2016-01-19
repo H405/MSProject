@@ -1518,6 +1518,26 @@ void SceneGame::pauseUpdate(void)
 
 
 
+
+
+
+	if(wiiContoroller->getTrigger(WC_ONE))
+	{
+		fireAutoManulFlag = false;
+
+		stringManual->SetEnableGraphic(true);
+	}
+	if(wiiContoroller->getTrigger(WC_TWO))
+	{
+		fireAutoManulFlag = true;
+
+		stringManual->SetEnableGraphic(false);
+	}
+
+
+
+
+
 	//	Objectクラスの更新が止まってるから、ここで更新処理
 	if(finger != nullptr)
 		finger->Update();
