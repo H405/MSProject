@@ -571,28 +571,79 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
 		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
+		markers[ counterMarker ].SetEnableMotion( false );
 	}
-	markers[ 0 ].SetPosition( 5400.0f, 0.0f, -380.0f );
-	markers[ 0 ].SetRotationY( 0.0f );
+
+	markers[ 0 ].SetPosition( 5450.0f, 0.0f, -380.0f );
+	markers[ 0 ].SetRotationY( DEG_TO_RAD( -86.0f ) );
+	markers[ 0 ].SetEnableMotion( true );
 	markers[ 1 ].SetPosition( 960.0f, 0.0f, 3860.0f );
-	markers[ 1 ].SetRotationY( 40.0f );
+	markers[ 1 ].SetRotationY( DEG_TO_RAD( 40.0f ) );
 	markers[ 2 ].SetPosition( 1130.0f, 0.0f, 4500.0f );
-	markers[ 2 ].SetRotationY( -35.0f );
+	markers[ 2 ].SetRotationY( DEG_TO_RAD( -35.0f ) );
 	markers[ 3 ].SetPosition( 310.0f, 0.0f, 4710.0f );
-	markers[ 3 ].SetRotationY( 28.0f );
+	markers[ 3 ].SetRotationY( DEG_TO_RAD( 28.0f ) );
 	markers[ 4 ].SetPosition( -2300.0f, 0.0f, 550.0f );
-	markers[ 4 ].SetRotationY( 78.0f );
+	markers[ 4 ].SetRotationY( DEG_TO_RAD( 78.0f ) );
 	markers[ 5 ].SetPosition( -2000.0f, 0.0f, 2250.0f );
-	markers[ 5 ].SetRotationY( -186.0f );
+	markers[ 5 ].SetRotationY( DEG_TO_RAD( -186.0f ) );
 	markers[ 6 ].SetPosition( -1300.0f, 0.0f, 1250.0f );
-	markers[ 6 ].SetRotationY( -157.0f );
+	markers[ 6 ].SetRotationY( DEG_TO_RAD( -157.0f ) );
 	markers[ 7 ].SetPosition( 1510.0f, 0.0f, 450.0f );
-	markers[ 7 ].SetRotationY( -8.0f );
+	markers[ 7 ].SetRotationY( DEG_TO_RAD( -8.0f ) );
 	markers[ 8 ].SetPosition( 2160.0f, 0.0f, -60.0f );
-	markers[ 8 ].SetRotationY( -44.0f );
+	markers[ 8 ].SetRotationY( DEG_TO_RAD( -44.0f ) );
 	markers[ 9 ].SetPosition( 1430.0f, 800.0f, -2180.0f );
-	markers[ 9 ].SetRotationY( -2.0f );
+	markers[ 9 ].SetRotationY( DEG_TO_RAD( -2.0f ) );
 	markers[ 9 ].SetScale( 2.0f, 2.0f, 2.0f );
+
+	// マテリアルの設定
+	Material	materialDancer;
+	pModelMarker->GetMaterial( 0, &materialDancer );
+	materialDancer.specular_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	materialDancer.reflection_ = 0.7f;
+	materialDancer.power_ = 5.0f;
+	pModelMarker->SetMaterial( 0, materialDancer );
+
+	Material	materialBridge;
+	pModelBridge->GetMaterial( 0, &materialBridge );
+	materialBridge.specular_ = D3DXCOLOR( 0.7f, 0.7f, 0.7f, 1.0f );
+	materialBridge.reflection_ = 0.5f;
+	materialBridge.power_ = 5.0f;
+	pModelBridge->SetMaterial( 0, materialBridge );
+
+	Material	materialField;
+	pModelField->GetMaterial( 0, &materialField );
+	materialField.specular_ = D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f );
+	materialField.reflection_ = 0.5f;
+	materialField.power_ = 2.0f;
+	pModelField->SetMaterial( 0, materialField );
+
+	Material	materialWindow;
+	pModelHouse->GetMaterial( 0, &materialWindow );
+	materialWindow.specular_ = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	materialWindow.reflection_ = 1.0f;
+	materialWindow.power_ = 5.0f;
+	pModelHouse->SetMaterial( 0, materialWindow );
+
+	Material	materialHouse;
+	pModelHouse->GetMaterial( 1, &materialHouse );
+	materialHouse.specular_ = D3DXCOLOR( 0.5f, 0.5f, 0.5f, 1.0f );
+	materialHouse.reflection_ = 0.25f;
+	materialHouse.power_ = 1.5f;
+	pModelHouse->SetMaterial( 1, materialHouse );
+
+	Model*		pModelGear = nullptr;
+	Model*		pModelBase = nullptr;
+	pModelGear = pArgument->pModel_->Get( _T( "suisya_gear_002.x" ) );
+	pModelBase = pArgument->pModel_->Get( _T( "suisya_dai_002.x" ) );
+	Material	materialWaterwheel;
+	pModelHouse->GetMaterial( 0, &materialWaterwheel );
+	materialWaterwheel.specular_ = D3DXCOLOR( 0.9f, 0.9f, 0.9f, 1.0f );
+	materialWaterwheel.reflection_ = 0.4f;
+	materialWaterwheel.power_ = 3.0f;
+	pModelGear->SetMaterial( 0, materialWaterwheel );
+	pModelBase->SetMaterial( 0, materialWaterwheel );
 }
 
 //==============================================================================
@@ -653,9 +704,9 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureCircle
 		);
 
-	autoFadeTable[2] = -1;
 	autoFadeTable[0] = -1;
 	autoFadeTable[1] = -1;
+	autoFadeTable[2] = -1;
 	autoFadeTableMax = 0;
 	autoFadeTableNum = 0;
 	autoFadeTableCount = 0;
@@ -670,7 +721,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		//D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
 		D3DXVECTOR3(0.0f, -150.0f, 400.0f),
 		pArgument);
-
+	player->SetEnableMotion( false );
 /*
 	// スキンメッシュの生成
 	Effect*	pEffectSkinMesh = nullptr;					// エフェクト

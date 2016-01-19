@@ -123,6 +123,13 @@ public:
 	bool IsBlending( void );
 
 	//==============================================================================
+	// Brief  : モーションの有効設定
+	// Return : void								: なし
+	// Arg    : bool value							: 設定する値
+	//==============================================================================
+	void SetEnableMotion( bool value );
+
+	//==============================================================================
 	// アクセサ
 	//==============================================================================
 	void SetGraphic( GraphicSkinMesh* pValue );
@@ -152,6 +159,8 @@ private:
 	int			indexFrame_;				// フレーム番号
 	int			indexFrameBeginBlend_;		// ブレンド開始フレーム番号
 	int			countFrameBlend_;			// ブレンドするフレーム数
+
+	bool		isEnableMotion_;			// モーション有効フラグ
 };
 
 #endif	// MY_OBJECT_SKIN_MESH_H

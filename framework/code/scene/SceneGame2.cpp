@@ -26,8 +26,12 @@
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/combo/combo.h"
 #include "../system/gage/gage.h"
-#include "../system/SceneArgumentMain.h"
 #include "../system/gage/gage.h"
+#include "../system/player/Player.h"
+#include "../system/SceneArgumentMain.h"
+
+#include "../framework/graphic/Material.h"
+#include "../framework/resource/Model.h"
 
 // テスト用
 #include "../framework/light/LightPoint.h"
@@ -525,6 +529,7 @@ void SceneGame::InitializeSelf2( void )
 	pObjectRanking_ = nullptr;
 	pObjectScoreRanking_ = nullptr;
 	indexSection_ = 0;
+	indexSectionForPlayer_ = 0;
 	maximumCombo_ = 0;
 }
 
@@ -708,6 +713,24 @@ void SceneGame::UpdateBetweenSection( void )
 	if( timerSceneGame_ == 0 )
 	{
 		++indexSection_;
+	}
+
+	// プレイヤー用セクション番号の切り替え
+	if( indexSection_ == 1 )
+	{
+		if( timerSceneGame_ == 115 )
+		{
+			indexSectionForPlayer_ = 1;
+			player->SetEnableMotion( false );
+		}
+	}
+	else if( indexSection_ == 0 )
+	{
+		if( timerSceneGame_ == 60 )
+		{
+			indexSectionForPlayer_ = 2;
+			player->SetEnableMotion( false );
+		}
 	}
 
 	// タイマーの経過
@@ -1258,7 +1281,7 @@ void SceneGame::UpdateTest( void )
 	// オブジェクトの移動
 	Object*	pObject = nullptr;		// 移動対象オブジェクト
 	float	velocity;				// 移動速度
-	pObject = gate;
+	pObject = &markers[ 0 ];
 	if( pArgument_->pKeyboard_->IsPress( DIK_LCONTROL ) )
 	{
 		velocity = 10.0f;
@@ -1317,6 +1340,44 @@ void SceneGame::UpdateTest( void )
 	PrintDebug( _T( "座標 ： ( %11.6f, %11.6f, %11.6f )\n" ), pObject->GetPositionX(), pObject->GetPositionY(), pObject->GetPositionZ() );
 	PrintDebug( _T( "回転 ： ( %11.6f, %11.6f, %11.6f )\n" ), 180.0f / D3DX_PI * pObject->GetRotationX(), 180.0f / D3DX_PI * pObject->GetRotationY(), 180.0f / D3DX_PI * pObject->GetRotationZ() );
 	PrintDebug( _T( "拡縮 ： ( %11.6f, %11.6f, %11.6f )\n" ), pObject->GetScaleX(), pObject->GetScaleY(), pObject->GetScaleZ() );
+
+	// スペキュラ
+	Material	material;
+	Model*		pModel = nullptr;
+	pModel = pArgument_->pModel_->Get( _T( "suisya_gear_002.x" ) );
+	pModel->GetMaterial( 0, &material );
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_I, 30, 1 ) )
+	{
+		material.specular_ += D3DXCOLOR( 0.05f, 0.05f, 0.05f, 0.0f );
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_O, 30, 1 ) )
+	{
+		material.specular_ -= D3DXCOLOR( 0.05f, 0.05f, 0.05f, 0.0f );
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_K, 30, 1 ) )
+	{
+		material.reflection_ += 0.05f;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_L, 30, 1 ) )
+	{
+		material.reflection_ -= 0.05f;
+	}
+	if( pArgument_->pKeyboard_->IsRepeat( DIK_COMMA, 30, 1 ) )
+	{
+		material.power_ += 0.5f;
+	}
+	else if( pArgument_->pKeyboard_->IsRepeat( DIK_PERIOD, 30, 1 ) )
+	{
+		material.power_ -= 0.5f;
+	}
+	pModel->SetMaterial( 0, material );
+	PrintDebug( _T( "\n" ) );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "| 反射                                 |\n" ) );
+	PrintDebug( _T( "*--------------------------------------*\n" ) );
+	PrintDebug( _T( "色   ： ( %11.6f, %11.6f, %11.6f )\n" ), material.specular_.r, material.specular_.g, material.specular_.b );
+	PrintDebug( _T( "割合 ： %11.6f\n" ), material.reflection_ );
+	PrintDebug( _T( "強さ ： %11.6f\n" ), material.power_ );
 
 	// 点光源テスト
 	D3DXVECTOR3	pPositionPointTest[ 3 ] =

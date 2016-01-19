@@ -203,7 +203,7 @@ void ObjectSkinMesh::Update( void )
 	}
 
 	// フレームを進める
-	if( countMotion_ > 0 )
+	if( countMotion_ > 0 && isEnableMotion_ )
 	{
 		++indexFrame_;
 		if( static_cast< unsigned int >( indexFrame_ ) >= ppTableMotion_[ indexMotionCurrent_ ]->GetCountFrame() )
@@ -310,6 +310,23 @@ bool ObjectSkinMesh::IsBlending( void )
 }
 
 //==============================================================================
+// Brief  : モーションの有効設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void ObjectSkinMesh::SetEnableMotion( bool value )
+{
+	// 向こうの場合最初のフレームに設定
+	if( !value )
+	{
+		indexFrame_ = 0;
+	}
+
+	// 有効フラグの設定
+	isEnableMotion_ = value;
+}
+
+//==============================================================================
 // Brief  : モーションテーブルの設定
 // Return : void								: なし
 // Arg    : int index							: 設定する番号
@@ -383,4 +400,6 @@ void ObjectSkinMesh::InitializeSelf( void )
 	indexFrame_ = 0;
 	indexFrameBeginBlend_ = 0;
 	countFrameBlend_ = 0;
+
+	isEnableMotion_ = true;
 }
