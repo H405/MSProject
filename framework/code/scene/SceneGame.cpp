@@ -239,6 +239,57 @@ void SceneGame::Update( void )
 		}
 	}
 
+	// プレイヤーの位置設定
+	if( fpUpdate != &SceneGame::normalUpdate && fpUpdate != &SceneGame::demoUpdate && fpUpdate != &SceneGame::tutorialUpdate )
+	{
+		D3DXVECTOR3	pPos2ForSet[ 3 ] =
+		{
+			D3DXVECTOR3( 749.0f, 121.0f, 5366.0f ),
+			D3DXVECTOR3( -1114.8f, 21.3f, 211.4f ),
+			D3DXVECTOR3( 1673.2f, 14.6f, 856.0f )
+		};
+		D3DXVECTOR3	pVecCameraForSet[ 3 ] =
+		{
+			D3DXVECTOR3( -555.0f, 70.0f, -2405.0f ),
+			D3DXVECTOR3( -2635.0f, 845.0f, 2980.0f ),
+			D3DXVECTOR3( 40.0f, 270.0f, -2455.0f )
+		};
+		D3DXMATRIX	matrixIdentity;
+		D3DXMatrixIdentity( &matrixIdentity );
+		player->setInvViewMatrix( matrixIdentity );
+		player->SetPos2( pPos2ForSet[ indexSectionForPlayer_ ] );
+		player->setCameraVec( pVecCameraForSet[ indexSectionForPlayer_ ] );
+		player->SetIsLimited( false );
+	}
+	else
+	{
+		player->SetIsLimited( true );
+	}
+
+	// モーションの更新
+	if( fpUpdate == &SceneGame::normalUpdate || fpUpdate == &SceneGame::demoUpdate || fpUpdate == &SceneGame::tutorialUpdate )
+	{
+		player->SetEnableMotion( true );
+		if( indexSectionForPlayer_ == 0 )
+		{
+			markers[ 1 ].SetEnableMotion( true );
+			markers[ 2 ].SetEnableMotion( true );
+			markers[ 3 ].SetEnableMotion( true );
+		}
+		else if( indexSectionForPlayer_ == 1 )
+		{
+			markers[ 4 ].SetEnableMotion( true );
+			markers[ 5 ].SetEnableMotion( true );
+			markers[ 6 ].SetEnableMotion( true );
+		}
+		else if( indexSectionForPlayer_ == 2 )
+		{
+			markers[ 7 ].SetEnableMotion( true );
+			markers[ 8 ].SetEnableMotion( true );
+			markers[ 9 ].SetEnableMotion( true );
+		}
+	}
+
 	//	設定された更新関数へ
 	(this->*fpUpdate)();
 

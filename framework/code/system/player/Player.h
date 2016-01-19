@@ -90,6 +90,9 @@ public:
 	void addSpeed(float _value){speed += _value;}
 
 	void SetEnableGraphic( bool value );
+	void SetIsLimited( bool value )			{ isLimited_ = value; }
+	void SetPos2( const D3DXVECTOR3& pos )	{ pos2 = pos; }
+	void SetEnableMotion( bool value );
 
 protected:
 
@@ -109,6 +112,9 @@ protected:
 //	ObjectSkinMesh* arm_r;
 //	ObjectSkinMesh* leg_l;
 //	ObjectSkinMesh* leg_r;
+
+	bool		isLimited_;
+	D3DXVECTOR3	pos2;
 
 private:
 	void InitializeSelf( void );

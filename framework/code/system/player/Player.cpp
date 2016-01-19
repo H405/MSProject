@@ -12,6 +12,7 @@
 //******************************************************************************
 #include "Player.h"
 #include "../../Object/ObjectSkinMesh.h"
+#include "../../framework/develop/DebugProc.h"
 #include "../../framework/resource/ManagerEffect.h"
 #include "../../framework/resource/ManagerModel.h"
 #include "../../framework/resource/ManagerMotion.h"
@@ -55,6 +56,8 @@ void Player::InitializeSelf( void )
 	body = nullptr;
 //	arm_l = nullptr;
 	D3DXMatrixIdentity(&invViewMatrix);
+	isLimited_ = true;
+	pos2 = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //==============================================================================
@@ -140,7 +143,7 @@ int Player::Initialize(
 	leg_l->SetScale(1.0f, 1.0f, 1.0f);
 	leg_r->SetScale(1.0f, 1.0f, 1.0f);
 #else
-	body->SetScale(1.0f, 1.0f, 1.0f);
+	body->SetScale(0.5f, 0.5f, 0.5f);
 #endif
 #if 0
 	//	親オブジェクト登録
@@ -191,14 +194,24 @@ void Player::Update( void )
 	pos.x += speed;
 	speed *= 0.9f;
 
-	if(pos.x <= -250.0f)
-		pos.x = -250.0f;
-	else if(pos.x >= 250.0f)
-		pos.x = 250.0f;
+	if( isLimited_ )
+	{
+		if(pos.x <= -250.0f)
+			pos.x = -250.0f;
+		else if(pos.x >= 250.0f)
+			pos.x = 250.0f;
+	}
 
 	//	オフセット値を加味してもう一度
 	D3DXVECTOR4 buffPos;
-	D3DXVec3Transform(&buffPos, &pos, &invViewMatrix);
+	if( isLimited_ )
+	{
+		D3DXVec3Transform(&buffPos, &pos, &invViewMatrix);
+	}
+	else
+	{
+		D3DXVec3Transform(&buffPos, &pos2, &invViewMatrix);
+	}
 
 	//	身体にセット
 	body->SetPosition(buffPos.x, buffPos.y, buffPos.z);
@@ -209,6 +222,11 @@ void Player::Update( void )
 
 	// 基本クラスの処理
 	ObjectMovement::Update();
+
+	// テスト
+	D3DXVECTOR3	positionBody;
+	body->GetPosition( &positionBody );
+	PrintDebug( _T( "PLAYER : %9.3f, %9.3f, %9.3f\n" ), positionBody.x, positionBody.y, positionBody.z );
 }
 
 //==============================================================================
@@ -239,4 +257,15 @@ void Player::addPositionArm(float _x, float _y, float _z)
 void Player::SetEnableGraphic( bool value )
 {
 	body->SetEnableGraphic( value );
+}
+
+//==============================================================================
+// Brief  : モーションの有効設定
+// Return : void								: なし
+// Arg    : bool value							: 設定する値
+//==============================================================================
+void Player::SetEnableMotion( bool value )
+{
+	// 有効フラグの設定
+	body->SetEnableMotion( value );
 }

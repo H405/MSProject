@@ -26,8 +26,9 @@
 #include "../system/camera/CameraStateSpline.h"
 #include "../system/combo/combo.h"
 #include "../system/gage/gage.h"
-#include "../system/SceneArgumentMain.h"
 #include "../system/gage/gage.h"
+#include "../system/player/Player.h"
+#include "../system/SceneArgumentMain.h"
 
 // テスト用
 #include "../framework/light/LightPoint.h"
@@ -525,6 +526,7 @@ void SceneGame::InitializeSelf2( void )
 	pObjectRanking_ = nullptr;
 	pObjectScoreRanking_ = nullptr;
 	indexSection_ = 0;
+	indexSectionForPlayer_ = 0;
 	maximumCombo_ = 0;
 }
 
@@ -708,6 +710,24 @@ void SceneGame::UpdateBetweenSection( void )
 	if( timerSceneGame_ == 0 )
 	{
 		++indexSection_;
+	}
+
+	// プレイヤー用セクション番号の切り替え
+	if( indexSection_ == 1 )
+	{
+		if( timerSceneGame_ == 115 )
+		{
+			indexSectionForPlayer_ = 1;
+			player->SetEnableMotion( false );
+		}
+	}
+	else if( indexSection_ == 0 )
+	{
+		if( timerSceneGame_ == 60 )
+		{
+			indexSectionForPlayer_ = 2;
+			player->SetEnableMotion( false );
+		}
 	}
 
 	// タイマーの経過
@@ -1258,7 +1278,7 @@ void SceneGame::UpdateTest( void )
 	// オブジェクトの移動
 	Object*	pObject = nullptr;		// 移動対象オブジェクト
 	float	velocity;				// 移動速度
-	pObject = gate;
+	pObject = &markers[ 0 ];
 	if( pArgument_->pKeyboard_->IsPress( DIK_LCONTROL ) )
 	{
 		velocity = 10.0f;

@@ -564,22 +564,37 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pEffectMarkerShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
 	pEffectMarkerParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
-	markers = new ObjectSkinMesh[ 4 ];
-	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
+	markers = new ObjectSkinMesh[ 10 ];
+	for( int counterMarker = 0; counterMarker < 10; ++counterMarker )
 	{
 		markers[ counterMarker ].Initialize( 0, 1 );
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
 		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
+		markers[ counterMarker ].SetEnableMotion( false );
 	}
-	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
-	markers[ 0 ].SetRotationY( 0.0f );
-	markers[ 1 ].SetPosition( -1505.0f, 0.0f, 625.0f );
-	markers[ 1 ].SetRotationY( 134.0f );
-	markers[ 2 ].SetPosition( 1680.0f, 0.0f, 600.0f );
-	markers[ 2 ].SetRotationY( 0.0f );
-	markers[ 3 ].SetPosition( 5400.0f, 0.0f, -380.0f );
-	markers[ 3 ].SetRotationY( 0.0f );
+	markers[ 0 ].SetPosition( 5400.0f, 0.0f, -380.0f );
+	markers[ 0 ].SetRotationY( DEG_TO_RAD( 0.0f ) );
+	markers[ 0 ].SetEnableMotion( true );
+	markers[ 1 ].SetPosition( 960.0f, 0.0f, 3860.0f );
+	markers[ 1 ].SetRotationY( DEG_TO_RAD( 40.0f ) );
+	markers[ 2 ].SetPosition( 1130.0f, 0.0f, 4500.0f );
+	markers[ 2 ].SetRotationY( DEG_TO_RAD( -35.0f ) );
+	markers[ 3 ].SetPosition( 310.0f, 0.0f, 4710.0f );
+	markers[ 3 ].SetRotationY( DEG_TO_RAD( 28.0f ) );
+	markers[ 4 ].SetPosition( -2300.0f, 0.0f, 550.0f );
+	markers[ 4 ].SetRotationY( DEG_TO_RAD( 78.0f ) );
+	markers[ 5 ].SetPosition( -2000.0f, 0.0f, 2250.0f );
+	markers[ 5 ].SetRotationY( DEG_TO_RAD( -186.0f ) );
+	markers[ 6 ].SetPosition( -1300.0f, 0.0f, 1250.0f );
+	markers[ 6 ].SetRotationY( DEG_TO_RAD( -157.0f ) );
+	markers[ 7 ].SetPosition( 1510.0f, 0.0f, 450.0f );
+	markers[ 7 ].SetRotationY( DEG_TO_RAD( -8.0f ) );
+	markers[ 8 ].SetPosition( 2160.0f, 0.0f, -60.0f );
+	markers[ 8 ].SetRotationY( DEG_TO_RAD( -44.0f ) );
+	markers[ 9 ].SetPosition( 1430.0f, 800.0f, -2550.0f );
+	markers[ 9 ].SetRotationY( DEG_TO_RAD( -2.0f ) );
+	markers[ 9 ].SetScale( 2.0f, 2.0f, 2.0f );
 }
 
 //==============================================================================
@@ -640,9 +655,9 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureCircle
 		);
 
-	autoFadeTable[2];
 	autoFadeTable[0] = -1;
 	autoFadeTable[1] = -1;
+	autoFadeTable[2] = -1;
 	autoFadeTableMax = 0;
 	autoFadeTableNum = 0;
 	autoFadeTableCount = 0;
@@ -657,7 +672,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		//D3DXVECTOR3(0.0f, 150.0f, -2000.0f),
 		D3DXVECTOR3(0.0f, -150.0f, 400.0f),
 		pArgument);
-
+	player->SetEnableMotion( false );
 /*
 	// スキンメッシュの生成
 	Effect*	pEffectSkinMesh = nullptr;					// エフェクト

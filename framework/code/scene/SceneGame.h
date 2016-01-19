@@ -490,6 +490,7 @@ private:
 	ObjectScore*		pObjectScoreRanking_;				// ランキングスコアオブジェクト
 
 	int					indexSection_;						// ゲームセクション番号
+	int					indexSectionForPlayer_;
 
 	int					maximumCombo_;						// 最大コンボ数
 
