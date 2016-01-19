@@ -192,7 +192,7 @@ void SceneGame::Update( void )
 	// 焦点距離の更新
 	D3DXVECTOR3	positionLookAt;		// 注視点
 	pCamera_->GetPositionLookAt( &positionLookAt );
-	if( fpUpdate == &SceneGame::normalUpdate || fpUpdate == &SceneGame::demoUpdate )
+	if( fpUpdate == &SceneGame::normalUpdate || fpUpdate == &SceneGame::demoUpdate || fpUpdate == &SceneGame::tutorialUpdate|| fpUpdate == &SceneGame::tutorialFadeUpdate)
 	{
 		D3DXVECTOR3	pTablePositionForcus[] =
 		{
@@ -201,11 +201,26 @@ void SceneGame::Update( void )
 			D3DXVECTOR3( 1680.0f, 0.0f, 600.0f ),
 			D3DXVECTOR3( 5400.0f, 0.0f, -380.0f )
 		};
-		pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( pTablePositionForcus[ indexSection_ ] ) );
+		//pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( pTablePositionForcus[ indexSection_ ] ) );
+
+		/*
+		D3DXVECTOR3 buffPlayerPos;
+		player->GetPosition(&buffPlayerPos);
+		pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( buffPlayerPos ) );
+		PrintDebug("buffPlayerPos.x = %f", buffPlayerPos.x);
+		PrintDebug("buffPlayerPos.y = %f", buffPlayerPos.y);
+		PrintDebug("buffPlayerPos.z = %f", buffPlayerPos.z);
+		*/
+
+		pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( player->getWorldPosition() ) );
+		PrintDebug("buffPlayerPos.x = %f", player->getWorldPosition().x);
+		PrintDebug("buffPlayerPos.y = %f", player->getWorldPosition().y);
+		PrintDebug("buffPlayerPos.z = %f", player->getWorldPosition().z);
 	}
 	else
 	{
 		pArgument_->pEffectParameter_->SetForcus( 0.5f * pCamera_->GetViewZ( positionLookAt ) );
+		//pArgument_->pEffectParameter_->SetForcus( pCamera_->GetViewZ( player->getPosition() ) );
 	}
 
 	// 影用カメラ近の更新
@@ -942,7 +957,7 @@ void SceneGame::tutorialUpdate(void)
 	if(targetAppearFlag == true)
 	{
 		targetAppearCount++;
-		if(targetAppearCount == 150)
+		if(targetAppearCount == 100)
 		{
 			int buff;
 			buff = managerTarget->Add(
@@ -1920,8 +1935,10 @@ void SceneGame::collision_fireworks_fireworks()
 				combo->addScore();
 
 				//	スコア値加算
-				score->setAddScore((gage->getPercent() + 10) * SCORE_MUL);
-				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 10) * SCORE_MUL);
+				score->setAddScore((gage->getPercent() + 5) * SCORE_MUL);
+				score->AddScoreFuture(combo->getScore() * (gage->getPercent() + 5) * SCORE_MUL);
+
+				//	setAddScoreして、そのAddSocoreでの加算処理が終わる前に、次のAddScoreが設定されるからバグる
 
 				//	振動
 				wiiContoroller->rumble((unsigned int)500);

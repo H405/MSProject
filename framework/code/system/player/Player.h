@@ -78,6 +78,7 @@ public:
 	// アクセサ
 	//==============================================================================
 	D3DXVECTOR3 getPosition(){return pos;}
+	D3DXVECTOR3 getWorldPosition(){return worldPos;}
 	void setPosition(D3DXVECTOR3 _pos){pos = _pos;}
 	void AddPositionX(float _value){pos.x += _value;};
 	void setRotationArm(float _x, float _y, float _z);
@@ -96,6 +97,8 @@ protected:
 	//	位置情報
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 rot;
+
+	D3DXVECTOR3 worldPos;
 
 	//	移動スピード
 	float speed;

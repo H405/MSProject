@@ -564,22 +564,35 @@ void SceneGame::InitializeStage(SceneArgumentMain* pArgument)
 	pEffectMarkerReflect = pArgument->pEffect_->Get( _T( "SkinMeshReflect.fx" ) );
 	pEffectMarkerShadow = pArgument->pEffect_->Get( _T( "SkinMeshShadow.fx" ) );
 	pEffectMarkerParaboloid = pArgument->pEffect_->Get( _T( "SkinMeshParaboloid.fx" ) );
-	markers = new ObjectSkinMesh[ 4 ];
-	for( int counterMarker = 0; counterMarker < 4; ++counterMarker )
+	markers = new ObjectSkinMesh[ 10 ];
+	for( int counterMarker = 0; counterMarker < 10; ++counterMarker )
 	{
 		markers[ counterMarker ].Initialize( 0, 1 );
 		markers[ counterMarker ].CreateGraphic( 0, pModelMarker, pArgument->pEffectParameter_,
 			pEffectMarkerGeneral, pEffectMarkerReflect, pEffectMarkerShadow, pEffectMarkerParaboloid );
 		markers[ counterMarker ].SetTableMotion( 0, pMotionMarker );
 	}
-	markers[ 0 ].SetPosition( 620.0f, 0.0f, 4550.0f );
+	markers[ 0 ].SetPosition( 5400.0f, 0.0f, -380.0f );
 	markers[ 0 ].SetRotationY( 0.0f );
-	markers[ 1 ].SetPosition( -1505.0f, 0.0f, 625.0f );
-	markers[ 1 ].SetRotationY( 134.0f );
-	markers[ 2 ].SetPosition( 1680.0f, 0.0f, 600.0f );
-	markers[ 2 ].SetRotationY( 0.0f );
-	markers[ 3 ].SetPosition( 5400.0f, 0.0f, -380.0f );
-	markers[ 3 ].SetRotationY( 0.0f );
+	markers[ 1 ].SetPosition( 960.0f, 0.0f, 3860.0f );
+	markers[ 1 ].SetRotationY( 40.0f );
+	markers[ 2 ].SetPosition( 1130.0f, 0.0f, 4500.0f );
+	markers[ 2 ].SetRotationY( -35.0f );
+	markers[ 3 ].SetPosition( 310.0f, 0.0f, 4710.0f );
+	markers[ 3 ].SetRotationY( 28.0f );
+	markers[ 4 ].SetPosition( -2300.0f, 0.0f, 550.0f );
+	markers[ 4 ].SetRotationY( 78.0f );
+	markers[ 5 ].SetPosition( -2000.0f, 0.0f, 2250.0f );
+	markers[ 5 ].SetRotationY( -186.0f );
+	markers[ 6 ].SetPosition( -1300.0f, 0.0f, 1250.0f );
+	markers[ 6 ].SetRotationY( -157.0f );
+	markers[ 7 ].SetPosition( 1510.0f, 0.0f, 450.0f );
+	markers[ 7 ].SetRotationY( -8.0f );
+	markers[ 8 ].SetPosition( 2160.0f, 0.0f, -60.0f );
+	markers[ 8 ].SetRotationY( -44.0f );
+	markers[ 9 ].SetPosition( 1430.0f, 800.0f, -2180.0f );
+	markers[ 9 ].SetRotationY( -2.0f );
+	markers[ 9 ].SetScale( 2.0f, 2.0f, 2.0f );
 }
 
 //==============================================================================
@@ -640,7 +653,7 @@ void SceneGame::Initialize3DObject(SceneArgumentMain* pArgument)
 		pTextureCircle
 		);
 
-	autoFadeTable[2];
+	autoFadeTable[2] = -1;
 	autoFadeTable[0] = -1;
 	autoFadeTable[1] = -1;
 	autoFadeTableMax = 0;

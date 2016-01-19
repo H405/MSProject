@@ -110,6 +110,7 @@ int Player::Initialize(
 	body->CreateGraphic( 0, pModel, pArgument->pEffectParameter_, pEffect, pEffectReflect, pEffectShadow, pEffectParaboloid);
 	body->SetTableMotion(0, pMotion);
 	body->SetPosition(pos);
+
 #if 0
 	pModel = pArgument->pModel_->Get( _T( "player_hand_l.model" ) );
 	arm_l = new ObjectSkinMesh();
@@ -140,7 +141,8 @@ int Player::Initialize(
 	leg_l->SetScale(1.0f, 1.0f, 1.0f);
 	leg_r->SetScale(1.0f, 1.0f, 1.0f);
 #else
-	body->SetScale(1.0f, 1.0f, 1.0f);
+	//body->SetScale(1.0f, 1.0f, 1.0f);
+	body->SetScale(0.5f, 0.5f, 0.5f);
 #endif
 #if 0
 	//	親オブジェクト登録
@@ -199,6 +201,10 @@ void Player::Update( void )
 	//	オフセット値を加味してもう一度
 	D3DXVECTOR4 buffPos;
 	D3DXVec3Transform(&buffPos, &pos, &invViewMatrix);
+
+	worldPos.x = buffPos.x;
+	worldPos.y = buffPos.y;
+	worldPos.z = buffPos.z;
 
 	//	身体にセット
 	body->SetPosition(buffPos.x, buffPos.y, buffPos.z);
